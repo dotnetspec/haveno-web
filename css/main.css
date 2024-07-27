@@ -1,0 +1,361 @@
+/* Possible - font-family: "Trebuchet MS", Arial, Helvetica, sans-serif; */
+
+/* NOTE: Standard html elements that are given some custom value for this site. Use if using a standard 
+element for styling makes sense cos same everywhere, otherwise create custom classes*/
+
+/* suggested font pairings:
+    Open Sans and Lora
+
+    Open Sans is a clean and modern sans-serif font that is easy to read and works well for body text.
+    Lora is a classic serif font with a moderate contrast that can add a touch of elegance to headings and titles.
+
+    Source Sans Pro and Source Serif Pro
+
+    Source Sans Pro is a simple and contemporary sans-serif font that is easy to read and works well for body text.
+    Source Serif Pro is a classic serif font that is easy on the eyes and can add a touch of sophistication to headings and titles.
+
+    Roboto and Merriweather
+
+    Roboto is a modern and versatile sans-serif font that is easy to read and works well for body text.
+    Merriweather is a classic serif font that is well-suited for longer blocks of text and can add a touch of professionalism to headings and titles.
+
+    PT Sans and PT Serif
+
+    PT Sans is a modern and legible sans-serif font that works well for body text.
+    PT Serif is a classic serif font with a moderate contrast that can add a touch of refinement to headings and titles.
+ */
+
+/* You can use mainly the element tags. But no problem breaking out into classes as needed eg.:
+ p.a {
+  font: 20px Arial, sans-serif;
+}
+
+p.b {
+  font: italic small-caps bold 12px/30px Georgia, serif;
+}
+
+every class should be part of an element.
+
+NOTE: A class name can be used by multiple HTML elements, while an id (#) name must only be used by one HTML element within the page: 
+REF: https://www.w3schools.com/css/tryit.asp?filename=trycss_vertical-align
+Handle the logo individually and separately from the ul so that it's width change doesn't affect the links
+
+
+New Azure colors:
+0017eb - dark blue
+005477 - grey
+3a9af9 - mid blue
+5cb8ff - light blue
+ffffff - white
+
+old colors:
+ --clr-primary-200: #fff5d0;
+  --clr-primary-300: #ebe7d9;
+  --clr-primary-400: #ba3521;
+  --clr-primary-400-half-opacity: rgba(186, 53, 33, 0.8);
+
+  --clr-neutral-100: #fff;
+  --clr-neutral-900: #0f222d;
+  --clr-neutral-900-with-opacity: rgba(15, 34, 45, 0.8);
+ */
+
+/* NOTE: Pull in the external files -- WARN: must remain at top of this file */
+
+@import 'defaults.css';
+@import 'burger.css';
+@import 'below800px.css';
+/*This media query affects the top and main nav links */
+@import 'above800px.css' screen and (min-width: 800px);
+@import 'forms.css';
+
+
+/* NOTE: Kevin's standard defaults */
+/* NOTE: This class is assoc. with the 'section' element and hence
+determines style for all the text */
+.section-background {
+  /* display: none; */
+  background-color: var(--clr-primary-200);
+}
+
+.bg-primary {
+  color: var(--clr-neutral-100);
+  background-color: var(--clr-primary-400);
+}
+
+.bg-dark {
+  background-color: var(--clr-neutral-900);
+}
+
+/* NOTE: Kevin's approach - utility(?): */
+.bg-primary h2,
+.bg-dark h2 {
+  color: var(--clr-primary-200);
+}
+
+a {
+  color: #0f46ad9f;
+  text-decoration: none;
+  font-weight: normal;
+}
+
+/* 
+NOTE: Format most the lists points as follows. There are some 
+overwrites e.g. in topLinks
+*/
+li {
+  padding: 1rem;
+  box-sizing: border-box;
+  background-color: transparent;
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+/* NOTE: .active controlled in code */
+li.active {
+  color: #0017eb;
+}
+
+/* NOTE: li[a gap].active  doesn't work */
+li.active a {
+  color: #0017eb;
+  text-decoration: none;
+  font-weight: normal;
+}
+
+img.philImage {
+  max-width: 100%;
+  padding: 1rem;
+}
+
+header {
+  flex-direction: row;
+  position: fixed;
+  z-index: 3;
+  width: 100%;
+}
+
+nav ul {
+  padding: 0;
+  list-style: none;
+  align-items: center;
+
+  flex-wrap: wrap;
+}
+
+nav li {
+  margin-bottom: 1em;
+  margin-left: 1em;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  /* opacity: 0; */
+  transition: opacity 150ms ease-in-out;
+}
+
+nav a:hover {
+  color: var(--clr-primary-400);
+}
+
+.navLink {
+  display: flex;
+  justify-content: space-between;
+  left: 0px;
+  margin-top: 0px;
+  top: 35px;
+  /* Horizontally space out links */
+}
+
+nav img {
+  /* display: none; */
+}
+
+.nav-toggle:checked~nav {
+  display: block;
+  transform: scale(1, 1);
+}
+
+/* NOTE: ~ nav - means look for a nav that's a sibling of nav-toggle  */
+.nav-toggle:checked~nav a {
+  opacity: 1;
+  transition: opacity 250ms ease-in-out 250ms;
+}
+
+/* changed this from the tutorial video to
+   allow it to gain focus, making it tabbable */
+.nav-toggle {
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+}
+
+.nav-toggle:focus~.nav-toggle-label {
+  outline: 3px solid rgba(lightblue, 0.75);
+}
+
+/* NOTE: Create the hamburger menu on the span*/
+.nav-toggle-label {
+  /* display: none; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 2em;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border: 1rem white;
+  /* background-color: var(--clr-neutral-900-with-opacity); */
+  background-color: blue;
+}
+
+/* NOTE: ::before/after create a way to draw the hamburger */
+.nav-toggle-label span,
+.nav-toggle-label span::before,
+.nav-toggle-label span::after {
+  display: block;
+  background: white;
+  height: 120px;
+  width: 120em;
+  border-radius: 12px;
+  position: relative;
+}
+
+.nav-toggle-label span::before,
+.nav-toggle-label span::after {
+  /* NOTE: If don't add content at all nothing will show */
+  content: '';
+  position: absolute;
+}
+
+.nav-toggle-label span::before {
+  bottom: 17px;
+}
+
+.nav-toggle-label span::after {
+  top: 17px;
+}
+
+.highlighted {
+  background-color: var(--clr-primary-400-half-opacity);
+}
+
+/* NOTE: All below are additional custom .css added by Phil 2 Feb 2023 onwards */
+
+/* NOTE: Custom design specific link on the page */
+
+a[href="https://squashpassion.com/partnerbb/"] {
+  background-color: #f44336;
+  color: white;
+  padding: 1em 1em;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* HACK: All way down to i a is just a repeat of the media query > 1300 of this socials code.
+Done so can add whatsapp when < 1300 as well
+*/
+/* TODO: You may try to get the backgrounds to take up 
+less space so bground doesn't entirely fill the container.
+Optional */
+.socials-main-container {
+  display: flex;
+  justify-content: center;
+  /* NOTE: Width might change if add more socials */
+  width: 100%;
+  font-size: large;
+  z-index: 2;
+ 
+}
+
+.socials-sub-container {
+  width: 30%;
+  padding: 0.5rem;
+  background-color: transparent;
+  /* border: 1px solid black; */
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2rem;
+}
+
+.socials-sub-container:hover {
+  transform: scale(1.1);
+}
+
+.socials-sub-container-whatsapp {
+  order: 4;
+  /* HACK: Just for whatsapp. For more socials there may be issues */
+  width: 10%;
+}
+
+/* NOTE: Stop a settings interferring */
+/* .socials-sub-container-whatsapp a {all: unset;} */
+
+.socials-sub-container-whatsapp:hover {
+  order: 4;
+  background-color: #2ed66d;
+  color: white;
+  /* NOTE: border-radius different to the others */
+  border-radius: 70%;
+  position: relative;
+}
+
+/* NOTE: i is effectively the 'icon' element these days */
+i a {
+  color: #fff176;
+}
+
+i a:hover {
+  color: white;
+}
+
+/* .topLinksLogo {display: none;} */
+
+/* NAV: @media column width */
+/* NOTE: These media queries are for when we have MORE space and are for the text/img cols */
+@media (min-width: 60em) {
+
+  /* NOTE: If there's enough space go back to row: */
+  .split {
+    flex-direction: row;
+  }
+
+  /* NOTE: Operate on all the direct children of .split.
+  flex-basis is setting the ideal width you want something to be: */
+  .split>* {
+    flex-basis: 100%;
+  }
+
+  /* NOTE: Make some space between cols.
+  * + * is the adjacent sibling selector. Any element that has a sibling
+  before it. IOW, if it doesn't have a sibling before it it won't create a gap  */
+  .split>*+* {
+    margin-left: 2em;
+  }
+}
+
+/* NOTE: Be consistent with the previous one */
+@media (min-width: 60em) {}
+
+.spinner {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  animation: spin 1s ease-in-out infinite;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

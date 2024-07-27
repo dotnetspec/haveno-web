@@ -1,0 +1,287 @@
+/* NOTE: header does not include topLinks */
+header {
+  /* display: flex; */
+  align-items: center;
+  /* margin-top: 7rem; */
+  transition: margin-top 0.4s;
+  justify-content: center;
+  background-color: transparent;
+}
+
+/* header.headeronscrolldown {
+  margin-top: 0rem;
+} */
+
+.nav-section-above800px.headeronscrolldown {
+  margin-top: 0rem;
+}
+
+.topLinksLogo {
+  display: none;
+}
+
+.menu-btn {
+  display: none;
+}
+
+.banner {
+  display: block;
+  width: 100%;
+}
+
+.material-icons {
+  margin-left: 30px;
+}
+
+.topLinks-flex-container {
+  color: #fff176;
+  font-size: small;
+  display: flex;
+  z-index: 3;
+  position: fixed;
+  width: 100%;
+  align-items: center;
+  transition: width 0.5s, max-width 0.5s, height 0.5s, max-height 0.5s,
+    transform 0.5s;
+  /* NOTE: Scale will return it to it's orig. size on scroll up */
+  transform: scale(1);
+  transform-origin: top left;
+  /* NOTE: Need to use rgba and it's opacity here,
+    not a separate color and opacity so as not to include
+    the children in the opacity */
+  /* Make the very top of the overlay a little bit darker */
+  background-color: rgba(0, 0, 0, 0.3);
+  justify-content: space-between;
+}
+
+.topLinks-transition {
+  transform: scale(0);
+  transform-origin: top left;
+}
+
+.socials-main-container {
+  justify-content: center;
+  width: 40%;
+}
+
+.socials-sub-container-whatsapp {
+  order: 4;
+  width: 7%;
+}
+
+/* NOTE: Stop a settings interferring */
+/* i a {all: unset;} */
+
+.socials-sub-container-whatsapp:hover {
+  order: 4;
+  background-color: #2ed66d;
+  color: white;
+  /* NOTE: border-radius different to the others */
+  border-radius: 70%;
+  position: relative;
+}
+
+.logoImageShrink {
+  transform: scale(0.5);
+  transform-origin: left;
+  transition: transform 0.5s;
+}
+
+.logoImageExpand {
+  transform: scale(1);
+  transform-origin: left;
+  transition: transform 0.5s;
+}
+
+.section {
+  flex: 0;
+}
+
+/* NOTE: Avoid gaps at top of lists */
+ul {
+  margin: 0;
+}
+
+.topLinksLeft {
+  width: 100%;
+  justify-content: right;
+  display: flex;
+  font-weight: bold;
+
+  align-items: center;
+}
+
+.topLinksLeft a:hover {
+  color: #bbb;
+}
+
+.emailphone {
+  list-style-type: none;
+  font-weight: normal;
+
+  font-size: small;
+}
+
+.emailphone a {
+  color: #fff176;
+  text-decoration: none;
+  font-weight: normal;
+
+  font-size: small;
+}
+
+.banner {
+  width: 100%;
+}
+
+.footer {
+  
+  padding: 20px;
+  font-size: 8px;
+}
+
+.logo {
+  display: block;
+}
+
+/* 
+NOTE: If you want the code to flag an error use this as it's class:
+
+.error-messages {
+  position: fixed;
+  top: top 0;
+  background: rgb(250, 250, 250);
+  padding: 20px;
+  border: 1px solid;
+} */
+
+.nav-section-above800px {
+  display: flex;
+  /* background-color: blue; */
+  margin-top: 5rem;
+}
+
+
+nav {
+  position: relative;
+  display: flex;
+  background-color: transparent;
+  transition: all 0.5s ease-in-out;
+  transform: scale(1, 1);
+  /* transform: scale(1, 0);
+transform-origin: top;
+transition: transform 400ms ease-in-out; */
+  z-index: 1;
+  margin-top: 0;
+  justify-content: center;
+}
+
+/* NOTE: main-nav-flex-container is the element container for the left side (ul of links) 
+and right side (logo and socials) of the header. These need to be split into 'sections' (which contain 'elements') so they 
+don't overlap and become unclickable */
+
+.main-nav-flex-container {
+  display: flex;
+  /* background-color: #bbb; */
+  
+}
+
+.section {
+  flex: 1;
+}
+
+.element {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f1f1f1;
+}
+
+/* NOTE: Now we don't need the hamburger menu, but we want toplinks */
+.nav-toggle-label {
+  display: none;
+}
+
+.ulonscrolldown {
+  /* height: 48px; */
+    top: 0;
+  /* position: fixed; */
+  background-color: black;
+  z-index: 2;
+  /* ensure navbar is above the padded content */
+  /* padding-top: 1rem; */
+}
+
+/* NOTE: Display the ul horizontally */
+nav ul {
+  display: flex;
+  margin: 0;
+}
+
+nav li {
+  margin-bottom: 0;
+}
+
+nav a {
+  opacity: 1;
+  position: relative;
+}
+
+/* NOTE: The animated lines above menu items */
+nav a::before {
+  content: "";
+  display: block;
+  height: 5px;
+  background: #0f222d;
+  position: absolute;
+  top: -0.75em;
+  left: 0;
+  right: 0;
+  transform: scale(0, 1);
+  transition: transform ease-in-out 250ms;
+}
+
+nav a:hover::before {
+  transform: scale(1, 1);
+}
+
+nav img {
+  display: flex;
+}
+
+/* NOTE: This will make the container fill the full width of its parent, and the video will fill the full width of the container. 
+  Anything that sits e.g. on top of the video (e.g. header links) has to be in this container - note copied from elsewhere - don't
+  take too literally
+  */
+.video-container {
+  display: block;
+  position: relative;
+  width: 100%;
+  /* NOTE: z-index is like layers and ensures vid is below links */
+  z-index: 0;
+}
+
+video {
+  width: 100%;
+  height: auto;
+}
+
+/* NOTE: Following down to 'overlay' is to provide the grey background to the video */
+
+/*   .video-container {
+    position: relative;
+  } */
+
+.video-container video {
+  width: 100%;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(68, 53, 53, 0.8);
+  background-image: url('resources/Effects/grainy-overlay.png');
+  opacity: 0.3;
+}

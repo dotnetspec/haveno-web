@@ -1,0 +1,173 @@
+:root {
+    /* NOTE: From light to dark according to -<number>: */
+    --clr-primary-200: #5cb8ff;
+    --clr-primary-300: #3a9af9;
+    --clr-primary-400: #0017eb;
+    --clr-primary-400-half-opacity: rgba(0, 9, 92, 0.8);
+  
+    --clr-neutral-100: #fff;
+    --clr-neutral-900: #005477;
+    --clr-neutral-900-with-opacity: rgba(15, 34, 45, 0.8);
+    /* NOTE: Fonts: */
+    --ff-primary: "Arial", sans-serif;
+    --ff-accent: "Playfair Display", serif;
+  }
+  
+  /* NOTE: * covers ALL the elements */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: var(--ff-primary);
+    font-weight: 400;
+    font-size: 1.3125rem;
+    /* NOTE: Line height here creates a gap between video/body */
+    /* line-height: 1.6; */
+  }
+  
+  
+  
+  
+  body,
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+  } */
+  
+  /* NOTE: Utility classes (do only one thing).
+  All 3 will respond to the settings in the last one: */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--ff-accent);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--clr-primary-400);
+  
+  }
+  
+  h1,
+  h2,
+  h3,
+  p {
+    margin-bottom: 1em;
+  }
+  
+  h1 {
+    
+    padding: 0.5em;
+    /* padding-top: 4em; */
+  }
+
+  
+  /* h1, h2, h3 {padding: 2rem;} */
+  
+  /* NOTE: This is the setup BEFORE any media queries are triggered. i.e. the defaults for a small screen. */
+  
+  img {
+    display: block;
+    /* NOTE: Img starts to shrink proportionally as move below 100% of it's width,
+    but won't stretch if over 100% */
+    max-width: 100%;
+    
+  }
+  
+  .default-button{ background-color: var( --clr-primary-400-half-opacity);
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease; /* Add transition for smooth effect */
+  }
+  
+  .default-button:hover {
+    background-color: var(--clr-primary-400) 
+  }
+  
+  /* NOTE: Avoid gaps at top of lists */
+  ul{margin: 0;}
+  
+  ul.availabilityList{padding-left: 0px;}
+  
+  .logo {
+    display: block;
+  }
+  
+  .smallScreenLogo {
+    display: flex;
+    justify-content: center;
+    z-index: 3;
+    color: white;
+  }
+  
+  
+  .banner {
+    display: block;
+    
+  }
+  
+  
+  .text-center {display: block;
+    text-align: center;
+  }
+  
+  .footer {
+    display: block;
+    padding: 20px;
+    font-size: 8px;
+  }
+
+  .data-removal-notice {
+    display: block;
+    padding: 20px;
+    font-size: 14px;
+    text-align: center;
+  }
+  
+  .container {
+    display: block;
+    margin-inline: auto;
+    /* NOTE: This is where the responsiveness is implemented: */
+    width: min(90%, 70.5)
+  }
+  
+  /* NOTE: Make wide enough to fully display homepage imgs if there's space: */
+  .container--narrow {
+    display: block; /* FIX */
+    max-width: 60rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* NOTE: .split refers to the text/img columns */
+  .split {
+    /* NOTE: This displays as columns: */
+    display: flex; 
+    /* NOTE: This helps if you re-set margins (?): */
+    flex-direction: column;
+  }
+  
+  .split-col {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    line-height: 1.6;
+    overflow: hidden;
+    
+  }
+  
+  .split img {
+    align-self: center;
+  }
+  

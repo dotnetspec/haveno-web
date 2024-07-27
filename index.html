@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+
+<html xmlns="https://www.w3.org/1999/xhtml" lang="en-SG">
+<!-- NOTE: head will load before body, so nothing do in elm will influence head (unless you talk back via a port) -->
+
+<head>
+  <meta name="google-site-verification" content="hoIU93Z7-8uZkf1Ebby9FRPN7Qk_Fbp_TJ14rGASEYo" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <!-- Correct is actually, but this currently breaks:
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" href="/resources/Logos/favicon.ico" type="image/x-icon" />
+  <!-- Following has eg. phone and email icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SportRank</title>
+  <meta name="description" content="Ranking App" />
+  <meta name="author" content="Philip Mockridge" />
+  <link rel="shortcut icon" type="image/x-icon" href="/src/static/img/favicon.ico" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+    integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" />
+  <link rel="icon" href="data:," />
+  <base href="./" />
+
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:5500;"> -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com"> -->
+  <!-- For Development - wide open security policy - 
+    -- NOTE: Mobile browsers may well apply their own regardless 
+    Unless you use explicit tags like 'unsafe-inline' the security policy will generally tighten up security -->
+  <meta http-equiv="Content-Security-Policy" content="unsafe-inline" />
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'"> -->
+
+  <!-- For production -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://squashpassion.com;"> -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+  <!-- NOTE: Ionicons is for the socials link icons - go to their site and search for new ones to add if nec. -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <!-- NOTE: Internal styles will take precedent (unless this import is done at the end of the html) -->
+  <link rel="stylesheet" type="text/css" href="/css/main.css" />
+  <!-- manifest for pwa -->
+
+  <!--   <link rel="stylesheet" type="text/css" href="/css/burger.css" /> -->
+
+  <title>Singapore Squash Partner With Squash Passion</title>
+  <!-- -- NOTE: load any required .js files here BEFORE the elm.js -->
+  <!-- get the mongodb 'realm-web' code online (not from node_modules (currenlty don't know how to import otherwise)) 
+    This gives us the 'Realm' class used to interact with Realm from within a web browser
+    WARN: Researching correct syntax etc. should always be by reference to realm-web because it works DIFFERENTLY
+    to the node.js (middleware only) realm packages.
+    -->
+  <script src="https://unpkg.com/realm-web/dist/bundle.iife.js"></script>
+
+
+  <!-- NOTE: You might need this if you ever go back to using modules -->
+  <!--  <script nomodule src="/src/static/mongodb/initializeMongo.js"></script> -->
+  <!-- NOTE: Elm related -->
+  <!-- NOTE: Import elm.js -->
+  <script src="/js/elm.js"></script>
+  <!-- NOTE: Cache-Busting Techniques -->
+  <!-- <script src="/js/elm.v1.js"></script> -->
+
+  <!-- Botsonic bot <script src="/js/bot.js"></script> -->
+
+  <!-- NOTE: PWA related: -->
+  <meta name="theme-color" content="#005477" />
+  <link rel="manifest" href="/pwa/manifest.json" />
+
+  <!-- <script>navigator.serviceWorker.register('/pwa/service-worker.js', { scope: '/' })</script> -->
+  <!-- Register sw -->
+  <script>
+    navigator.serviceWorker.register("/service-worker.js");
+  </script>
+  <!-- to unregister: -->
+  <!-- <script>
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (const registration of registrations) {
+          registration.unregister()
+        }
+      })
+    </script> -->
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/service-worker.js", { scope: "/" })
+        .then((registration) => {
+          console.log("Registration successful");
+        })
+        .catch((error) => {
+          console.log("Registration failed");
+        });
+    }
+  </script>
+
+  <!-- NOTE: Necessary to improve SEO score. Only 1 cananical tag per page: -->
+  <link rel="canonical" href="https://squashpassion.com/" />
+
+  <meta name="description" content="Singapore Squash Sessions with experienced, qualified partner
+" />
+  <meta name="keywords" content="Learn squash in Singapore, squash partner, squash partner in Singapore, squash Sessions in Singapore, 
+        Singapore squash partner, squash partner drills, squash passion singapore, squash singapore, 
+        cheap squash, learning squash singapore, squash Sessions ,learn squash in Singapore, squash courts in singapore,
+        squash Sessions singapore,squash passion,squash in singapore,
+        squash Sessions,squash courts singapore,squash singapore,squash 
+        Session,squash courts singapore,correct squash technique" />
+</head>
+
+<body>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-1068004571"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "AW-1068004571");
+  </script>
+
+
+  
+
+  <!-- NOTE: Add a container element for your Elm app -->
+  <div id="elm-container"></div>
+
+  <!-- Initialize Elm app -->
+  <script>
+    var detectEnvironment = function () {
+      var protocol = window.location.protocol;
+      var hostname = window.location.hostname; // Get the host (domain name)
+      var port = window.location.port; // Get the port
+
+      // Set a default port (e.g., 80 for HTTP, 443 for HTTPS)
+      var defaultPort = protocol === "https:" ? 443 : 80;
+
+      // Use parseInt to ensure port is a number, or use the default port if it's empty
+      var parsedPort = port ? parseInt(port, 10) : defaultPort;
+
+      // You can return them as an object or in any other format you prefer
+      return {
+        protocol: protocol,
+        hostname: hostname,
+        port: parsedPort,
+      };
+    };
+
+    // Call the detectEnvironment function to get the host and port
+    var environmentInfo = detectEnvironment();
+
+    console.log("Protocol:", environmentInfo.protocol);
+    console.log("Hostname:", environmentInfo.hostname);
+    console.log("Port:", environmentInfo.port);
+
+    const protocol = environmentInfo.protocol;
+    const hostnm = environmentInfo.hostname;
+    const prt = environmentInfo.port;
+
+    // NOTE: Use JSON.stringify to send any js params in as json
+    // where you can decode them to any types, not just the restricted
+    // set allowed without doing this
+    jsonUrl = JSON.stringify(protocol + "//" + hostnm + ":" + prt);
+    console.log("jsonUrl:", jsonUrl);
+
+    /* NOTE: This must match the app's entry point file. In this case Main.elm
+not e.g. Elm.MyApp ... etc */
+    var eapp = Elm.Main.init({
+      node: document.getElementById("elm-container"),
+      flags: jsonUrl,
+    });
+
+    // Listen for commands from the `setStorage` port in Elm.
+    // Turn the data to a string and put it in local or sessionStorage.
+    //app.ports.setStorage.subscribe(function (state) {
+    //localStorage.setItem("myapp-storage", JSON.stringify(state));
+    //sessionStorage.setItem('myapp-storage', JSON.stringify(state));
+    //});
+
+    // NOTE: Receive a message here in .js that has been sent OUT FROM Elm
+    eapp.ports.sendMessage.subscribe(function (message) {
+      console.log("Message sent to js ", message);
+
+      handleMessageFromElm(message);
+      //RF: At some point you may want to build json objects in Elm and 
+      //pass them here via sendMessage. But it's all or nothing. Template at 
+      //Pages.Rankings.ConfirmChallenge in Main.elm:
+
+      /* const obj = JSON.parse(message);
+      const { action, rankingId, userId, playerId, rank } = obj; */
+
+    });
+
+    // Create a WebSocket connection to the local middleware server
+const socket = new WebSocket('ws://localhost:3000');
+
+// Listen for messages from the server
+socket.addEventListener('message', (event) => {
+  try {
+    const data = JSON.parse(event.data);
+    console.log('Data from server: ', data);
+    sendWebSocketChangeEventFromMongoDbToElmPort(data);
+  } catch (error) {
+    console.error('Invalid JSON:', event.data);
+  }
+});
+
+async function sendWebSocketChangeEventFromMongoDbToElmPort(applicationData) {
+  //NOTE: Notes in register.js
+  console.log('applicationData in sendWebSocketChangeEventFromMongoDbToElmPort', applicationData);
+
+  //NOTE: We're extracting the key data we need immediately from the applicationData object
+  // but also sending the whole object through to Elm so that it can be used later if needed
+  //const additionalDataObjExtendibleIfRequired = {userid : applicationData._id, nickname : applicationData.nickname};
+  additionalDataObjExtendibleIfRequired = { userid: '', nickname: '' }
+
+  jsonMsgToElm = {
+    //NOTE: Here operationEvent is always 'webSocket' and that means the applicationData below 
+    // will be stringified
+    operationEventMsg: 'webSocket',
+    //NOTE: dataFromMongo is what we originally sent to Elm alone
+    // Now it is sent with these other fields for added context
+    dataFromMongo: applicationData,
+    
+    //NOTE: Each 'additionalDataFromJs' will have it's own decoder in Elm 
+    // Which decoder will be determined by the 'msg' type above
+    additionalDataFromJs: additionalDataObjExtendibleIfRequired,
+  }
+
+  // NOTE: Send data TO Elm
+  eapp.ports.messageReceiver.send(jsonMsgToElm)
+}
+
+
+  </script>
+
+  <!-- WARN: Elm is a functional programming language that compiles to JavaScript, but it doesn't directly work with the CommonJS-style 
+      require syntax used in Node.js or other JavaScript environments. Instead, Elm compiles to JavaScript modules using ES3 module syntax,
+      REF: https://github.com/elm-lang/elm-make/issues/193 
+      which isn't compatible with CommonJS-style require or ES6
+      This is why you're encountering the 'require is not defined' error when trying to use require in Elm and all the ES6 issues 
+      So we just go with 'old fashioned' js imports -- TODO: Go through all the js and ensure no function name clashes as there is no
+      protection against this (that's what ES6 etc. does)
+    -->
+
+  <script src="/js/scrollTopLinksMenu.js"></script>
+  <script src="/js/burgeranimation.js"></script>
+
+  <!-- REVIEW: currently putting the others here, they might go elsewhere? -->
+  <script type="text/javascript" src="/src/static/mongodb/updateRanking.js"></script>
+  <script type="text/javascript" src="/src/static/mongodb/fetchedRanking.js"></script>
+  <script type="text/javascript" src="/src/static/mongodb/register.js"></script>
+  <script type="text/javascript" src="/src/static/mongodb/createRanking.js"></script>
+  <script type="text/javascript" src="/src/static/mongodb/joinRanking.js"></script>
+  <script type="text/javascript" src="/src/static/mongodb/leaveRanking.js"></script>
+  <script type="text/javascript" src="/src/static/mongodb/updateForChallenge.js"></script>
+  <script type="text/javascript" src="/src/static/mongodb/handleResult.js"></script>
+  <script type="text/javascript" src="/src/static/mongodb/deleteRanking.js"></script>
+  <script type="text/javascript" src="/src/static/mongodb/utils/utilities.js"></script>
+  <script type="text/javascript" src="/src/static/mongodb/abandon.js"></script>
+  <script type="text/javascript" src="/src/static/mongodb/deleteUser.js"></script>
+  <!-- WARN:Keep this file at the bottom of the page so that eapp is defined -->
+  <script type="text/javascript" src="/src/static/mongodb/authentication.js"></script>
+  <!-- REVIEW: We are NOT using ECMAScript modules cos the mongo code doesn't use them. We're using the older style
+      that also uses the older 'text/javascript' MIME type. This is mainly cos this works whereas there are many import issues
+      moving over to modules. A refactor would need to focus on this issue alone.
+     -->
+  <script type="text/javascript" src="/src/static/mongodb/initializeMongo.js"></script>
+
+  <!-- NOTE: This is the script for the ladder -->
+  <!-- <div id="sportyhq-ladder-934-widget"></div>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.2/iframeResizer.min.js"></script>
+  <script>
+  !function() { 'use strict'; var e = ['debug', 'destroy', 'do', 'help', 'identify', 'is', 'off', 'on', 'ready', 'render', 'reset', 'safe', 'set']; if (window.sportyhq_ladder) console.warn('SportyHQ Bookings SDK code snippet loaded more than once'); else { var n = window.sportyhq_ladder = window.sportyhq_ladder || []; function t(e) { return function() { var t = Array.prototype.slice.call(arguments); return t.unshift(e), n.push(t), n } } function o() { for (var o = 0; o < e.length; o++) { var r = e[o]; n[r] = t(r) } } function r() { var e = document.createElement('script'); e.async = !0, e.src = 'https://www.sportyhq.com/assets/js/ladder.js?nocache=' + Math.random(); var n = document.head; n.insertBefore(e, n.firstChild) } o(), r() } }();
+  sportyhq_ladder.render('934', '', '');
+  </script> -->
+
+</body>
+
+</html>

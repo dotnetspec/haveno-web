@@ -1,0 +1,24 @@
+{
+  "name": "sport-rank-2",
+  "version": "1.6.2",
+  "description": "Ladder app for UCSC Squash Club",
+  "main": "js/elm.js",
+  "scripts": {
+    "unit": "elm-test 'src/**/Tests/Test*.elm' --fuzz 100" ,
+    "middleware": "node middleware/mongodbMW.js",
+    "spec": "npx elm-spec --specRoot ./",
+    "debug" : "elm make src/Main.elm --output=js/elm.js --debug",
+    "optimize": "elm make src/Main.elm --output=js/elm.js --optimize"
+  },
+  "author": "Philip Mockridge",
+  "license": "Proprietary Software - All Rights Reserved",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "mime": "^3.0.0",
+    "mongodb": "^6.1.0",
+    "realm": "^12.2.0"
+  },
+  "devDependencies": {
+    "vite-plugin-pwa": "^0.16.4"
+  }
+}

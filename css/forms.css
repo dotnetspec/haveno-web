@@ -1,0 +1,55 @@
+/* Base styles for the input form */
+.input-form {
+    font-family: var(--ff-primary);
+  }
+  
+  /* Text label styles */
+  .text-label {
+    color: var(--clr-neutral-900);
+    font-family: var(--ff-primary);
+  }
+  
+  /* Text input box styles */
+  .text-input {
+    border: 1px solid var(--clr-neutral-900);
+    padding: 8px;
+    font-family: var(--ff-primary);
+    color: var(--clr-neutral-900);
+  }
+  
+  /* Dropdown styles */
+  .dropdown {
+    border: 1px solid var(--clr-neutral-900);
+    padding: 8px;
+    font-family: var(--ff-primary);
+    color: var(--clr-neutral-900);
+    background-color: var(--clr-neutral-100);
+  }
+  
+  /* Styles for primary buttons (submit, etc.) */
+  .primary-button {
+    background-color: var(--clr-primary-400);
+    color: var(--clr-neutral-100);
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* Styles for secondary buttons (cancel, etc.) */
+  .secondary-button {
+    background-color: var(--clr-neutral-100);
+    color: var(--clr-primary-400);
+    padding: 10px 15px;
+    border: 1px solid var(--clr-primary-400);
+    cursor: pointer;
+  }
+
+  .error {
+    
+    color: rgb(246, 6, 6); /* Or any other color that contrasts well with the background */
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  

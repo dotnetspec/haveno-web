@@ -1,0 +1,10 @@
+# elm-package generated files
+elm-stuff/
+# elm-repl generated files
+repl-temp-*
+project/*
+resources/Video/*
+proxy/node_modules
+node_modules
+pwa/android/*
+

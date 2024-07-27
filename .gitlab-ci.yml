@@ -1,0 +1,45 @@
+# NOTE: This project is using the Gitlab runner assigned from the Zoho-Responsive scheduler project
+stages:
+  - test
+  - integration_test
+  - deploy
+  
+test:
+  stage: test
+  script:
+    - apt-get update -qy # Update package list (for Debian/Ubuntu-based runners)
+    - apt-get install -qy nodejs npm # Install Node.js and npm
+    # Elm needs the latest npm version
+    - npm i -g npm@latest
+    - npm install -g elm@latest-0.19.1
+    - elm make src/Main.elm --output=js/elm.js --optimize
+    - npm install -g elm-test
+    - elm-test 'src/**/Tests/Test*.elm' 
+
+integration_test:
+  stage: integration_test
+  script:
+    - apt-get update -qy 
+    - apt-get install -qy nodejs npm 
+    - npm i -g npm@latest
+    - npm install elm@latest-0.19.1
+    # WARN: SP-Zoho-Responsive has PATH variable set to PATH1
+    - export PATH=./node_modules/.bin:$PATH
+    - elm make src/Main.elm --output=js/elm.js --optimize 
+    - npm install elm-spec-runner
+    - npx elm-spec --specRoot ./
+    
+deploy:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - apk add --update lftp
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - lftp -d -u "$FTP_USERNAME,$FTP_PASSWORD" "$FTP_SERVER:21098" -e "set sftp:connect-program 'ssh -a -x -s -l squastgr -p 21098 -oHostKeyAlgorithms=+ssh-rsa -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null'; mirror -R ./js /home/squastgr/sr-ucsc-1.squashpassion.com/public_html/js; quit"
+    
+  only:
+    - master
+  dependencies:
+    - test
+    - integration_test

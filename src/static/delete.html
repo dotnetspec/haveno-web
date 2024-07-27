@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<!-- TODO: Report to user outstanding owned/member of rankings, so they can delete ownership/membership before deleting account -->
+<head>
+  <meta charSet="utf-8" />
+  <!-- better mobile rendering: -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SportRank</title>
+  <meta name="description" content="Ranking App" />
+  <meta name="author" content="Philip Mockridge" />
+  <link rel="shortcut icon" type="image/x-icon" href="./img/favicon.ico" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" 
+  integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+  <!-- something to do with loading favicons: -->
+  <link rel="icon" href="data:,">
+  <!-- The base is the location the page is in. Every relative URL is relative to that base. Not much of an issue here -->
+  <base href="./">
+
+  <!-- load any required .js files here before the elm.js -->
+  <!-- get the mongodb 'realm-web' code online from a CDN (not from node_modules (currenlty don't know how to import otherwise)) -->
+  <script src="https://unpkg.com/realm-web/dist/bundle.iife.js"></script>
+  <script type="text/javascript" src="./js/initializeMongo.js"></script>
+  <script type="text/javascript" src="./js/deleteUser.js"></script>
+  <script type="text/javascript" src="./js/elm.js"></script>
+</head>
+
+<body>
+  <!-- Disply login -->
+    <div id="loginDiv" style="color:rgb(39, 93, 4); text-align: center">
+      <label for="email"><b>Email</b></label>
+      <input type="text" placeholder="Enter Email" id="email" required><br>
+      <br>
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" id="psw" required><br>
+      <br>
+      <div id="message1Div" style="color:rgb(39, 93, 4); text-align: center">
+        Please enter your email and password above to delete your account.</div>
+        <br>
+      <div id="message2Div" style="color:rgb(213, 61, 5); text-align: center">
+      You must delete all owned rankings and leave all joined member rankings before you can delete your account.</div>
+      <br>
+      <input type="button" value="Delete User Profile and Account" onclick="deleteUserData()"/><br>
+      <br>
+      <a href="../static/index.html">Login</a> <br>
+      <br>
+      <label>
+        <input type="checkbox" checked="checked" name="remember"> Remember me
+      </label><br>
+    </div>
+
+    <!-- Display errors  -->
+    <div id="authError" style="display:none"></div>
+     
+    <!-- Display Elm app after successful login -->
+    <div id="elmappDiv" style="display:none">
+      <div id="elmapp"></div>
+    </div>
+</body>
+
+<script type="text/javascript">
+
+    //PORTS:
+  //n.b the compiler will cut out code that it deems 'unused'. This can affect port code giving 'undefined' errors.
+  //as documented by codewhisperer at where-the-hell-is-my-port-an-adventure-in-elm
+
+// Extract the stored data from previous sessions (Elm not involved)
+// nb. something has to have been set in localStorage first:
+var storedData = localStorage.getItem('myapp-storage');
+
+//flags get sent to Elm (below)
+var flags = storedData ? JSON.parse(storedData) : null;
+console.log('data : ', storedData);
+
+  // Start the Elm application ensuring we already have a 'flags' value
+  //'app' can now be used to 'talk' to any elm code in elm.js as 'Elm.main' is defined there
+  var app = Elm.Main.init({
+      node: document.getElementById('elmapp'),
+	    flags: flags
+  });
+
+
+
+// Listen for commands from the `setStorage` port in Elm.
+// Turn the data to a string and put it in local or sessionStorage.
+app.ports.setStorage.subscribe(function(state) {
+    localStorage.setItem('myapp-storage', JSON.stringify(state));
+    //sessionStorage.setItem('myapp-storage', JSON.stringify(state));
+});
+  
+  </script>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<!-- REVIEW: This and assoc. js may be depricated in future - not used -->
+<head>
+  <!-- <meta charSet="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SportRank</title>
+  <meta name="description" content="Ranking App" />
+  <meta name="author" content="Philip Mockridge" />
+  <link rel="shortcut icon" type="image/x-icon" href="./img/favicon.ico" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" 
+  integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+  <link rel="icon" href="data:,">
+  <base href="./"> -->
+
+  <!-- load any required .js files here before the elm.js -->
+  <!-- get the mongodb 'realm-web' code online from a CDN (not from node_modules (currenlty don't know how to import otherwise)) -->
+  <script src="https://unpkg.com/realm-web/dist/bundle.iife.js"></script>
+ <!--  <script type="text/javascript" src="authentication.js"></script>
+  <script type="text/javascript" src="registerNew.js"></script> -->
+  <script type="text/javascript" src="./mongodb/updateCustomUserData.js"></script>
+</head>
+
+<body>
+  <!-- Disply login -->
+    <div id="loginDiv" style="color:rgb(39, 93, 4); text-align: center">
+      <label for="nickname"><b>Update Custom Data</b></label>
+      <input type="text" placeholder="Enter nickname" id="nickname"><br>
+      <br>
+      <input type="button" value="Update nickname" onclick="updateNickname()"/><br>
+      <br>
+ 
+    </div>
+
+    <!-- Display errors  -->
+    <div id="authError" style="display:none"></div>
+   
+</body>
+</html>
