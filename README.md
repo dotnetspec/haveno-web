@@ -1,5 +1,5 @@
 # Production Website
-REF: https://sr-ucsc-1.squashpassion.com
+REF: https://haveno-web-1.squashpassion.com
 
 👉 SportRank 2 is Squash Passion's ranking app.
 

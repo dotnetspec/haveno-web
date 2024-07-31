@@ -1,7 +1,7 @@
 {
-  "name": "sport-rank-2",
-  "version": "1.6.2",
-  "description": "Ladder app for UCSC Squash Club",
+  "name": "haveno-web",
+  "version": "0.0.1",
+  "description": "Mobile-first web app for Haveno",
   "main": "js/elm.js",
   "scripts": {
     "unit": "elm-test 'src/**/Tests/Test*.elm' --fuzz 100" ,
@@ -10,8 +10,8 @@
     "debug" : "elm make src/Main.elm --output=js/elm.js --debug",
     "optimize": "elm make src/Main.elm --output=js/elm.js --optimize"
   },
-  "author": "Philip Mockridge",
-  "license": "Proprietary Software - All Rights Reserved",
+  "author": "FreeRoss",
+  "license": "AGPL-3.0",
   "dependencies": {
     "cors": "^2.8.5",
     "mime": "^3.0.0",

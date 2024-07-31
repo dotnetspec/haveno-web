@@ -2,7 +2,7 @@ module Extras.TestData exposing (..)
 
 import Extras.Constants as Consts exposing (..)
 import Json.Encode as E
-import Pages.Rankings as Rankings exposing (..)
+import Pages.Hardware as Hardware exposing (..)
 import Spec.Http.Route as Route exposing (HttpRoute)
 import Spec.Http.Stub as Stub
 import Time exposing (Posix, millisToPosix, utc)

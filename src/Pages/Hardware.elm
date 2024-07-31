@@ -1,4 +1,4 @@
-module Pages.Rankings exposing (..)
+module Pages.Hardware exposing (..)
 
 --import Task
 -- REVIEW: Either here or DateType, but not both?
@@ -82,7 +82,7 @@ init fromMainToRankings =
 type alias Model =
     { status : Status
     , title : String
-    , root : Rankings
+    , root : Hardware
     , flagUrl : Url
 
     -- NOTE: Use a Maybe so that can specify Nothing in init
@@ -811,7 +811,7 @@ update msg model =
                 -- RF
                 updatedFlagUrlToIncludeMongoDBMWSvr =
                     -- TODO: Replace with sportsrank for production:
-                    if String.contains "squashpassion" model.flagUrl.host then
+                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
                         Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
 
                     else
@@ -849,11 +849,11 @@ update msg model =
         UserLoginPasswordInputChg newPwrd ->
             ( { model | emailpassword = { email = model.emailpassword.email, password = newPwrd } }, Cmd.none )
 
-        -- NOTE: Start of old SP-blahblahZoho code:
+        -- NOTE: Start of old Haveno-Web-blahblahZoho code:
         ToggleReturnUser ->
             ( { model | isReturnUser = not model.isReturnUser }, Cmd.none )
 
-        -- NOTE: Start of old SP-blahblahZoho code:
+        -- NOTE: Start of old Haveno-Web-blahblahZoho code:
         SelDateTime selectedHour ->
             ( model
             , Cmd.none
@@ -917,7 +917,7 @@ update msg model =
 
                 -- incorporate new header with access token and update middleware port
                 flagUrlWithMongoDBMWAndPortUpdate =
-                    if String.contains "squashpassion" model.flagUrl.host then
+                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
                         Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.middleWarePath Nothing Nothing
 
                     else
@@ -970,7 +970,7 @@ update msg model =
 
                 -- incorporate new header with access token and update middleware port
                 flagUrlWithMongoDBMWAndPortUpdate =
-                    if String.contains "squashpassion" model.flagUrl.host then
+                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
                         Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.middleWarePath Nothing Nothing
 
                     else
@@ -1021,7 +1021,7 @@ update msg model =
 
                 -- incorporate new header with access token and update middleware port
                 flagUrlWithMongoDBMWAndPortUpdate =
-                    if String.contains "squashpassion" model.flagUrl.host then
+                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
                         Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.middleWarePath Nothing Nothing
 
                     else
@@ -1116,7 +1116,7 @@ update msg model =
 
                 -- incorporate new header with access token and update middleware port
                 flagUrlWithMongoDBMWAndPortUpdate =
-                    if String.contains "squashpassion" model.flagUrl.host then
+                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
                         Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.middleWarePath Nothing Nothing
 
                     else
@@ -1249,7 +1249,7 @@ update msg model =
 
         -- NAV: Update - SubmitSearchForm
         -- NOTE: If, in future updates/releases, you want to do a lot of validation
-        -- at this point can -- REF: SP-Responsive-Zoho app. Don't need here.
+        -- at this point can -- REF: Haveno-Web-Responsive-Zoho app. Don't need here.
         SubmitSearchForm searchInput ->
             let
                 -- NOTE: Build the json body
@@ -1269,7 +1269,7 @@ update msg model =
                 -- RF
                 updatedFlagUrlToIncludeMongoDBMWSvr =
                     -- TODO: Replace with sportsrank for production:
-                    if String.contains "squashpassion" model.flagUrl.host then
+                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
                         Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
 
                     else
@@ -1306,7 +1306,7 @@ update msg model =
                 -- RF
                 updatedFlagUrlToIncludeMongoDBMWSvr =
                     -- TODO: Replace with sportsrank for production:
-                    if String.contains "squashpassion" model.flagUrl.host then
+                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
                         Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
 
                     else
@@ -1363,8 +1363,7 @@ content model =
             [ div
                 [ class "split-col"
                 ]
-                [ img [ Attr.class "left_column", src "resources/InText/Yio Chu Kang Sports Centre354X266.png", alt "Yio Chu Kang Squash Center", width 354, height 266, title "Yio Chu Kang Squash Center" ]
-                    []
+                [ 
                 ]
             , case model.status of
                 Loading ->
@@ -1549,8 +1548,7 @@ content model =
             , div
                 [ class "split-col"
                 ]
-                [ img [ Attr.class "right_column", src "resources/InText/Kallang Squash and Tennis Centre354X266.png", alt "Kallang Squash Center", width 354, height 266, title "Kallang Squash Center" ]
-                    []
+                [ 
                 ]
             ]
         ]
@@ -2032,12 +2030,12 @@ globalrankingbtns searchterm searchResults user =
 
         U.Registered userInfo ->
             Element.column Grid.section <|
-                [ Element.el Heading.h5 <| Element.text "Your Owned Rankings:"
+                [ Element.el Heading.h5 <| Element.text "Your Owned Hardware:"
                 , Element.column (Card.simple ++ Grid.simple) <|
                     [ infoBtn "Create New Ladder" <| CreateNewRanking userInfo ]
                 , Element.column (Card.simple ++ Grid.simple) <|
                     List.map ownedRankingBtn userInfo.ownedRankings
-                , Element.el Heading.h5 <| Element.text "Your Member Rankings: "
+                , Element.el Heading.h5 <| Element.text "Your Member Hardware: "
                 , Element.column (Card.simple ++ Grid.simple) <|
                     List.map memberRankingBtn userInfo.memberRankings
 
@@ -2052,7 +2050,7 @@ globalrankingbtns searchterm searchResults user =
                               onChange = SubmitSearchForm --SearchInputChg
                             , text = searchterm
                             , placeholder = Just <| Input.placeholder [] (Element.text "Enter ranking name")
-                            , label = Input.labelLeft (Input.label ++ [ Element.moveLeft 11.0 ]) (Element.text "Search Rankings")
+                            , label = Input.labelLeft (Input.label ++ [ Element.moveLeft 11.0 ]) (Element.text "Search Hardware")
                             }
                         ]
                     ]
@@ -2106,7 +2104,7 @@ displayGlobalRankingBtns searchterm searchResults userVal =
         U.Spectator _ ->
             Element.column Grid.section <|
                 [ -- HACK: Not Create
-                  infoBtn "Log In" Create
+                  infoBtn "Test APK" Create
 
                 --, El.warningText errorMsg
                 , infoBtn "Register" Create
@@ -2122,9 +2120,10 @@ loginView : Model -> Html Msg
 loginView model =
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
-            [ Element.el Heading.h5 <| Element.text "SportRank - Please Login"
+            [ Element.el Heading.h5 <| Element.text "Haveno-Web"
             , Element.text "\n"
-            , displayLoginBtns model
+            
+            , infoBtn "Test APK" <| ClickedLogInUser model.emailpassword
             , case model.errors of
                 [] ->
                     Element.text ""
@@ -2248,8 +2247,8 @@ type JsonData
     | JsonObj D.Value
 
 
-type Rankings
-    = Rankings
+type Hardware
+    = Hardware
         { name : String
         }
 
@@ -2398,7 +2397,7 @@ type alias CustomerDetails =
 initialize : FromMainToRankings -> Model
 initialize fromMainToRankings =
     let
-        -- REF: look at SP Zoho Responsive app for how OAuth works.
+        -- REF: look at Haveno-Web Zoho Responsive app for how OAuth works.
         -- We use the Node.js driver in this proj.
         {- postData : E.Value
            postData =
@@ -2420,7 +2419,7 @@ initialize fromMainToRankings =
         -}
         -- RF
         updatedFlagUrlToIncludeMongoDBMWSvr =
-            if String.contains "squashpassion" fromMainToRankings.flagUrl.host then
+            if String.contains Consts.localorproductionServerAutoCheck fromMainToRankings.flagUrl.host then
                 Url fromMainToRankings.flagUrl.protocol fromMainToRankings.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
 
             else
@@ -2429,8 +2428,8 @@ initialize fromMainToRankings =
     -- NOTE: these api's are in mongodbMW.js currently - mabye they will be sent through from elm at a later point
     -- Use the refresh token to obtain a new access token
     Model Loaded
-        "Rankings"
-        (Rankings { name = "Loading..." })
+        "Hardware"
+        (Hardware { name = "Loading..." })
         fromMainToRankings.flagUrl
         -- NOTE: Datetime updated in Main
         (Maybe.withDefault Nothing (Just fromMainToRankings.time))
@@ -2971,7 +2970,7 @@ sendPostDataToMongoDBMW model =
                     ToMongoDBMWConfig "" [] "testPostRequest error" Http.emptyBody Nothing Nothing
 
         headers =
-            -- NOTE: Bearer (access) token should be received on init of Rankings page (for anon users) and/or after login
+            -- NOTE: Bearer (access) token should be received on init of Hardware page (for anon users) and/or after login
             [ Http.header "Authorization" ("Bearer " ++ withDefault "No access token 1" model.apiSpecifics.accessToken)
             , Http.header "Accept" "application/json"
             ]
@@ -3437,7 +3436,7 @@ displayLoginBtns model =
                     }
                 ]
             ]
-        , infoBtn "Log In" <| ClickedLogInUser model.emailpassword
+        , infoBtn "Test APK" <| ClickedLogInUser model.emailpassword
         , infoBtn "Register" Create
         , Element.wrappedRow (Card.fill ++ Grid.simple)
             [ Element.column
@@ -3449,7 +3448,7 @@ displayLoginBtns model =
                       onChange = SubmitSearchForm --SearchInputChg
                     , text = model.searchterm
                     , placeholder = Just <| Input.placeholder [] (Element.text "Enter ranking name")
-                    , label = Input.labelLeft (Input.label ++ [ Element.moveLeft 11.0 ]) (Element.text "Search Rankings")
+                    , label = Input.labelLeft (Input.label ++ [ Element.moveLeft 11.0 ]) (Element.text "Search Hardware")
                     }
                 ]
             ]
@@ -3462,7 +3461,7 @@ displayLoginBtns model =
 
 
 
--- NOTE: Start of original SP-blahblah-Zoho helpers
+-- NOTE: Start of original Haveno-Web-blahblah-Zoho helpers
 
 
 humandateTimePlaceholder : DD.DateRecord

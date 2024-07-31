@@ -132,7 +132,7 @@ globalHeading : U.User -> Element msg
 globalHeading user =
     case user of
         U.Spectator _ ->
-            Element.el Heading.h5 <| Element.text "SportRank - Welcome Spectator"
+            Element.el Heading.h5 <| Element.text "Successfully talking to the APK"
 
         U.Registered (userInfo ) ->
             Element.el Heading.h5 <| Element.text <| "SportRank - Welcome Back - " ++ userInfo.nickname
@@ -195,7 +195,7 @@ legalUserInfoText =
         [ Element.el [ Font.bold ] <| Element.text "Please note: "
         , Element.paragraph [] <|
             List.singleton <|
-                Element.text "Terms and Conditions Apply"
+                Element.text "Portfolio and Conditions Apply"
         ]
 
 

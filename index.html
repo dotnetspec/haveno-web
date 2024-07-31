@@ -15,8 +15,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SportRank</title>
-  <meta name="description" content="Ranking App" />
-  <meta name="author" content="Philip Mockridge" />
+  <meta name="description" content="Haveno-Web App" />
+  <meta name="author" content="FreeRoss" />
   <link rel="shortcut icon" type="image/x-icon" href="/src/static/img/favicon.ico" />
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
     integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous" />
@@ -33,7 +33,7 @@
   <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'"> -->
 
   <!-- For production -->
-  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://squashpassion.com;"> -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://haveno-web.squashpassion.com;"> -->
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
@@ -45,7 +45,7 @@
 
   <!--   <link rel="stylesheet" type="text/css" href="/css/burger.css" /> -->
 
-  <title>Singapore Squash Partner With Squash Passion</title>
+  <title>Haveno-Web</title>
   <!-- -- NOTE: load any required .js files here BEFORE the elm.js -->
   <!-- get the mongodb 'realm-web' code online (not from node_modules (currenlty don't know how to import otherwise)) 
     This gives us the 'Realm' class used to interact with Realm from within a web browser
@@ -71,9 +71,9 @@
 
   <!-- <script>navigator.serviceWorker.register('/pwa/service-worker.js', { scope: '/' })</script> -->
   <!-- Register sw -->
-  <script>
+  <!-- <script>
     navigator.serviceWorker.register("/service-worker.js");
-  </script>
+  </script> -->
   <!-- to unregister: -->
   <!-- <script>
       navigator.serviceWorker.getRegistrations().then((registrations) => {
@@ -96,34 +96,11 @@
     }
   </script>
 
-  <!-- NOTE: Necessary to improve SEO score. Only 1 cananical tag per page: -->
-  <link rel="canonical" href="https://squashpassion.com/" />
-
-  <meta name="description" content="Singapore Squash Sessions with experienced, qualified partner
-" />
-  <meta name="keywords" content="Learn squash in Singapore, squash partner, squash partner in Singapore, squash Sessions in Singapore, 
-        Singapore squash partner, squash partner drills, squash passion singapore, squash singapore, 
-        cheap squash, learning squash singapore, squash Sessions ,learn squash in Singapore, squash courts in singapore,
-        squash Sessions singapore,squash passion,squash in singapore,
-        squash Sessions,squash courts singapore,squash singapore,squash 
-        Session,squash courts singapore,correct squash technique" />
+  <meta name="description" content="Haveno-Web" />
+  <meta name="keywords" content="monero" />
 </head>
 
 <body>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-1068004571"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag("js", new Date());
-
-    gtag("config", "AW-1068004571");
-  </script>
-
-
-  
 
   <!-- NOTE: Add a container element for your Elm app -->
   <div id="elm-container"></div>
@@ -187,7 +164,7 @@ not e.g. Elm.MyApp ... etc */
       handleMessageFromElm(message);
       //RF: At some point you may want to build json objects in Elm and 
       //pass them here via sendMessage. But it's all or nothing. Template at 
-      //Pages.Rankings.ConfirmChallenge in Main.elm:
+      //Pages.Hardware.ConfirmChallenge in Main.elm:
 
       /* const obj = JSON.parse(message);
       const { action, rankingId, userId, playerId, rank } = obj; */

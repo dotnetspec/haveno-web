@@ -1,4 +1,4 @@
-module Pages.Pricing exposing (Model, Msg, content, init, update, view)
+module Pages.Buy exposing (Model, Msg, content, init, update, view)
 
 import Buttons.Default exposing (defaultButton)
 import Html exposing (..)
@@ -13,12 +13,12 @@ import Html.Attributes as Attr exposing (..)
 type alias Model =
     { status : Status
     , title : String
-    , root : Pricing
+    , root : Buy
     }
 
 
-type Pricing
-    = Pricing
+type Buy
+    = Buy
         { name : String
         }
 
@@ -32,14 +32,14 @@ type Status
 initialModel : Model
 initialModel =
     { status = Loading
-    , title = "Pricing"
-    , root = Pricing { name = "Loading..." }
+    , title = "Buy"
+    , root = Buy { name = "Loading..." }
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { initialModel | title = "SP Pricing" }
+    ( { initialModel | title = "Haveno-Web Buy" }
     , Cmd.none
     )
 
@@ -70,13 +70,8 @@ content =
         [ 
         ul
             []
-            [ h1 [class "pricing"] [ text "How Much Does It Cost?" ]
-            , defaultButton "schedule"
-            , text "An intoductory/trial session is just "
-            , p [ style "font-weight" "bold" ] [ text "S$10" ]
-            , p [] [ text "+ court fee*." ]
-            , p [] [ text "If you decide to continue sessions hourly price is S$40 + court fee." ]
-            , p [] [ text """*Court fees are determined by SGActive rates and are between S$3 and S$10""" ]
-            , p [] [ text """Any questions? Please contact me for more info""" ]
+            [ h1 [class "pricing"] [ text "Buy" ]
+            , defaultButton "hardware"
+            
             ]
         ]

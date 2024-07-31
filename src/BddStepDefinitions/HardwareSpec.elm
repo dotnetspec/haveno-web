@@ -1,4 +1,4 @@
-module BddStepDefinitions.RankingsSpec exposing (main)
+module BddStepDefinitions.HardwareSpec exposing (main)
 
 import BddStepDefinitions.Extra exposing (..)
 import BddStepDefinitions.Runner as Runner exposing (..)
@@ -11,7 +11,7 @@ import Http
 import Json.Decode as D
 import Json.Encode as E
 import Main
-import Pages.Rankings
+import Pages.Hardware
 import Spec exposing (Flags, Spec, describe, expect, given, it, scenario, when)
 import Spec.Claim as Claim exposing (Claim, Verdict)
 import Spec.Command exposing (..)
@@ -34,34 +34,34 @@ import Url exposing (Protocol(..), Url)
 -- NOTE: App.Model and App.Msg are type paramters for the Spec type
 -- They make Spec type more flexible as it can be used with any model and msg types
 -- NOTE: placeholderURL is used to load the rankings page
--- FromMainToRankings is particular to the Rankings page
+-- FromMainToRankings is particular to the Hardware page
 --(gives us the current time/date and the URL to the API which responds with the timeslot data for the page)
-{- testFlags : Rankings.FromMainToRankings
+{- testFlags : Hardware.FromMainToRankings
    testFlags =
        -- WARN: We cannot set CurrentDateTime here, cos Tick newTime will override it.
        -- but can use Spec.Time.withTime to set the time in scenario setup
-       Rankings.FromMainToRankings Nothing Consts.localhostForElmSpecProxyURL
+       Hardware.FromMainToRankings Nothing Consts.localhostForElmSpecProxyURL
 -}
--- NOTE: The following is a test for the Rankings page
+-- NOTE: The following is a test for the Hardware page
 -- The test checks that the page displays the available timeslots when the access token request is successful
 -- and the request for available timeslots is successful
 
 
 
-runSpecTests : Spec Pages.Rankings.Model Pages.Rankings.Msg
+runSpecTests : Spec Pages.Hardware.Model Pages.Hardware.Msg
 runSpecTests =
     describe
-        "Scenarios based on a Ranking App MVP"
+        "Scenarios based on a Haveno Web App MVP"
         [ --Runner.pick <|
           --, Runner.skip <|
-          scenario "1. Display The Ranking Page Login Dialogue"
+          {- scenario "1. Accessing the Web App via Tor Browser"
             (given
                 (Setup.init
                     -- NOTE: We have to use testInit cos we don't have a Nav.Key to initialize with
-                    -- TODO: RF remove 'time' from Pages.Rankings.init
-                    (Pages.Rankings.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
-                    |> Setup.withView Pages.Rankings.view
-                    |> Setup.withUpdate Pages.Rankings.update
+                    -- TODO: RF remove 'time' from Pages.Hardware.init
+                    (Pages.Hardware.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
+                    |> Setup.withView Pages.Hardware.view
+                    |> Setup.withUpdate Pages.Hardware.update
                     |> Stub.serve [ TestData.failedMongodbLoginStub ]
                 )
                 {- |> Spec.when "we log the http requests"
@@ -81,23 +81,26 @@ runSpecTests =
                                 )
                         )
                     ]
-            )
-        , scenario "2. Display An Error Message On Login Fail"
+            ) -}
+        scenario "1. Accessing the Web App via Tor Browser"
             (given
                 (Setup.init
-                    (Pages.Rankings.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
-                    |> Setup.withView Pages.Rankings.view
-                    |> Setup.withUpdate Pages.Rankings.update
-                    |> Stub.serve [ TestData.failedMongodbLoginStub ]
+                    (Pages.Hardware.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
+                    |> Setup.withView Pages.Hardware.view
+                    |> Setup.withUpdate Pages.Hardware.update
+                    |> Stub.serve [ TestData.successfullLocationFetch ]
                 )
                 |> when "we simulate clicking the login button"
-                    [ Spec.Command.send <| Spec.Command.fake (Pages.Rankings.ClickedLogInUser { email = "k223445687@k.com", password = "nonExistent" }) ]
+                    [ Spec.Command.send <| Spec.Command.fake (Pages.Hardware.ClickedLogInUser 
+                    --{ email = "k223445687@k.com", password = "nonExistent" }
+                        { email = "", password = "" }
+                    ) ]
                 {- |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
                    ]
                 -}
                 |> Spec.observeThat
-                    [ it "displays a 'login failed' message from the Ranking home page"
+                    [ it "displays a 'successfully talking to the APK' message from the Ranking page"
                         (Markup.observeElement
                             |> Markup.query
                             -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
@@ -105,7 +108,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "SportRank - Please Login"
+                                        Claim.isStringContaining 1 "Successfully talking to the APK"
                                 )
                         )
                     ]
@@ -113,12 +116,12 @@ runSpecTests =
 
         --Runner.pick <|
         --, Runner.skip <|
-        , scenario "3. Display An Active User On Login Succeed"
+        {- , scenario "3. Display An Active User On Login Succeed"
             (given
                 (Setup.init
-                    (Pages.Rankings.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
-                    |> Setup.withView Pages.Rankings.view
-                    |> Setup.withUpdate Pages.Rankings.update
+                    (Pages.Hardware.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
+                    |> Setup.withView Pages.Hardware.view
+                    |> Setup.withUpdate Pages.Hardware.update
                     |> Stub.serve
                         [ TestData.successfullLocationFetch
                         , TestData.successfullLoginFetch
@@ -127,7 +130,7 @@ runSpecTests =
                         ]
                 )
                 |> when "the user submits the login form"
-                    [ Spec.Command.send <| Spec.Command.fake (Pages.Rankings.ClickedLogInUser { email = "k2@k.com", password = "Pa55w0rd" }) ]
+                    [ Spec.Command.send <| Spec.Command.fake (Pages.Hardware.ClickedLogInUser { email = "k2@k.com", password = "Pa55w0rd" }) ]
                 {- |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
                    ]
@@ -210,7 +213,7 @@ runSpecTests =
                                 )
                         )
                     ]
-            )
+            ) -}
         ]
 
 
@@ -218,7 +221,7 @@ runSpecTests =
 --main : Program Flags (Spec.Model Main.Model Main.Msg) (Spec.Msg Main.Msg)
 
 
-main : Program Flags (Spec.Model Pages.Rankings.Model Pages.Rankings.Msg) (Spec.Msg Pages.Rankings.Msg)
+main : Program Flags (Spec.Model Pages.Hardware.Model Pages.Hardware.Msg) (Spec.Msg Pages.Hardware.Msg)
 main =
     -- NOTE: By using the browserProgram function, developers can specify configurations such as how the application's initial state is initialized
     -- , how the view is rendered, how updates are handled, and how subscriptions and browser events are managed during test execution

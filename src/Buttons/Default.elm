@@ -20,30 +20,31 @@ defaultButton btnName =
                     "contact" ->
                         href "/contact"
 
-                    "schedule" ->
-                        href "/schedule"
+                    "hardware" ->
+                        href "/hardware"
+
+                    
 
                     "cost" ->
                         href "/pricing"
 
-                    "bb" ->
-                        href "https://squashpassion.com/partnerbb/"
+                    
 
                     _ ->
                         href "/"
                 ]
                 [ case btnName of
-                    "contact" ->
-                        text "Contact"
+                    
 
-                    "schedule" ->
-                        text "Rankings Now"
+                    
+
+                    "hardware" ->
+                        text "Hardware Now"
 
                     "cost" ->
-                        text "Pricing"
+                        text "Buy"
 
-                    "bb" ->
-                        text "Squash Partner Bulletin Board"
+                    
 
                     _ ->
                         text ""

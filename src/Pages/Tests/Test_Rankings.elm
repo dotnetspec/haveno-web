@@ -6,7 +6,7 @@ import Expect
 import Extras.Constants as Consts exposing (..)
 import Json.Decode as D exposing (..)
 import Json.Encode as E exposing (..)
-import Pages.Rankings exposing (..)
+import Pages.Hardware exposing (..)
 import Test exposing (..)
 
 
@@ -227,8 +227,8 @@ tests =
                         , name = "Bobbys Lads"
                         , players =
                             Just
-                                [ Pages.Rankings.PlayerFromChangeEvent "652e2b3441c3decf3044f7c9" "6353e8b6aedf80653eb34191" 1
-                                , Pages.Rankings.PlayerFromChangeEvent "655441c96eb7b94ec384a1d5" "6353e8b6aedf80653eb34191" 2
+                                [ Pages.Hardware.PlayerFromChangeEvent "652e2b3441c3decf3044f7c9" "6353e8b6aedf80653eb34191" 1
+                                , Pages.Hardware.PlayerFromChangeEvent "655441c96eb7b94ec384a1d5" "6353e8b6aedf80653eb34191" 2
 
                                 -- add more as required
                                 ]
@@ -303,7 +303,7 @@ tests =
                                        rank = 1
                                    },
                                    -- NOTE: This is another way to define a playerFromChangeEvent
-                                   Pages.Rankings.PlayerFromChangeEvent "655441c96eb7b94ec384a1d5" "6353e8b6aedf80653eb34191" 2 ]
+                                   Pages.Hardware.PlayerFromChangeEvent "655441c96eb7b94ec384a1d5" "6353e8b6aedf80653eb34191" 2 ]
                                 -}
                                 , ownerId = "652e2b3441c3decf3044f7c9"
                                 , baseAddress = { street = "99 George Street", city = "Super City" }
@@ -765,7 +765,7 @@ tests =
                     expectedChange =
                         Change "update"
                             { id = "62c66dc612296752b7c82cde" }
-                            { --updatedFields = fromList [ ( "_id__baas_transaction", [Pages.Rankings.IdbaasTransaction (IdbaasTransactionFromUpdatedFields "656fd8ca60ae275a00683ddb")]) ]
+                            { --updatedFields = fromList [ ( "_id__baas_transaction", [Pages.Hardware.IdbaasTransaction (IdbaasTransactionFromUpdatedFields "656fd8ca60ae275a00683ddb")]) ]
                               -- HACK: This is not adequately testing _id__baas_transaction here, -- FIX if necessary
                               updatedFields = Dict.fromList [ ( "_id__baas_transaction", [] ) ]
                             , removedFields = []

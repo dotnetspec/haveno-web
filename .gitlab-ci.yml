@@ -23,7 +23,7 @@ integration_test:
     - apt-get install -qy nodejs npm 
     - npm i -g npm@latest
     - npm install elm@latest-0.19.1
-    # WARN: SP-Zoho-Responsive has PATH variable set to PATH1
+    # WARN: Haveno-Web-Zoho-Responsive has PATH variable set to PATH1
     - export PATH=./node_modules/.bin:$PATH
     - elm make src/Main.elm --output=js/elm.js --optimize 
     - npm install elm-spec-runner
@@ -36,7 +36,7 @@ deploy:
     - apk add --update lftp
     - apk add --no-cache openssh-client
     - eval $(ssh-agent -s)
-    - lftp -d -u "$FTP_USERNAME,$FTP_PASSWORD" "$FTP_SERVER:21098" -e "set sftp:connect-program 'ssh -a -x -s -l squastgr -p 21098 -oHostKeyAlgorithms=+ssh-rsa -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null'; mirror -R ./js /home/squastgr/sr-ucsc-1.squashpassion.com/public_html/js; quit"
+    - lftp -d -u "$FTP_USERNAME,$FTP_PASSWORD" "$FTP_SERVER:21098" -e "set sftp:connect-program 'ssh -a -x -s -l squastgr -p 21098 -oHostKeyAlgorithms=+ssh-rsa -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null'; mirror -R ./js /home/squastgr/haveno-web.squashpassion.com/public_html/js; quit"
     
   only:
     - master

@@ -1,0 +1,87 @@
+Here’s a series of Gherkin/BDD scenarios describing the behavior of a mobile Tor-based web app that communicates with a user-buildable APK (leveraging a Haveno daemon) via HTTPS to handle hardware wallet transactions. The app will use the hardware wallet as the sole form of identity, and no additional authorization is required.
+
+### **Feature: Mobile Tor-Based Web App with User-Buildable APK Integration**
+
+#### **Background:**
+Given the user has a mobile device with the Tor Browser installed 
+And the user has a hardware wallet (e.g., Ledger Nano X) connected to the device 
+And the user-buildable APK is running on the mobile device and has an HTTPS server configured 
+And the APK is connected to a Haveno daemon for handling transactions 
+
+---
+
+#### **Scenario 1: Accessing the Web App via Tor Browser**
+
+**Given** the user opens the Tor Browser on their mobile device 
+**When** the user navigates to the mobile Tor-based web app 
+**Then** the web app should load securely over HTTPS 
+**And** the web app should be able to communicate with the backend service running on the APK 
+
+---
+
+#### **Scenario 2: Connecting the Hardware Wallet**
+
+**Given** the user has the hardware wallet connected to their mobile device 
+**When** the user accesses the "Connect Wallet" feature in the mobile web app 
+**Then** the web app should detect the connected hardware wallet 
+**And** the web app should display a confirmation message indicating successful wallet connection 
+
+---
+
+#### **Scenario 3: Initiating a Transaction**
+
+**Given** the user has connected their hardware wallet to the mobile web app 
+**When** the user initiates a transaction in the web app (e.g., sending Monero) 
+**And** the web app sends the transaction request to the backend service via HTTPS 
+**Then** the backend service (APK) should receive the transaction request 
+**And** the APK should relay the transaction request to the Haveno daemon for processing 
+**And** the APK should return the transaction status to the web app 
+
+---
+
+#### **Scenario 4: Handling Transaction Approval**
+
+**Given** the user initiates a transaction 
+**When** the transaction request is received by the APK 
+**And** the user needs to approve the transaction using the hardware wallet 
+**Then** the web app should display a prompt to the user indicating that transaction approval is required 
+**And** the user should approve the transaction on their hardware wallet 
+**And** the hardware wallet should send the approval to the APK 
+**And** the APK should forward the approval to the Haveno daemon 
+**And** the web app should display a success message upon receiving confirmation of the approved transaction 
+
+---
+
+#### **Scenario 5: Handling Transaction Failures**
+
+**Given** the user initiates a transaction 
+**When** the transaction request is received by the APK 
+**And** the user encounters an issue (e.g., insufficient funds, hardware wallet error) during transaction approval 
+**Then** the APK should send a failure message to the web app 
+**And** the web app should display an error message indicating the reason for the failure 
+**And** the user should be able to retry or correct the issue based on the error message 
+
+---
+
+#### **Scenario 6: Secure Communication**
+
+**Given** the user is interacting with the web app over Tor 
+**When** the web app communicates with the APK via HTTPS 
+**Then** all data exchanged between the web app and APK should be encrypted 
+**And** the communication should be secure against eavesdropping and tampering 
+
+---
+
+#### **Scenario 7: Device and Network Security**
+
+**Given** the user is using the Tor network to access the web app 
+**When** the user connects their hardware wallet and initiates transactions 
+**Then** the web app and APK should handle all data securely, considering both the Tor network and local device security 
+**And** no sensitive data should be exposed or stored insecurely on the device 
+
+### **Summary**
+
+These scenarios outline the critical interactions between the mobile Tor-based web app and the user-buildable APK leveraging a Haveno daemon. 
+he scenarios cover essential functions like accessing the web app, connecting hardware wallets, initiating and handling transactions, and 
+ensuring secure communication.
+

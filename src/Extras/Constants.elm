@@ -13,6 +13,11 @@ localhostForElmSpecProxyURL : Url
 localhostForElmSpecProxyURL =
     Url Http "localhost" (Just 3000) "/proxy" Nothing Nothing
 
+-- NOTE: Potential point of failure when switching between dev and prod
+localorproductionServerAutoCheck : String
+localorproductionServerAutoCheck =
+    "haveno-web.squashpassion"
+
 
 post : String
 post =

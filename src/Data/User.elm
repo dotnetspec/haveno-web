@@ -185,7 +185,7 @@ emptyDescription =
 
 -- NAV: userDecoder
 -- RF: There should probably only be one userDecoder. For now had to split.
--- REVIEW: Attempting a better way in style of SP-Responsive:
+-- REVIEW: Attempting a better way in style of Haveno-Web-Responsive:
 -- NAV: Current
 --|> optional "name" string "blah"
 

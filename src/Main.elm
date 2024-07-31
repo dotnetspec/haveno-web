@@ -16,15 +16,15 @@ import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick)
 import Json.Decode as JD
 import Json.Encode as JE
-import Pages.About
-import Pages.Contact
+import Pages.Market
+
 import Pages.Home
-import Pages.Location
-import Pages.Pricing
-import Pages.Privacy
-import Pages.Rankings
-import Pages.Terms
-import Pages.Testimonials
+import Pages.Support
+import Pages.Buy
+import Pages.Funds
+import Pages.Hardware
+import Pages.Portfolio
+import Pages.Sell
 import Task
 import Time
 import Types.DateType exposing (DateTime(..))
@@ -91,7 +91,7 @@ init flag url key =
 
                 Err _ ->
                     -- Handle the case where decoding fails
-                    Url.Url Https "squashpassion.com" Nothing "" Nothing Nothing
+                    Url.Url Https "haveno-web.squashpassion.com" Nothing "" Nothing Nothing
 
         navigate newUrl =
             Nav.pushUrl key (Url.toString newUrl)
@@ -113,7 +113,7 @@ testInit flag url =
 
                 Err _ ->
                     -- Handle the case where decoding fails
-                    Url.Url Https "squashpassion.com" Nothing "" Nothing Nothing
+                    Url.Url Https "haveno-web.squashpassion.com" Nothing "" Nothing Nothing
 
         -- NOTE: AI suggested. Don't know how works:
         navigate newUrl =
@@ -151,14 +151,14 @@ type Msg
     = ClickedLink Browser.UrlRequest
       -- NOTE: the type of GotHomeMsg is (Pages.Home.Msg -> Msg)
     | GotHomeMsg Pages.Home.Msg
-    | GotTestimonialsMsg Pages.Testimonials.Msg
-    | GotTermsMsg Pages.Terms.Msg
-    | GotPrivacyMsg Pages.Privacy.Msg
-    | GotLocationMsg Pages.Location.Msg
-    | GotContactMsg Pages.Contact.Msg
-    | GotPricingMsg Pages.Pricing.Msg
-    | GotAboutMsg Pages.About.Msg
-    | GotRankingsMsg Pages.Rankings.Msg
+    | GotSellMsg Pages.Sell.Msg
+    | GotTermsMsg Pages.Portfolio.Msg
+    | GotPrivacyMsg Pages.Funds.Msg
+    | GotLocationMsg Pages.Support.Msg
+  
+    | GotPricingMsg Pages.Buy.Msg
+    | GotAboutMsg Pages.Market.Msg
+    | GotRankingsMsg Pages.Hardware.Msg
     | ChangedUrl Url.Url
     | Tick Time.Posix
     | AdjustTimeZone Time.Zone
@@ -204,8 +204,8 @@ update msg model =
 
             else
                 case model.page of
-                    RankingsPage rankings ->
-                        toRankings model (Pages.Rankings.update (Pages.Rankings.ResponseDataFromMain rawJsonMessage) rankings)
+                    HardwarePage rankings ->
+                        toRankings model (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) rankings)
 
                     _ ->
                         ( model, Cmd.none )
@@ -228,12 +228,13 @@ update msg model =
                     ( model, Nav.load href )
 
                 Browser.Internal url ->
-                    -- NOTE: If partnerbb isn't explicitly branched like
+                    -- NOTE: If site isn't explicitly branched like
                     -- this, it is parsed as an internal link. We
                     -- need to load it as if it were an external link
                     -- (using Nav.load) for it to work on production server
+                    -- this isn't currently used and points nowhere
                     case Url.toString url of
-                        "https://squashpassion.com/partnerbb/" ->
+                        "https://haveno-web.squashpassion.com/" ->
                             ( model, Nav.load (Url.toString url) )
 
                         -- NOTE: Nav.pushUrl only manipulates the address bar
@@ -256,26 +257,26 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        GotTestimonialsMsg testimonialsMsg ->
+        GotSellMsg sellMsg ->
             case model.page of
-                TestimonialsPage testimonials ->
-                    toTestimonials model (Pages.Testimonials.update testimonialsMsg testimonials)
+                SellPage sell ->
+                    toSell model (Pages.Sell.update sellMsg sell)
 
                 _ ->
                     ( model, Cmd.none )
 
         GotTermsMsg termsMsg ->
             case model.page of
-                TermsPage terms ->
-                    toTerms model (Pages.Terms.update termsMsg terms)
+                PortfolioPage terms ->
+                    toTerms model (Pages.Portfolio.update termsMsg terms)
 
                 _ ->
                     ( model, Cmd.none )
 
         GotPrivacyMsg privacyMsg ->
             case model.page of
-                PrivacyPage privacy ->
-                    toPrivacy model (Pages.Privacy.update privacyMsg privacy)
+                FundsPage privacy ->
+                    toPrivacy model (Pages.Funds.update privacyMsg privacy)
 
                 _ ->
                     ( model, Cmd.none )
@@ -283,56 +284,50 @@ update msg model =
         GotLocationMsg locationMsg ->
             case model.page of
                 LocationPage location ->
-                    toLocation model (Pages.Location.update locationMsg location)
+                    toLocation model (Pages.Support.update locationMsg location)
 
                 _ ->
                     ( model, Cmd.none )
 
-        GotContactMsg activeSGNoMsg ->
-            case model.page of
-                ContactPage activeSGNo ->
-                    toContact model (Pages.Contact.update activeSGNoMsg activeSGNo)
-
-                _ ->
-                    ( model, Cmd.none )
+        
 
         GotPricingMsg pricingMsg ->
             case model.page of
-                PricingPage pricing ->
-                    toPricing model (Pages.Pricing.update pricingMsg pricing)
+                BuyPage pricing ->
+                    toPricing model (Pages.Buy.update pricingMsg pricing)
 
                 _ ->
                     ( model, Cmd.none )
 
         GotAboutMsg aboutMsg ->
             case model.page of
-                AboutPage about ->
-                    toAbout model (Pages.About.update aboutMsg about)
+                MarketPage about ->
+                    toAbout model (Pages.Market.update aboutMsg about)
 
                 _ ->
                     ( model, Cmd.none )
 
         -- NOTE: GotRankingsMsg is triggered by toRankings, which is triggered by updateUrl
         -- which is triggered by init. updateUrl is sent the url and uses the parser to parse it.
-        -- The parser outputs the Rankings page so that the case in updateUrl can branch on Rankings.
-        -- Rankings.init can then be run to init the page and the page can, through toRankings, be added
+        -- The parser outputs the Hardware page so that the case in updateUrl can branch on Hardware.
+        -- Hardware.init can then be run to init the page and the page can, through toRankings, be added
         -- to the model in Main (as the current page).
-        -- NOTE: Make changes to the Rankings model, cmds etc. in toRankings (more options)
+        -- NOTE: Make changes to the Hardware model, cmds etc. in toRankings (more options)
         GotRankingsMsg rankingsMsg ->
             case model.page of
-                RankingsPage rankings ->
+                HardwarePage rankings ->
                     -- NOTE: Example of handling data coming from sub module to main
                     -- If the message is one that needs to be handled in Main (e.g. sends message to port)
                     -- then handle it here:
                     case rankingsMsg of
-                        Pages.Rankings.ConfirmNewRanking ranking user ->
+                        Pages.Hardware.ConfirmNewRanking ranking user ->
                             let
                                 -- rankings is the model. Need to update here:
                                 newRankingsModel =
-                                    { rankings | queryType = Pages.Rankings.LoggedInUser }
+                                    { rankings | queryType = Pages.Hardware.LoggedInUser }
                             in
                             -- WARN: Password currently hard coded
-                            ( { model | page = RankingsPage newRankingsModel }
+                            ( { model | page = HardwarePage newRankingsModel }
                             , --Debug.log "Sending new ranking details"
                               sendMessage
                                 ("createRanking"
@@ -358,21 +353,21 @@ update msg model =
 
                         
 
-                        Pages.Rankings.FetchOwned ownedRanking ->
+                        Pages.Hardware.FetchOwned ownedRanking ->
                             -- NOTE: when this message returns, we will have full Ranking with all the details
-                            ( { model | page = RankingsPage { rankings | queryType = Pages.Rankings.OwnedSelectedView } }
+                            ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.OwnedSelectedView } }
                             , --Debug.log "Sending message"
                               sendMessage ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")
                             )
 
-                        Pages.Rankings.FetchMember memberRanking ->
+                        Pages.Hardware.FetchMember memberRanking ->
                             -- NOTE: when this message returns, we will have full Ranking with all the details
-                            ( { model | page = RankingsPage { rankings | queryType = Pages.Rankings.MemberSelectedView } }
+                            ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.MemberSelectedView } }
                             , --Debug.log "Sending message"
                               sendMessage ("fetchRanking" ++ "~^&" ++ memberRanking.id ++ "~^&memberranking")
                             )
 
-                        Pages.Rankings.ConfirmJoin rankingWantToJoin userid lastRank ->
+                        Pages.Hardware.ConfirmJoin rankingWantToJoin userid lastRank ->
                             let
                                 newRank =
                                     { rank = lastRank + 1
@@ -391,9 +386,9 @@ update msg model =
                             -- NOTE: when this message returns, we will have full Ranking with all the details
                             ( { model
                                 | page =
-                                    RankingsPage
+                                    HardwarePage
                                         { rankings
-                                            | queryType = Pages.Rankings.MemberSelectedView
+                                            | queryType = Pages.Hardware.MemberSelectedView
                                             , selectedranking = R.Member { rankingWantToJoin | ladder = updatedRanking.ladder }
                                             , user = updatedUser
                                             , searchterm = ""
@@ -415,7 +410,7 @@ update msg model =
 
                         -- REVIEW: Can rankingWantToLeave be replaced with rankings.selectedranking?
                         -- and userid from model.user?
-                        Pages.Rankings.ConfirmLeaveMemberRanking rankingWantToLeave userid ->
+                        Pages.Hardware.ConfirmLeaveMemberRanking rankingWantToLeave userid ->
                             let
                                 updatedRankingList =
                                     U.deleteRankingFromMemberRankings rankings.user rankingWantToLeave.id
@@ -435,9 +430,9 @@ update msg model =
                             -- NOTE: update the UI selectedranking and user (list of rankings) immediately
                             ( { model
                                 | page =
-                                    RankingsPage
+                                    HardwarePage
                                         { rankings
-                                            | queryType = Pages.Rankings.SpectatorSelectedView
+                                            | queryType = Pages.Hardware.SpectatorSelectedView
                                             , selectedranking = R.Spectator updatedRanking
                                             , user = Registered updatedUserInfo
                                         }
@@ -455,7 +450,7 @@ update msg model =
                             )
 
                         -- NOTE: Spectator rankings will be fetched via mongodb middleware
-                        {- Pages.Rankings.ConfirmChallenge ranking rank ->
+                        {- Pages.Hardware.ConfirmChallenge ranking rank ->
                            -- RF: Potential to send/recieve data to/from js as Json:
                            {- let
                                   data =
@@ -468,17 +463,17 @@ update msg model =
                                           ]
                               in
                            -}
-                           --( { model | page = RankingsPage { rankings | queryType = Pages.Rankings.LoggedInUser } }
+                           --( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.LoggedInUser } }
                            --, sendMessage (JE.encode 0 data))
                            -- NOTE: when this message returns, we will have full Ranking with all the details
                            -- REVIEW: we are SUBSTITUTING the current challenger.id (...191 -- unchallenged) for the user.id (the new challenger)
                            -- This is fragile - if an incorrect userid sent at this point - not good.
-                           ( { model | page = RankingsPage { rankings | queryType = Pages.Rankings.MemberSelectedView ranking  } }
+                           ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.MemberSelectedView ranking  } }
                            , Debug.log "Sending message"
                                (sendMessage ("updateForChallenge" ++ "~^&" ++ ranking.id ++ "~^&" ++ U.gotId rankings.user ++ "~^&" ++ rank.player.id ++ "~^&" ++ String.fromInt rank.rank))
                            )
                         -}
-                        Pages.Rankings.ConfirmChallenge selectedRanking rank ->
+                        Pages.Hardware.ConfirmChallenge selectedRanking rank ->
                             let
                                 -- TODO: Handle the default
                                 gotRankBelow =
@@ -499,9 +494,9 @@ update msg model =
                             -- NOTE: update the UI selectedranking and user (list of rankings) immediately
                             ( { model
                                 | page =
-                                    RankingsPage
+                                    HardwarePage
                                         { rankings
-                                            | queryType = Pages.Rankings.MemberSelectedView
+                                            | queryType = Pages.Hardware.MemberSelectedView
                                             , selectedranking = R.Member updatedRanking
 
                                             --, user = newUserMemberRankingListWithUpdatedRankingAdded
@@ -518,9 +513,9 @@ update msg model =
                                 )
                             )
 
-                        Pages.Rankings.ConfirmResult result ->
+                        Pages.Hardware.ConfirmResult result ->
                             let
-                                -- TODO: We have to update the user's List of Rankings here
+                                -- TODO: We have to update the user's List of Hardware here
                                 selectedRanking =
                                     R.gotRanking rankings.selectedranking
 
@@ -536,9 +531,9 @@ update msg model =
                             -- NOTE: update the UI selectedranking and user (list of rankings) immediately
                             ( { model
                                 | page =
-                                    RankingsPage
+                                    HardwarePage
                                         { rankings
-                                            | queryType = Pages.Rankings.MemberSelectedView
+                                            | queryType = Pages.Hardware.MemberSelectedView
                                             , selectedranking = R.Member updatedRanking
                                         }
                               }
@@ -553,22 +548,22 @@ update msg model =
                                 )
                             )
 
-                        Pages.Rankings.LogOut ->
+                        Pages.Hardware.LogOut ->
                             -- REVIEW: do we need apispecs for this app? or just queryType at top level?
-                            ( { model | page = RankingsPage { rankings | queryType = Pages.Rankings.Login Consts.emptyEmailPassword } }
+                            ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.Login Consts.emptyEmailPassword } }
                             , --Debug.log "Sending message"
                               sendMessage "logout"
                             )
 
                         --updateForChallenge
-                        Pages.Rankings.RegisUser newUserRegistrationDetails ->
-                            ( { model | page = RankingsPage { rankings | queryType = Pages.Rankings.RegisterUser newUserRegistrationDetails } }
+                        Pages.Hardware.RegisUser newUserRegistrationDetails ->
+                            ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.RegisterUser newUserRegistrationDetails } }
                             , --Debug.log "Sending registration details"
                               sendMessage ("register" ++ "~^&" ++ Maybe.withDefault "" newUserRegistrationDetails.email ++ "~^&" ++ newUserRegistrationDetails.password ++ "~^&" ++ newUserRegistrationDetails.nickname)
                             )
 
                         -- REVIEW: This will be implemented if it is not possible to implement delete via API
-                        Pages.Rankings.DeleteOwnedRanking ->
+                        Pages.Hardware.DeleteOwnedRanking ->
                             let
                                 ownedRanking =
                                     case rankings.selectedranking of
@@ -581,21 +576,21 @@ update msg model =
                                 newUser =
                                     U.deleteRankingFromOwnedRankings rankings.user ownedRanking.id
                             in
-                            ( { model | page = RankingsPage { rankings | queryType = Pages.Rankings.LoggedInUser, user = newUser } }
+                            ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.LoggedInUser, user = newUser } }
                             , --Debug.log "Sending message"
                               sendMessage ("deleteRanking" ++ "~^&" ++ R.gotRankingId (R.gotRanking rankings.selectedranking))
                             )
 
-                        Pages.Rankings.DeleteAccount ->
-                            ( { model | page = RankingsPage { rankings | queryType = Pages.Rankings.Login Consts.emptyEmailPassword } }
+                        Pages.Hardware.DeleteAccount ->
+                            ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.Login Consts.emptyEmailPassword } }
                             , --Debug.log "Sending message"
                               sendMessage ("deleteAccount" ++ "~^&" ++ U.gotId rankings.user)
                             )
 
                         _ ->
                             
-                            -- otherwise operate within the Rankings sub module:
-                            toRankings model (Pages.Rankings.update rankingsMsg rankings)
+                            -- otherwise operate within the Hardware sub module:
+                            toRankings model (Pages.Hardware.update rankingsMsg rankings)
 
                 _ ->
                     ( model, Cmd.none )
@@ -625,7 +620,7 @@ view : Model -> Browser.Document Msg
 view model =
     let
         contentByPage =
-            {- -- NOTE:  We are 'delegating' views to Home.view and Testimonials.view etc.
+            {- -- NOTE:  We are 'delegating' views to Home.view and Sell.view etc.
                Something similar can be done with subscriptions if required
             -}
             case model.page of
@@ -633,42 +628,40 @@ view model =
                     Pages.Home.view home
                         -- NOTE: Go from Html Pages.Home.Msg value to Html Msg value using Html.map.
                         {- Conceptually, what Html.map is doing for us here is wrapping a Pages.Home.Msg or
-                           Pages.Testimonials.Msg in a Main.Msg , because Main.update knows how to deal with only
+                           Pages.Sell.Msg in a Main.Msg , because Main.update knows how to deal with only
                            Main.Msg values. Those wrapped messages will prove useful later when we handle
                            these new messages inside update .
                         -}
                         |> Html.map GotHomeMsg
 
-                TestimonialsPage home ->
-                    Pages.Testimonials.view home
-                        |> Html.map GotTestimonialsMsg
+                SellPage home ->
+                    Pages.Sell.view home
+                        |> Html.map GotSellMsg
 
-                TermsPage terms ->
-                    Pages.Terms.view terms
+                PortfolioPage terms ->
+                    Pages.Portfolio.view terms
                         |> Html.map GotTermsMsg
 
-                PrivacyPage privacy ->
-                    Pages.Privacy.view privacy
+                FundsPage privacy ->
+                    Pages.Funds.view privacy
                         |> Html.map GotPrivacyMsg
 
                 LocationPage location ->
-                    Pages.Location.view location
+                    Pages.Support.view location
                         |> Html.map GotLocationMsg
 
-                ContactPage contact ->
-                    Pages.Contact.view contact
-                        |> Html.map GotContactMsg
+               
 
-                PricingPage pricing ->
-                    Pages.Pricing.view pricing
+                BuyPage pricing ->
+                    Pages.Buy.view pricing
                         |> Html.map GotPricingMsg
 
-                AboutPage about ->
-                    Pages.About.view about
+                MarketPage about ->
+                    Pages.Market.view about
                         |> Html.map GotAboutMsg
 
-                RankingsPage rankings ->
-                    Pages.Rankings.view rankings
+                HardwarePage hardware ->
+                    Pages.Hardware.view hardware
                         |> Html.map GotRankingsMsg
 
                 NotFound ->
@@ -677,7 +670,7 @@ view model =
     -- NAV : Page Content
     -- TODO: Make this content's naming conventions closely match the
     -- related css.
-    { title = "Squash Passion - Singapore Squash Partner"
+    { title = "Haveno-Web"
     , body =
         [ pageHeader model.page
         , showVideoOrBanner model.page
@@ -702,14 +695,14 @@ view model =
 
 type Route
     = Home
-    | Testimonials
-    | Terms
-    | Privacy
-    | Location
-    | Contact
-    | Pricing
-    | About
-    | Rankings
+    | Sell
+    | Portfolio
+    | Funds
+    | Support
+  
+    | Buy
+    | Market
+    | Hardware
 
 
 
@@ -721,14 +714,14 @@ type
     -- NOTE: Be able to access the model in the selected page so that it can
     -- be passed to the view for that page:
     = HomePage Pages.Home.Model
-    | TestimonialsPage Pages.Testimonials.Model
-    | TermsPage Pages.Terms.Model
-    | PrivacyPage Pages.Privacy.Model
-    | LocationPage Pages.Location.Model
-    | ContactPage Pages.Contact.Model
-    | PricingPage Pages.Pricing.Model
-    | AboutPage Pages.About.Model
-    | RankingsPage Pages.Rankings.Model
+    | SellPage Pages.Sell.Model
+    | PortfolioPage Pages.Portfolio.Model
+    | FundsPage Pages.Funds.Model
+    | LocationPage Pages.Support.Model
+   
+    | BuyPage Pages.Buy.Model
+    | MarketPage Pages.Market.Model
+    | HardwarePage Pages.Hardware.Model
     | NotFound
 
 
@@ -780,7 +773,7 @@ urlAsPageParser =
     -- Parser.s function turns a hardcoded string into a parser for that string
     -- NOTE: Without this call to Parser.map , our Parser
     -- would output a plain old String whenever it succeeds. Thanks to Parser.map , that
-    -- String will instead be passed along to eg. Testimonials , so the resulting parser will
+    -- String will instead be passed along to eg. Sell , so the resulting parser will
     -- output a Page we can store in our model.
     -- (Route -> a) is the type of the function that the parser produces.
     -- It is a function that takes a Route value as input and produces a value of type a.
@@ -789,14 +782,14 @@ urlAsPageParser =
     oneOf
         [ Url.Parser.map Home (s "index.html")
         , Url.Parser.map Home Url.Parser.top
-        , Url.Parser.map Testimonials (Url.Parser.s "testimonials")
-        , Url.Parser.map Terms (Url.Parser.s "terms")
-        , Url.Parser.map Privacy (Url.Parser.s "privacy")
-        , Url.Parser.map Location (Url.Parser.s "location")
-        , Url.Parser.map Contact (Url.Parser.s "contact")
-        , Url.Parser.map Pricing (Url.Parser.s "pricing")
-        , Url.Parser.map About (Url.Parser.s "about")
-        , Url.Parser.map Rankings (Url.Parser.s "rankings")
+        , Url.Parser.map Sell (Url.Parser.s "sell")
+        , Url.Parser.map Portfolio (Url.Parser.s "portfolio")
+        , Url.Parser.map Funds (Url.Parser.s "funds")
+        , Url.Parser.map Support (Url.Parser.s "support")
+    
+        , Url.Parser.map Buy (Url.Parser.s "buy")
+        , Url.Parser.map Market (Url.Parser.s "market")
+        , Url.Parser.map Hardware (Url.Parser.s "hardware")
         ]
 
 
@@ -814,30 +807,6 @@ codeParser =
 
 
 
--- codeParser : SimpleParser.Parser (Maybe String)
--- codeParser =
---   succeed QueryParams
---     |. symbol "?"
---     |. spaces
---     |= "code"
---     |. spaces
---     |. equals
---     |. spaces
---
--- NOTE: parsers don't process or manipulate, but they do output
--- queryParamsParser : Parser a c
--- queryParamsParser =
---     Query.map3 (\code location accountsServer ->
---         -- Here you can use the `code`, `location`, and `accountsServer`
---         -- values to construct your desired output of type `c`
---         -- and return it as the final result of the parser
---         -- Note: Replace `a` and `c` with the actual types you need
---         -- for your specific use case
---         c code location accountsServer
---     )
---     (Query.string "code")
---     (Query.string "location")
---     (Query.string "accounts-server")
 -- Define a parser for the query parameters in the URL
 {- -- NOTE: The docs specify the 'string' function. Make sure to realize the 'string' function
    is in Parser.Query.string. So Parser.string won't work
@@ -845,7 +814,7 @@ codeParser =
 -- queryParser : QueryStringParser (Maybe String)
 -- queryParser =
 --     Query.string "code"
-{- -- NOTE: Getting Model.Home and Model.Testimonials values exactly where we need them.
+{- -- NOTE: Getting Model.Home and Model.Sell values exactly where we need them.
    Replaces (eventually) urlToPage used in most of the book: "KEEPING
    BOTH MODEL AND CMD FOR INIT
    Without having their init commands run, our pages’ initial HTTP requests aren’t
@@ -895,40 +864,38 @@ updateUrl url model =
                     Pages.Home.init ()
                         |> toHome model
 
-        Just Testimonials ->
-            Pages.Testimonials.init ()
-                |> toTestimonials model
+        Just Sell ->
+            Pages.Sell.init ()
+                |> toSell model
 
-        Just Terms ->
-            Pages.Terms.init ()
+        Just Portfolio ->
+            Pages.Portfolio.init ()
                 |> toTerms model
 
-        Just Privacy ->
-            Pages.Privacy.init ()
+        Just Funds ->
+            Pages.Funds.init ()
                 |> toPrivacy model
 
-        Just Location ->
-            Pages.Location.init ()
+        Just Support ->
+            Pages.Support.init ()
                 |> toLocation model
 
-        Just Contact ->
-            Pages.Contact.init ()
-                |> toContact model
+        
 
-        Just Pricing ->
-            Pages.Pricing.init ()
+        Just Buy ->
+            Pages.Buy.init ()
                 |> toPricing model
 
-        Just About ->
-            Pages.About.init ()
+        Just Market ->
+            Pages.Market.init ()
                 |> toAbout model
 
-        Just Rankings ->
+        Just Hardware ->
             -- NOTE: This is the only place we can pass args from Main.elm into
             -- the sub module for initialization
-            -- REVIEW: Time is sent through here as it may speed up the slots fetch in Rankings - tbc
+            -- REVIEW: Time is sent through here as it may speed up the slots fetch in Hardware - tbc
             -- RF: Change name flagUrl to domainUrl
-            Pages.Rankings.init { time = Nothing, flagUrl = model.flag }
+            Pages.Hardware.init { time = Nothing, flagUrl = model.flag }
                 |> toRankings model
 
                 
@@ -945,54 +912,50 @@ toHome model ( home, cmd ) =
     )
 
 
-toTestimonials : Model -> ( Pages.Testimonials.Model, Cmd Pages.Testimonials.Msg ) -> ( Model, Cmd Msg )
-toTestimonials model ( testimonials, cmd ) =
-    ( { model | page = TestimonialsPage testimonials }
-      {- -- NOTE: In your example, Cmd.map GotTestimonialsMsg cmd, GotTestimonialsMsg is indeed a function,
-         but you're not explicitly applying it. Cmd.map will take care of applying GotTestimonialsMsg to each value that the command produces.
+toSell : Model -> ( Pages.Sell.Model, Cmd Pages.Sell.Msg ) -> ( Model, Cmd Msg )
+toSell model ( sell, cmd ) =
+    ( { model | page = SellPage sell }
+      {- -- NOTE: In your example, Cmd.map GotSellMsg cmd, GotSellMsg is indeed a function,
+         but you're not explicitly applying it. Cmd.map will take care of applying GotSellMsg to each value that the command produces.
       -}
-    , Cmd.map GotTestimonialsMsg cmd
+    , Cmd.map GotSellMsg cmd
     )
 
 
-toTerms : Model -> ( Pages.Terms.Model, Cmd Pages.Terms.Msg ) -> ( Model, Cmd Msg )
+toTerms : Model -> ( Pages.Portfolio.Model, Cmd Pages.Portfolio.Msg ) -> ( Model, Cmd Msg )
 toTerms model ( terms, cmd ) =
-    ( { model | page = TermsPage terms }
+    ( { model | page = PortfolioPage terms }
     , Cmd.map GotTermsMsg cmd
     )
 
 
-toPrivacy : Model -> ( Pages.Privacy.Model, Cmd Pages.Privacy.Msg ) -> ( Model, Cmd Msg )
+toPrivacy : Model -> ( Pages.Funds.Model, Cmd Pages.Funds.Msg ) -> ( Model, Cmd Msg )
 toPrivacy model ( terms, cmd ) =
-    ( { model | page = PrivacyPage terms }
+    ( { model | page = FundsPage terms }
     , Cmd.map GotPrivacyMsg cmd
     )
 
 
-toLocation : Model -> ( Pages.Location.Model, Cmd Pages.Location.Msg ) -> ( Model, Cmd Msg )
+toLocation : Model -> ( Pages.Support.Model, Cmd Pages.Support.Msg ) -> ( Model, Cmd Msg )
 toLocation model ( location, cmd ) =
     ( { model | page = LocationPage location }
     , Cmd.map GotLocationMsg cmd
     )
 
 
-toContact : Model -> ( Pages.Contact.Model, Cmd Pages.Contact.Msg ) -> ( Model, Cmd Msg )
-toContact model ( contact, cmd ) =
-    ( { model | page = ContactPage contact }
-    , Cmd.map GotContactMsg cmd
-    )
 
 
-toPricing : Model -> ( Pages.Pricing.Model, Cmd Pages.Pricing.Msg ) -> ( Model, Cmd Msg )
+
+toPricing : Model -> ( Pages.Buy.Model, Cmd Pages.Buy.Msg ) -> ( Model, Cmd Msg )
 toPricing model ( pricing, cmd ) =
-    ( { model | page = PricingPage pricing }
+    ( { model | page = BuyPage pricing }
     , Cmd.map GotPricingMsg cmd
     )
 
 
-toAbout : Model -> ( Pages.About.Model, Cmd Pages.About.Msg ) -> ( Model, Cmd Msg )
+toAbout : Model -> ( Pages.Market.Model, Cmd Pages.Market.Msg ) -> ( Model, Cmd Msg )
 toAbout model ( about, cmd ) =
-    ( { model | page = AboutPage about }
+    ( { model | page = MarketPage about }
     , Cmd.map GotAboutMsg cmd
     )
 
@@ -1002,35 +965,35 @@ toAbout model ( about, cmd ) =
 
    1. **Function Name and Purpose**:
       - The function is called `toRankings`.
-      - Its job is to translate information from the `Rankings` module into a format that the main application (`Main`) can understand.
+      - Its job is to translate information from the `Hardware` module into a format that the main application (`Main`) can understand.
 
    2. **Input Parameters**:
       - It takes two inputs:
         - `model`: Information about the current state of the application in Main's model.
-        - `(rankings, cmd)`: Information from the `Rankings` module, including rankings data and commands.
+        - `(rankings, cmd)`: Information from the `Hardware` module, including rankings data and commands.
 
    3. **What it Does**:
-      - It takes the existing Main `model` and updates it to include the `rankings` data, indicating that the current page is the "Rankings" page.
-      - It translates the commands (`cmd`) coming from the `Rankings` module to a format that `Main` understands.
+      - It takes the existing Main `model` and updates it to include the `rankings` data, indicating that the current page is the "Hardware" page.
+      - It translates the commands (`cmd`) coming from the `Hardware` module to a format that `Main` understands.
 
    4. **Output**:
       - It produces two things:
-        - An updated Main `model` that now includes the `rankings` data and indicates the current page is the "Rankings" page.
+        - An updated Main `model` that now includes the `rankings` data and indicates the current page is the "Hardware" page.
         - Commands that have been translated to a format that `Main` can use.
 
-   In simpler terms, this function helps the main part of the app (`Main`) understand and work with the rankings information provided by the `Rankings` module.
+   In simpler terms, this function helps the main part of the app (`Main`) understand and work with the rankings information provided by the `Hardware` module.
    It's like translating a message into a language that both parts of the app can understand and use effectively.
 -}
 
 
-toRankings : Model -> ( Pages.Rankings.Model, Cmd Pages.Rankings.Msg ) -> ( Model, Cmd Msg )
+toRankings : Model -> ( Pages.Hardware.Model, Cmd Pages.Hardware.Msg ) -> ( Model, Cmd Msg )
 toRankings model ( rankings, cmd ) =
-    ( { model | page = RankingsPage rankings }
+    ( { model | page = HardwarePage rankings }
       {- -- NOTE: Cmd.map is applying the GotRankingsMsg constructor to the message in the command.
          In Elm, GotRankingsMsg is a type constructor for the Msg type. It's used to create a new Msg value. When you use
          GotRankingsMsg with Cmd.map, you're telling Elm to take the message that results from the command and wrap it in GotRankingsMsg.
-         In this code, cmd is a command that will produce a Pages.Rankings.Msg when it's executed. Cmd.map GotRankingsMsg cmd creates a new
-         command that, when executed, will produce a Msg that wraps the Pages.Rankings.Msg in GotRankingsMsg.
+         In this code, cmd is a command that will produce a Pages.Hardware.Msg when it's executed. Cmd.map GotRankingsMsg cmd creates a new
+         command that, when executed, will produce a Msg that wraps the Pages.Hardware.Msg in GotRankingsMsg.
 
          So, while GotRankingsMsg is not a function in the traditional sense, it's a type constructor that can be used like a
          function to create new values.
@@ -1075,11 +1038,11 @@ gotCodeFromUrl url =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     --Time.every 10000 Tick
-    -- Update Rankings model on every Tick
+    -- Update Hardware model on every Tick
     --15 minutes in seconds = 15 minutes * 60 seconds/minute = 900 seconds
     -- NOTE: You have to get time from main, cos only main has subscription.
     -- It is anyway best practice to send data top down
-    Sub.batch [ Time.every 900000 (\posixTime -> GotRankingsMsg (Pages.Rankings.Tick posixTime)), messageReceiver Recv ]
+    Sub.batch [ Time.every 900000 (\posixTime -> GotRankingsMsg (Pages.Hardware.Tick posixTime)), messageReceiver Recv ]
 
 
 
@@ -1121,7 +1084,7 @@ showVideoOrBanner page =
 
        _ ->
     -}
-    img [ Attr.class "banner", src "resources/Banners/racketandball3_1918X494.png", alt "Squash Racket And Ball", width 1918, height 494, title "Squash Partner Banner" ]
+    img [ Attr.class "banner", src "resources/Banners/monero - 1918x494.png", alt "Monero", width 1918, height 494, title "Monero Banner" ]
         []
 
 
@@ -1143,20 +1106,20 @@ showVideoOrBanner page =
 
 topLinksLogo : Html msg
 topLinksLogo =
-    div [ Attr.class "topLinksLogo" ] [ a [ Attr.href "https://squashpassion.com" ] [ topLinksLogoImage ] ]
+    div [ Attr.class "topLinksLogo" ] [ a [ Attr.href "https://haveno-web.squashpassion.com" ] [ topLinksLogoImage ] ]
 
 
 topLinksLogoImage : Html msg
 topLinksLogoImage =
     img
-        [ Attr.src "resources/Logos/SP-V-Logo2.png"
+        [ Attr.src "resources/Logos/monero_icon.jpeg"
 
         -- NOTE: always define the width and height of images. This reduces flickering,
         -- because the browser can reserve space for the image before loading.
         , Attr.width 100
         , Attr.height 33
-        , Attr.alt "Squash Passion Logo"
-        , Attr.title "Squash Passion Logo"
+        , Attr.alt "Monero Logo"
+        , Attr.title "Monero Logo"
         ]
         []
 
@@ -1164,14 +1127,14 @@ topLinksLogoImage =
 logoImage : Html msg
 logoImage =
     img
-        [ Attr.src "resources/Logos/SP-V-Logo2.png"
+        [ Attr.src "resources/Logos/monero_icon.jpeg"
 
         -- NOTE: always define the width and height of images. This reduces flickering,
         -- because the browser can reserve space for the image before loading.
         , Attr.width 200
         , Attr.height 67
-        , Attr.alt "Squash Passion Logo"
-        , Attr.title "Squash Passion Logo"
+        , Attr.alt "Monero Logo"
+        , Attr.title "Monero Logo"
         ]
         []
 
@@ -1225,7 +1188,7 @@ socialsLinks =
             [ i
                 []
                 [ a
-                    [ Attr.href "https://chat.whatsapp.com/KIEF0OD3ICm5vHMdf6iD0A"
+                    [ Attr.href ""
                     , Attr.target "_blank"
                     ]
                     [ node "ion-icon"
@@ -1300,15 +1263,15 @@ navLinks page =
             ul
                 [-- NOTE: img is now managed separately so is can be shrunk etc. withouth affecting the links
                 ]
-                [ li [ class "logo" ] [ a [ Attr.href "https://squashpassion.com", Attr.class "logoImageShrink" ] [ logoImage ] ]
+                [ li [ class "logo" ] [ a [ Attr.href "https://haveno-web.squashpassion.com", Attr.class "logoImageShrink" ] [ logoImage ] ]
                 , navLink Home { url = "/", caption = "Home" }
-                , navLink About { url = "about", caption = "About" }
-                , navLink Location { url = "location", caption = "Location" }
-                , navLink Testimonials { url = "testimonials", caption = "Testimonials" }
-                , navLink Pricing { url = "pricing", caption = "Pricing" }
-                , navLink Rankings { url = "rankings", caption = "Rankings" }
-                , navLink Contact { url = "contact", caption = "Contact" }
-                , navLink Terms { url = "terms", caption = "Terms" }
+                , navLink Market { url = "market", caption = "Market" }
+                , navLink Support { url = "support", caption = "Support" }
+                , navLink Sell { url = "sell", caption = "Sell" }
+                , navLink Buy { url = "buy", caption = "Buy" }
+                , navLink Hardware { url = "hardware", caption = "Hardware" }
+                
+                , navLink Portfolio { url = "portfolio", caption = "Portfolio" }
                 ]
 
         -- NOTE: route and page are only there for isActive.
@@ -1334,12 +1297,12 @@ topLinksLeft =
                     [ Attr.class "material-icons"
                     ]
                     [ text "email" ]
-                , navLink { url = "/", caption = "pmo@squashpassion.com    " }
+                , navLink { url = "/", caption = "potential support url   " }
                 , Html.i
                     [ Attr.class "material-icons"
                     ]
-                    [ text "phone" ]
-                , navLink { url = "contact", caption = "+(65) 8835 0839" }
+                    [ text "support" ]
+                , navLink { url = "support", caption = "other potential support" }
                 ]
 
         -- NOTE: We just want to display these on every page, so no route required
@@ -1365,47 +1328,22 @@ logOutUser =
 -- NAV: Video
 
 
-videoClip : Html msg
-videoClip =
-    video
-        [ Attr.width 320
-        , Attr.height 240
-        , Attr.autoplay True
-        , Attr.loop True
-        , Attr.property "muted" (JE.bool True)
-        , Attr.property "contentUrl" (JE.string "https://squashpassion.com/resources/Video/SP_Squash_Partner_4.mp4")
-        , Attr.class "video-container"
-        , Attr.poster "https://squashpassion.com/resources/Video/SP_Squash_Partner_4.mp4#t=0.5&poster=http://squashpassion.com/resources/Video/SP_video.png"
-        ]
-        [ -- TODO: Add more alternative video formats as fallbacks:
-          source
-            [ Attr.src "../resources/Video/SP_Squash_Partner_4.mp4"
-            , Attr.type_ "video/mp4"
-            ]
-            []
-        , source
-            [ Attr.src "../resources/Video/test.webm"
-            , Attr.type_ "video/webm"
-            ]
-            []
-        , text "Your browser does not support the video tag."
-        ]
+
 
 
 footerContent : Html msg
 footerContent =
     footer []
         [ div [ Attr.class "footer", Attr.style "text-align" "center" ]
-            [ a [ href "/" ] [ text "Singapore Squash Sessions" ]
-            , br []
+            [ br []
                 []
             , span []
-                [ text "All Rights Reserved "
-                , a [ href "https://squashpassion.com" ] [ text "Squash Passion" ]
+                [ text ""
+                , a [ href "https://haveno-web.squashpassion.com" ] [ text "Haveno-Web" ]
                 , br []
                     []
-                , text "Proprietary code & design"
-                , p [] [ text "Version 1.6.2" ]
+                , text "Open source code & design"
+                , p [] [ text "Version 0.0.1" ]
                 ]
             ]
         ]
@@ -1428,52 +1366,47 @@ isActive { link, page } =
         ( Home, _ ) ->
             False
 
-        ( Testimonials, TestimonialsPage _ ) ->
+        ( Sell, SellPage _ ) ->
             True
 
-        ( Testimonials, _ ) ->
+        ( Sell, _ ) ->
             False
 
-        ( Terms, TermsPage _ ) ->
+        ( Portfolio, PortfolioPage _ ) ->
             True
 
-        ( Terms, _ ) ->
+        ( Portfolio, _ ) ->
             False
 
-        ( Privacy, PrivacyPage _ ) ->
+        ( Funds, FundsPage _ ) ->
             True
 
-        ( Privacy, _ ) ->
+        ( Funds, _ ) ->
             False
 
-        ( Location, LocationPage _ ) ->
+        ( Support, LocationPage _ ) ->
             True
 
-        ( Location, _ ) ->
+        ( Support, _ ) ->
             False
 
-        ( Contact, ContactPage _ ) ->
+      
+        ( Buy, BuyPage _ ) ->
             True
 
-        ( Contact, _ ) ->
+        ( Buy, _ ) ->
             False
 
-        ( Pricing, PricingPage _ ) ->
+        ( Market, MarketPage _ ) ->
             True
 
-        ( Pricing, _ ) ->
+        ( Market, _ ) ->
             False
 
-        ( About, AboutPage _ ) ->
+        ( Hardware, HardwarePage _ ) ->
             True
 
-        ( About, _ ) ->
-            False
-
-        ( Rankings, RankingsPage _ ) ->
-            True
-
-        ( Rankings, _ ) ->
+        ( Hardware, _ ) ->
             False
 
 

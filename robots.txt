@@ -5,4 +5,4 @@ Disallow: /howmuch.html
 Disallow: /schedule-interface.php
 Disallow: /mobile-venue-selection.php
 Disallow: /bestfit.php
-Sitemap: https://squashpassion.com/sitemap.xml
+Sitemap: https://haveno-web.squashpassion.com/sitemap.xml

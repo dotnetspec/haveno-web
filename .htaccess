@@ -1,13 +1,13 @@
 #This file is only used on the Lightspeed server (Namecheap) and 
-#ensures that e.g. refresh on sr-ucsc-1.squashpassion.com/ will not error
+#ensures that e.g. refresh on haveno-web-1.squashpassion.com/ will not error
 #we keep here so that we have a source controlled copy that is reliable.
 #It lives in public_html off ROOT (experience is that Lightspeed does not
 #respond to .htaccess in the sub-directories)
 
 RewriteEngine on
 
-# Redirect requests for sr-ucsc-1.squashpassion.com to index.html
-RewriteCond %{HTTP_HOST} ^(www\.)?sr-ucsc-1\.squashpassion\.com$ [NC]
+# Redirect requests for haveno-web-1.squashpassion.com to index.html
+RewriteCond %{HTTP_HOST} ^(www\.)?haveno-web-1\.squashpassion\.com$ [NC]
 RewriteRule ^/?$ /public_html/index.html [L]
 
 # Rewrite requests for /rankings to index.html
@@ -15,7 +15,7 @@ RewriteCond %{HTTP_HOST} ^(www\.)?squashpassion\.com$ [NC]
 RewriteRule ^rankings(/)?$ /public_html/index.html [L]
 
 # Rewrite other requests to preserve path structure
-RewriteCond %{HTTP_HOST} ^(www\.)?sr-ucsc-1\.squashpassion\.com$ [NC]
+RewriteCond %{HTTP_HOST} ^(www\.)?haveno-web-1\.squashpassion\.com$ [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ /public_html/$1 [L]
