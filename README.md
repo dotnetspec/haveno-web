@@ -1,10 +1,9 @@
 # Production Website
 REF: https://haveno-web-1.squashpassion.com
 
-👉 SportRank 2 is Squash Passion's ranking app.
+👉 Haveno-Web is the web based front end for the Haveno project
 
-This site uses mongodb api and can be adapted to talk to other APIs if required
-
+This site is IN DEVELOPMENT and EXPERIMENTAL. DO NOT USE AT THIS TIME UNLESS EXPLICITLY AUTHORIZED BY THE HAVENO PROJECT!!!
 
 
 # Building
@@ -31,11 +30,14 @@ robots.tx and sitemap.xml can be updated if necessary (e.g. filename changes)
 NOTE: they must stay on the root
 
 
-# Licensing
-Proprietary Software - All Rights Reserved
+## License
 
-This software is the proprietary intellectual property of Philip Mockridge - Squash Passion. All rights are reserved, and no permission is granted to use, modify, distribute, or sublicense this code except under a separate, written agreement. Unauthorized use or reproduction of this code is strictly prohibited.
+This project is a combination of two previously separate projects, each with its own license.
+
+- **Elm Community**: Licensed under the BSD 3-Clause. See `LICENSE-Elm Community` for details.
+- **Haveno**: Licensed under the Apache License 2.0. See `LICENSE-Apache` for details.
+
+
 
 # Miscellaneous
-NOTE: The application started with middleware due to difficulties with json translation and CORS. Whilst the middleware is probably still required for the search functionality the login code demonstrates that i, and all the js code in static/mondodb, can theoretically be bypassed
-via direct https requests from the Elm code. It is expected that the js will be deprecated over time.
+NOTE: The application started with middleware due to difficulties with json translation and CORS. Whilst the middleware is probably still required for the search functionality the login code demonstrates that it, and all the js code in static/mondodb, can theoretically be bypassed via direct https requests from the Elm code. It is expected that the js will be deprecated over time.

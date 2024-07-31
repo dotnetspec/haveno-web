@@ -10,25 +10,17 @@ And the APK is connected to a Haveno daemon for handling transactions
 
 ---
 
-#### **Scenario 1: Accessing the Web App via Tor Browser**
-
-**Given** the user opens the Tor Browser on their mobile device 
-**When** the user navigates to the mobile Tor-based web app 
-**Then** the web app should load securely over HTTPS 
-**And** the web app should be able to communicate with the backend service running on the APK 
-
----
-
-#### **Scenario 2: Connecting the Hardware Wallet**
+#### **Scenario 1: Connecting the Hardware Wallet**
 
 **Given** the user has the hardware wallet connected to their mobile device 
-**When** the user accesses the "Connect Wallet" feature in the mobile web app 
+**When** the user accesses the Hardware page
+**And** the user clicks the "Connect Wallet" feature
 **Then** the web app should detect the connected hardware wallet 
 **And** the web app should display a confirmation message indicating successful wallet connection 
 
 ---
 
-#### **Scenario 3: Initiating a Transaction**
+#### **Scenario 2: Initiating a Transaction**
 
 **Given** the user has connected their hardware wallet to the mobile web app 
 **When** the user initiates a transaction in the web app (e.g., sending Monero) 
@@ -39,7 +31,7 @@ And the APK is connected to a Haveno daemon for handling transactions
 
 ---
 
-#### **Scenario 4: Handling Transaction Approval**
+#### **Scenario 3: Handling Transaction Approval**
 
 **Given** the user initiates a transaction 
 **When** the transaction request is received by the APK 
@@ -52,7 +44,7 @@ And the APK is connected to a Haveno daemon for handling transactions
 
 ---
 
-#### **Scenario 5: Handling Transaction Failures**
+#### **Scenario 4: Handling Transaction Failures**
 
 **Given** the user initiates a transaction 
 **When** the transaction request is received by the APK 
@@ -63,7 +55,7 @@ And the APK is connected to a Haveno daemon for handling transactions
 
 ---
 
-#### **Scenario 6: Secure Communication**
+#### **Scenario 5: Secure Communication**
 
 **Given** the user is interacting with the web app over Tor 
 **When** the web app communicates with the APK via HTTPS 
@@ -72,7 +64,7 @@ And the APK is connected to a Haveno daemon for handling transactions
 
 ---
 
-#### **Scenario 7: Device and Network Security**
+#### **Scenario 6: Device and Network Security**
 
 **Given** the user is using the Tor network to access the web app 
 **When** the user connects their hardware wallet and initiates transactions 
@@ -82,6 +74,6 @@ And the APK is connected to a Haveno daemon for handling transactions
 ### **Summary**
 
 These scenarios outline the critical interactions between the mobile Tor-based web app and the user-buildable APK leveraging a Haveno daemon. 
-he scenarios cover essential functions like accessing the web app, connecting hardware wallets, initiating and handling transactions, and 
+The scenarios cover essential functions like accessing the web app, connecting hardware wallets, initiating and handling transactions, and 
 ensuring secure communication.
 

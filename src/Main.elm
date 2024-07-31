@@ -1,7 +1,7 @@
 port module Main exposing (..)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
--- Main loads Home initially.
+-- Main loads Dashboard initially.
 -- NOTE: exposing Url exposes a different type of Url to
 -- just import Url
 
@@ -18,7 +18,7 @@ import Json.Decode as JD
 import Json.Encode as JE
 import Pages.Market
 
-import Pages.Home
+import Pages.Dashboard
 import Pages.Support
 import Pages.Buy
 import Pages.Funds
@@ -60,8 +60,8 @@ main =
 
 -- NAV: Init
 -- NOTE: Nav.Key is a special Elm type to avoid bugs - just pass, and leave, it
-{- -- NOTE: we need to populate Pages.Home.Model values in our init function. How can
-   we obtain a Pages.Home.Model value? By calling Home.init .
+{- -- NOTE: we need to populate Pages.Dashboard.Model values in our init function. How can
+   we obtain a Pages.Dashboard.Model value? By calling Dashboard.init .
 
    Change the type (here and in Main) of any flag you pass in if necessary.
 
@@ -149,8 +149,8 @@ type alias Model =
 
 type Msg
     = ClickedLink Browser.UrlRequest
-      -- NOTE: the type of GotHomeMsg is (Pages.Home.Msg -> Msg)
-    | GotHomeMsg Pages.Home.Msg
+      -- NOTE: the type of GotDashboardMsg is (Pages.Dashboard.Msg -> Msg)
+    | GotDashboardMsg Pages.Dashboard.Msg
     | GotSellMsg Pages.Sell.Msg
     | GotTermsMsg Pages.Portfolio.Msg
     | GotPrivacyMsg Pages.Funds.Msg
@@ -249,10 +249,10 @@ update msg model =
         ChangedUrl url ->
             updateUrl url model
 
-        GotHomeMsg homeMsg ->
+        GotDashboardMsg dashboardMsg ->
             case model.page of
-                HomePage home ->
-                    toHome model (Pages.Home.update homeMsg home)
+                DashboardPage dashboard ->
+                    toDashboard model (Pages.Dashboard.update dashboardMsg dashboard)
 
                 _ ->
                     ( model, Cmd.none )
@@ -620,22 +620,22 @@ view : Model -> Browser.Document Msg
 view model =
     let
         contentByPage =
-            {- -- NOTE:  We are 'delegating' views to Home.view and Sell.view etc.
+            {- -- NOTE:  We are 'delegating' views to Dashboard.view and Sell.view etc.
                Something similar can be done with subscriptions if required
             -}
             case model.page of
-                HomePage home ->
-                    Pages.Home.view home
-                        -- NOTE: Go from Html Pages.Home.Msg value to Html Msg value using Html.map.
-                        {- Conceptually, what Html.map is doing for us here is wrapping a Pages.Home.Msg or
+                DashboardPage dashboard ->
+                    Pages.Dashboard.view dashboard
+                        -- NOTE: Go from Html Pages.Dashboard.Msg value to Html Msg value using Html.map.
+                        {- Conceptually, what Html.map is doing for us here is wrapping a Pages.Dashboard.Msg or
                            Pages.Sell.Msg in a Main.Msg , because Main.update knows how to deal with only
                            Main.Msg values. Those wrapped messages will prove useful later when we handle
                            these new messages inside update .
                         -}
-                        |> Html.map GotHomeMsg
+                        |> Html.map GotDashboardMsg
 
-                SellPage home ->
-                    Pages.Sell.view home
+                SellPage dashboard ->
+                    Pages.Sell.view dashboard
                         |> Html.map GotSellMsg
 
                 PortfolioPage terms ->
@@ -682,7 +682,7 @@ view model =
 
 
 -- TYPES
--- NOTE: Home.elm is the equivalent of PhotoFolders.elm or 'Folders' in the code
+-- NOTE: Dashboard.elm is the equivalent of PhotoFolders.elm or 'Folders' in the code
 {- -- NOTE: Two data structures for use cases that were similar but ended up NOT being the same. If you're
    getting complicated knock-on effects consider that you may need to split data structures like this.
    Here prompted by 'What’s the problem here? Why isn’t Page working well
@@ -694,7 +694,7 @@ view model =
 
 
 type Route
-    = Home
+    = Dashboard
     | Sell
     | Portfolio
     | Funds
@@ -713,7 +713,7 @@ type
     Page
     -- NOTE: Be able to access the model in the selected page so that it can
     -- be passed to the view for that page:
-    = HomePage Pages.Home.Model
+    = DashboardPage Pages.Dashboard.Model
     | SellPage Pages.Sell.Model
     | PortfolioPage Pages.Portfolio.Model
     | FundsPage Pages.Funds.Model
@@ -780,8 +780,8 @@ urlAsPageParser =
     -- If a Route value representing a Page is sent as input to the parser function,
     -- the resulting 'a' will be a Page (or whatever type Page represents in your specific code).
     oneOf
-        [ Url.Parser.map Home (s "index.html")
-        , Url.Parser.map Home Url.Parser.top
+        [ Url.Parser.map Dashboard (s "index.html")
+        , Url.Parser.map Dashboard Url.Parser.top
         , Url.Parser.map Sell (Url.Parser.s "sell")
         , Url.Parser.map Portfolio (Url.Parser.s "portfolio")
         , Url.Parser.map Funds (Url.Parser.s "funds")
@@ -814,7 +814,7 @@ codeParser =
 -- queryParser : QueryStringParser (Maybe String)
 -- queryParser =
 --     Query.string "code"
-{- -- NOTE: Getting Model.Home and Model.Sell values exactly where we need them.
+{- -- NOTE: Getting Model.Dashboard and Model.Sell values exactly where we need them.
    Replaces (eventually) urlToPage used in most of the book: "KEEPING
    BOTH MODEL AND CMD FOR INIT
    Without having their init commands run, our pages’ initial HTTP requests aren’t
@@ -839,7 +839,7 @@ updateUrl url model =
         
     in
     case Url.Parser.parse urlAsPageParser urlMinusQueryStr of
-        Just Home ->
+        Just Dashboard ->
             
             -- TODO: Review below as we don't use Oauth.Callback any more:
             -- NOTE: When we get an oauth code we want to move program control to Oauth.Callback
@@ -852,17 +852,17 @@ updateUrl url model =
                     -- NOTE: Unlike in book, we're not sending filenames etc. to init. Just ().
                     -- If you wanted info in this page to e.g. be based on an Http.get then
                     -- follow book to setup here:
-                    Pages.Home.init ()
-                        |> toHome model
+                    Pages.Dashboard.init ()
+                        |> toDashboard model
 
                 Just "" ->
-                    Pages.Home.init ()
-                        |> toHome model
+                    Pages.Dashboard.init ()
+                        |> toDashboard model
 
                 -- HACK: -- FIX?
                 Just _ ->
-                    Pages.Home.init ()
-                        |> toHome model
+                    Pages.Dashboard.init ()
+                        |> toDashboard model
 
         Just Sell ->
             Pages.Sell.init ()
@@ -904,11 +904,11 @@ updateUrl url model =
             ( { model | page = NotFound }, Cmd.none )
 
 
-toHome : Model -> ( Pages.Home.Model, Cmd Pages.Home.Msg ) -> ( Model, Cmd Msg )
-toHome model ( home, cmd ) =
-    ( { model | page = HomePage home }
+toDashboard : Model -> ( Pages.Dashboard.Model, Cmd Pages.Dashboard.Msg ) -> ( Model, Cmd Msg )
+toDashboard model ( dashboard, cmd ) =
+    ( { model | page = DashboardPage dashboard }
       -- NOTE: Cmd.map is a way to manipulate the result of a command
-    , Cmd.batch [ Cmd.map GotHomeMsg cmd, Task.perform AdjustTimeZone Time.here ]
+    , Cmd.batch [ Cmd.map GotDashboardMsg cmd, Task.perform AdjustTimeZone Time.here ]
     )
 
 
@@ -1072,14 +1072,14 @@ port setStorage : JE.Value -> Cmd msg
 
 
 
-{--HACK: Since only Home page no banner, use below. But with more page etc. can add bool banner property to 
+{--HACK: Since only Dashboard page no banner, use below. But with more page etc. can add bool banner property to 
 each page model and match against-}
 
 
 showVideoOrBanner : Page -> Html msg
 showVideoOrBanner page =
     {- case page of
-       HomePage _ ->
+       DashboardPage _ ->
            videoClip
 
        _ ->
@@ -1264,7 +1264,7 @@ navLinks page =
                 [-- NOTE: img is now managed separately so is can be shrunk etc. withouth affecting the links
                 ]
                 [ li [ class "logo" ] [ a [ Attr.href "https://haveno-web.squashpassion.com", Attr.class "logoImageShrink" ] [ logoImage ] ]
-                , navLink Home { url = "/", caption = "Home" }
+                , navLink Dashboard { url = "/", caption = "Dashboard" }
                 , navLink Market { url = "market", caption = "Market" }
                 , navLink Support { url = "support", caption = "Support" }
                 , navLink Sell { url = "sell", caption = "Sell" }
@@ -1360,10 +1360,10 @@ isActive { link, page } =
         , page
         )
     of
-        ( Home, HomePage _ ) ->
+        ( Dashboard, DashboardPage _ ) ->
             True
 
-        ( Home, _ ) ->
+        ( Dashboard, _ ) ->
             False
 
         ( Sell, SellPage _ ) ->

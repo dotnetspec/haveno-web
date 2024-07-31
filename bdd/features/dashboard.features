@@ -1,0 +1,47 @@
+Here’s a series of Gherkin/BDD scenarios describing the behavior of a mobile Tor-based web app that communicates with a user-buildable APK (leveraging a Haveno daemon) via HTTPS to handle hardware wallet transactions. The app will use the hardware wallet as the sole form of identity, and no additional authorization is required.
+
+### **Feature: Mobile Tor-Based Web App with User-Buildable APK Integration**
+
+#### **Background:**
+Given the user has a mobile device with the Tor Browser installed 
+And the user has a hardware wallet (e.g., Ledger Nano X) connected to the device 
+And the user-buildable APK is running on the mobile device and has an HTTPS server configured 
+And the APK is connected to a Haveno daemon for handling transactions 
+
+---
+
+#### **Scenario 1: Accessing the Web App via Tor Browser**
+
+**Given** the user opens the Tor Browser on their mobile device 
+**When** the user navigates to the mobile Tor-based web app 
+**Then** the web app should load securely over HTTPS 
+
+
+---
+
+#### **Scenario 2: Display user's on device balance**
+
+**Given** the mobile Tor-based web app is open
+**When** the user can view the Dashboard
+**Then** the web app should be able to communicate with the backend service running on the APK 
+**And** the user can see his balance on the mobile device
+
+---
+
+#### **Scenario 3: Secure Communication**
+
+**Given** the user is interacting with the web app over Tor 
+**When** the web app communicates with the APK via HTTPS 
+**Then** all data exchanged between the web app and APK should be encrypted 
+**And** the communication should be secure against eavesdropping and tampering 
+
+---
+
+
+
+### **Summary**
+
+These scenarios outline the critical interactions between the mobile Tor-based web app and the user-buildable APK leveraging a Haveno daemon. 
+he scenarios cover essential functions like accessing the web app, connecting hardware wallets, initiating and handling transactions, and 
+ensuring secure communication.
+

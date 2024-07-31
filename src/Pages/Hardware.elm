@@ -1810,7 +1810,6 @@ dialoguePrepareResultView uinfo rank ranking =
 
 -- NAV: Buttons
 
-
 playerbuttons : R.Ranking -> U.UserInfo -> Element Msg
 playerbuttons r u =
     let
@@ -1973,9 +1972,6 @@ createLadderView userInfo ranking =
 
 
 
--- NAV: Buttons
--- NOTE: These buttons are here just below their respective Views
-
 
 spectatorRankingBtn : R.RankingSearchResult -> Element Msg
 spectatorRankingBtn ranking =
@@ -2062,6 +2058,7 @@ globalrankingbtns searchterm searchResults user =
                 ]
 
 
+
 spectatorView : Html Msg
 spectatorView =
     Framework.responsiveLayout [] <|
@@ -2104,7 +2101,7 @@ displayGlobalRankingBtns searchterm searchResults userVal =
         U.Spectator _ ->
             Element.column Grid.section <|
                 [ -- HACK: Not Create
-                  infoBtn "Test APK" Create
+                  infoBtn "Connect Wallet" Create
 
                 --, El.warningText errorMsg
                 , infoBtn "Register" Create
@@ -2123,7 +2120,7 @@ loginView model =
             [ Element.el Heading.h5 <| Element.text "Haveno-Web"
             , Element.text "\n"
             
-            , infoBtn "Test APK" <| ClickedLogInUser model.emailpassword
+            , infoBtn "Connect Wallet" <| ClickedLogInUser model.emailpassword
             , case model.errors of
                 [] ->
                     Element.text ""
@@ -3436,7 +3433,7 @@ displayLoginBtns model =
                     }
                 ]
             ]
-        , infoBtn "Test APK" <| ClickedLogInUser model.emailpassword
+        , infoBtn "Connect Wallet" <| ClickedLogInUser model.emailpassword
         , infoBtn "Register" Create
         , Element.wrappedRow (Card.fill ++ Grid.simple)
             [ Element.column

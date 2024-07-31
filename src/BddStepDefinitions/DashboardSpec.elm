@@ -1,4 +1,4 @@
-module BddStepDefinitions.HardwareSpec exposing (main)
+module BddStepDefinitions.DashboardSpec exposing (main)
 
 import BddStepDefinitions.Extra exposing (..)
 import BddStepDefinitions.Runner as Runner exposing (..)
@@ -11,7 +11,7 @@ import Http
 import Json.Decode as D
 import Json.Encode as E
 import Main
-import Pages.Hardware
+import Pages.Dashboard
 import Spec exposing (Flags, Spec, describe, expect, given, it, scenario, when)
 import Spec.Claim as Claim exposing (Claim, Verdict)
 import Spec.Command exposing (..)
@@ -30,35 +30,104 @@ import Time exposing (..)
 import Types.DateType as DateType
 import Url exposing (Protocol(..), Url)
 
+-- NOTE: Local test setup
+-- NOTE: App.Model and App.Msg are type paramters for the Spec type
+-- They make Spec type more flexible as it can be used with any model and msg types
+-- NOTE: placeholderURL is used to load the rankings page
+-- FromMainToRankings is particular to the Hardware page
+--(gives us the current time/date and the URL to the API which responds with the timeslot data for the page)
+{- testFlags : Hardware.FromMainToRankings
+   testFlags =
+       -- WARN: We cannot set CurrentDateTime here, cos Tick newTime will override it.
+       -- but can use Spec.Time.withTime to set the time in scenario setup
+       Hardware.FromMainToRankings Nothing Consts.localhostForElmSpecProxyURL
+-}
+-- NOTE: The following is a test for the Hardware page
+-- The test checks that the page displays the available timeslots when the access token request is successful
+-- and the request for available timeslots is successful
 
 
-
-
-runSpecTests : Spec Pages.Hardware.Model Pages.Hardware.Msg
+runSpecTests : Spec Pages.Dashboard.Model Pages.Dashboard.Msg
 runSpecTests =
     describe
         "Scenarios based on a Haveno Web App MVP"
         [ --Runner.pick <|
           --, Runner.skip <|
-          scenario "1. Connecting the Hardware Wallet"
+          scenario "1. Accessing the Web App via Tor Browser"
             (given
                 (Setup.init
-                    (Pages.Hardware.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
-                    |> Setup.withView Pages.Hardware.view
-                    |> Setup.withUpdate Pages.Hardware.update
+                    -- NOTE: We have to use testInit cos we don't have a Nav.Key to initialize with
+                    -- TODO: RF remove 'time' from Pages.Dashboard.init
+                    (Pages.Dashboard.init ())
+                    |> Setup.withView Pages.Dashboard.view
+                    |> Setup.withUpdate Pages.Dashboard.update
+                    |> Stub.serve [ TestData.failedMongodbLoginStub ]
+                )
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
+                |> Spec.observeThat
+                    [ it "displays a message from the Dashboard page"
+                        (Markup.observeElement
+                            |> Markup.query
+                            -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
+                            << by [ tag "h1" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Haveno Web"
+                                )
+                        )
+                    ]
+            )
+        , scenario "2: Display user's on device balance"
+            (given
+                (Setup.init
+                    -- NOTE: We have to use testInit cos we don't have a Nav.Key to initialize with
+                    -- TODO: RF remove 'time' from Pages.Dashboard.init
+                    (Pages.Dashboard.init ())
+                    |> Setup.withView Pages.Dashboard.view
+                    |> Setup.withUpdate Pages.Dashboard.update
+                    |> Stub.serve [ TestData.failedMongodbLoginStub ]
+                )
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
+                |> Spec.observeThat
+                    [ it "displays a message from the Dashboard page"
+                        (Markup.observeElement
+                            |> Markup.query
+                            -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
+                            << by [ tag "div" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Your balance is:"
+                                )
+                        )
+                    ]
+            )
+        {- , scenario "3. Connecting the Dashboard Wallet"
+            (given
+                (Setup.init
+                    (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
+                    |> Setup.withView Pages.Dashboard.view
+                    |> Setup.withUpdate Pages.Dashboard.update
                     |> Stub.serve [ TestData.successfullLocationFetch ]
                 )
                 |> when "we simulate clicking the login button"
-                    [ Spec.Command.send <| Spec.Command.fake (Pages.Hardware.ClickedLogInUser 
+                    [ Spec.Command.send <| Spec.Command.fake (Pages.Dashboard.ClickedLogInUser 
                     --{ email = "k223445687@k.com", password = "nonExistent" }
                         { email = "", password = "" }
                     ) ]
                 {- |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
-                   ] -}
-               
+                   ]
+                -}
                 |> Spec.observeThat
-                    [ it "displays a 'successfully talking to the hardware wallet' message from the Hardware page"
+                    [ it "displays a 'successfully talking to the hardware wallet' message from the Dashboard page"
                         (Markup.observeElement
                             |> Markup.query
                             -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
@@ -70,16 +139,16 @@ runSpecTests =
                                 )
                         )
                     ]
-            )
+            ) -}
 
         --Runner.pick <|
         --, Runner.skip <|
         {- , scenario "3. Display An Active User On Login Succeed"
             (given
                 (Setup.init
-                    (Pages.Hardware.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
-                    |> Setup.withView Pages.Hardware.view
-                    |> Setup.withUpdate Pages.Hardware.update
+                    (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
+                    |> Setup.withView Pages.Dashboard.view
+                    |> Setup.withUpdate Pages.Dashboard.update
                     |> Stub.serve
                         [ TestData.successfullLocationFetch
                         , TestData.successfullLoginFetch
@@ -88,7 +157,7 @@ runSpecTests =
                         ]
                 )
                 |> when "the user submits the login form"
-                    [ Spec.Command.send <| Spec.Command.fake (Pages.Hardware.ClickedLogInUser { email = "k2@k.com", password = "Pa55w0rd" }) ]
+                    [ Spec.Command.send <| Spec.Command.fake (Pages.Dashboard.ClickedLogInUser { email = "k2@k.com", password = "Pa55w0rd" }) ]
                 {- |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
                    ]
@@ -179,7 +248,7 @@ runSpecTests =
 --main : Program Flags (Spec.Model Main.Model Main.Msg) (Spec.Msg Main.Msg)
 
 
-main : Program Flags (Spec.Model Pages.Hardware.Model Pages.Hardware.Msg) (Spec.Msg Pages.Hardware.Msg)
+main : Program Flags (Spec.Model Pages.Dashboard.Model Pages.Dashboard.Msg) (Spec.Msg Pages.Dashboard.Msg)
 main =
     -- NOTE: By using the browserProgram function, developers can specify configurations such as how the application's initial state is initialized
     -- , how the view is rendered, how updates are handled, and how subscriptions and browser events are managed during test execution

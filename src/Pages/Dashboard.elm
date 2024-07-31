@@ -1,6 +1,6 @@
-module Pages.Home exposing (Model, Msg, content, init, update, view)
+module Pages.Dashboard exposing (Model, Msg, content, init, update, view)
 
-{-| The homepage. You can get here via either the / or /#/ routes.
+{-| The Dashboardpage. You can get here via either the / or /#/ routes.
 -}
 
 import Buttons.Default exposing (defaultButton)
@@ -19,40 +19,43 @@ import Html.Attributes as Attr exposing (..)
 type alias Model =
     { status : Status
     , title : String
-    , root : Home
+    , root : Dashboard
     }
 
 
-type Home
-    = Home
+type Dashboard
+    = Dashboard
         { name : String
         }
 
 
 type Status
     = Loading
-    -- | Loaded
-    -- | Errored
+
+
+
+-- | Loaded
+-- | Errored
 
 
 initialModel : Model
 initialModel =
     { status = Loading
-    , title = "Home"
-    , root = Home { name = "Loading..." }
+    , title = "Dashboard"
+    , root = Dashboard { name = "Loading..." }
     }
 
 
 
-{- -- NOTE: by calling (from Main) Tuple.first (Home.init ()) , we’ll end up with
-   the Home.Model value we seek. () means we don't really care what goes in, we just
+{- -- NOTE: by calling (from Main) Tuple.first (Dashboard.init ()) , we’ll end up with
+   the Dashboard.Model value we seek. () means we don't really care what goes in, we just
    want the output (in this case the model (slightly modified))
 -}
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { initialModel | title = "Haveno-Web Home" }
+    ( { initialModel | title = "Haveno-Web Dashboard" }
     , Cmd.none
     )
 
@@ -85,19 +88,21 @@ content : Html msg
 content =
     section [ Attr.id "page", class "section-background" ]
         [ div [ class "container container--narrow" ]
-            [ h1 [ classList [( "text-center", True), ( "home", True)]]
+            [ h1 [ classList [ ( "text-center", True ), ( "Dashboard", True ) ] ]
                 [ text "Haveno Web" ]
             , h2 [ class "text-center" ]
                 [ text "Online Dex" ]
-            , div [ ]
-                [ 
-                    div [ class "text-center" ]
-                    [ text "Welcome to Haveno Web, the online decentralized exchange for Haveno, the private, untraceable cryptocurrency." 
+            , div []
+                [ div [ class "text-center" ]
+                    [ text "Welcome to Haveno Web, the online decentralized exchange for Haveno, the private, untraceable cryptocurrency."
                     
-                        ,defaultButton "hardware"
                     
                     ]
-                
+                ]
+            , div []
+                [ div [ class "text-center" ]
+                    [ text "Your balance is:"
+                    ]
                 ]
             ]
         ]
