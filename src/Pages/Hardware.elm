@@ -67,12 +67,69 @@ import Utils.Validation.Validate as V
 -- NOTE: CORS err may be due to wrong dev/prod setting
 
 
-init : FromMainToRankings -> ( Model, Cmd Msg )
+
+init : FromMainToRankings -> (Model, Cmd Msg)
 init fromMainToRankings =
-    ( -- NOTE: Have to do this twice cos need to return a model
-      initialize fromMainToRankings
-    , Cmd.none
-    )
+    let
+        -- REF: look at Haveno-Web Zoho Responsive app for how OAuth works.
+        -- We use the Node.js driver in this proj.
+        {- postData : E.Value
+           postData =
+               E.object
+                   {- -- REVIEW: Keep this in case use tokens in future?
+
+                      [ ( "grant_type", E.string "refresh_token" )
+                      , ( "query_type", E.string "access-token" )
+
+                      -- NOTE: Sending to Accounts (not API) url
+                      , ( "apiUrl", E.string <| Url.toString Consts.zohoAccountsTokenBaseURL )
+                      ]
+                   -}
+                   -- NOTE: Left side tells mongodbMW.js what it is, right side is actual value
+                   [ ( "query_type", E.string "user_login" )
+                   , ( "customer_email", E.string "t3@t.com" )
+                   , ( "customer_password", E.string "Pa55w0rd" )
+                   ]
+        -}
+        -- RF
+        updatedFlagUrlToIncludeMongoDBMWSvr =
+            if String.contains Consts.localorproductionServerAutoCheck fromMainToRankings.flagUrl.host then
+                Url fromMainToRankings.flagUrl.protocol fromMainToRankings.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
+
+            else
+                Url fromMainToRankings.flagUrl.protocol fromMainToRankings.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
+    in
+    -- NOTE: these api's are in mongodbMW.js currently - mabye they will be sent through from elm at a later point
+    -- Use the refresh token to obtain a new access token
+    (Model Loaded
+        "Hardware"
+        (Hardware { name = "Loading..." })
+        fromMainToRankings.flagUrl
+        -- NOTE: Datetime updated in Main
+        (Maybe.withDefault Nothing (Just fromMainToRankings.time))
+        humandateTimePlaceholder
+        []
+        apiSpecsPlaceHolder
+        (Login Consts.emptyEmailPassword)
+        (Just (ToMongoDBMWConfig Consts.post [] (Url.toString updatedFlagUrlToIncludeMongoDBMWSvr) Http.emptyBody Nothing Nothing))
+        False
+        False
+        [ "" ]
+        [ Nothing ]
+        False
+        False
+        -- NOTE: Dave is k2
+        --{ email = "k2@k.com", password = "Pa55w0rd" }
+        { email = "", password = "" }
+        R.None
+        R.emptyRank
+        U.emptySpectator
+        R.Undecided
+        ""
+        []
+        Nothing
+        , Cmd.none)
+
 
 
 
@@ -949,7 +1006,7 @@ update msg model =
         CallResponse (Err responseErr) ->
             let
                 respErr =
-                    httpErrorToString responseErr
+                    Consts.httpErrorToString responseErr
 
                 apiSpecs =
                     model.apiSpecifics
@@ -1001,7 +1058,7 @@ update msg model =
         ProfileResponse (Err responseErr) ->
             let
                 respErr =
-                    httpErrorToString responseErr
+                    Consts.httpErrorToString responseErr
 
                 apiSpecs =
                     model.apiSpecifics
@@ -1050,7 +1107,7 @@ update msg model =
         LocationResponse (Err responseErr) ->
             let
                 respErr =
-                    httpErrorToString responseErr
+                    Consts.httpErrorToString responseErr
 
                 apiSpecs =
                     model.apiSpecifics
@@ -2388,69 +2445,8 @@ type alias CustomerDetails =
 
 
 
--- NAV: Initialize
 
 
-initialize : FromMainToRankings -> Model
-initialize fromMainToRankings =
-    let
-        -- REF: look at Haveno-Web Zoho Responsive app for how OAuth works.
-        -- We use the Node.js driver in this proj.
-        {- postData : E.Value
-           postData =
-               E.object
-                   {- -- REVIEW: Keep this in case use tokens in future?
-
-                      [ ( "grant_type", E.string "refresh_token" )
-                      , ( "query_type", E.string "access-token" )
-
-                      -- NOTE: Sending to Accounts (not API) url
-                      , ( "apiUrl", E.string <| Url.toString Consts.zohoAccountsTokenBaseURL )
-                      ]
-                   -}
-                   -- NOTE: Left side tells mongodbMW.js what it is, right side is actual value
-                   [ ( "query_type", E.string "user_login" )
-                   , ( "customer_email", E.string "t3@t.com" )
-                   , ( "customer_password", E.string "Pa55w0rd" )
-                   ]
-        -}
-        -- RF
-        updatedFlagUrlToIncludeMongoDBMWSvr =
-            if String.contains Consts.localorproductionServerAutoCheck fromMainToRankings.flagUrl.host then
-                Url fromMainToRankings.flagUrl.protocol fromMainToRankings.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
-
-            else
-                Url fromMainToRankings.flagUrl.protocol fromMainToRankings.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
-    in
-    -- NOTE: these api's are in mongodbMW.js currently - mabye they will be sent through from elm at a later point
-    -- Use the refresh token to obtain a new access token
-    Model Loaded
-        "Hardware"
-        (Hardware { name = "Loading..." })
-        fromMainToRankings.flagUrl
-        -- NOTE: Datetime updated in Main
-        (Maybe.withDefault Nothing (Just fromMainToRankings.time))
-        humandateTimePlaceholder
-        []
-        apiSpecsPlaceHolder
-        (Login Consts.emptyEmailPassword)
-        (Just (ToMongoDBMWConfig Consts.post [] (Url.toString updatedFlagUrlToIncludeMongoDBMWSvr) Http.emptyBody Nothing Nothing))
-        False
-        False
-        [ "" ]
-        [ Nothing ]
-        False
-        False
-        -- NOTE: Dave is k2
-        --{ email = "k2@k.com", password = "Pa55w0rd" }
-        { email = "", password = "" }
-        R.None
-        R.emptyRank
-        U.emptySpectator
-        R.Undecided
-        ""
-        []
-        Nothing
 
 
 
@@ -3638,23 +3634,7 @@ updateNewUserRegistrationFormField msg queryType model =
 -- NOTE: Theses are generic. If you want specific errors customize in the relevant update
 
 
-httpErrorToString : Http.Error -> String
-httpErrorToString err =
-    case err of
-        Http.BadUrl url ->
-            "Bad URL: " ++ url
 
-        Http.Timeout ->
-            "Request timed out"
-
-        Http.NetworkError ->
-            "Network error occurred"
-
-        Http.BadStatus status ->
-            "Bad status: " ++ String.fromInt status
-
-        Http.BadBody body ->
-            "Bad body: " ++ body
 
 
 validateName : Maybe String -> Result String String

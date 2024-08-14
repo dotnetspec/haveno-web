@@ -11,8 +11,11 @@
             "Orasund/elm-ui-framework": "1.6.1",
             "Orasund/elm-ui-widgets": "3.4.0",
             "RomanErnst/erl": "2.1.1",
+            "anmolitor/elm-grpc": "1.1.0",
+            "anmolitor/elm-protoc-types": "2.0.0",
             "brian-watkins/elm-spec": "3.3.2",
             "elm/browser": "1.0.2",
+            "elm/bytes": "1.0.8",
             "elm/core": "1.0.5",
             "elm/html": "1.0.0",
             "elm/http": "2.0.0",
@@ -23,13 +26,16 @@
             "elm/url": "1.0.0",
             "elm-community/string-extra": "4.0.1",
             "elm-explorations/test": "2.1.2",
+            "eriktim/elm-protocol-buffers": "1.2.0",
             "justinmimbs/time-extra": "1.1.1",
             "mdgriffith/elm-ui": "1.1.8",
+            "rosenbergm/elm-grpc": "1.0.1",
             "truqu/elm-md5": "1.1.0"
         },
         "indirect": {
+            "anmolitor/elm-protoc-utils": "2.3.0",
             "avh4/elm-color": "1.0.0",
-            "elm/bytes": "1.0.8",
+            "danfishgold/base64-bytes": "1.1.0",
             "elm/file": "1.0.5",
             "elm/random": "1.0.0",
             "elm/svg": "1.0.1",
@@ -38,6 +44,7 @@
             "fredcy/elm-parseint": "2.0.1",
             "justinmimbs/date": "4.0.1",
             "noahzgordon/elm-color-extra": "1.0.2",
+            "rtfeldman/elm-iso8601-date-strings": "1.1.4",
             "turboMaCk/queue": "1.1.0",
             "zwilias/elm-utf-tools": "2.0.1"
         }

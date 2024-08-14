@@ -25,6 +25,7 @@ import Pages.Funds
 import Pages.Hardware
 import Pages.Portfolio
 import Pages.Sell
+import Pages.PingPong
 import Task
 import Time
 import Types.DateType exposing (DateTime(..))
@@ -152,13 +153,13 @@ type Msg
       -- NOTE: the type of GotDashboardMsg is (Pages.Dashboard.Msg -> Msg)
     | GotDashboardMsg Pages.Dashboard.Msg
     | GotSellMsg Pages.Sell.Msg
-    | GotTermsMsg Pages.Portfolio.Msg
-    | GotPrivacyMsg Pages.Funds.Msg
-    | GotLocationMsg Pages.Support.Msg
-  
-    | GotPricingMsg Pages.Buy.Msg
-    | GotAboutMsg Pages.Market.Msg
-    | GotRankingsMsg Pages.Hardware.Msg
+    | GotPortfolioMsg Pages.Portfolio.Msg
+    | GotFundsMsg Pages.Funds.Msg
+    | GotSupportMsg Pages.Support.Msg
+    | GotPingPongMsg Pages.PingPong.Msg
+    | GotBuyMsg Pages.Buy.Msg
+    | GotMarketMsg Pages.Market.Msg
+    | GotHardwareMsg Pages.Hardware.Msg
     | ChangedUrl Url.Url
     | Tick Time.Posix
     | AdjustTimeZone Time.Zone
@@ -170,7 +171,7 @@ type Msg
 --| MsgToSpecMsg Msg
 -- ...
 -- NAV: Update
--- NOTE: See GotRankingsMsg for example of how data that depended on Main (due to use of subscription)
+-- NOTE: See GotHardwareMsg for example of how data that depended on Main (due to use of subscription)
 -- was handled before sending the page model where it could be used
 
 
@@ -204,8 +205,8 @@ update msg model =
 
             else
                 case model.page of
-                    HardwarePage rankings ->
-                        toRankings model (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) rankings)
+                    HardwarePage hardware ->
+                        toHardware model (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) hardware)
 
                     _ ->
                         ( model, Cmd.none )
@@ -265,33 +266,41 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        GotTermsMsg termsMsg ->
+        GotPortfolioMsg termsMsg ->
             case model.page of
                 PortfolioPage terms ->
-                    toTerms model (Pages.Portfolio.update termsMsg terms)
+                    toPortfolio model (Pages.Portfolio.update termsMsg terms)
 
                 _ ->
                     ( model, Cmd.none )
 
-        GotPrivacyMsg privacyMsg ->
+        GotFundsMsg privacyMsg ->
             case model.page of
                 FundsPage privacy ->
-                    toPrivacy model (Pages.Funds.update privacyMsg privacy)
+                    toFunds model (Pages.Funds.update privacyMsg privacy)
 
                 _ ->
                     ( model, Cmd.none )
 
-        GotLocationMsg locationMsg ->
+        GotSupportMsg supportMsg ->
             case model.page of
-                LocationPage location ->
-                    toLocation model (Pages.Support.update locationMsg location)
+                SupportPage support ->
+                    toSupport model (Pages.Support.update supportMsg support)
+
+                _ ->
+                    ( model, Cmd.none )
+
+        GotPingPongMsg pingpongMsg ->
+            case model.page of
+                PingPongPage pingpong ->
+                    toPingPong model (Pages.PingPong.update pingpongMsg pingpong)
 
                 _ ->
                     ( model, Cmd.none )
 
         
 
-        GotPricingMsg pricingMsg ->
+        GotBuyMsg pricingMsg ->
             case model.page of
                 BuyPage pricing ->
                     toPricing model (Pages.Buy.update pricingMsg pricing)
@@ -299,21 +308,21 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        GotAboutMsg aboutMsg ->
+        GotMarketMsg aboutMsg ->
             case model.page of
                 MarketPage about ->
-                    toAbout model (Pages.Market.update aboutMsg about)
+                    toMarket model (Pages.Market.update aboutMsg about)
 
                 _ ->
                     ( model, Cmd.none )
 
-        -- NOTE: GotRankingsMsg is triggered by toRankings, which is triggered by updateUrl
+        -- NOTE: GotHardwareMsg is triggered by toRankings, which is triggered by updateUrl
         -- which is triggered by init. updateUrl is sent the url and uses the parser to parse it.
         -- The parser outputs the Hardware page so that the case in updateUrl can branch on Hardware.
         -- Hardware.init can then be run to init the page and the page can, through toRankings, be added
         -- to the model in Main (as the current page).
         -- NOTE: Make changes to the Hardware model, cmds etc. in toRankings (more options)
-        GotRankingsMsg rankingsMsg ->
+        GotHardwareMsg rankingsMsg ->
             case model.page of
                 HardwarePage rankings ->
                     -- NOTE: Example of handling data coming from sub module to main
@@ -590,7 +599,7 @@ update msg model =
                         _ ->
                             
                             -- otherwise operate within the Hardware sub module:
-                            toRankings model (Pages.Hardware.update rankingsMsg rankings)
+                            toHardware model (Pages.Hardware.update rankingsMsg rankings)
 
                 _ ->
                     ( model, Cmd.none )
@@ -640,29 +649,31 @@ view model =
 
                 PortfolioPage terms ->
                     Pages.Portfolio.view terms
-                        |> Html.map GotTermsMsg
+                        |> Html.map GotPortfolioMsg
 
                 FundsPage privacy ->
                     Pages.Funds.view privacy
-                        |> Html.map GotPrivacyMsg
+                        |> Html.map GotFundsMsg
 
-                LocationPage location ->
-                    Pages.Support.view location
-                        |> Html.map GotLocationMsg
+                SupportPage support ->
+                    Pages.Support.view support
+                        |> Html.map GotSupportMsg
 
-               
+                PingPongPage pingpong ->
+                    Pages.PingPong.view pingpong
+                        |> Html.map GotPingPongMsg
 
-                BuyPage pricing ->
-                    Pages.Buy.view pricing
-                        |> Html.map GotPricingMsg
+                BuyPage buy ->
+                    Pages.Buy.view buy
+                        |> Html.map GotBuyMsg
 
-                MarketPage about ->
-                    Pages.Market.view about
-                        |> Html.map GotAboutMsg
+                MarketPage market ->
+                    Pages.Market.view market
+                        |> Html.map GotMarketMsg
 
                 HardwarePage hardware ->
                     Pages.Hardware.view hardware
-                        |> Html.map GotRankingsMsg
+                        |> Html.map GotHardwareMsg
 
                 NotFound ->
                     text "Not Found"
@@ -699,7 +710,7 @@ type Route
     | Portfolio
     | Funds
     | Support
-  
+    | PingPong
     | Buy
     | Market
     | Hardware
@@ -717,8 +728,8 @@ type
     | SellPage Pages.Sell.Model
     | PortfolioPage Pages.Portfolio.Model
     | FundsPage Pages.Funds.Model
-    | LocationPage Pages.Support.Model
-   
+    | SupportPage Pages.Support.Model
+    | PingPongPage Pages.PingPong.Model
     | BuyPage Pages.Buy.Model
     | MarketPage Pages.Market.Model
     | HardwarePage Pages.Hardware.Model
@@ -786,7 +797,7 @@ urlAsPageParser =
         , Url.Parser.map Portfolio (Url.Parser.s "portfolio")
         , Url.Parser.map Funds (Url.Parser.s "funds")
         , Url.Parser.map Support (Url.Parser.s "support")
-    
+        , Url.Parser.map PingPong (Url.Parser.s "pingpong")
         , Url.Parser.map Buy (Url.Parser.s "buy")
         , Url.Parser.map Market (Url.Parser.s "market")
         , Url.Parser.map Hardware (Url.Parser.s "hardware")
@@ -852,16 +863,16 @@ updateUrl url model =
                     -- NOTE: Unlike in book, we're not sending filenames etc. to init. Just ().
                     -- If you wanted info in this page to e.g. be based on an Http.get then
                     -- follow book to setup here:
-                    Pages.Dashboard.init ()
+                    Pages.Dashboard.init { time = Nothing, flagUrl = model.flag }
                         |> toDashboard model
 
                 Just "" ->
-                    Pages.Dashboard.init ()
+                    Pages.Dashboard.init { time = Nothing, flagUrl = model.flag }
                         |> toDashboard model
 
                 -- HACK: -- FIX?
                 Just _ ->
-                    Pages.Dashboard.init ()
+                    Pages.Dashboard.init { time = Nothing, flagUrl = model.flag }
                         |> toDashboard model
 
         Just Sell ->
@@ -870,17 +881,19 @@ updateUrl url model =
 
         Just Portfolio ->
             Pages.Portfolio.init ()
-                |> toTerms model
+                |> toPortfolio model
 
         Just Funds ->
             Pages.Funds.init ()
-                |> toPrivacy model
+                |> toFunds model
 
         Just Support ->
             Pages.Support.init ()
-                |> toLocation model
+                |> toSupport model
 
-        
+        Just PingPong ->
+            Pages.PingPong.init ()
+                |> toPingPong model
 
         Just Buy ->
             Pages.Buy.init ()
@@ -888,7 +901,7 @@ updateUrl url model =
 
         Just Market ->
             Pages.Market.init ()
-                |> toAbout model
+                |> toMarket model
 
         Just Hardware ->
             -- NOTE: This is the only place we can pass args from Main.elm into
@@ -896,7 +909,8 @@ updateUrl url model =
             -- REVIEW: Time is sent through here as it may speed up the slots fetch in Hardware - tbc
             -- RF: Change name flagUrl to domainUrl
             Pages.Hardware.init { time = Nothing, flagUrl = model.flag }
-                |> toRankings model
+            -- Model -> ( Pages.Hardware.Model, Cmd Pages.Hardware.Msg ) -> ( Model, Cmd Msg )
+                |> toHardware model
 
                 
 
@@ -922,83 +936,87 @@ toSell model ( sell, cmd ) =
     )
 
 
-toTerms : Model -> ( Pages.Portfolio.Model, Cmd Pages.Portfolio.Msg ) -> ( Model, Cmd Msg )
-toTerms model ( terms, cmd ) =
-    ( { model | page = PortfolioPage terms }
-    , Cmd.map GotTermsMsg cmd
+toPortfolio : Model -> ( Pages.Portfolio.Model, Cmd Pages.Portfolio.Msg ) -> ( Model, Cmd Msg )
+toPortfolio model ( portfolio, cmd ) =
+    ( { model | page = PortfolioPage portfolio }
+    , Cmd.map GotPortfolioMsg cmd
     )
 
 
-toPrivacy : Model -> ( Pages.Funds.Model, Cmd Pages.Funds.Msg ) -> ( Model, Cmd Msg )
-toPrivacy model ( terms, cmd ) =
-    ( { model | page = FundsPage terms }
-    , Cmd.map GotPrivacyMsg cmd
+toFunds : Model -> ( Pages.Funds.Model, Cmd Pages.Funds.Msg ) -> ( Model, Cmd Msg )
+toFunds model ( funds, cmd ) =
+    ( { model | page = FundsPage funds }
+    , Cmd.map GotFundsMsg cmd
     )
 
 
-toLocation : Model -> ( Pages.Support.Model, Cmd Pages.Support.Msg ) -> ( Model, Cmd Msg )
-toLocation model ( location, cmd ) =
-    ( { model | page = LocationPage location }
-    , Cmd.map GotLocationMsg cmd
+toSupport : Model -> ( Pages.Support.Model, Cmd Pages.Support.Msg ) -> ( Model, Cmd Msg )
+toSupport model ( support, cmd ) =
+    ( { model | page = SupportPage support }
+    , Cmd.map GotSupportMsg cmd
     )
 
 
-
+toPingPong : Model -> ( Pages.PingPong.Model, Cmd Pages.PingPong.Msg ) -> ( Model, Cmd Msg )
+toPingPong model ( pingpong, cmd ) =
+    ( { model | page = PingPongPage pingpong }
+    , Cmd.map GotPingPongMsg cmd
+    )
 
 
 toPricing : Model -> ( Pages.Buy.Model, Cmd Pages.Buy.Msg ) -> ( Model, Cmd Msg )
 toPricing model ( pricing, cmd ) =
     ( { model | page = BuyPage pricing }
-    , Cmd.map GotPricingMsg cmd
+    , Cmd.map GotBuyMsg cmd
     )
 
 
-toAbout : Model -> ( Pages.Market.Model, Cmd Pages.Market.Msg ) -> ( Model, Cmd Msg )
-toAbout model ( about, cmd ) =
-    ( { model | page = MarketPage about }
-    , Cmd.map GotAboutMsg cmd
+toMarket : Model -> ( Pages.Market.Model, Cmd Pages.Market.Msg ) -> ( Model, Cmd Msg )
+toMarket model ( market, cmd ) =
+    ( { model | page = MarketPage market }
+    , Cmd.map GotMarketMsg cmd
     )
 
 
 
-{- Let's break down the `toRankings` function step by step in simple terms:
+{- Let's break down the `toHardware` function step by step in simple terms:
 
    1. **Function Name and Purpose**:
-      - The function is called `toRankings`.
+      - The function is called `toHardware`.
       - Its job is to translate information from the `Hardware` module into a format that the main application (`Main`) can understand.
 
    2. **Input Parameters**:
       - It takes two inputs:
         - `model`: Information about the current state of the application in Main's model.
-        - `(rankings, cmd)`: Information from the `Hardware` module, including rankings data and commands.
+        - `(hardware, cmd)`: Information from the `Hardware` module, including hardware data and commands.
 
    3. **What it Does**:
-      - It takes the existing Main `model` and updates it to include the `rankings` data, indicating that the current page is the "Hardware" page.
+      - It takes the existing Main `model` and updates it to include the `hardware` data, indicating that the current page is the "Hardware" page.
       - It translates the commands (`cmd`) coming from the `Hardware` module to a format that `Main` understands.
 
    4. **Output**:
       - It produces two things:
-        - An updated Main `model` that now includes the `rankings` data and indicates the current page is the "Hardware" page.
+        - An updated Main `model` that now includes the `hardware` data and indicates the current page is the "Hardware" page.
         - Commands that have been translated to a format that `Main` can use.
 
-   In simpler terms, this function helps the main part of the app (`Main`) understand and work with the rankings information provided by the `Hardware` module.
+   In simpler terms, this function helps the main part of the app (`Main`) understand and work with the hardware information provided by the `Hardware` module.
    It's like translating a message into a language that both parts of the app can understand and use effectively.
 -}
 
 
-toRankings : Model -> ( Pages.Hardware.Model, Cmd Pages.Hardware.Msg ) -> ( Model, Cmd Msg )
-toRankings model ( rankings, cmd ) =
-    ( { model | page = HardwarePage rankings }
-      {- -- NOTE: Cmd.map is applying the GotRankingsMsg constructor to the message in the command.
-         In Elm, GotRankingsMsg is a type constructor for the Msg type. It's used to create a new Msg value. When you use
-         GotRankingsMsg with Cmd.map, you're telling Elm to take the message that results from the command and wrap it in GotRankingsMsg.
-         In this code, cmd is a command that will produce a Pages.Hardware.Msg when it's executed. Cmd.map GotRankingsMsg cmd creates a new
-         command that, when executed, will produce a Msg that wraps the Pages.Hardware.Msg in GotRankingsMsg.
+toHardware : Model -> ( Pages.Hardware.Model, Cmd Pages.Hardware.Msg ) -> ( Model, Cmd Msg )
+toHardware model ( hardware, cmd ) =
+    ( { model | page = HardwarePage hardware }
+      {- -- NOTE: Cmd.map is applying the GotHardwareMsg constructor to the message in the command.
+         In Elm, GotHardwareMsg is a type constructor for the Msg type. It's used to create a new Msg value. When you use
+         GotHardwareMsg with Cmd.map, you're telling Elm to take the message that results from the command and wrap it in GotHardwareMsg.
+         In this code, cmd is a command that will produce a Pages.Hardware.Msg when it's executed. Cmd.map GotHardwareMsg cmd creates a new
+         command that, when executed, will produce a Msg that wraps the Pages.Hardware.Msg in GotHardwareMsg.
 
-         So, while GotRankingsMsg is not a function in the traditional sense, it's a type constructor that can be used like a
+         So, while GotHardwareMsg is not a function in the traditional sense, it's a type constructor that can be used like a
          function to create new values.
       -}
-    , Cmd.map GotRankingsMsg cmd
+    , Cmd.map GotHardwareMsg cmd
     
     )
 
@@ -1042,7 +1060,7 @@ subscriptions _ =
     --15 minutes in seconds = 15 minutes * 60 seconds/minute = 900 seconds
     -- NOTE: You have to get time from main, cos only main has subscription.
     -- It is anyway best practice to send data top down
-    Sub.batch [ Time.every 900000 (\posixTime -> GotRankingsMsg (Pages.Hardware.Tick posixTime)), messageReceiver Recv ]
+    Sub.batch [ Time.every 900000 (\posixTime -> GotHardwareMsg (Pages.Hardware.Tick posixTime)), messageReceiver Recv ]
 
 
 
@@ -1267,6 +1285,7 @@ navLinks page =
                 , navLink Dashboard { url = "/", caption = "Dashboard" }
                 , navLink Market { url = "market", caption = "Market" }
                 , navLink Support { url = "support", caption = "Support" }
+                , navLink PingPong { url = "pingpong", caption = "PingPong" }
                 , navLink Sell { url = "sell", caption = "Sell" }
                 , navLink Buy { url = "buy", caption = "Buy" }
                 , navLink Hardware { url = "hardware", caption = "Hardware" }
@@ -1339,11 +1358,11 @@ footerContent =
                 []
             , span []
                 [ text ""
-                , a [ href "https://haveno-web.squashpassion.com" ] [ text "Haveno-Web" ]
+                , a [ href "https://github.com/haveno-dex/haveno" ] [ text "Haveno-Dex" ]
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.1" ]
+                , p [] [ text "Version 0.0.2" ]
                 ]
             ]
         ]
@@ -1384,10 +1403,16 @@ isActive { link, page } =
         ( Funds, _ ) ->
             False
 
-        ( Support, LocationPage _ ) ->
+        ( Support, SupportPage _ ) ->
             True
 
         ( Support, _ ) ->
+            False
+
+        ( PingPong, PingPongPage _ ) ->
+            True
+
+        ( PingPong, _ ) ->
             False
 
       

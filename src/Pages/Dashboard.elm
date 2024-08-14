@@ -4,8 +4,22 @@ module Pages.Dashboard exposing (Model, Msg, content, init, update, view)
 -}
 
 import Buttons.Default exposing (defaultButton)
+import Extras.Constants as Consts
+import Grpc
 import Html exposing (..)
 import Html.Attributes as Attr exposing (..)
+import Http exposing (..)
+import Json.Decode as D exposing (..)
+import Json.Decode.Pipeline exposing (optional, required)
+import Json.Encode as E exposing (..)
+import Maybe exposing (withDefault)
+import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
+import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
+import Types.DateType as DateType exposing (DateTime(..))
+import Url exposing (Protocol(..), Url)
+import Grpc exposing (..)
+
+
 
 
 
@@ -14,12 +28,18 @@ import Html.Attributes as Attr exposing (..)
    start getting tricky (lots of difficult changes to existing code), ask yourself if you need a similar,
    but different, data structure (e.g. Page AND Route)
 -}
+-- NAV: Model
 
 
 type alias Model =
     { status : Status
     , title : String
     , root : Dashboard
+    , balance : String
+    , flagUrl : Url
+    , havenoAPKHttpRequest : Maybe HavenoAPKHttpRequest
+    , version : Maybe GetVersionReply
+    , errors : List String
     }
 
 
@@ -36,32 +56,40 @@ type Status
 
 -- | Loaded
 -- | Errored
-
-
-initialModel : Model
-initialModel =
-    { status = Loading
-    , title = "Dashboard"
-    , root = Dashboard { name = "Loading..." }
-    }
-
-
-
 {- -- NOTE: by calling (from Main) Tuple.first (Dashboard.init ()) , we’ll end up with
    the Dashboard.Model value we seek. () means we don't really care what goes in, we just
    want the output (in this case the model (slightly modified))
 -}
+-- NAV: Init
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( { initialModel | title = "Haveno-Web Dashboard" }
-    , Cmd.none
+init : FromMainToDashboard -> ( Model, Cmd Msg )
+init fromMainToDashboard =
+    let
+        -- REVIEW: Not yet clear how/if this will be used here
+        devOrProdServer =
+            if String.contains Consts.localorproductionServerAutoCheck fromMainToDashboard.flagUrl.host then
+                Url fromMainToDashboard.flagUrl.protocol fromMainToDashboard.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
+
+            else
+                Url fromMainToDashboard.flagUrl.protocol fromMainToDashboard.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
+
+        newModel =
+            Model Loading "Haveno-Web Dashboard" (Dashboard { name = "Loading..." }) "0.00" fromMainToDashboard.flagUrl (Just (HavenoAPKHttpRequest Consts.post [] "" Http.emptyBody Nothing Nothing)) Nothing []
+    in
+    ( newModel
+    , sendVersionRequest {}
     )
 
 
 type Msg
     = GotInitialModel Model
+    | BalanceResponse (Result Http.Error SuccessfullBalanceResult)
+    | GotVersion (Result Grpc.Error GetVersionReply)
+
+
+
+-- NAV: Update
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -70,8 +98,65 @@ update msg model =
         {- -- NOTE: This was originally setup to work with an Http Result (branch on OK and Err)
            but we're just handling the initialModel - not really doing much
         -}
+        GotVersion (Ok versionResp) ->
+            ( { model | version = Just versionResp }, Cmd.none )
+
+        GotVersion (Err _) ->
+            ( { model | version = model.version }, Cmd.none )
+
         GotInitialModel newModel ->
             ( { newModel | title = model.title }, Cmd.none )
+
+        BalanceResponse (Ok auth) ->
+            let
+                headers =
+                    -- NOTE: the 'Zoho-oauthtoken' sent at this point is the access token received after refresh
+                    [ Http.header "Authorization" ("Bearer " ++ withDefault "No access token 2" (Just auth.deployment_model)) ]
+
+                -- incorporate new header with access token and update middleware port
+                flagUrlWithMongoDBMWAndPortUpdate =
+                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
+                        Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.middleWarePath Nothing Nothing
+
+                    else
+                        Url.toString <| Url.Url model.flagUrl.protocol model.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
+
+                newHttpParams =
+                    HavenoAPKHttpRequest Consts.get headers flagUrlWithMongoDBMWAndPortUpdate Http.emptyBody Nothing Nothing
+
+                {- apiSpecs =
+                   model.apiSpecifics
+                -}
+                -- HACK:
+                newModel =
+                    { model
+                        | havenoAPKHttpRequest = Just newHttpParams
+
+                        --, queryType = LoggedInUser
+                    }
+            in
+            ( newModel
+            , -- NOTE: if you want to run a function based on the response can here:
+              Cmd.none
+              --loginRequest newModel
+              --sendPostDataToMongoDBMW newModel
+            )
+
+        BalanceResponse (Err responseErr) ->
+            let
+                respErr =
+                    Consts.httpErrorToString responseErr
+
+                {- apiSpecs =
+                       model.apiSpecifics
+
+                   newapiSpecs =
+                       { apiSpecs | accessToken = Nothing }
+                -}
+            in
+            ( { model | errors = model.errors ++ [ respErr ] }
+            , Cmd.none
+            )
 
 
 
@@ -80,12 +165,12 @@ update msg model =
 
 
 view : Model -> Html msg
-view _ =
-    content
+view model =
+    content model
 
 
-content : Html msg
-content =
+content : Model -> Html msg
+content model =
     section [ Attr.id "page", class "section-background" ]
         [ div [ class "container container--narrow" ]
             [ h1 [ classList [ ( "text-center", True ), ( "Dashboard", True ) ] ]
@@ -95,14 +180,107 @@ content =
             , div []
                 [ div [ class "text-center" ]
                     [ text "Welcome to Haveno Web, the online decentralized exchange for Haveno, the private, untraceable cryptocurrency."
-                    
-                    
                     ]
                 ]
             , div []
                 [ div [ class "text-center" ]
-                    [ text "Your balance is:"
+                    [ text "Your version is:"
+                    ]
+                ]
+            , div []
+                [ div [ class "text-center" ]
+                    [ text (Maybe.withDefault "" (model.version |> Maybe.map .version))
                     ]
                 ]
             ]
         ]
+
+
+
+-- NAV: Type Aliases
+
+
+type alias SuccessfullVersion =
+    { version : String }
+
+
+type alias SuccessfullBalanceResult =
+    { deployment_model : String
+    , location : String
+    , hostname : String
+    , ws_hostname : String
+    }
+
+
+type alias FromMainToDashboard =
+    { time : Maybe DateTime
+    , flagUrl : Url.Url
+    }
+
+
+type alias HavenoAPKHttpRequest =
+    { method : String
+    , headers : List Header
+    , url : String
+    , body : Body
+    , timeout : Maybe Float
+    , tracker : Maybe String
+    }
+
+
+
+-- NAV: Http requests
+-- Function to create the GetVersionRequest
+
+
+-- NAV: Http requests
+-- Function to create the GetVersionRequest
+
+createVersionRequest : GetVersionRequest
+createVersionRequest =
+    -- Initialize the request as needed
+    {}
+
+-- Define the getVersion function
+{- getVersion : Grpc.Rpc GetVersionRequest GetVersionReply
+getVersion =
+     Grpc.new getVersion createVersionRequest
+        --|> Grpc.addHeader "authorization" token
+        |> Grpc.setHost "http://example.com" Grpc.Ok_ -}
+
+
+
+-- Define the Rpc endpoint
+
+
+-- Function to make the HTTP request
+sendVersionRequest : GetVersionRequest -> Cmd Msg
+sendVersionRequest request =
+    let
+        grpcRequest =
+            Grpc.new getVersion request
+                |> Grpc.addHeader "password" "apitest"
+                |> Grpc.addHeader "Content-Type" "application/grpc-web+proto"
+                |> Grpc.setHost "http://localhost:8080"
+
+        
+    in
+        Grpc.toCmd GotVersion grpcRequest
+
+
+
+-- NAV: Json Decoders
+
+
+versionDecoder : Decoder String
+versionDecoder =
+    field "version" D.string
+
+
+balanceDecoder : Decoder SuccessfullBalanceResult
+balanceDecoder =
+    D.map4 SuccessfullBalanceResult
+        (field "deployment_model" D.string)
+        (field "location" D.string)
+        (field "hostname" D.string)
+        (field "ws_hostname" D.string)

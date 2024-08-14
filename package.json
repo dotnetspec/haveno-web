@@ -4,16 +4,19 @@
   "description": "Mobile-first web app for Haveno",
   "main": "js/elm.js",
   "scripts": {
-    "unit": "elm-test 'src/**/Tests/Test*.elm' --fuzz 100" ,
+    "unit": "elm-test 'src/**/Tests/Test*.elm' --fuzz 100",
     "middleware": "node middleware/mongodbMW.js",
     "spec": "npx elm-spec --specRoot ./",
-    "debug" : "elm make src/Main.elm --output=js/elm.js --debug",
+    "debug": "elm make src/Main.elm --output=js/elm.js --debug",
     "optimize": "elm make src/Main.elm --output=js/elm.js --optimize"
   },
   "author": "FreeRoss",
   "license": "AGPL-3.0",
   "dependencies": {
+    "@x-cmd-pkg/grpcurl": "^0.0.0-v1.8.9-meta.yml",
     "cors": "^2.8.5",
+    "grpc-web": "^1.5.0",
+    "haveno-ts": "^0.0.27",
     "mime": "^3.0.0",
     "mongodb": "^6.1.0",
     "realm": "^12.2.0"

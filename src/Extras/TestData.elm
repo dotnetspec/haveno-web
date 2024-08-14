@@ -9,6 +9,11 @@ import Time exposing (Posix, millisToPosix, utc)
 import Url exposing (Protocol(..), Url)
 
 
+getVersionReplyURL : String
+getVersionReplyURL =
+    "http://localhost:9999/GetVersion"
+
+
 availabilityRequestURL27_Feb_2024_14_09 : String
 availabilityRequestURL27_Feb_2024_14_09 =
     "http://localhost:3000/proxy?apiUrl=https://www.zohoapis.com/bookings/v1/json/availableslots&query_type=bookingsAvailability&service_id=4503471000000091024&staff_id=4503471000000033016&selected_date=27-Feb-2024 14:09"
@@ -40,15 +45,23 @@ loginRequestCallURL =
     "https://ap-southeast-1.aws.realm.mongodb.com/api/client/v2.0/app/sr-espa1-snonq/functions/call"
 
 
-mongoMWUrl : Url
-mongoMWUrl =
-    Url Http "localhost" (Just 3000) "/middleware" Nothing Nothing
+placeholderUrl : Url
+placeholderUrl =
+    Url Http "localhost" (Just 3000) "" Nothing Nothing
 
 
 rankingsUrl : Url
 rankingsUrl =
     Url Http "localhost" (Just 5501) "/rankings" Nothing Nothing
 
+
+
+successfullVersionFetch : Stub.HttpResponseStub
+successfullVersionFetch =
+    
+    Stub.for (Route.post getVersionReplyURL)
+        --Stub.for (Route.post (Url.toString placeholderUrl))
+        |> Stub.withBody (Stub.withText "1.0.7")
 
 failedLogin : Stub.HttpResponseStub
 failedLogin =
@@ -60,7 +73,7 @@ failedLogin =
                 , ( "link", E.string "https://services.cloud.mongodb.com/groups/62c2926accd1a85c9abe4c0d/apps/62f4815cdf2bbee9f10cd109/logs?co_id=662b0069154db56fcc2d050f" )
                 ]
     in
-    Stub.for (Route.post (Url.toString mongoMWUrl))
+    Stub.for (Route.post (Url.toString placeholderUrl))
         |> Stub.withBody (Stub.withJson jsonObject)
 
 
@@ -81,7 +94,7 @@ successfullLoginFetch =
                 ]
     in
     Stub.for (Route.post loginRequestURL)
-        --Stub.for (Route.post (Url.toString mongoMWUrl))
+        --Stub.for (Route.post (Url.toString placeholderUrl))
         |> Stub.withBody (Stub.withJson jsonObject)
 
 

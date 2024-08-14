@@ -43,7 +43,7 @@ runSpecTests =
           scenario "1. Connecting the Hardware Wallet"
             (given
                 (Setup.init
-                    (Pages.Hardware.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
+                    (Pages.Hardware.init { time = Nothing, flagUrl = TestData.placeholderUrl })
                     |> Setup.withView Pages.Hardware.view
                     |> Setup.withUpdate Pages.Hardware.update
                     |> Stub.serve [ TestData.successfullLocationFetch ]

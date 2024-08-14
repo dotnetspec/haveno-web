@@ -3,6 +3,7 @@ module Extras.Constants exposing (..)
 import Json.Encode as E
 import Time exposing (..)
 import Url exposing (Protocol(..), Url)
+import Http exposing (..)
 
 
 
@@ -332,3 +333,21 @@ callRequestJson =
 
         --]
         ]
+
+httpErrorToString : Http.Error -> String
+httpErrorToString err =
+    case err of
+        Http.BadUrl url ->
+            "Bad URL: " ++ url
+
+        Http.Timeout ->
+            "Request timed out"
+
+        Http.NetworkError ->
+            "Network error occurred"
+
+        Http.BadStatus status ->
+            "Bad status: " ++ String.fromInt status
+
+        Http.BadBody body ->
+            "Bad body: " ++ body
