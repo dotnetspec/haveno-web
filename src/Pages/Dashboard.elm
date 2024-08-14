@@ -236,23 +236,6 @@ type alias HavenoAPKHttpRequest =
 -- NAV: Http requests
 -- Function to create the GetVersionRequest
 
-createVersionRequest : GetVersionRequest
-createVersionRequest =
-    -- Initialize the request as needed
-    {}
-
--- Define the getVersion function
-{- getVersion : Grpc.Rpc GetVersionRequest GetVersionReply
-getVersion =
-     Grpc.new getVersion createVersionRequest
-        --|> Grpc.addHeader "authorization" token
-        |> Grpc.setHost "http://example.com" Grpc.Ok_ -}
-
-
-
--- Define the Rpc endpoint
-
-
 -- Function to make the HTTP request
 sendVersionRequest : GetVersionRequest -> Cmd Msg
 sendVersionRequest request =
@@ -260,7 +243,7 @@ sendVersionRequest request =
         grpcRequest =
             Grpc.new getVersion request
                 |> Grpc.addHeader "password" "apitest"
-                |> Grpc.addHeader "Content-Type" "application/grpc-web+proto"
+                -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
                 |> Grpc.setHost "http://localhost:8080"
 
         

@@ -9,9 +9,13 @@ import Time exposing (Posix, millisToPosix, utc)
 import Url exposing (Protocol(..), Url)
 
 
-getVersionReplyURL : String
-getVersionReplyURL =
-    "http://localhost:9999/GetVersion"
+grpcsetHostURL  : String
+grpcsetHostURL  =
+    -- NOTE: Without final "/" get Err: An attempt was made to load a file from disk, but this 
+    -- runner does not support that capability.
+    "http://localhost:8080/io.haveno.protobuffer.GetVersion/GetVersion/"
+
+    --/io.haveno.protobuffer.GetVersion/GetVersion
 
 
 availabilityRequestURL27_Feb_2024_14_09 : String
@@ -59,7 +63,7 @@ rankingsUrl =
 successfullVersionFetch : Stub.HttpResponseStub
 successfullVersionFetch =
     
-    Stub.for (Route.post getVersionReplyURL)
+    Stub.for (Route.post grpcsetHostURL )
         --Stub.for (Route.post (Url.toString placeholderUrl))
         |> Stub.withBody (Stub.withText "1.0.7")
 

@@ -92,10 +92,10 @@ runSpecTests =
                     |> Setup.withUpdate Pages.Dashboard.update
                     |> Stub.serve [ TestData.successfullVersionFetch ]
                 )
-                {- |> Spec.when "we log the http requests"
+                |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
                    ]
-                -}
+               
                 |> Spec.observeThat
                     [ it "displays Haveno version number on the Dashboard page"
                         (Markup.observeElement

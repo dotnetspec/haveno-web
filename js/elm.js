@@ -12735,7 +12735,7 @@ var $author$project$Main$footerContent = A2(
 							_List_Nil,
 							_List_fromArray(
 								[
-									$elm$html$Html$text('Version 0.0.1')
+									$elm$html$Html$text('Version 0.0.2')
 								]))
 						]))
 				]))
