@@ -9,11 +9,15 @@
     "spec": "npx elm-spec-runner --specRoot ./",
     "debug": "elm make src/Main.elm --output=js/elm.js --debug",
     "optimize": "elm make src/Main.elm --output=js/elm.js --optimize",
-    "terminals": "./openterminals.sh"
+    "terminals": "./openterminals.sh",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
   },
   "author": "FreeRoss",
   "license": "AGPL-3.0",
   "dependencies": {
+    "@ledgerhq/wallet-api-client": "^1.5.9",
     "@x-cmd-pkg/grpcurl": "^0.0.0-v1.8.9-meta.yml",
     "cors": "^2.8.5",
     "elm-spec-runner": "^2.5.1",
@@ -21,7 +25,9 @@
     "haveno-ts": "^0.0.27",
     "mime": "^3.0.0",
     "mongodb": "^6.1.0",
-    "realm": "^12.2.0"
+    "realm": "^12.2.0",
+    "vite": "^5.4.1",
+    "vite-plugin-html": "^3.2.2"
   },
   "devDependencies": {
     "vite-plugin-pwa": "^0.16.4"

@@ -68,7 +68,6 @@ old colors:
 @import 'above800px.css' screen and (min-width: 800px);
 @import 'forms.css';
 
-
 /* NOTE: Kevin's standard defaults */
 /* NOTE: This class is assoc. with the 'section' element and hence
 determines style for all the text */
@@ -98,10 +97,8 @@ a {
   font-weight: normal;
 }
 
-/* 
-NOTE: Format most the lists points as follows. There are some 
-overwrites e.g. in topLinks
-*/
+/* NOTE: Format most the lists points as follows. There are some
+overwrites e.g. in topLinks */
 li {
   padding: 1rem;
   box-sizing: border-box;
@@ -173,13 +170,13 @@ nav img {
   /* display: none; */
 }
 
-.nav-toggle:checked~nav {
+.nav-toggle:checked ~ nav {
   display: block;
   transform: scale(1, 1);
 }
 
 /* NOTE: ~ nav - means look for a nav that's a sibling of nav-toggle  */
-.nav-toggle:checked~nav a {
+.nav-toggle:checked ~ nav a {
   opacity: 1;
   transition: opacity 250ms ease-in-out 250ms;
 }
@@ -192,7 +189,7 @@ nav img {
   left: -9999px !important;
 }
 
-.nav-toggle:focus~.nav-toggle-label {
+.nav-toggle:focus ~ .nav-toggle-label {
   outline: 3px solid rgba(lightblue, 0.75);
 }
 
@@ -247,7 +244,8 @@ nav img {
 
 /* NOTE: Custom design specific link on the page */
 
-a[href="https://squashpassion.com/partnerbb/"] {
+a[href="https://squashpassion.com/partnerbb/"]
+{
   background-color: #f44336;
   color: white;
   padding: 1em 1em;
@@ -269,7 +267,6 @@ Optional */
   width: 100%;
   font-size: large;
   z-index: 2;
- 
 }
 
 .socials-sub-container {
@@ -320,7 +317,6 @@ i a:hover {
 /* NAV: @media column width */
 /* NOTE: These media queries are for when we have MORE space and are for the text/img cols */
 @media (min-width: 60em) {
-
   /* NOTE: If there's enough space go back to row: */
   .split {
     flex-direction: row;
@@ -328,20 +324,21 @@ i a:hover {
 
   /* NOTE: Operate on all the direct children of .split.
   flex-basis is setting the ideal width you want something to be: */
-  .split>* {
+  .split > * {
     flex-basis: 100%;
   }
 
   /* NOTE: Make some space between cols.
   * + * is the adjacent sibling selector. Any element that has a sibling
   before it. IOW, if it doesn't have a sibling before it it won't create a gap  */
-  .split>*+* {
+  .split > * + * {
     margin-left: 2em;
   }
 }
 
 /* NOTE: Be consistent with the previous one */
-@media (min-width: 60em) {}
+@media (min-width: 60em) {
+}
 
 .spinner {
   display: inline-block;
@@ -356,6 +353,11 @@ i a:hover {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }

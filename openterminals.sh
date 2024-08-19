@@ -36,5 +36,5 @@ gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/haveno-dex/haveno-t
 
 # -- NOTE: We're using elm-merge folder here:
 
-gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/elm-merge/haveno-web && npx http-server -p 5500 --cors; exec bash"
+#gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/elm-merge/haveno-web && npx http-server -p 5500 --cors; exec bash"
 #'

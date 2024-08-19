@@ -97,7 +97,7 @@ header {
   flex: 0;
 }
 
-/* NOTE: Avoid gaps at top of lists */
+/* Avoid gaps at top of lists */
 ul {
   margin: 0;
 }
