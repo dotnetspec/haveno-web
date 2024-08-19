@@ -2846,13 +2846,13 @@ locationRequest : Model -> Cmd Msg
 locationRequest model =
     let
         -- NOTE: It's the ToMongoDBMWConfig that are a Maybe (not the body)
-        toMongoDBMWConfig =
+        {- toMongoDBMWConfig =
             case model.toMongoDBMWConfig of
                 Just mongodbmwPrams ->
                     mongodbmwPrams
 
                 Nothing ->
-                    ToMongoDBMWConfig "" [] "testPostRequest error" Http.emptyBody Nothing Nothing
+                    ToMongoDBMWConfig "" [] "testPostRequest error" Http.emptyBody Nothing Nothing -}
 
         {- headers =
            -- NOTE: the 'Zoho-oauthtoken' sent at this point is the access token received after refresh

@@ -30,6 +30,8 @@ import Time exposing (..)
 import Types.DateType as DateType
 import Url exposing (Protocol(..), Url)
 
+
+
 -- NOTE: Local test setup
 -- NOTE: App.Model and App.Msg are type paramters for the Spec type
 -- They make Spec type more flexible as it can be used with any model and msg types
@@ -52,7 +54,7 @@ runSpecTests =
     describe
         "Scenarios based on a Haveno Web App MVP"
         [ --Runner.pick <|
-          --, Runner.skip <|
+          --Runner.skip <|
           scenario "1. Accessing the Web App via Tor Browser"
             (given
                 (Setup.init
@@ -62,7 +64,7 @@ runSpecTests =
                     (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.placeholderUrl })
                     |> Setup.withView Pages.Dashboard.view
                     |> Setup.withUpdate Pages.Dashboard.update
-                    |> Stub.serve [ TestData.failedMongodbLoginStub ]
+                    |> Stub.serve [ TestData.successfullVersionFetch ]
                 )
                 {- |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
@@ -82,7 +84,8 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario "2: Display user's on device balance"
+        , --Runner.skip <|
+          scenario "2: Display the Haveno core app version number"
             (given
                 (Setup.init
                     -- NOTE: We have to use testInit cos we don't have a Nav.Key to initialize with
@@ -93,9 +96,8 @@ runSpecTests =
                     |> Stub.serve [ TestData.successfullVersionFetch ]
                 )
                 |> Spec.when "we log the http requests"
-                   [ Spec.Http.logRequests
-                   ]
-               
+                    [ Spec.Http.logRequests
+                    ]
                 |> Spec.observeThat
                     [ it "displays Haveno version number on the Dashboard page"
                         (Markup.observeElement
@@ -110,138 +112,140 @@ runSpecTests =
                         )
                     ]
             )
-        {- , scenario "3. Connecting the Dashboard Wallet"
-            (given
-                (Setup.init
-                    (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
-                    |> Setup.withView Pages.Dashboard.view
-                    |> Setup.withUpdate Pages.Dashboard.update
-                    |> Stub.serve [ TestData.successfullLocationFetch ]
-                )
-                |> when "we simulate clicking the login button"
-                    [ Spec.Command.send <| Spec.Command.fake (Pages.Dashboard.ClickedLogInUser 
-                    --{ email = "k223445687@k.com", password = "nonExistent" }
-                        { email = "", password = "" }
-                    ) ]
-                {- |> Spec.when "we log the http requests"
-                   [ Spec.Http.logRequests
-                   ]
-                -}
-                |> Spec.observeThat
-                    [ it "displays a 'successfully talking to the hardware wallet' message from the Dashboard page"
-                        (Markup.observeElement
-                            |> Markup.query
-                            -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
-                            << by [ tag "h5" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Successfully talking to the hardware wallet"
-                                )
-                        )
-                    ]
-            ) -}
 
+        {- , scenario "3. Connecting the Dashboard Wallet"
+           (given
+               (Setup.init
+                   (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
+                   |> Setup.withView Pages.Dashboard.view
+                   |> Setup.withUpdate Pages.Dashboard.update
+                   |> Stub.serve [ TestData.successfullLocationFetch ]
+               )
+               |> when "we simulate clicking the login button"
+                   [ Spec.Command.send <| Spec.Command.fake (Pages.Dashboard.ClickedLogInUser
+                   --{ email = "k223445687@k.com", password = "nonExistent" }
+                       { email = "", password = "" }
+                   ) ]
+               {- |> Spec.when "we log the http requests"
+                  [ Spec.Http.logRequests
+                  ]
+               -}
+               |> Spec.observeThat
+                   [ it "displays a 'successfully talking to the hardware wallet' message from the Dashboard page"
+                       (Markup.observeElement
+                           |> Markup.query
+                           -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
+                           << by [ tag "h5" ]
+                           |> Spec.expect
+                               (Claim.isSomethingWhere <|
+                                   Markup.text <|
+                                       Claim.isStringContaining 1 "Successfully talking to the hardware wallet"
+                               )
+                       )
+                   ]
+           )
+        -}
         --Runner.pick <|
         --, Runner.skip <|
         {- , scenario "3. Display An Active User On Login Succeed"
-            (given
-                (Setup.init
-                    (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
-                    |> Setup.withView Pages.Dashboard.view
-                    |> Setup.withUpdate Pages.Dashboard.update
-                    |> Stub.serve
-                        [ TestData.successfullLocationFetch
-                        , TestData.successfullLoginFetch
-                        , TestData.successfullProfileFetch
-                        , TestData.successfullCallResponse
-                        ]
-                )
-                |> when "the user submits the login form"
-                    [ Spec.Command.send <| Spec.Command.fake (Pages.Dashboard.ClickedLogInUser { email = "k2@k.com", password = "Pa55w0rd" }) ]
-                {- |> Spec.when "we log the http requests"
-                   [ Spec.Http.logRequests
-                   ]
-                -}
-                |> Spec.observeThat
-                    [ it "requests the realm server location"
-                        (Spec.Http.observeRequests
-                            -- NOTE: Copy the route from the logRequest above (assuming app actually makes the correct request)
-                            -- to ensure it matches the request the app attempts.
-                            -- otherwise, you would get a 404 response code if your program attempts to make a request that is not stubbed
-                            -- NOTE: The route only appears in RED in the test results in terminal if it's correctly specified here:
-                            (Route.get TestData.loginRequestLocationURL)
-                            |> expect
-                                (Claim.isListWhere
-                                    [ Spec.Http.url <|
-                                        -- HACK: These are not good tests currently:
-                                        Claim.isStringContaining 1 "realm.mongodb.com"
-                                    ]
-                                )
-                        )
-                    , it "makes the login request"
-                        (Spec.Http.observeRequests
-                            (Route.post TestData.loginRequestURL)
-                            |> expect
-                                (Claim.isListWhere
-                                    [ Spec.Http.url <|
-                                        Claim.isStringContaining 1 "local-userpass/login"
-                                    ]
-                                )
-                        )
-                    , it "sends the access token in the profile request"
-                        (Spec.Http.observeRequests
-                            (Route.get TestData.loginRequestProfileURL)
-                            |> expect
-                                (Claim.isListWhere
-                                    [ Spec.Http.header "Authorization" <|
-                                        Claim.isSomethingWhere <|
-                                            Claim.isStringContaining 1 "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYWFzX2RldmljZV9pZCI6IjY2MmEyMjFiNDc1Yzk3YWY2YTFlYmRiNCIsImJhYXNfZG9tYWluX2lkIjoiNjJmNDgxNWNkZjJiYmVlOWYxMGNkMTBhIiwiZXhwIjoxNzE0MTIwMTY5LCJpYXQiOjE3MTQxMTgzNjksImlzcyI6IjY2MmI1ZWUxMjBlMTVmMDNhOTVjMWM4NyIsImp0aSI6IjY2MmI1ZWUxMjBlMTVmMDNhOTVjMWM4OSIsInN0aXRjaF9kZXZJZCI6IjY2MmEyMjFiNDc1Yzk3YWY2YTFlYmRiNCIsInN0aXRjaF9kb21haW5JZCI6IjYyZjQ4MTVjZGYyYmJlZTlmMTBjZDEwYSIsInN1YiI6IjY1MWZhMDA2YjE1YTUzNGM2OWIxMTllZiIsInR5cCI6ImFjY2VzcyJ9.DpiBqSs8bPuanHw9VqHeSkqjSc84SLCQN-OWcePHQ8g"
-                                    ]
-                                )
-                        )
-                    , it "sends the access token in the call request"
-                        (Spec.Http.observeRequests
-                            (Route.post TestData.loginRequestCallURL)
-                            |> expect
-                                (Claim.isListWhere
-                                    [ Spec.Http.header "Authorization" <|
-                                        Claim.isSomethingWhere <|
-                                            Claim.isStringContaining 1 "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYWFzX2RldmljZV9pZCI6IjY2MmEyMjFiNDc1Yzk3YWY2YTFlYmRiNCIsImJhYXNfZG9tYWluX2lkIjoiNjJmNDgxNWNkZjJiYmVlOWYxMGNkMTBhIiwiZXhwIjoxNzE0MTIwMTY5LCJpYXQiOjE3MTQxMTgzNjksImlzcyI6IjY2MmI1ZWUxMjBlMTVmMDNhOTVjMWM4NyIsImp0aSI6IjY2MmI1ZWUxMjBlMTVmMDNhOTVjMWM4OSIsInN0aXRjaF9kZXZJZCI6IjY2MmEyMjFiNDc1Yzk3YWY2YTFlYmRiNCIsInN0aXRjaF9kb21haW5JZCI6IjYyZjQ4MTVjZGYyYmJlZTlmMTBjZDEwYSIsInN1YiI6IjY1MWZhMDA2YjE1YTUzNGM2OWIxMTllZiIsInR5cCI6ImFjY2VzcyJ9.DpiBqSs8bPuanHw9VqHeSkqjSc84SLCQN-OWcePHQ8g"
-                                    ]
-                                )
-                        )
-                    , it "correctly formats selected fields in the json in the POST request"
-                        (Spec.Http.observeRequests (Route.post TestData.loginRequestCallURL)
-                            |> expect
-                                -- NOTE: list each POST request i.e. token validation and then booking request
-                                (Claim.isListWhere
-                                    [ Spec.Http.body
-                                        (Spec.Http.asJson <| D.at [ "arguments", "0", "pipeline", "0", "$match", "_id", "$oid" ] D.string)
-                                        (Claim.isStringContaining 1 "651fa006b15a534c69b119ef")
+           (given
+               (Setup.init
+                   (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
+                   |> Setup.withView Pages.Dashboard.view
+                   |> Setup.withUpdate Pages.Dashboard.update
+                   |> Stub.serve
+                       [ TestData.successfullLocationFetch
+                       , TestData.successfullLoginFetch
+                       , TestData.successfullProfileFetch
+                       , TestData.successfullCallResponse
+                       ]
+               )
+               |> when "the user submits the login form"
+                   [ Spec.Command.send <| Spec.Command.fake (Pages.Dashboard.ClickedLogInUser { email = "k2@k.com", password = "Pa55w0rd" }) ]
+               {- |> Spec.when "we log the http requests"
+                  [ Spec.Http.logRequests
+                  ]
+               -}
+               |> Spec.observeThat
+                   [ it "requests the realm server location"
+                       (Spec.Http.observeRequests
+                           -- NOTE: Copy the route from the logRequest above (assuming app actually makes the correct request)
+                           -- to ensure it matches the request the app attempts.
+                           -- otherwise, you would get a 404 response code if your program attempts to make a request that is not stubbed
+                           -- NOTE: The route only appears in RED in the test results in terminal if it's correctly specified here:
+                           (Route.get TestData.loginRequestLocationURL)
+                           |> expect
+                               (Claim.isListWhere
+                                   [ Spec.Http.url <|
+                                       -- HACK: These are not good tests currently:
+                                       Claim.isStringContaining 1 "realm.mongodb.com"
+                                   ]
+                               )
+                       )
+                   , it "makes the login request"
+                       (Spec.Http.observeRequests
+                           (Route.post TestData.loginRequestURL)
+                           |> expect
+                               (Claim.isListWhere
+                                   [ Spec.Http.url <|
+                                       Claim.isStringContaining 1 "local-userpass/login"
+                                   ]
+                               )
+                       )
+                   , it "sends the access token in the profile request"
+                       (Spec.Http.observeRequests
+                           (Route.get TestData.loginRequestProfileURL)
+                           |> expect
+                               (Claim.isListWhere
+                                   [ Spec.Http.header "Authorization" <|
+                                       Claim.isSomethingWhere <|
+                                           Claim.isStringContaining 1 "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYWFzX2RldmljZV9pZCI6IjY2MmEyMjFiNDc1Yzk3YWY2YTFlYmRiNCIsImJhYXNfZG9tYWluX2lkIjoiNjJmNDgxNWNkZjJiYmVlOWYxMGNkMTBhIiwiZXhwIjoxNzE0MTIwMTY5LCJpYXQiOjE3MTQxMTgzNjksImlzcyI6IjY2MmI1ZWUxMjBlMTVmMDNhOTVjMWM4NyIsImp0aSI6IjY2MmI1ZWUxMjBlMTVmMDNhOTVjMWM4OSIsInN0aXRjaF9kZXZJZCI6IjY2MmEyMjFiNDc1Yzk3YWY2YTFlYmRiNCIsInN0aXRjaF9kb21haW5JZCI6IjYyZjQ4MTVjZGYyYmJlZTlmMTBjZDEwYSIsInN1YiI6IjY1MWZhMDA2YjE1YTUzNGM2OWIxMTllZiIsInR5cCI6ImFjY2VzcyJ9.DpiBqSs8bPuanHw9VqHeSkqjSc84SLCQN-OWcePHQ8g"
+                                   ]
+                               )
+                       )
+                   , it "sends the access token in the call request"
+                       (Spec.Http.observeRequests
+                           (Route.post TestData.loginRequestCallURL)
+                           |> expect
+                               (Claim.isListWhere
+                                   [ Spec.Http.header "Authorization" <|
+                                       Claim.isSomethingWhere <|
+                                           Claim.isStringContaining 1 "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYWFzX2RldmljZV9pZCI6IjY2MmEyMjFiNDc1Yzk3YWY2YTFlYmRiNCIsImJhYXNfZG9tYWluX2lkIjoiNjJmNDgxNWNkZjJiYmVlOWYxMGNkMTBhIiwiZXhwIjoxNzE0MTIwMTY5LCJpYXQiOjE3MTQxMTgzNjksImlzcyI6IjY2MmI1ZWUxMjBlMTVmMDNhOTVjMWM4NyIsImp0aSI6IjY2MmI1ZWUxMjBlMTVmMDNhOTVjMWM4OSIsInN0aXRjaF9kZXZJZCI6IjY2MmEyMjFiNDc1Yzk3YWY2YTFlYmRiNCIsInN0aXRjaF9kb21haW5JZCI6IjYyZjQ4MTVjZGYyYmJlZTlmMTBjZDEwYSIsInN1YiI6IjY1MWZhMDA2YjE1YTUzNGM2OWIxMTllZiIsInR5cCI6ImFjY2VzcyJ9.DpiBqSs8bPuanHw9VqHeSkqjSc84SLCQN-OWcePHQ8g"
+                                   ]
+                               )
+                       )
+                   , it "correctly formats selected fields in the json in the POST request"
+                       (Spec.Http.observeRequests (Route.post TestData.loginRequestCallURL)
+                           |> expect
+                               -- NOTE: list each POST request i.e. token validation and then booking request
+                               (Claim.isListWhere
+                                   [ Spec.Http.body
+                                       (Spec.Http.asJson <| D.at [ "arguments", "0", "pipeline", "0", "$match", "_id", "$oid" ] D.string)
+                                       (Claim.isStringContaining 1 "651fa006b15a534c69b119ef")
 
-                                    {- , Spec.Http.body
-                                       (Spec.Http.asJson <| D.at [ "arguments", "0"] D.string)
-                                           D.field "collection" D.string
-                                       )
-                                       (Claim.isStringContaining 1 "users")
-                                    -}
-                                    ]
-                                )
-                        )
-                    , it "the page should display the user's rankings and details (global view)"
-                        (Markup.observeElement
-                            |> Markup.query
-                            -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
-                            << by [ tag "h5" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "SportRank - Welcome Back - Dave"
-                                )
-                        )
-                    ]
-            ) -}
+                                   {- , Spec.Http.body
+                                      (Spec.Http.asJson <| D.at [ "arguments", "0"] D.string)
+                                          D.field "collection" D.string
+                                      )
+                                      (Claim.isStringContaining 1 "users")
+                                   -}
+                                   ]
+                               )
+                       )
+                   , it "the page should display the user's rankings and details (global view)"
+                       (Markup.observeElement
+                           |> Markup.query
+                           -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
+                           << by [ tag "h5" ]
+                           |> Spec.expect
+                               (Claim.isSomethingWhere <|
+                                   Markup.text <|
+                                       Claim.isStringContaining 1 "SportRank - Welcome Back - Dave"
+                               )
+                       )
+                   ]
+           )
+        -}
         ]
 
 

@@ -24,11 +24,14 @@
   <link rel="icon" href="data:," />
   <base href="./" />
 
-  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:5500;"> -->
+ <!--  <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:5500;"> -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src *; script-src *; style-src *; img-src *; connect-src *;"> -->
+
   <!-- <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com"> -->
   <!-- For Development - wide open security policy - 
     -- NOTE: Mobile browsers may well apply their own regardless 
     Unless you use explicit tags like 'unsafe-inline' the security policy will generally tighten up security -->
+    <!-- -- NOTE: The unsafe-inline directive in CSP WON'T address CORS issues. -->
   <meta http-equiv="Content-Security-Policy" content="unsafe-inline" />
   <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'"> -->
 
@@ -175,7 +178,7 @@ not e.g. Elm.MyApp ... etc */
 //const socket = new WebSocket('ws://localhost:3000');
 
 // Listen for messages from the server
-socket.addEventListener('message', (event) => {
+/* socket.addEventListener('message', (event) => {
   try {
     const data = JSON.parse(event.data);
     console.log('Data from server: ', data);
@@ -183,7 +186,7 @@ socket.addEventListener('message', (event) => {
   } catch (error) {
     console.error('Invalid JSON:', event.data);
   }
-});
+}); */
 
 async function sendWebSocketChangeEventFromMongoDbToElmPort(applicationData) {
   //NOTE: Notes in register.js

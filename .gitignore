@@ -8,3 +8,4 @@ proxy/node_modules
 node_modules
 pwa/android/*
 
+package-lock.json

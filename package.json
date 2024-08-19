@@ -6,15 +6,17 @@
   "scripts": {
     "unit": "elm-test 'src/**/Tests/Test*.elm' --fuzz 100",
     "middleware": "node middleware/mongodbMW.js",
-    "spec": "npx elm-spec --specRoot ./",
+    "spec": "npx elm-spec-runner --specRoot ./",
     "debug": "elm make src/Main.elm --output=js/elm.js --debug",
-    "optimize": "elm make src/Main.elm --output=js/elm.js --optimize"
+    "optimize": "elm make src/Main.elm --output=js/elm.js --optimize",
+    "terminals": "./openterminals.sh"
   },
   "author": "FreeRoss",
   "license": "AGPL-3.0",
   "dependencies": {
     "@x-cmd-pkg/grpcurl": "^0.0.0-v1.8.9-meta.yml",
     "cors": "^2.8.5",
+    "elm-spec-runner": "^2.5.1",
     "grpc-web": "^1.5.0",
     "haveno-ts": "^0.0.27",
     "mime": "^3.0.0",

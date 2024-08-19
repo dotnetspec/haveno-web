@@ -9,13 +9,15 @@ import Time exposing (Posix, millisToPosix, utc)
 import Url exposing (Protocol(..), Url)
 
 
-grpcsetHostURL  : String
-grpcsetHostURL  =
-    -- NOTE: Without final "/" get Err: An attempt was made to load a file from disk, but this 
+grpcsetHostURL : String
+grpcsetHostURL =
+    -- NOTE: Without final "/" get Err: An attempt was made to load a file from disk, but this
     -- runner does not support that capability.
-    "http://localhost:8080/io.haveno.protobuffer.GetVersion/GetVersion/"
+    "http://localhost:8080/io.haveno.protobuffer.GetVersion/GetVersion"
 
-    --/io.haveno.protobuffer.GetVersion/GetVersion
+
+
+--/io.haveno.protobuffer.GetVersion/GetVersion
 
 
 availabilityRequestURL27_Feb_2024_14_09 : String
@@ -59,13 +61,17 @@ rankingsUrl =
     Url Http "localhost" (Just 5501) "/rankings" Nothing Nothing
 
 
-
 successfullVersionFetch : Stub.HttpResponseStub
 successfullVersionFetch =
-    
-    Stub.for (Route.post grpcsetHostURL )
-        --Stub.for (Route.post (Url.toString placeholderUrl))
-        |> Stub.withBody (Stub.withText "1.0.7")
+    let
+        jsonObject =
+            E.object
+                [ ( "version", E.string "1.0.7" )
+                ]
+    in
+    Stub.for (Route.post grpcsetHostURL)
+        |> Stub.withBody (Stub.withJson jsonObject)
+
 
 failedLogin : Stub.HttpResponseStub
 failedLogin =
@@ -79,11 +85,6 @@ failedLogin =
     in
     Stub.for (Route.post (Url.toString placeholderUrl))
         |> Stub.withBody (Stub.withJson jsonObject)
-
-
-
-
-
 
 
 successfullLoginFetch : Stub.HttpResponseStub
@@ -167,16 +168,16 @@ successfullCallResponse =
             E.list
                 identity
                 [ E.object
-                    [ ( "_id", E.object [ ( "$oid", E.string "651fa006b15a534c69b119ef" ) ]  )
+                    [ ( "_id", E.object [ ( "$oid", E.string "651fa006b15a534c69b119ef" ) ] )
                     , ( "description", E.object [ ( "level", E.string "" ), ( "comment", E.string "" ) ] )
                     , ( "memberRankings", E.list E.object [] )
                     , ( "ownedRankings"
                       , E.list
                             E.object
-                            [ [ ( "_id", E.object [ ( "$oid", E.string "651fa006b15a534c69b119ef" ) ]  )
+                            [ [ ( "_id", E.object [ ( "$oid", E.string "651fa006b15a534c69b119ef" ) ] )
                               , ( "active", E.bool True )
                               , ( "name", E.string "DavesDorks" )
-                              , ( "owner_id", E.object [ ( "$oid", E.string "651fa006b15a534c69b119ef" ) ]  )
+                              , ( "owner_id", E.object [ ( "$oid", E.string "651fa006b15a534c69b119ef" ) ] )
                               , ( "baseaddress", E.object [ ( "street", E.string "Unspecified" ), ( "city", E.string "Unspecified" ) ] )
                               , ( "owner_name", E.string "Dave" )
                               , ( "player_count", E.int 1 )

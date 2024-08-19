@@ -4251,7 +4251,7 @@ function _Browser_getViewport()
 		si: {
 			ss: _Browser_window.pageXOffset,
 			su: _Browser_window.pageYOffset,
-			dt: _Browser_doc.documentElement.clientWidth,
+			ds: _Browser_doc.documentElement.clientWidth,
 			iU: _Browser_doc.documentElement.clientHeight
 		}
 	};
@@ -4262,7 +4262,7 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		dt: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		ds: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
 		iU: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
@@ -4287,13 +4287,13 @@ function _Browser_getViewportOf(id)
 	{
 		return {
 			rs: {
-				dt: node.scrollWidth,
+				ds: node.scrollWidth,
 				iU: node.scrollHeight
 			},
 			si: {
 				ss: node.scrollLeft,
 				su: node.scrollTop,
-				dt: node.clientWidth,
+				ds: node.clientWidth,
 				iU: node.clientHeight
 			}
 		};
@@ -4328,13 +4328,13 @@ function _Browser_getElement(id)
 			si: {
 				ss: x,
 				su: y,
-				dt: _Browser_doc.documentElement.clientWidth,
+				ds: _Browser_doc.documentElement.clientWidth,
 				iU: _Browser_doc.documentElement.clientHeight
 			},
-			dw: {
+			dv: {
 				ss: x + rect.left,
 				su: y + rect.top,
-				dt: rect.width,
+				ds: rect.width,
 				iU: rect.height
 			}
 		};
@@ -7098,7 +7098,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$unknownFieldDecoder = function
 };
 var $eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage = F2(
 	function (width, state) {
-		return (state.dt <= 0) ? ($elm$core$Set$isEmpty(state.kU) ? $elm$bytes$Bytes$Decode$succeed(
+		return (state.ds <= 0) ? ($elm$core$Set$isEmpty(state.kU) ? $elm$bytes$Bytes$Decode$succeed(
 			$elm$bytes$Bytes$Decode$Done(
 				_Utils_Tuple2(width, state.uR))) : $elm$bytes$Bytes$Decode$fail) : A2(
 			$elm$bytes$Bytes$Decode$andThen,
@@ -7121,7 +7121,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage = F2(
 									{
 										uR: fn(state.uR),
 										kU: A2($elm$core$Set$remove, fieldNumber, state.kU),
-										dt: (state.dt - usedBytes) - n
+										ds: (state.ds - usedBytes) - n
 									}));
 						},
 						decoder(wireType));
@@ -7132,7 +7132,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage = F2(
 							return $elm$bytes$Bytes$Decode$Loop(
 								_Utils_update(
 									state,
-									{dt: (state.dt - usedBytes) - n}));
+									{ds: (state.ds - usedBytes) - n}));
 						},
 						$eriktim$elm_protocol_buffers$Protobuf$Decode$unknownFieldDecoder(wireType));
 				}
@@ -7171,7 +7171,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$message = F2(
 				var width = wireType.a;
 				return A2(
 					$elm$bytes$Bytes$Decode$loop,
-					{nL: dict, uR: v, kU: requiredSet, dt: width},
+					{nL: dict, uR: v, kU: requiredSet, ds: width},
 					$eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage(width));
 			} else {
 				return $elm$bytes$Bytes$Decode$fail;
@@ -8012,7 +8012,7 @@ var $author$project$Pages$Hardware$Model = function (status) {
 																					return function (searchterm) {
 																						return function (searchResults) {
 																							return function (objectJSONfromJSPort) {
-																								return {ao: apiSpecifics, sO: availableSlots, nI: datetimeFromMain, bL: emailpassword, d1: errors, iL: flagUrl, uh: humanDateTime, nY: isReturnUser, uB: isValidBookingResponse, ea: isValidNewAccessToken, fC: isWaitingForResponse, qE: objectJSONfromJSPort, vk: posixTmes, bO: queryType, vA: result, rj: root, vM: searchResults, vN: searchterm, oc: selectedSingleRank, et: selectedranking, rP: status, wo: title, dn: toMongoDBMWConfig, dr: user};
+																								return {ao: apiSpecifics, sO: availableSlots, nI: datetimeFromMain, bL: emailpassword, d1: errors, iL: flagUrl, uh: humanDateTime, nY: isReturnUser, uB: isValidBookingResponse, ea: isValidNewAccessToken, fC: isWaitingForResponse, qE: objectJSONfromJSPort, vk: posixTmes, bO: queryType, vA: result, rj: root, vM: searchResults, vN: searchterm, oc: selectedSingleRank, et: selectedranking, rP: status, wo: title, dH: toMongoDBMWConfig, dq: user};
 																							};
 																						};
 																					};
@@ -8050,8 +8050,8 @@ var $author$project$Pages$Hardware$ApiSpecifics = F2(
 var $author$project$Pages$Hardware$apiSpecsPlaceHolder = A2($author$project$Pages$Hardware$ApiSpecifics, '', $elm$core$Maybe$Nothing);
 var $author$project$Extras$Constants$emptyEmailPassword = {nP: '', n6: ''};
 var $author$project$Data$Ranking$emptyRank = {
-	ap: {B: 'String', dC: 'String'},
-	aC: {B: 'String', dC: 'String'},
+	ap: {B: 'String', dB: 'String'},
+	aC: {B: 'String', dB: 'String'},
 	bG: 0
 };
 var $author$project$Data$User$Spectator = function (a) {
@@ -8081,7 +8081,7 @@ var $author$project$Data$User$UserInfo = function (userid) {
 																				return function (description) {
 																					return function (credits) {
 																						return function (addInfo) {
-																							return {mS: active, sx: addInfo, sA: age, tr: credits, tw: datestamp, d_: description, nP: email, tL: emailValidationError, t$: gender, uy: isEmailInputFocused, uz: isMobileInputFocused, uA: isNameInputFocused, ec: memberRankings, n0: mobile, uP: mobileValidationError, uU: nameValidationError, dC: nickname, dN: ownedRankings, n6: password, vf: passwordValidationError, wr: token, ww: updatetext, sd: userid};
+																							return {mS: active, sx: addInfo, sA: age, tr: credits, tw: datestamp, d_: description, nP: email, tL: emailValidationError, t$: gender, uy: isEmailInputFocused, uz: isMobileInputFocused, uA: isNameInputFocused, ec: memberRankings, n0: mobile, uP: mobileValidationError, uU: nameValidationError, dB: nickname, dN: ownedRankings, n6: password, vf: passwordValidationError, wr: token, ww: updatetext, sd: userid};
 																						};
 																					};
 																				};
@@ -8133,7 +8133,7 @@ var $author$project$Pages$Hardware$init = function (fromMainToRankings) {
 			A2(
 				$elm$core$Maybe$withDefault,
 				$elm$core$Maybe$Nothing,
-				$elm$core$Maybe$Just(fromMainToRankings.dH)))($author$project$Pages$Hardware$humandateTimePlaceholder)(_List_Nil)($author$project$Pages$Hardware$apiSpecsPlaceHolder)(
+				$elm$core$Maybe$Just(fromMainToRankings.dG)))($author$project$Pages$Hardware$humandateTimePlaceholder)(_List_Nil)($author$project$Pages$Hardware$apiSpecsPlaceHolder)(
 			$author$project$Pages$Hardware$Login($author$project$Extras$Constants$emptyEmailPassword))(
 			$elm$core$Maybe$Just(
 				A6(
@@ -8674,20 +8674,20 @@ var $author$project$Main$updateUrl = F2(
 							$author$project$Main$toDashboard,
 							model,
 							$author$project$Pages$Dashboard$init(
-								{iL: model.d6, dH: $elm$core$Maybe$Nothing}));
+								{iL: model.d6, dG: $elm$core$Maybe$Nothing}));
 					} else {
 						if (oauthCode.a === '') {
 							return A2(
 								$author$project$Main$toDashboard,
 								model,
 								$author$project$Pages$Dashboard$init(
-									{iL: model.d6, dH: $elm$core$Maybe$Nothing}));
+									{iL: model.d6, dG: $elm$core$Maybe$Nothing}));
 						} else {
 							return A2(
 								$author$project$Main$toDashboard,
 								model,
 								$author$project$Pages$Dashboard$init(
-									{iL: model.d6, dH: $elm$core$Maybe$Nothing}));
+									{iL: model.d6, dG: $elm$core$Maybe$Nothing}));
 						}
 					}
 				case 1:
@@ -8738,7 +8738,7 @@ var $author$project$Main$updateUrl = F2(
 						$author$project$Main$toHardware,
 						model,
 						$author$project$Pages$Hardware$init(
-							{iL: model.d6, dH: $elm$core$Maybe$Nothing}));
+							{iL: model.d6, dG: $elm$core$Maybe$Nothing}));
 			}
 		} else {
 			return _Utils_Tuple2(
@@ -8789,7 +8789,7 @@ var $author$project$Main$init = F3(
 				d6: decodedJsonFromIndexjs,
 				nc: navigate,
 				v: $author$project$Main$NotFound,
-				dH: $elm$time$Time$millisToPosix(0),
+				dG: $elm$time$Time$millisToPosix(0),
 				nB: $elm$core$Maybe$Just($elm$time$Time$utc)
 			});
 	});
@@ -9086,7 +9086,7 @@ var $author$project$Data$Ranking$Spectator = function (a) {
 };
 var $author$project$Pages$Hardware$SpectatorSelectedView = {$: 8};
 var $author$project$Extras$Constants$noCurrentChallengerId = '6353e8b6aedf80653eb34191';
-var $author$project$Data$Ranking$noChallengerCurrently = {B: $author$project$Extras$Constants$noCurrentChallengerId, dC: 'No Challenger'};
+var $author$project$Data$Ranking$noChallengerCurrently = {B: $author$project$Extras$Constants$noCurrentChallengerId, dB: 'No Challenger'};
 var $author$project$Data$Ranking$abandonSingleUserChallenge = F2(
 	function (userId, ranks) {
 		return A2(
@@ -9229,10 +9229,10 @@ var $author$project$Data$User$gotId = function (user) {
 var $author$project$Data$User$gotNickName = function (user) {
 	if (!user.$) {
 		var userInfo = user.a;
-		return userInfo.dC;
+		return userInfo.dB;
 	} else {
 		var userInfo = user.a;
-		return userInfo.dC;
+		return userInfo.dB;
 	}
 };
 var $author$project$Data$Ranking$gotRankBelow = F2(
@@ -9290,12 +9290,12 @@ var $author$project$Data$Ranking$userLost = F2(
 				return _Utils_eq(rank.aC.B, userId) ? _Utils_update(
 					rank,
 					{
-						ap: {B: $author$project$Extras$Constants$noCurrentChallengerId, dC: 'No Challenger'},
+						ap: {B: $author$project$Extras$Constants$noCurrentChallengerId, dB: 'No Challenger'},
 						aC: rank.ap
 					}) : (_Utils_eq(rank.ap.B, userId) ? _Utils_update(
 					rank,
 					{
-						ap: {B: $author$project$Extras$Constants$noCurrentChallengerId, dC: 'No Challenger'},
+						ap: {B: $author$project$Extras$Constants$noCurrentChallengerId, dB: 'No Challenger'},
 						aC: rank.ap
 					}) : rank);
 			},
@@ -9309,12 +9309,12 @@ var $author$project$Data$Ranking$userWon = F2(
 				return _Utils_eq(rank.ap.B, userId) ? _Utils_update(
 					rank,
 					{
-						ap: {B: $author$project$Extras$Constants$noCurrentChallengerId, dC: 'No Challenger'},
+						ap: {B: $author$project$Extras$Constants$noCurrentChallengerId, dB: 'No Challenger'},
 						aC: rank.ap
 					}) : (_Utils_eq(rank.aC.B, userId) ? _Utils_update(
 					rank,
 					{
-						ap: {B: $author$project$Extras$Constants$noCurrentChallengerId, dC: 'No Challenger'},
+						ap: {B: $author$project$Extras$Constants$noCurrentChallengerId, dB: 'No Challenger'},
 						aC: rank.ap
 					}) : rank);
 			},
@@ -10090,7 +10090,7 @@ var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $author$project$Data$Ranking$ownerIdDecoder = A2($elm$json$Json$Decode$field, '$oid', $elm$json$Json$Decode$string);
 var $author$project$Data$Ranking$Player = F2(
 	function (id, nickname) {
-		return {B: id, dC: nickname};
+		return {B: id, dB: nickname};
 	});
 var $author$project$Data$Ranking$playerDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
@@ -10548,7 +10548,7 @@ var $author$project$Data$Ranking$isCurrentlyInAChallenge = function (rank) {
 };
 var $author$project$Pages$Hardware$AdditionalDataFromJs = F2(
 	function (userid, nickname) {
-		return {dC: nickname, sd: userid};
+		return {dB: nickname, sd: userid};
 	});
 var $author$project$Pages$Hardware$additonalDataFromJsDecoder = A3(
 	$elm$json$Json$Decode$map2,
@@ -10585,15 +10585,6 @@ var $author$project$Pages$Hardware$locationDecoder = A5(
 	A2($elm$json$Json$Decode$field, 'hostname', $elm$json$Json$Decode$string),
 	A2($elm$json$Json$Decode$field, 'ws_hostname', $elm$json$Json$Decode$string));
 var $author$project$Pages$Hardware$locationRequest = function (model) {
-	var toMongoDBMWConfig = function () {
-		var _v0 = model.dn;
-		if (!_v0.$) {
-			var mongodbmwPrams = _v0.a;
-			return mongodbmwPrams;
-		} else {
-			return A6($author$project$Pages$Hardware$ToMongoDBMWConfig, '', _List_Nil, 'testPostRequest error', $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-		}
-	}();
 	var therequest = $elm$http$Http$request(
 		{
 			sZ: $elm$http$Http$emptyBody,
@@ -10758,7 +10749,7 @@ var $author$project$Pages$Hardware$searchResultsDecoder = A2(
 		$elm$json$Json$Decode$list($author$project$Data$Ranking$rankingSearchResultDecoder)));
 var $author$project$Pages$Hardware$sendPostDataToMongoDBMW = function (model) {
 	var toMongoDBMWConfig = function () {
-		var _v1 = model.dn;
+		var _v1 = model.dH;
 		if (!_v1.$) {
 			var mongodbmwPrams = _v1.a;
 			return mongodbmwPrams;
@@ -10890,7 +10881,7 @@ var $author$project$Pages$Hardware$updateNewUserRegistrationFormField = F3(
 						}();
 						return _Utils_update(
 							userDetails,
-							{uU: vldResult, dC: nme});
+							{uU: vldResult, dB: nme});
 					case 1:
 						var age = msg.a;
 						return _Utils_update(
@@ -11038,12 +11029,12 @@ var $author$project$Pages$Hardware$update = F2(
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 58:
-				var newUser = $author$project$Data$User$gotUserInfo(model.dr);
+				var newUser = $author$project$Data$User$gotUserInfo(model.dq);
 				var newMemberRankings = function () {
 					var _v1 = model.et;
 					if (_v1.$ === 1) {
 						var ranking = _v1.a;
-						return A2($author$project$Data$User$deleteRankingFromMemberRankings, model.dr, ranking.B);
+						return A2($author$project$Data$User$deleteRankingFromMemberRankings, model.dq, ranking.B);
 					} else {
 						return _List_fromArray(
 							[$author$project$Data$Ranking$emptyRanking]);
@@ -11057,7 +11048,7 @@ var $author$project$Pages$Hardware$update = F2(
 						model,
 						{
 							bO: $author$project$Pages$Hardware$LoggedInUser,
-							dr: $author$project$Data$User$Registered(newUserInfo)
+							dq: $author$project$Data$User$Registered(newUserInfo)
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 56:
@@ -11081,7 +11072,7 @@ var $author$project$Pages$Hardware$update = F2(
 						{bO: $author$project$Pages$Hardware$SpectatorSelectedView}),
 					$elm$core$Platform$Cmd$none);
 			case 55:
-				var _v2 = model.dr;
+				var _v2 = model.dq;
 				if (_v2.$ === 1) {
 					var userInfo = _v2.a;
 					return _Utils_Tuple2(
@@ -11211,8 +11202,8 @@ var $author$project$Pages$Hardware$update = F2(
 				var newRank = A3(
 					$author$project$Data$Ranking$Rank,
 					1,
-					{B: userInfo.sd, dC: userInfo.dC},
-					{B: $author$project$Extras$Constants$noCurrentChallengerId, dC: 'Challenger'});
+					{B: userInfo.sd, dB: userInfo.dB},
+					{B: $author$project$Extras$Constants$noCurrentChallengerId, dB: 'Challenger'});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -11226,7 +11217,7 @@ var $author$project$Pages$Hardware$update = F2(
 										nd: _List_fromArray(
 											[newRank]),
 										f3: userInfo.sd,
-										n5: userInfo.dC,
+										n5: userInfo.dB,
 										n8: 1
 									}))
 						}),
@@ -11254,7 +11245,7 @@ var $author$project$Pages$Hardware$update = F2(
 							$author$project$Pages$Hardware$JsonData(
 								$elm$json$Json$Encode$object(_List_Nil)),
 							{
-								dC: $elm$json$Json$Decode$errorToString(err),
+								dB: $elm$json$Json$Decode$errorToString(err),
 								sd: $elm$json$Json$Decode$errorToString(err)
 							});
 					}
@@ -11323,7 +11314,7 @@ var $author$project$Pages$Hardware$update = F2(
 							}();
 							var newLadder = A3(
 								$author$project$Pages$Hardware$filterAndSortRankingsOnLeaving,
-								$author$project$Data$User$gotId(model.dr),
+								$author$project$Data$User$gotId(model.dq),
 								currentSelectedRanking.nd,
 								_List_fromArray(
 									[
@@ -11399,12 +11390,12 @@ var $author$project$Pages$Hardware$update = F2(
 									return $elm$json$Json$Decode$errorToString(err);
 								}
 							}();
-							return $author$project$Data$User$gotUserInfo(model.dr);
+							return $author$project$Data$User$gotUserInfo(model.dq);
 						case 'NewUserCreationComplete':
 							var emptyUsrInfo = $author$project$Data$User$emptyUserInfo;
 							var newUsrInfo = _Utils_update(
 								emptyUsrInfo,
-								{dC: decodedJsObj.nD.dC, sd: decodedJsObj.nD.sd});
+								{dB: decodedJsObj.nD.dB, sd: decodedJsObj.nD.sd});
 							return newUsrInfo;
 						case 'LOGINCONFIRM':
 							return $author$project$Pages$Hardware$handleDecodeUser(json);
@@ -11416,7 +11407,7 @@ var $author$project$Pages$Hardware$update = F2(
 								if ($author$project$Pages$Hardware$is24AlphanumericChars(insertedId)) {
 									var userUpdatedWithNewRanking = A2(
 										$author$project$Data$User$addNewLadderToOwnedRankings,
-										model.dr,
+										model.dq,
 										A3(
 											$author$project$Data$Ranking$tempNewlyCreatedRanking,
 											insertedId,
@@ -11424,10 +11415,10 @@ var $author$project$Pages$Hardware$update = F2(
 											$author$project$Data$Ranking$gotRanking(model.et).fU));
 									return $author$project$Data$User$gotUserInfo(userUpdatedWithNewRanking);
 								} else {
-									return $author$project$Data$User$gotUserInfo(model.dr);
+									return $author$project$Data$User$gotUserInfo(model.dq);
 								}
 							} else {
-								return $author$project$Data$User$gotUserInfo(model.dr);
+								return $author$project$Data$User$gotUserInfo(model.dq);
 							}
 						case 'ownedranking':
 							var decodedRanking = function () {
@@ -11441,7 +11432,7 @@ var $author$project$Pages$Hardware$update = F2(
 								}
 							}();
 							return $author$project$Data$User$gotUserInfo(
-								A2($author$project$Data$User$addNewLadderToOwnedRankings, model.dr, decodedRanking));
+								A2($author$project$Data$User$addNewLadderToOwnedRankings, model.dq, decodedRanking));
 						case 'JoinedRankingConfirm':
 							var _v9 = $author$project$Pages$Hardware$handleNewlyJoinedDecodeRanking(json);
 							if (!_v9.$) {
@@ -11452,16 +11443,16 @@ var $author$project$Pages$Hardware$update = F2(
 									return _Utils_eq(
 										selrnking.B,
 										$author$project$Data$Ranking$newlyJoinedRankingIdAsValueManipulation(newlyJoinedRanking)) ? $author$project$Data$User$gotUserInfo(
-										A2($author$project$Data$User$addNewLadderToMemberRankings, model.dr, selrnking)) : $author$project$Data$User$gotUserInfo(model.dr);
+										A2($author$project$Data$User$addNewLadderToMemberRankings, model.dq, selrnking)) : $author$project$Data$User$gotUserInfo(model.dq);
 								} else {
-									return $author$project$Data$User$gotUserInfo(model.dr);
+									return $author$project$Data$User$gotUserInfo(model.dq);
 								}
 							} else {
 								var err = _v9.a;
-								return $author$project$Data$User$gotUserInfo(model.dr);
+								return $author$project$Data$User$gotUserInfo(model.dq);
 							}
 						case 'ResultSubmitted':
-							var _v11 = model.dr;
+							var _v11 = model.dq;
 							if (_v11.$ === 1) {
 								var userInfo = _v11.a;
 								return userInfo;
@@ -11469,7 +11460,7 @@ var $author$project$Pages$Hardware$update = F2(
 								return $author$project$Data$User$emptyUserInfo;
 							}
 						default:
-							var _v12 = model.dr;
+							var _v12 = model.dq;
 							if (_v12.$ === 1) {
 								var userInfo = _v12.a;
 								return userInfo;
@@ -11501,7 +11492,7 @@ var $author$project$Pages$Hardware$update = F2(
 							qE: $elm$core$Maybe$Just(decodedJsObj),
 							bO: updatedquerytype,
 							et: newRanking,
-							dr: newUser
+							dq: newUser
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 35:
@@ -11563,7 +11554,7 @@ var $author$project$Pages$Hardware$update = F2(
 						bL: emailpword,
 						vM: _List_Nil,
 						vN: '',
-						dn: $elm$core$Maybe$Just(newToMongoDBMWConfig)
+						dH: $elm$core$Maybe$Just(newToMongoDBMWConfig)
 					});
 				return _Utils_Tuple2(
 					newModel,
@@ -11692,8 +11683,8 @@ var $author$project$Pages$Hardware$update = F2(
 						{
 							ea: true,
 							bO: $author$project$Pages$Hardware$LoggedInUser,
-							dn: $elm$core$Maybe$Just(newHttpParams),
-							dr: $author$project$Data$User$Registered(auth)
+							dH: $elm$core$Maybe$Just(newHttpParams),
+							dq: $author$project$Data$User$Registered(auth)
 						});
 					var apiSpecs = model.ao;
 					return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
@@ -11745,7 +11736,7 @@ var $author$project$Pages$Hardware$update = F2(
 						model,
 						{
 							ea: true,
-							dn: $elm$core$Maybe$Just(newHttpParams)
+							dH: $elm$core$Maybe$Just(newHttpParams)
 						});
 					var apiSpecs = model.ao;
 					return _Utils_Tuple2(
@@ -11799,7 +11790,7 @@ var $author$project$Pages$Hardware$update = F2(
 						model,
 						{
 							bO: $author$project$Pages$Hardware$LoggedInUser,
-							dn: $elm$core$Maybe$Just(newHttpParams)
+							dH: $elm$core$Maybe$Just(newHttpParams)
 						});
 					var apiSpecs = model.ao;
 					return _Utils_Tuple2(
@@ -11833,8 +11824,8 @@ var $author$project$Pages$Hardware$update = F2(
 				if (!msg.a.$) {
 					var searchResult = msg.a.a;
 					var gotUsersMemberAndOwnedRankings = _Utils_ap(
-						$author$project$Data$User$gotOwnedRankings(model.dr),
-						$author$project$Data$User$gotMemberRankings(model.dr));
+						$author$project$Data$User$gotOwnedRankings(model.dq),
+						$author$project$Data$User$gotMemberRankings(model.dq));
 					var extractIdsFromRankings = function (rankings) {
 						return A2(
 							$elm$core$List$map,
@@ -11900,7 +11891,7 @@ var $author$project$Pages$Hardware$update = F2(
 								}),
 							ea: true,
 							bO: $author$project$Pages$Hardware$LoggedInUser,
-							dn: $elm$core$Maybe$Just(newHttpParams)
+							dH: $elm$core$Maybe$Just(newHttpParams)
 						});
 					return _Utils_Tuple2(
 						_Utils_update(
@@ -12052,7 +12043,7 @@ var $author$project$Pages$Hardware$update = F2(
 				var updatModelWithNewPostData = _Utils_update(
 					model,
 					{
-						dn: $elm$core$Maybe$Just(
+						dH: $elm$core$Maybe$Just(
 							A6(
 								$author$project$Pages$Hardware$ToMongoDBMWConfig,
 								$author$project$Extras$Constants$post,
@@ -12106,7 +12097,7 @@ var $author$project$Pages$Hardware$update = F2(
 						fC: true,
 						bO: $author$project$Pages$Hardware$SpectatorSelectedView,
 						et: $author$project$Data$Ranking$Spectator($author$project$Data$Ranking$emptyRanking),
-						dn: $elm$core$Maybe$Just(
+						dH: $elm$core$Maybe$Just(
 							A6(
 								$author$project$Pages$Hardware$ToMongoDBMWConfig,
 								$author$project$Extras$Constants$post,
@@ -12293,7 +12284,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{dH: newTime}),
+						{dG: newTime}),
 					A2($elm$core$Task$perform, $author$project$Main$AdjustTimeZone, $elm$time$Time$here));
 			case 12:
 				var newZone = msg.a;
@@ -12472,12 +12463,12 @@ var $author$project$Main$update = F2(
 							var rankingWantToJoin = rankingsMsg.a;
 							var userid = rankingsMsg.b;
 							var lastRank = rankingsMsg.c;
-							var updatedUser = A2($author$project$Data$User$addNewLadderToMemberRankings, rankings.dr, rankingWantToJoin);
+							var updatedUser = A2($author$project$Data$User$addNewLadderToMemberRankings, rankings.dq, rankingWantToJoin);
 							var newRank = {
-								ap: {B: '6353e8b6aedf80653eb34191', dC: 'No Challenger'},
+								ap: {B: '6353e8b6aedf80653eb34191', dB: 'No Challenger'},
 								aC: {
 									B: userid,
-									dC: $author$project$Data$User$gotNickName(rankings.dr)
+									dB: $author$project$Data$User$gotNickName(rankings.dq)
 								},
 								bG: lastRank + 1
 							};
@@ -12504,7 +12495,7 @@ var $author$project$Main$update = F2(
 														_Utils_update(
 															rankingWantToJoin,
 															{nd: updatedRanking.nd})),
-													dr: updatedUser
+													dq: updatedUser
 												}))
 									}),
 								$author$project$Main$sendMessage(
@@ -12512,10 +12503,10 @@ var $author$project$Main$update = F2(
 						case 58:
 							var rankingWantToLeave = rankingsMsg.a;
 							var userid = rankingsMsg.b;
-							var updatedRankingList = A2($author$project$Data$User$deleteRankingFromMemberRankings, rankings.dr, rankingWantToLeave.B);
+							var updatedRankingList = A2($author$project$Data$User$deleteRankingFromMemberRankings, rankings.dq, rankingWantToLeave.B);
 							var updatedUserInfo = A2(
 								$author$project$Data$User$updatedMemberRankings,
-								$author$project$Data$User$gotUserInfo(rankings.dr),
+								$author$project$Data$User$gotUserInfo(rankings.dq),
 								updatedRankingList);
 							var rankingWithAnyCurrentChallengesRemoved = A2($author$project$Data$Ranking$abandonSingleUserChallenge, userid, rankingWantToLeave.nd);
 							var updatedRanking = _Utils_update(
@@ -12533,7 +12524,7 @@ var $author$project$Main$update = F2(
 												{
 													bO: $author$project$Pages$Hardware$SpectatorSelectedView,
 													et: $author$project$Data$Ranking$Spectator(updatedRanking),
-													dr: $author$project$Data$User$Registered(updatedUserInfo)
+													dq: $author$project$Data$User$Registered(updatedUserInfo)
 												}))
 									}),
 								$author$project$Main$sendMessage(
@@ -12575,7 +12566,7 @@ var $author$project$Main$update = F2(
 							var updatedRanks = A3(
 								$author$project$Data$Ranking$handleResult,
 								result,
-								$author$project$Data$User$gotId(rankings.dr),
+								$author$project$Data$User$gotId(rankings.dq),
 								selectedRanking.nd);
 							var updatedRanking = _Utils_update(
 								selectedRanking,
@@ -12624,7 +12615,7 @@ var $author$project$Main$update = F2(
 												}))
 									}),
 								$author$project$Main$sendMessage(
-									'register' + ('~^&' + (A2($elm$core$Maybe$withDefault, '', newUserRegistrationDetails.nP) + ('~^&' + (newUserRegistrationDetails.n6 + ('~^&' + newUserRegistrationDetails.dC)))))));
+									'register' + ('~^&' + (A2($elm$core$Maybe$withDefault, '', newUserRegistrationDetails.nP) + ('~^&' + (newUserRegistrationDetails.n6 + ('~^&' + newUserRegistrationDetails.dB)))))));
 						case 46:
 							var ownedRanking = function () {
 								var _v14 = rankings.et;
@@ -12635,7 +12626,7 @@ var $author$project$Main$update = F2(
 									return $author$project$Data$Ranking$emptyRanking;
 								}
 							}();
-							var newUser = A2($author$project$Data$User$deleteRankingFromOwnedRankings, rankings.dr, ownedRanking.B);
+							var newUser = A2($author$project$Data$User$deleteRankingFromOwnedRankings, rankings.dq, ownedRanking.B);
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
@@ -12643,7 +12634,7 @@ var $author$project$Main$update = F2(
 										v: $author$project$Main$HardwarePage(
 											_Utils_update(
 												rankings,
-												{bO: $author$project$Pages$Hardware$LoggedInUser, dr: newUser}))
+												{bO: $author$project$Pages$Hardware$LoggedInUser, dq: newUser}))
 									}),
 								$author$project$Main$sendMessage(
 									'deleteRanking' + ('~^&' + $author$project$Data$Ranking$gotRankingId(
@@ -12661,7 +12652,7 @@ var $author$project$Main$update = F2(
 												}))
 									}),
 								$author$project$Main$sendMessage(
-									'deleteAccount' + ('~^&' + $author$project$Data$User$gotId(rankings.dr))));
+									'deleteAccount' + ('~^&' + $author$project$Data$User$gotId(rankings.dq))));
 						default:
 							return A2(
 								$author$project$Main$toHardware,
@@ -13706,7 +13697,7 @@ var $mdgriffith$elm_ui$Internal$Model$getStyleName = function (style) {
 				A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.m_)) + ('-space-x-' + ($mdgriffith$elm_ui$Internal$Model$lengthClassName(template.vX.a) + ('-space-y-' + $mdgriffith$elm_ui$Internal$Model$lengthClassName(template.vX.b)))))));
 		case 9:
 			var pos = style.a;
-			return 'gp grid-pos-' + ($elm$core$String$fromInt(pos.rl) + ('-' + ($elm$core$String$fromInt(pos.o2) + ('-' + ($elm$core$String$fromInt(pos.dt) + ('-' + $elm$core$String$fromInt(pos.iU)))))));
+			return 'gp grid-pos-' + ($elm$core$String$fromInt(pos.rl) + ('-' + ($elm$core$String$fromInt(pos.o2) + ('-' + ($elm$core$String$fromInt(pos.ds) + ('-' + $elm$core$String$fromInt(pos.iU)))))));
 		case 11:
 			var selector = style.a;
 			var subStyle = style.b;
@@ -16562,7 +16553,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 							'-ms-grid-row: ' + ($elm$core$String$fromInt(position.rl) + ';'),
 							'-ms-grid-row-span: ' + ($elm$core$String$fromInt(position.iU) + ';'),
 							'-ms-grid-column: ' + ($elm$core$String$fromInt(position.o2) + ';'),
-							'-ms-grid-column-span: ' + ($elm$core$String$fromInt(position.dt) + ';')
+							'-ms-grid-column-span: ' + ($elm$core$String$fromInt(position.ds) + ';')
 						]));
 				var modernPosition = A2(
 					$elm$core$String$join,
@@ -16570,9 +16561,9 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 					_List_fromArray(
 						[
 							'grid-row: ' + ($elm$core$String$fromInt(position.rl) + (' / ' + ($elm$core$String$fromInt(position.rl + position.iU) + ';'))),
-							'grid-column: ' + ($elm$core$String$fromInt(position.o2) + (' / ' + ($elm$core$String$fromInt(position.o2 + position.dt) + ';')))
+							'grid-column: ' + ($elm$core$String$fromInt(position.o2) + (' / ' + ($elm$core$String$fromInt(position.o2 + position.ds) + ';')))
 						]));
-				var _class = '.grid-pos-' + ($elm$core$String$fromInt(position.rl) + ('-' + ($elm$core$String$fromInt(position.o2) + ('-' + ($elm$core$String$fromInt(position.dt) + ('-' + $elm$core$String$fromInt(position.iU)))))));
+				var _class = '.grid-pos-' + ($elm$core$String$fromInt(position.rl) + ('-' + ($elm$core$String$fromInt(position.o2) + ('-' + ($elm$core$String$fromInt(position.ds) + ('-' + $elm$core$String$fromInt(position.iU)))))));
 				var modernGrid = _class + ('{' + (modernPosition + '}'));
 				var supports = '@supports (display:grid) {' + (modernGrid + '}');
 				var base = _class + ('{' + (msPosition + '}'));
@@ -19797,7 +19788,7 @@ var $author$project$Pages$Hardware$confirmDeleteUserView = function (userInfo) {
 					A2(
 					$mdgriffith$elm_ui$Element$el,
 					$Orasund$elm_ui_framework$Framework$Heading$h5,
-					$mdgriffith$elm_ui$Element$text(userInfo.dC + ' - Are you sure you want to delete your account?\n            Please note that this will delete all your AND THE RANKING MEMBER\'S rankings and is IRREVERSIBLE!\n            (You may wish to inform them before deleting)')),
+					$mdgriffith$elm_ui$Element$text(userInfo.dB + ' - Are you sure you want to delete your account?\n            Please note that this will delete all your AND THE RANKING MEMBER\'S rankings and is IRREVERSIBLE!\n            (You may wish to inform them before deleting)')),
 					A2(
 					$mdgriffith$elm_ui$Element$column,
 					A2(
@@ -19861,7 +19852,7 @@ var $author$project$SR$Elements$spectatorSelectedRankingHeaderEl = F2(
 		return A2(
 			$mdgriffith$elm_ui$Element$el,
 			$Orasund$elm_ui_framework$Framework$Heading$h5,
-			$mdgriffith$elm_ui$Element$text(userInfo.dC + (' you\'re interested in joining' + (' - ' + (r.fU + (' Id no: ' + (r.B + (' . \n Which is owned by ' + (r.n5 + (' id no: ' + r.f3))))))))));
+			$mdgriffith$elm_ui$Element$text(userInfo.dB + (' you\'re interested in joining' + (' - ' + (r.fU + (' Id no: ' + (r.B + (' . \n Which is owned by ' + (r.n5 + (' id no: ' + r.f3))))))))));
 	});
 var $mdgriffith$elm_ui$Internal$Model$AsRow = 0;
 var $mdgriffith$elm_ui$Internal$Model$asRow = 0;
@@ -20073,7 +20064,7 @@ var $author$project$Pages$Hardware$confirmJoinView = F2(
 						A2(
 						$mdgriffith$elm_ui$Element$el,
 						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(userInfo.dC + (' - Are you sure you want to join' + (ranking.n5 + '\'s  ranking?')))),
+						$mdgriffith$elm_ui$Element$text(userInfo.dB + (' - Are you sure you want to join' + (ranking.n5 + '\'s  ranking?')))),
 						A2(
 						$mdgriffith$elm_ui$Element$column,
 						A2(
@@ -20106,7 +20097,7 @@ var $author$project$SR$Elements$memberSelectedRankingHeaderEl = F2(
 		return A2(
 			$mdgriffith$elm_ui$Element$el,
 			$Orasund$elm_ui_framework$Framework$Heading$h5,
-			$mdgriffith$elm_ui$Element$text(userInfo.dC + (' you\'re a member of' + (' - ' + (r.fU + (' Id no: ' + (r.B + (' . \n Which is owned by ' + (r.n5 + (' id no: ' + r.f3))))))))));
+			$mdgriffith$elm_ui$Element$text(userInfo.dB + (' you\'re a member of' + (' - ' + (r.fU + (' Id no: ' + (r.B + (' . \n Which is owned by ' + (r.n5 + (' id no: ' + r.f3))))))))));
 	});
 var $author$project$Pages$Hardware$confirmLeaveView = F2(
 	function (userInfo, ranking) {
@@ -20128,7 +20119,7 @@ var $author$project$Pages$Hardware$confirmLeaveView = F2(
 						A2(
 						$mdgriffith$elm_ui$Element$el,
 						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(userInfo.dC + (' - Are you sure you want to leave ' + (ranking.n5 + '\'s  ranking?')))),
+						$mdgriffith$elm_ui$Element$text(userInfo.dB + (' - Are you sure you want to leave ' + (ranking.n5 + '\'s  ranking?')))),
 						A2(
 						$mdgriffith$elm_ui$Element$column,
 						A2(
@@ -20272,7 +20263,7 @@ var $author$project$Pages$Hardware$createChallengeView = F3(
 								A2(
 								$mdgriffith$elm_ui$Element$el,
 								_List_Nil,
-								$mdgriffith$elm_ui$Element$text(uinfo.dC + (' you are challenging ' + rank.aC.dC)))
+								$mdgriffith$elm_ui$Element$text(uinfo.dB + (' you are challenging ' + rank.aC.dB)))
 							])),
 						A2(
 						$mdgriffith$elm_ui$Element$el,
@@ -20345,7 +20336,7 @@ var $author$project$Pages$Hardware$createChallengeView = F3(
 								A2(
 								$mdgriffith$elm_ui$Element$el,
 								_List_Nil,
-								$mdgriffith$elm_ui$Element$text(uinfo.dC + ' aim high! Challenge up '))
+								$mdgriffith$elm_ui$Element$text(uinfo.dB + ' aim high! Challenge up '))
 							])),
 						A2(
 						$mdgriffith$elm_ui$Element$column,
@@ -20382,7 +20373,7 @@ var $author$project$Pages$Hardware$createChallengeView = F3(
 								A2(
 								$mdgriffith$elm_ui$Element$el,
 								_List_Nil,
-								$mdgriffith$elm_ui$Element$text(rank.aC.dC + ' you can\'t challenge yourself! '))
+								$mdgriffith$elm_ui$Element$text(rank.aC.dB + ' you can\'t challenge yourself! '))
 							])),
 						A2(
 						$mdgriffith$elm_ui$Element$column,
@@ -21564,7 +21555,7 @@ var $author$project$Pages$Hardware$createLadderView = F2(
 						A2(
 						$mdgriffith$elm_ui$Element$el,
 						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(userInfo.dC + ' - Please Enter Your Ladder \nDetails And Click \'Create\' below:')),
+						$mdgriffith$elm_ui$Element$text(userInfo.dB + ' - Please Enter Your Ladder \nDetails And Click \'Create\' below:')),
 						A2(
 						$mdgriffith$elm_ui$Element$wrappedRow,
 						_Utils_ap($Orasund$elm_ui_framework$Framework$Card$fill, $Orasund$elm_ui_framework$Framework$Grid$simple),
@@ -21684,7 +21675,7 @@ var $author$project$Pages$Hardware$dialogueConfirmChallengeView = F3(
 						A2(
 						$mdgriffith$elm_ui$Element$el,
 						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(ranking.n5 + (' - Are you sure you want to challenge ' + (rank.aC.dC + '?')))),
+						$mdgriffith$elm_ui$Element$text(ranking.n5 + (' - Are you sure you want to challenge ' + (rank.aC.dB + '?')))),
 						A2(
 						$mdgriffith$elm_ui$Element$wrappedRow,
 						_List_Nil,
@@ -21766,7 +21757,7 @@ var $author$project$Pages$Hardware$dialoguePrepareResultView = F3(
 						A2(
 						$mdgriffith$elm_ui$Element$el,
 						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(uinfo.dC + (' - Are you ready to enter your result vs ' + (rank.ap.dC + '?')))),
+						$mdgriffith$elm_ui$Element$text(uinfo.dB + (' - Are you ready to enter your result vs ' + (rank.ap.dB + '?')))),
 						A2($author$project$Data$Ranking$isUserOwnerOfRankning, uinfo.sd, ranking) ? A2(
 						$mdgriffith$elm_ui$Element$wrappedRow,
 						_List_Nil,
@@ -22011,7 +22002,7 @@ var $author$project$SR$Elements$globalHeading = function (user) {
 		return A2(
 			$mdgriffith$elm_ui$Element$el,
 			$Orasund$elm_ui_framework$Framework$Heading$h5,
-			$mdgriffith$elm_ui$Element$text('SportRank - Welcome Back - ' + userInfo.dC));
+			$mdgriffith$elm_ui$Element$text('SportRank - Welcome Back - ' + userInfo.dB));
 	}
 };
 var $author$project$Pages$Hardware$globalView = F3(
@@ -22105,7 +22096,7 @@ var $author$project$Pages$Hardware$challengeInProgressBtnDisabled = function (r)
 					$author$project$Pages$Hardware$enableButton(false)),
 				{
 					C: $mdgriffith$elm_ui$Element$text(
-						$elm$core$String$fromInt(r.bG) + ('. ' + (r.aC.dC + (' vs ' + r.ap.dC)))),
+						$elm$core$String$fromInt(r.bG) + ('. ' + (r.aC.dB + (' vs ' + r.ap.dB)))),
 					as: $elm$core$Maybe$Just(
 						$author$project$Pages$Hardware$ViewRank(r))
 				})
@@ -22122,7 +22113,7 @@ var $author$project$Pages$Hardware$challengeInProgressBtnEnabled = function (r) 
 				_Utils_ap($Orasund$elm_ui_framework$Framework$Button$fill, $Orasund$elm_ui_framework$Framework$Color$primary),
 				{
 					C: $mdgriffith$elm_ui$Element$text(
-						$elm$core$String$fromInt(r.bG) + ('. ' + (r.aC.dC + (' vs ' + r.ap.dC)))),
+						$elm$core$String$fromInt(r.bG) + ('. ' + (r.aC.dB + (' vs ' + r.ap.dB)))),
 					as: $elm$core$Maybe$Just(
 						$author$project$Pages$Hardware$ViewRank(r))
 				})
@@ -22147,7 +22138,7 @@ var $author$project$Pages$Hardware$singlePlayerBtnDisabled = function (r) {
 					$author$project$Pages$Hardware$enableButton(false)),
 				{
 					C: $mdgriffith$elm_ui$Element$text(
-						$elm$core$String$fromInt(r.bG) + ('. ' + r.aC.dC)),
+						$elm$core$String$fromInt(r.bG) + ('. ' + r.aC.dB)),
 					as: $elm$core$Maybe$Just(
 						$author$project$Pages$Hardware$ViewRank(r))
 				})
@@ -22164,7 +22155,7 @@ var $author$project$Pages$Hardware$singlePlayerBtnEnabled = function (r) {
 				_Utils_ap($Orasund$elm_ui_framework$Framework$Button$fill, $Orasund$elm_ui_framework$Framework$Color$primary),
 				{
 					C: $mdgriffith$elm_ui$Element$text(
-						$elm$core$String$fromInt(r.bG) + ('. ' + r.aC.dC)),
+						$elm$core$String$fromInt(r.bG) + ('. ' + r.aC.dB)),
 					as: $elm$core$Maybe$Just(
 						$author$project$Pages$Hardware$ViewRank(r))
 				})
@@ -22381,7 +22372,7 @@ var $author$project$Utils$Validation$Validate$isValid4to8Chars = function (str) 
 		str);
 };
 var $author$project$SR$Elements$nameValidView = function (userInfo) {
-	return (!$elm$core$String$length(userInfo.dC)) ? A2(
+	return (!$elm$core$String$length(userInfo.dB)) ? A2(
 		$mdgriffith$elm_ui$Element$el,
 		_Utils_ap(
 			A2(
@@ -22400,7 +22391,7 @@ var $author$project$SR$Elements$nameValidView = function (userInfo) {
 				[
 					$mdgriffith$elm_ui$Element$moveLeft(1.0)
 				])),
-		$mdgriffith$elm_ui$Element$text('Anon OK!')) : ($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.dC) ? A2(
+		$mdgriffith$elm_ui$Element$text('Anon OK!')) : ($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.dB) ? A2(
 		$mdgriffith$elm_ui$Element$el,
 		_Utils_ap(
 			A2(
@@ -22481,14 +22472,14 @@ var $author$project$Utils$Validation$Validate$is20CharMax = function (str) {
 };
 var $author$project$Pages$Hardware$isValidatedForAllUserDetailsInput = function (userInfo) {
 	return ($author$project$Utils$Validation$Validate$isEmailValid(
-		A2($elm$core$Maybe$withDefault, '', userInfo.nP)) && ($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.dC) && ($author$project$Utils$Validation$Validate$is20CharMax('') && ($author$project$Utils$Validation$Validate$isEmailValid(
+		A2($elm$core$Maybe$withDefault, '', userInfo.nP)) && ($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.dB) && ($author$project$Utils$Validation$Validate$is20CharMax('') && ($author$project$Utils$Validation$Validate$isEmailValid(
 		A2($elm$core$Maybe$withDefault, '', userInfo.nP)) && $author$project$Utils$Validation$Validate$isMobileValid(
 		A2($elm$core$Maybe$withDefault, '', userInfo.n0)))))) ? true : false;
 };
 var $author$project$Pages$Hardware$userDetailsConfirmPanel = function (userInfo) {
 	return (($author$project$Utils$Validation$Validate$isEmailValid(
 		A2($elm$core$Maybe$withDefault, '', userInfo.nP)) && ($elm$core$String$length(
-		A2($elm$core$Maybe$withDefault, '', userInfo.nP)) > 0)) && (($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.n6) && ($elm$core$String$length(userInfo.n6) > 0)) && ((userInfo.dC === '') || $author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.dC)))) ? A2(
+		A2($elm$core$Maybe$withDefault, '', userInfo.nP)) > 0)) && (($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.n6) && ($elm$core$String$length(userInfo.n6) > 0)) && ((userInfo.dB === '') || $author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.dB)))) ? A2(
 		$mdgriffith$elm_ui$Element$column,
 		$Orasund$elm_ui_framework$Framework$Grid$section,
 		_List_fromArray(
@@ -22671,7 +22662,7 @@ var $author$project$Pages$Hardware$registerView = function (userInfo) {
 												$mdgriffith$elm_ui$Element$Input$placeholder,
 												_List_Nil,
 												$mdgriffith$elm_ui$Element$text('Nickname'))),
-										bj: userInfo.dC
+										bj: userInfo.dB
 									}),
 									$author$project$SR$Elements$nameValidView(userInfo),
 									A2(
@@ -22904,7 +22895,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 													var newUser = _v1.a;
 													return $author$project$Pages$Hardware$registerView(newUser);
 												case 4:
-													return A3($author$project$Pages$Hardware$globalView, model.vN, model.vM, model.dr);
+													return A3($author$project$Pages$Hardware$globalView, model.vN, model.vM, model.dq);
 												case 5:
 													var userInfo = _v1.a;
 													return A2(
@@ -22913,7 +22904,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 														$author$project$Data$Ranking$gotRanking(model.et));
 												case 6:
 													var userInfo = function () {
-														var _v2 = model.dr;
+														var _v2 = model.dq;
 														if (_v2.$ === 1) {
 															var usrInfo = _v2.a;
 															return usrInfo;
@@ -22927,7 +22918,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 														$author$project$Data$Ranking$gotRanking(model.et));
 												case 7:
 													var userInfo = function () {
-														var _v3 = model.dr;
+														var _v3 = model.dq;
 														if (_v3.$ === 1) {
 															var usrInfo = _v3.a;
 															return usrInfo;
@@ -22941,7 +22932,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 														$author$project$Data$Ranking$gotRanking(model.et));
 												case 8:
 													var userInfo = function () {
-														var _v5 = model.dr;
+														var _v5 = model.dq;
 														if (_v5.$ === 1) {
 															var usrInfo = _v5.a;
 															return usrInfo;
@@ -22961,7 +22952,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 													return A2($author$project$Pages$Hardware$spectatorSelectedView, userInfo, ranking);
 												case 9:
 													var userInfo = function () {
-														var _v6 = model.dr;
+														var _v6 = model.dq;
 														if (_v6.$ === 1) {
 															var usrInfo = _v6.a;
 															return usrInfo;
@@ -22977,7 +22968,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 													var rank = _v1.a;
 													var ranking = _v1.b;
 													var userInfo = function () {
-														var _v7 = model.dr;
+														var _v7 = model.dq;
 														if (_v7.$ === 1) {
 															var usrInfo = _v7.a;
 															return usrInfo;
@@ -22990,7 +22981,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 													var rank = _v1.a;
 													var ranking = _v1.b;
 													var userInfo = function () {
-														var _v8 = model.dr;
+														var _v8 = model.dq;
 														if (_v8.$ === 1) {
 															var usrInfo = _v8.a;
 															return usrInfo;
@@ -23001,7 +22992,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 													return A3($author$project$Pages$Hardware$dialogueConfirmChallengeView, userInfo, rank, ranking);
 												case 14:
 													var userInfo = function () {
-														var _v9 = model.dr;
+														var _v9 = model.dq;
 														if (_v9.$ === 1) {
 															var usrInfo = _v9.a;
 															return usrInfo;
@@ -23015,7 +23006,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 														$author$project$Data$Ranking$gotRanking(model.et));
 												case 15:
 													var userInfo = function () {
-														var _v10 = model.dr;
+														var _v10 = model.dq;
 														if (_v10.$ === 1) {
 															var usrInfo = _v10.a;
 															return usrInfo;
@@ -23029,7 +23020,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 														$author$project$Data$Ranking$gotRanking(model.et));
 												case 16:
 													var userInfo = function () {
-														var _v11 = model.dr;
+														var _v11 = model.dq;
 														if (_v11.$ === 1) {
 															var usrInfo = _v11.a;
 															return usrInfo;
@@ -23041,7 +23032,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 												case 12:
 													return A3(
 														$author$project$Pages$Hardware$dialoguePrepareResultView,
-														$author$project$Data$User$gotUserInfo(model.dr),
+														$author$project$Data$User$gotUserInfo(model.dq),
 														model.oc,
 														$author$project$Data$Ranking$gotRanking(model.et));
 												default:

@@ -5,7 +5,7 @@ module Pages.Dashboard exposing (Model, Msg, content, init, update, view)
 
 import Buttons.Default exposing (defaultButton)
 import Extras.Constants as Consts
-import Grpc
+import Grpc exposing (..)
 import Html exposing (..)
 import Html.Attributes as Attr exposing (..)
 import Http exposing (..)
@@ -17,9 +17,6 @@ import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
 import Types.DateType as DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
-import Grpc exposing (..)
-
-
 
 
 
@@ -231,12 +228,11 @@ type alias HavenoAPKHttpRequest =
 
 -- NAV: Http requests
 -- Function to create the GetVersionRequest
-
-
 -- NAV: Http requests
 -- Function to create the GetVersionRequest
-
 -- Function to make the HTTP request
+
+
 sendVersionRequest : GetVersionRequest -> Cmd Msg
 sendVersionRequest request =
     let
@@ -245,10 +241,8 @@ sendVersionRequest request =
                 |> Grpc.addHeader "password" "apitest"
                 -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
                 |> Grpc.setHost "http://localhost:8080"
-
-        
     in
-        Grpc.toCmd GotVersion grpcRequest
+    Grpc.toCmd GotVersion grpcRequest
 
 
 

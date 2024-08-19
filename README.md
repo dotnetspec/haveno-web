@@ -13,6 +13,13 @@ elm reactor [`just type 'elm reactor' in the project directory terminal (below)`
 or [`http-server`]
 REF: (https://www.npmjs.com/package/http-server).
 
+Uncomment the 'haveno-ts && docker run' line in openterminal.sh to enable Envoy server to run from the
+~/Development/Monero/haveno-dex/haveno-ts/config folder (i.e. it's outside this project) - re-comment the line after
+first initialization.
+
+Start the necessary process (haveno and web server):
+'yarn terminals'
+
 Production:
 Upload files to your production environment (e.g. Namecheap - pubic_html)
 

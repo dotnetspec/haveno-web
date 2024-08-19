@@ -1,0 +1,18 @@
+### Description
+
+Brief description
+
+
+### Expected and actual results
+
+Expected:
+
+Actual:
+
+### Related information
+
+elm version: 0.19.1
+elm-spec-runner version: 2.5.1
+Haveno core version: 1.0.7
+node version: 21.7.3
+Operating system: Linux (x64) Mint 21.3 Cinnamon
