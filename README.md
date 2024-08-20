@@ -7,21 +7,14 @@ This site is IN DEVELOPMENT and EXPERIMENTAL. DO NOT USE AT THIS TIME UNLESS EXP
 
 
 # Building
-Locally:
-To view the site in a locally hosted browser, bring up `index.html` from any local HTTP server, for example 
-elm reactor [`just type 'elm reactor' in the project directory terminal (below)`]
-or [`http-server`]
-REF: (https://www.npmjs.com/package/http-server).
-
-Uncomment the 'haveno-ts && docker run' line in openterminal.sh to enable Envoy server to run from the
-~/Development/Monero/haveno-dex/haveno-ts/config folder (i.e. it's outside this project) - re-comment the line after
-first initialization.
-
+Local:
 Start the necessary process (haveno and web server):
 'yarn terminals'
+'yarn build'
+'yarn dev'
 
 Production:
-Upload files to your production environment (e.g. Namecheap - pubic_html)
+Upload contents of ./dist folder and ./resources (whole) folder to your production environment (e.g. Namecheap - pubic_html)
 
 
 # Domain management
@@ -47,4 +40,4 @@ This project is a combination of two previously separate projects, each with its
 
 
 # Miscellaneous
-NOTE: The application started with middleware due to difficulties with json translation and CORS. Whilst the middleware is probably still required for the search functionality the login code demonstrates that it, and all the js code in static/mondodb, can theoretically be bypassed via direct https requests from the Elm code. It is expected that the js will be deprecated over time.
+NOTE: Vite builds starting with root index.html and resolves to the ./dist folder. Elm is handled by Vite and added to ./dist/assets/index*.js
