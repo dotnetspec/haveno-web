@@ -10,8 +10,8 @@ import Url exposing (Protocol(..), Url)
 import Bytes.Encode as BE
 import Base64
 import Bytes exposing (Bytes)
-import String exposing (fromList)
-import Char exposing (toCode)
+--import String exposing (fromList)
+--import Char exposing (toCode)
 
 
 grpcsetHostURL : String
