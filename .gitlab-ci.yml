@@ -44,7 +44,7 @@ deploy:
     - apk add --update lftp
     - apk add --no-cache openssh-client
     - eval $(ssh-agent -s)
-    - lftp -d -u "$FTP_USERNAME,$FTP_PASSWORD" "$FTP_SERVER:21098" -e "set sftp:connect-program 'ssh -a -x -s -l squastgr -p 21098 -oHostKeyAlgorithms=+ssh-rsa -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null'; mirror -R ./js /home/squastgr/haveno-web.squashpassion.com/public_html/js; quit"
+    - lftp -d -u "$FTP_USERNAME,$FTP_PASSWORD" "$FTP_SERVER:21098" -e "set sftp:connect-program 'ssh -a -x -s -l squastgr -p 21098 -oHostKeyAlgorithms=+ssh-rsa -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null'; mirror -R ./dist /home/squastgr/haveno-web.squashpassion.com/public_html; quit"
     
   only:
     - master
