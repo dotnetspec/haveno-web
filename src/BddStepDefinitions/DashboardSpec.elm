@@ -66,10 +66,10 @@ runSpecTests =
                     |> Setup.withUpdate Pages.Dashboard.update
                     |> Stub.serve [ TestData.successfullVersionFetch ]
                 )
-                {- |> Spec.when "we log the http requests"
+                |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
                    ]
-                -}
+               
                 |> Spec.observeThat
                     [ it "displays a message from the Dashboard page"
                         (Markup.observeElement
@@ -84,7 +84,9 @@ runSpecTests =
                         )
                     ]
             )
-        , --Runner.skip <|
+        --, Runner.skip <|
+        --, Runner.pick <|  
+        ,
           scenario "2: Display the Haveno core app version number"
             (given
                 (Setup.init

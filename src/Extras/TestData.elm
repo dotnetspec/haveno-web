@@ -7,6 +7,11 @@ import Spec.Http.Route as Route exposing (HttpRoute)
 import Spec.Http.Stub as Stub
 import Time exposing (Posix, millisToPosix, utc)
 import Url exposing (Protocol(..), Url)
+import Bytes.Encode as BE
+import Base64
+import Bytes exposing (Bytes)
+import String exposing (fromList)
+import Char exposing (toCode)
 
 
 grpcsetHostURL : String
@@ -60,17 +65,26 @@ rankingsUrl : Url
 rankingsUrl =
     Url Http "localhost" (Just 5501) "/rankings" Nothing Nothing
 
+toBytes : String -> Maybe Bytes
+toBytes string =
+    Maybe.map BE.encode (Base64.encoder string)
 
 successfullVersionFetch : Stub.HttpResponseStub
 successfullVersionFetch =
     let
-        jsonObject =
-            E.object
-                [ ( "version", E.string "1.0.7" )
-                ]
+        base64Response =
+            "AAAAAAcKBTEuMC43gAAAAA9ncnBjLXN0YXR1czowDQo="
+        decodedBytes =
+            case toBytes base64Response of
+                Just bytes ->
+                    bytes
+
+                Nothing ->
+                    BE.encode (BE.unsignedInt8 0)
     in
     Stub.for (Route.post grpcsetHostURL)
-        |> Stub.withBody (Stub.withJson jsonObject)
+        |> Stub.withHeader ("Content-Type", "application/grpc-web+proto")
+        |> Stub.withBody (Stub.withBytes decodedBytes)
 
 
 failedLogin : Stub.HttpResponseStub
