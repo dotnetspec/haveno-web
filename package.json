@@ -13,7 +13,19 @@
     "terminals": "./openterminals.sh",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "prepare": "husky install"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,html,css,scss,md}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "author": "FreeRoss",
   "license": "AGPL-3.0",
@@ -32,6 +44,8 @@
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^26.0.1",
+    "husky": "^9.1.4",
+    "lint-staged": "^15.2.9",
     "vite-plugin-elm": "^3.0.1",
     "vite-plugin-pwa": "^0.16.4"
   }
