@@ -282,6 +282,6 @@ video {
   right: 0;
   bottom: 0;
   background-color: rgba(68, 53, 53, 0.8);
-  background-image: url('resources/Effects/grainy-overlay.png');
+  background-image: url('../resources/Effects/grainy-overlay.png');
   opacity: 0.3;
 }
