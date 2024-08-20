@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SportRank</title>
+  <title>Haveno-Web</title>
   <meta name="description" content="Haveno-Web App" />
   <meta name="author" content="FreeRoss" />
   <link rel="shortcut icon" type="image/x-icon" href="/src/static/img/favicon.ico" />
@@ -23,7 +23,7 @@
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <link rel="stylesheet" type="text/css" href="/css/main.css" />
   <script src="https://unpkg.com/realm-web/dist/bundle.iife.js"></script>
-  <script src="/js/elm.js"></script>
+  
   <meta name="theme-color" content="#005477" />
   <link rel="manifest" href="/pwa/manifest.json" />
   <script>
@@ -42,57 +42,11 @@
   <meta name="keywords" content="monero" />
 </head>
 <body>
-  <div id="elm-container"></div>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      var detectEnvironment = function () {
-        var protocol = window.location.protocol;
-        var hostname = window.location.hostname;
-        var port = window.location.port;
-        var defaultPort = protocol === "https:" ? 443 : 80;
-        var parsedPort = port ? parseInt(port, 10) : defaultPort;
-        return {
-          protocol: protocol,
-          hostname: hostname,
-          port: parsedPort,
-        };
-      };
-
-      var environmentInfo = detectEnvironment();
-      console.log("Protocol:", environmentInfo.protocol);
-      console.log("Hostname:", environmentInfo.hostname);
-      console.log("Port:", environmentInfo.port);
-
-      const protocol = environmentInfo.protocol;
-      const hostnm = environmentInfo.hostname;
-      const prt = environmentInfo.port;
-
-      jsonUrl = JSON.stringify(protocol + "//" + hostnm + ":" + prt);
-      console.log("jsonUrl:", jsonUrl);
-
-      var eapp = Elm.Main.init({
-        node: document.getElementById("elm-container"),
-        flags: jsonUrl,
-      });
-
-      eapp.ports.sendMessage.subscribe(function (message) {
-        console.log("Message sent to js ", message);
-        handleMessageFromElm(message);
-      });
-
-      async function sendWebSocketChangeEventFromMongoDbToElmPort(applicationData) {
-        console.log('applicationData in sendWebSocketChangeEventFromMongoDbToElmPort', applicationData);
-        additionalDataObjExtendibleIfRequired = { userid: '', nickname: '' }
-        jsonMsgToElm = {
-          operationEventMsg: 'webSocket',
-          dataFromMongo: applicationData,
-          additionalDataFromJs: additionalDataObjExtendibleIfRequired,
-        }
-        eapp.ports.messageReceiver.send(jsonMsgToElm)
-      }
-    });
-  </script>
-  <script src="/js/scrollTopLinksMenu.js"></script>
-  <script src="/js/burgeranimation.js"></script>
+  <div id="elm"></div>
+  <script type="module" src="/js/setupElm.js"></script>
+  <button id="menubtn"></button>
+  <script type="module"  src="/js/scrollTopLinksMenu.js"></script>
+  <button class="menu-btn">Menu</button>
+  <script type="module"  src="/js/burgeranimation.js"></script>
 </body>
 </html>

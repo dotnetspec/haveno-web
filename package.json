@@ -1,6 +1,7 @@
 {
   "name": "haveno-web",
   "version": "0.0.1",
+  "type": "module",
   "description": "Mobile-first web app for Haveno",
   "main": "js/elm.js",
   "scripts": {
@@ -30,6 +31,8 @@
     "vite-plugin-html": "^3.2.2"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "vite-plugin-elm": "^3.0.1",
     "vite-plugin-pwa": "^0.16.4"
   }
 }
