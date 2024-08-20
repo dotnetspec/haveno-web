@@ -14,7 +14,11 @@ test:
     - npm install -g elm@latest-0.19.1
     - elm make src/Main.elm --output=js/elm.js --optimize
     - npm install -g elm-test
-    - elm-test 'src/**/Tests/Test*.elm' 
+    - elm-test 'src/**/Tests/Test*.elm'
+    # Install Vite
+    - npm install -g vite
+    # Run Vite build
+    - vite build
 
 integration_test:
   stage: integration_test
@@ -28,6 +32,10 @@ integration_test:
     - elm make src/Main.elm --output=js/elm.js --optimize 
     - npm install elm-spec-runner
     - npx elm-spec --specRoot ./
+    # Install Vite
+    - npm install -g vite
+    # Run Vite build
+    - vite build
     
 deploy:
   stage: deploy
