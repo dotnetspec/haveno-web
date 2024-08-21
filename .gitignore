@@ -10,5 +10,4 @@ pwa/android/*
 
 package-lock.json
 
-# Build output
-dist/
+
