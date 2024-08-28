@@ -41,3 +41,4 @@ This project is a combination of two previously separate projects, each with its
 
 # Miscellaneous
 NOTE: Vite builds starting with root index.html and resolves to the ./dist folder. Elm is handled by Vite and added to ./dist/assets/index*.js
+NOTE: Project on hold awaiting response to question re: ledgerinterop.js -- REF: https://github.com/LedgerHQ/developer-portal/issues/245

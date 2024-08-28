@@ -1,5 +1,8 @@
 module Extras.TestData exposing (..)
 
+import Base64
+import Bytes exposing (Bytes)
+import Bytes.Encode as BE
 import Extras.Constants as Consts exposing (..)
 import Json.Encode as E
 import Pages.Hardware as Hardware exposing (..)
@@ -7,10 +10,6 @@ import Spec.Http.Route as Route exposing (HttpRoute)
 import Spec.Http.Stub as Stub
 import Time exposing (Posix, millisToPosix, utc)
 import Url exposing (Protocol(..), Url)
-import Bytes.Encode as BE
-import Base64
-import Bytes exposing (Bytes)
-
 
 
 grpcsetHostURL : String
@@ -64,15 +63,18 @@ rankingsUrl : Url
 rankingsUrl =
     Url Http "localhost" (Just 5501) "/rankings" Nothing Nothing
 
+
 toBytes : String -> Maybe Bytes
 toBytes string =
     Maybe.map BE.encode (Base64.encoder string)
+
 
 successfullVersionFetch : Stub.HttpResponseStub
 successfullVersionFetch =
     let
         base64Response =
             "AAAAAAcKBTEuMC43gAAAAA9ncnBjLXN0YXR1czowDQo="
+
         decodedBytes =
             case toBytes base64Response of
                 Just bytes ->
@@ -82,7 +84,7 @@ successfullVersionFetch =
                     BE.encode (BE.unsignedInt8 0)
     in
     Stub.for (Route.post grpcsetHostURL)
-        |> Stub.withHeader ("Content-Type", "application/grpc-web+proto")
+        |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
         |> Stub.withBody (Stub.withBytes decodedBytes)
 
 
@@ -271,3 +273,24 @@ successfullCallResponse =
 pipelineAsJsonString : String
 pipelineAsJsonString =
     """[{"$match":{"_id":{"$oid":"651fa006b15a534c69b119ef"}}},{"$lookup":{"from":"rankings","localField":"ownerOf","foreignField":"_id","as":"ownedRankings"}},{"$lookup":{"from":"rankings","localField":"memberOf","foreignField":"_id","as":"memberRankings"}},{"$lookup":{"from":"users","localField":"memberRankings.owner_id","foreignField":"_id","as":"memberRankingsWithOwnerName"}},{"$project":{"_id":{"$numberInt":"1"},"userid":{"$numberInt":"1"},"nickname":{"$numberInt":"1"},"active":{"$numberInt":"1"},"description":{"$numberInt":"1"},"datestamp":{"$numberInt":"1"},"token":{"$numberInt":"1"},"updatetext":{"$numberInt":"1"},"mobile":{"$numberInt":"1"},"credits":{"$numberInt":"1"},"ownedRankings":{"_id":{"$numberInt":"1"},"active":{"$numberInt":"1"},"owner_id":{"$numberInt":"1"},"baseaddress":{"$numberInt":"1"},"ranking":{"$numberInt":"1"},"player_count":{"$numberInt":"1"},"name":{"$numberInt":"1"},"owner_name":"$nickname"},"memberRankings":{"_id":{"$numberInt":"1"},"name":{"$numberInt":"1"},"active":{"$numberInt":"1"},"owner_id":{"$numberInt":"1"},"baseaddress":{"$numberInt":"1"},"ranking":{"$numberInt":"1"},"player_count":{"$numberInt":"1"},"owner_name":{"$arrayElemAt":["$memberRankingsWithOwnerName.nickname",{"$numberInt":"0"}]}},"owner_ranking_count":{"$size":"$ownedRankings"},"member_ranking_count":{"$size":"$memberRankings"},"addInfo":{"$numberInt":"1"},"gender":{"$numberInt":"1"},"age":{"$numberInt":"1"}}}]}]"""
+
+
+
+-- NAV: LNS tests
+
+
+successfulLnsResponseStub : Stub.HttpResponseStub
+successfulLnsResponseStub =
+    let
+        jsonResponse =
+            E.object
+                [ ( "context", E.object [ ( "function", E.string "send" ) ] )
+                , ( "date", E.string "Tue Aug 27 2024 12:56:47 GMT+0800 (Singapore Standard Time)" )
+                , ( "id", E.string "5" )
+                , ( "message", E.string "Received response from exchange" )
+                , ( "type", E.string "transport" )
+                ]
+    in
+    Stub.for (Route.post "http://localhost:1234/")
+        |> Stub.withHeader ( "Content-Type", "application/json" )
+        |> Stub.withBody (Stub.withJson jsonResponse)

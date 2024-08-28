@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Open the first terminal and run the first command
-#gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/haveno-dex/haveno && make monerod1-local; exec bash"
+gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/haveno-dex/haveno && make monerod1-local; exec bash"
 
 # Open the second terminal and run the second command
 #gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/haveno-dex/haveno && make monerod2-local; exec bash"
@@ -11,8 +11,8 @@
 
 # Send the start_mining command to the tmux session
 # Ensure the tmux session is running
-#tmux new-session -d -s mysession
-#tmux send-keys -t mysession 'start_mining 9tsUiG9bwcU7oTbAdBwBk2PzxFtysge5qcEsHEpetmEKgerHQa1fDqH7a4FiquZmms7yM22jdifVAD7jAb2e63GSJMuhY75 1' C-m
+tmux new-session -d -s mysession
+tmux send-keys -t mysession 'start_mining 9tsUiG9bwcU7oTbAdBwBk2PzxFtysge5qcEsHEpetmEKgerHQa1fDqH7a4FiquZmms7yM22jdifVAD7jAb2e63GSJMuhY75 1' C-m
 
 #tmux new-session -d -s mysession 'start_mining 9tsUiG9bwcU7oTbAdBwBk2PzxFtysge5qcEsHEpetmEKgerHQa1fDqH7a4FiquZmms7yM22jdifVAD7jAb2e63GSJMuhY75 1'
 
@@ -34,7 +34,7 @@ gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/haveno-dex/haveno-t
 
 #gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/haveno-dex/haveno && make funding-wallet-local; exec bash"
 
-# -- NOTE: We're using elm-merge folder here:
+# -- NOTE: We're using elm-merge folder here. We don't need this cos we're using yarn dev:
 
 #gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/elm-merge/haveno-web && npx http-server -p 5500 --cors; exec bash"
 #'

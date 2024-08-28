@@ -46,27 +46,27 @@ runSpecTests =
                     (Pages.Hardware.init { time = Nothing, flagUrl = TestData.placeholderUrl })
                     |> Setup.withView Pages.Hardware.view
                     |> Setup.withUpdate Pages.Hardware.update
-                    |> Stub.serve [ TestData.successfullLocationFetch ]
+                    |> Stub.serve [ TestData.successfulLnsResponseStub ]
                 )
-                |> when "we simulate clicking the login button"
-                    [ Spec.Command.send <| Spec.Command.fake (Pages.Hardware.ClickedLogInUser 
+                |> when "we simulate clicking the ledger connect button"
+                    [ Spec.Command.send <| Spec.Command.fake (Pages.Hardware.ClickedLedgerConnect 
                     --{ email = "k223445687@k.com", password = "nonExistent" }
                         { email = "", password = "" }
                     ) ]
-                {- |> Spec.when "we log the http requests"
+                |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
-                   ] -}
+                   ]
                
                 |> Spec.observeThat
-                    [ it "displays a 'successfully talking to the hardware wallet' message from the Hardware page"
+                    [ it "displays a message indicating the lns is connected and initialized"
                         (Markup.observeElement
                             |> Markup.query
                             -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
-                            << by [ tag "h5" ]
+                            << by [ tag "h1" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Successfully talking to the hardware wallet"
+                                        Claim.isStringContaining 1 "Connect your Nano and open the Bitcoin app. Click anywhere to start..."
                                 )
                         )
                     ]
@@ -88,7 +88,7 @@ runSpecTests =
                         ]
                 )
                 |> when "the user submits the login form"
-                    [ Spec.Command.send <| Spec.Command.fake (Pages.Hardware.ClickedLogInUser { email = "k2@k.com", password = "Pa55w0rd" }) ]
+                    [ Spec.Command.send <| Spec.Command.fake (Pages.Hardware.ClickedLedgerConnect { email = "k2@k.com", password = "Pa55w0rd" }) ]
                 {- |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
                    ]

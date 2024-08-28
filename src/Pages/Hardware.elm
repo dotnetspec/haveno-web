@@ -205,7 +205,7 @@ type Msg
       -- NOTE: Start of new Msg variants from espa1
     | UserLoginEmailInputChg String
     | UserLoginPasswordInputChg String
-    | ClickedLogInUser EmailPasswordLogin
+    | ClickedLedgerConnect EmailPasswordLogin
       -- NOTE: ResponseDataFromMain is a Msg from the port
     | ResponseDataFromMain D.Value
     | LogOut
@@ -250,7 +250,7 @@ type Msg
     | DialogueConfirmDeleteAccount
     | DeleteAccount
     | LoginResponse (Result Http.Error SuccessfulLoginResult)
-    | LocationResponse (Result Http.Error SuccessfullLocationResult)
+    | LNSConnectResponse (Result Http.Error SuccessfullLNSConnectResult)
     | ProfileResponse (Result Http.Error SuccessfullProfileResult)
     | CallResponse (Result Http.Error U.UserInfo)
 
@@ -797,30 +797,7 @@ update msg model =
         Confirm ->
             ( model, Cmd.none )
 
-        {- ( case model.queryType of
-               ConfirmDeleteOwnedRanking ->
-                    { model
-                       | queryType = LoggedInUser
-                     }
-
-               CreatingNewLadder _  ->
-                    { model
-                       | queryType = LoggedInUser
-                     }
-               ConfirmChallengeView _ _ ->
-                    { model
-                       | queryType = MemberSelectedView
-                     }
-
-               _ ->
-                    { model
-                       | queryType = Login Consts.emptyEmailPassword
-                     }
-
-
-           , Cmd.none
-           )
-        -}
+        
         -- NOTE: Will be handled in Main/GotRankingsMsg
         -- because needs data from the port
         ConfirmNewRanking _ _ ->
@@ -858,8 +835,8 @@ update msg model =
 
         -- NOTE: Previously -> Will be handled in Main/GotRankingsMsg
         -- because needs data from the port, but now go straight to sendPostDataToMongoDBMW
-        ClickedLogInUser emailpword ->
-            let
+        ClickedLedgerConnect emailpword ->
+            {- let
                 -- REVIEW: Probably don't need emailpword in the body yet - only need for the login post
                 -- but we do add to the model below so it's ready to use
                 newBody =
@@ -879,9 +856,10 @@ update msg model =
 
                 newModel =
                     { model | searchResults = [], searchterm = "", toMongoDBMWConfig = Just newToMongoDBMWConfig, emailpassword = emailpword }
-            in
-            ( newModel
-            , locationRequest newModel
+            in -}
+            ( --newModel
+            model
+            , lnsConnectRequest model
             )
 
         -- NOTE: Will be handled in Main/GotRankingsMsg
@@ -1070,11 +1048,11 @@ update msg model =
             , Cmd.none
             )
 
-        LocationResponse (Ok auth) ->
+        LNSConnectResponse (Ok auth) ->
             let
-                headers =
+                headers = []
                     -- NOTE: the 'Zoho-oauthtoken' sent at this point is the access token received after refresh
-                    [ Http.header "Authorization" ("Bearer " ++ withDefault "No access token 2" (Just auth.deployment_model)) ]
+                    --[ Http.header "Authorization" ("Bearer " ++ withDefault "No access token 2" (Just auth.deployment_model)) ]
 
                 -- incorporate new header with access token and update middleware port
                 flagUrlWithMongoDBMWAndPortUpdate =
@@ -1099,12 +1077,12 @@ update msg model =
             in
             ( newModel
             , -- NOTE: if you want to run a function based on the response can here:
-              --Cmd.none
-              loginRequest newModel
+              Cmd.none
+              --loginRequest newModel
               --sendPostDataToMongoDBMW newModel
             )
 
-        LocationResponse (Err responseErr) ->
+        LNSConnectResponse (Err responseErr) ->
             let
                 respErr =
                     Consts.httpErrorToString responseErr
@@ -2177,7 +2155,7 @@ loginView model =
             [ Element.el Heading.h5 <| Element.text "Haveno-Web"
             , Element.text "\n"
             
-            , infoBtn "Connect Wallet" <| ClickedLogInUser model.emailpassword
+            , infoBtn "Connect Wallet" <| ClickedLedgerConnect model.emailpassword
             , case model.errors of
                 [] ->
                     Element.text ""
@@ -2493,12 +2471,20 @@ type alias FailedLoginResult =
     }
 
 
-type alias SuccessfullLocationResult =
-    { deployment_model : String
-    , location : String
-    , hostname : String
-    , ws_hostname : String
+type alias SuccessfullLNSConnectResult =
+    { function : String
+    , date : String
+    , id : String
+    , message : String
+    , transport_type : String
     }
+
+    {- [ ( "context", E.object [ ( "function", E.string "send" ) ] )
+                , ( "date", E.string "Tue Aug 27 2024 12:56:47 GMT+0800 (Singapore Standard Time)" )
+                , ( "id", E.string "5" )
+                , ( "message", E.string "Received response from exchange" )
+                , ( "type", E.string "transport" )
+                ] -}
 
 
 type alias FailedLocationResult =
@@ -2632,13 +2618,14 @@ failedLoginResultDecoder =
         (field "link" D.string)
 
 
-locationDecoder : Decoder SuccessfullLocationResult
-locationDecoder =
-    D.map4 SuccessfullLocationResult
-        (field "deployment_model" D.string)
-        (field "location" D.string)
-        (field "hostname" D.string)
-        (field "ws_hostname" D.string)
+lnsResponseDecoder : Decoder SuccessfullLNSConnectResult
+lnsResponseDecoder =
+    D.map5 SuccessfullLNSConnectResult
+        (field "function" D.string)
+        (field "date" D.string)
+        (field "id" D.string)
+        (field "message" D.string)
+        (field "type" D.string)
 
 
 providerDataDecoder : D.Decoder ProviderData
@@ -2842,8 +2829,8 @@ decodeApply =
 -- NAV: Http requests
 
 
-locationRequest : Model -> Cmd Msg
-locationRequest model =
+lnsConnectRequest : Model -> Cmd Msg
+lnsConnectRequest model =
     let
         -- NOTE: It's the ToMongoDBMWConfig that are a Maybe (not the body)
         {- toMongoDBMWConfig =
@@ -2861,10 +2848,10 @@ locationRequest model =
         therequest =
             Http.request
                 { body = Http.emptyBody
-                , method = "GET"
+                , method = "POST"
                 , headers = []
-                , url = "https://realm.mongodb.com/api/client/v2.0/app/sr-espa1-snonq/location"
-                , expect = Http.expectJson LocationResponse locationDecoder
+                , url = "http://localhost:1234"
+                , expect = Http.expectJson LNSConnectResponse lnsResponseDecoder
                 , timeout = Nothing
                 , tracker = Nothing
                 }
@@ -3429,7 +3416,7 @@ displayLoginBtns model =
                     }
                 ]
             ]
-        , infoBtn "Connect Wallet" <| ClickedLogInUser model.emailpassword
+        , infoBtn "Connect Wallet" <| ClickedLedgerConnect model.emailpassword
         , infoBtn "Register" Create
         , Element.wrappedRow (Card.fill ++ Grid.simple)
             [ Element.column

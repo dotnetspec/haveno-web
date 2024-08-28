@@ -1066,6 +1066,13 @@ subscriptions _ =
 
 -- NAV: Ports
 
+port initializeLedger : (Int -> msg) -> Sub msg
+port getAccountInfo : (Int -> msg) -> Sub msg
+
+-- Handle the responses from the ports
+port ledgerInitialized : (JD.Value -> msg) -> Sub msg
+port accountInfoReceived : (JD.Value -> msg) -> Sub msg
+
 
 port sendMessage : String -> Cmd msg
 
@@ -1438,6 +1445,19 @@ isActive { link, page } =
 {-| -- NOTE: Render dismissable errors. We use this all over the place!
 I think it needs a dismissErrors function to go with it ...
 -}
+
+-- NOTE: Did this as an example of currying and partial application:
+
+errorMessages : List String -> List (Html msg)
+errorMessages errors =
+    List.map (\error -> p [] [ text error ]) errors
+
+
+okButton : msg -> Html msg
+okButton dismissErrors =
+    button [ onClick dismissErrors ] [ text "Ok" ]
+
+
 viewErrors : msg -> List String -> Html msg
 viewErrors dismissErrors errors =
     if List.isEmpty errors then
@@ -1448,5 +1468,6 @@ viewErrors dismissErrors errors =
             [ class "error-messages"
             ]
         <|
-            List.map (\error -> p [] [ text error ]) errors
-                ++ [ button [ onClick dismissErrors ] [ text "Ok" ] ]
+            errorMessages errors
+                ++ [ okButton dismissErrors ]
+
