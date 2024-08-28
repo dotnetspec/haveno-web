@@ -185,7 +185,7 @@ update msg model =
             ( model, Cmd.none )
 
         -- NAV: Recv rawJsonMessage
-        -- NOTE: This is updated when a message from js (mongo) is received
+        -- NOTE: This is updated when a message from js is received
         Recv rawJsonMessage ->
             -- NOTE: rawJsonMessage is a Json value that is ready to be decoded. It does not need to be
             -- converted to a string.
@@ -343,7 +343,7 @@ update msg model =
                                     ++ "~^&"
                                     ++ ranking.name
                                     ++ "~^&"
-                                    -- NOTE: these cannot be "" for mongodb
+                                    -- NOTE: sometimes these cannot be ""
                                     ++ (if ranking.baseaddress.street == "" then
                                             "Unspecified"
 
@@ -458,30 +458,7 @@ update msg model =
                                 )
                             )
 
-                        -- NOTE: Spectator rankings will be fetched via mongodb middleware
-                        {- Pages.Hardware.ConfirmChallenge ranking rank ->
-                           -- RF: Potential to send/recieve data to/from js as Json:
-                           {- let
-                                  data =
-                                      JE.object
-                                          [ ( "action", JE.string "updateForChallenge" )
-                                          , ( "rankingId", JE.string ranking.id )
-                                          , ( "userId", JE.string (U.gotId rankings.user) )
-                                          , ( "playerId", JE.string rank.player.id )
-                                          , ( "rank", JE.int rank.rank )
-                                          ]
-                              in
-                           -}
-                           --( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.LoggedInUser } }
-                           --, sendMessage (JE.encode 0 data))
-                           -- NOTE: when this message returns, we will have full Ranking with all the details
-                           -- REVIEW: we are SUBSTITUTING the current challenger.id (...191 -- unchallenged) for the user.id (the new challenger)
-                           -- This is fragile - if an incorrect userid sent at this point - not good.
-                           ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.MemberSelectedView ranking  } }
-                           , Debug.log "Sending message"
-                               (sendMessage ("updateForChallenge" ++ "~^&" ++ ranking.id ++ "~^&" ++ U.gotId rankings.user ++ "~^&" ++ rank.player.id ++ "~^&" ++ String.fromInt rank.rank))
-                           )
-                        -}
+                        
                         Pages.Hardware.ConfirmChallenge selectedRanking rank ->
                             let
                                 -- TODO: Handle the default

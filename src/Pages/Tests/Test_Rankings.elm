@@ -320,7 +320,7 @@ tests =
                         JsonData (E.object [ ( "key", E.string "value" ) ])
 
                     stringData =
-                        StringData "Error - dataFromMongo is a value"
+                        StringData "Error -  is a value"
 
                     complexStringData =
                         StringData """

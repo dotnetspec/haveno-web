@@ -67,8 +67,7 @@ import Utils.Validation.Validate as V
 -- NOTE: CORS err may be due to wrong dev/prod setting
 
 
-
-init : FromMainToRankings -> (Model, Cmd Msg)
+init : FromMainToRankings -> ( Model, Cmd Msg )
 init fromMainToRankings =
     let
         -- REF: look at Haveno-Web Zoho Responsive app for how OAuth works.
@@ -101,7 +100,7 @@ init fromMainToRankings =
     in
     -- NOTE: these api's are in mongodbMW.js currently - mabye they will be sent through from elm at a later point
     -- Use the refresh token to obtain a new access token
-    (Model Loaded
+    ( Model Loaded
         "Hardware"
         (Hardware { name = "Loading..." })
         fromMainToRankings.flagUrl
@@ -128,8 +127,8 @@ init fromMainToRankings =
         ""
         []
         Nothing
-        , Cmd.none)
-
+    , Cmd.none
+    )
 
 
 
@@ -193,7 +192,6 @@ type Msg
     | CondoNameInput String
     | CondoAddressInput String
     | AddInfoInput String
-    | SubmitSearchForm String
     | ConfirmBookingForm
     | NoOp
     | DismissErrors
@@ -238,7 +236,6 @@ type Msg
     | ConfirmResult R.ResultOfMatch
     | CancelDialoguePrepareResultView
     | SearchInputChg String
-    | SearchResponse (Result Http.Error SearchResults)
     | FetchSpectatorRanking String
     | SpectatorRankingResponse (Result Http.Error R.Ranking)
     | SpectatorJoin
@@ -527,8 +524,7 @@ update msg model =
                     case decodedJsObj.operationEventMsg of
                         -- NOTE: decodedJsObj.dataFromMongo will have different JSON structures
                         -- how they are handled depends on these messages from js
-                        -- NOTE: webSocket is a change event message from mongo that may well have come
-                        -- from another client. What we do here will sync this client to reflect db changes
+                        -- NOTE: 'webSocket': What we do here will sync this client to reflect db changes
                         -- initiated by any other users (e.g. rank update)
                         "webSocket" ->
                             let
@@ -797,7 +793,6 @@ update msg model =
         Confirm ->
             ( model, Cmd.none )
 
-        
         -- NOTE: Will be handled in Main/GotRankingsMsg
         -- because needs data from the port
         ConfirmNewRanking _ _ ->
@@ -837,28 +832,29 @@ update msg model =
         -- because needs data from the port, but now go straight to sendPostDataToMongoDBMW
         ClickedLedgerConnect emailpword ->
             {- let
-                -- REVIEW: Probably don't need emailpword in the body yet - only need for the login post
-                -- but we do add to the model below so it's ready to use
-                newBody =
-                    prepareEmailPwordLogin emailpword
+                   -- REVIEW: Probably don't need emailpword in the body yet - only need for the login post
+                   -- but we do add to the model below so it's ready to use
+                   newBody =
+                       prepareEmailPwordLogin emailpword
 
-                -- RF
-                updatedFlagUrlToIncludeMongoDBMWSvr =
-                    -- TODO: Replace with sportsrank for production:
-                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
-                        Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
+                   -- RF
+                   updatedFlagUrlToIncludeMongoDBMWSvr =
+                       -- TODO: Replace with sportsrank for production:
+                       if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
+                           Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
 
-                    else
-                        Url.toString <| Url model.flagUrl.protocol model.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
+                       else
+                           Url.toString <| Url model.flagUrl.protocol model.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
 
-                newToMongoDBMWConfig =
-                    ToMongoDBMWConfig Consts.post [] updatedFlagUrlToIncludeMongoDBMWSvr (Http.jsonBody newBody) Nothing Nothing
+                   newToMongoDBMWConfig =
+                       ToMongoDBMWConfig Consts.post [] updatedFlagUrlToIncludeMongoDBMWSvr (Http.jsonBody newBody) Nothing Nothing
 
-                newModel =
-                    { model | searchResults = [], searchterm = "", toMongoDBMWConfig = Just newToMongoDBMWConfig, emailpassword = emailpword }
-            in -}
+                   newModel =
+                       { model | searchResults = [], searchterm = "", toMongoDBMWConfig = Just newToMongoDBMWConfig, emailpassword = emailpword }
+               in
+            -}
             ( --newModel
-            model
+              model
             , lnsConnectRequest model
             )
 
@@ -1050,10 +1046,11 @@ update msg model =
 
         LNSConnectResponse (Ok auth) ->
             let
-                headers = []
-                    -- NOTE: the 'Zoho-oauthtoken' sent at this point is the access token received after refresh
-                    --[ Http.header "Authorization" ("Bearer " ++ withDefault "No access token 2" (Just auth.deployment_model)) ]
+                headers =
+                    []
 
+                -- NOTE: the 'Zoho-oauthtoken' sent at this point is the access token received after refresh
+                --[ Http.header "Authorization" ("Bearer " ++ withDefault "No access token 2" (Just auth.deployment_model)) ]
                 -- incorporate new header with access token and update middleware port
                 flagUrlWithMongoDBMWAndPortUpdate =
                     if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
@@ -1109,39 +1106,7 @@ update msg model =
             , Cmd.none
             )
 
-        SearchResponse (Ok searchResult) ->
-            let
-                -- NOTE: The purpose below is just to exlcude any of the user's existing rankings (member or owned)
-                -- from the search results.
-                gotUsersMemberAndOwnedRankings =
-                    U.gotOwnedRankings model.user ++ U.gotMemberRankings model.user
-
-                -- Function to extract all IDs from the Ranking list
-                extractIdsFromRankings : List R.Ranking -> List String
-                extractIdsFromRankings rankings =
-                    List.map (\ranking -> ranking.id) rankings
-
-                -- Function to exclude RankingSearchResult objects based on IDs from R.Ranking list
-                excludeByRankingIds : List R.RankingSearchResult -> List R.Ranking -> List R.RankingSearchResult
-                excludeByRankingIds searchResults rankings =
-                    let
-                        rankingIds =
-                            extractIdsFromRankings rankings
-                    in
-                    List.filter (\result -> not (List.member result.id rankingIds)) searchResults
-            in
-            ( { model
-                -- REVIEW: Maybe handle searchResult differently?
-                | isWaitingForResponse = False
-                , searchResults = excludeByRankingIds searchResult.searchresponse gotUsersMemberAndOwnedRankings
-              }
-            , Cmd.none
-            )
-
-        SearchResponse (Err responseErr) ->
-            ( model
-            , Cmd.none
-            )
+        
 
         LoginResponse (Ok auth) ->
             let
@@ -1285,43 +1250,6 @@ update msg model =
         -- NAV: Update - SubmitSearchForm
         -- NOTE: If, in future updates/releases, you want to do a lot of validation
         -- at this point can -- REF: Haveno-Web-Responsive-Zoho app. Don't need here.
-        SubmitSearchForm searchInput ->
-            let
-                -- NOTE: Build the json body
-                postDataForMongoDBMWSvr : E.Value
-                postDataForMongoDBMWSvr =
-                    E.object
-                        [ -- NOTE: Sending to API url
-                          ( "apiUrl"
-                          , E.string <| Url.toString Consts.mongodbSearchURL
-                          )
-                        , ( "query_type", E.string "search" )
-                        , -- NOTE: We're not using the model here - straight from the UI
-                          ( "searchterm", E.string <| searchInput )
-                        ]
-
-                -- NOTE: Update the model with the new postDataForMongoDBMWSvr
-                -- RF
-                updatedFlagUrlToIncludeMongoDBMWSvr =
-                    -- TODO: Replace with sportsrank for production:
-                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
-                        Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
-
-                    else
-                        Url.toString <| Url model.flagUrl.protocol model.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
-
-                updatModelWithNewPostData =
-                    { model | toMongoDBMWConfig = Just (ToMongoDBMWConfig Consts.post [] updatedFlagUrlToIncludeMongoDBMWSvr (Http.jsonBody postDataForMongoDBMWSvr) Nothing Nothing) }
-            in
-            -- NOTE: set isWaitingForResponse to disable button in case user presses submit multiple times
-            -- NOTE: searchInput - straight from the UI into the model
-            ( { updatModelWithNewPostData | isWaitingForResponse = True, errors = [ "" ], searchterm = searchInput }
-            , sendPostDataToMongoDBMW updatModelWithNewPostData
-              -- NOTE: Until figure out why browsers are prejudiced against elm (cors), although this Msg enables updating the model
-              -- the 'work' is done in sendMessage in Main as usual.
-              --Cmd.none
-            )
-
         FetchSpectatorRanking rankingId ->
             let
                 -- NOTE: Build the json body
@@ -1331,7 +1259,7 @@ update msg model =
                         [ -- NOTE: Sending to API url
                           ( "apiUrl"
                           , E.string <|
-                                Url.toString Consts.mongodbSearchURL
+                                Url.toString Consts.placeholderUrl
                           )
                         , ( "query_type", E.string "fetch" )
                         , ( "rankingid", E.string <| rankingId )
@@ -1359,10 +1287,10 @@ update msg model =
             -- NOTE: set isWaitingForResponse to disable button in case user presses submit multiple times
             -- NOTE: rankingId - straight from the UI into the model
             ( updatModelWithNewPostData
-            , sendPostDataToMongoDBMW updatModelWithNewPostData
+            , 
               -- NOTE: Until figure out why browsers are prejudiced against elm (cors), although this Msg enables updating the model
               -- the 'work' is done in sendMessage in Main as usual.
-              --Cmd.none
+              Cmd.none
             )
 
         ConfirmBookingForm ->
@@ -1398,8 +1326,7 @@ content model =
             [ div
                 [ class "split-col"
                 ]
-                [ 
-                ]
+                []
             , case model.status of
                 Loading ->
                     div
@@ -1583,8 +1510,7 @@ content model =
             , div
                 [ class "split-col"
                 ]
-                [ 
-                ]
+                []
             ]
         ]
 
@@ -1845,6 +1771,7 @@ dialoguePrepareResultView uinfo rank ranking =
 
 -- NAV: Buttons
 
+
 playerbuttons : R.Ranking -> U.UserInfo -> Element Msg
 playerbuttons r u =
     let
@@ -2006,8 +1933,6 @@ createLadderView userInfo ranking =
             ]
 
 
-
-
 spectatorRankingBtn : R.RankingSearchResult -> Element Msg
 spectatorRankingBtn ranking =
     Element.column Grid.simple <|
@@ -2042,56 +1967,6 @@ ownedRankingBtn ranking =
             , label = Element.text ranking.name
             }
         ]
-
-
-globalrankingbtns : String -> List R.RankingSearchResult -> U.User -> Element Msg
-globalrankingbtns searchterm searchResults user =
-    case user of
-        U.Spectator uinfo ->
-            Element.column Grid.section <|
-                [ Element.el Heading.h5 <| Element.text "If you register you can \ncreate your own rankings"
-                , infoBtn "Cancel" <| Cancel
-                , Element.text "\n"
-                , Element.column (Card.simple ++ Grid.simple)
-                    -- HACK: list will need filling or a search list?
-                    -- Spectator won't have any 'owned' or 'member' rankings
-                    --(List.map rankingBtn (G.asList (G.fetchedOther g)))
-                    []
-                ]
-
-        U.Registered userInfo ->
-            Element.column Grid.section <|
-                [ Element.el Heading.h5 <| Element.text "Your Owned Hardware:"
-                , Element.column (Card.simple ++ Grid.simple) <|
-                    [ infoBtn "Create New Ladder" <| CreateNewRanking userInfo ]
-                , Element.column (Card.simple ++ Grid.simple) <|
-                    List.map ownedRankingBtn userInfo.ownedRankings
-                , Element.el Heading.h5 <| Element.text "Your Member Hardware: "
-                , Element.column (Card.simple ++ Grid.simple) <|
-                    List.map memberRankingBtn userInfo.memberRankings
-
-                -- NOTE: Here was originally a listing of other rankings. It will be more search based going forwards:
-                , Element.wrappedRow (Card.fill ++ Grid.simple)
-                    [ Element.column
-                        Grid.simple
-                        -- NOTE: You have changed this text ONLY to email from username
-                        [ Input.text (Input.simple ++ [ Element.htmlAttribute <| Attr.id "searchRankings", Input.focusedOnLoad ])
-                            { -- NOTE: onChange will make a new api call on each keypress once
-                              -- auto complete search is implemented (no need for button then)
-                              onChange = SubmitSearchForm --SearchInputChg
-                            , text = searchterm
-                            , placeholder = Just <| Input.placeholder [] (Element.text "Enter ranking name")
-                            , label = Input.labelLeft (Input.label ++ [ Element.moveLeft 11.0 ]) (Element.text "Search Hardware")
-                            }
-                        ]
-                    ]
-
-                -- TODO: When the inputs have been changed above SubmitSearchForm will handle the inputs
-                --, infoBtn "Search" SubmitSearchForm
-                , Element.column (Card.simple ++ Grid.simple) <|
-                    List.map spectatorRankingBtn searchResults
-                ]
-
 
 
 spectatorView : Html Msg
@@ -2132,20 +2007,10 @@ globalView searchterm searchResults userVal =
 
 displayGlobalRankingBtns : String -> List R.RankingSearchResult -> U.User -> Element Msg
 displayGlobalRankingBtns searchterm searchResults userVal =
-    case userVal of
-        U.Spectator _ ->
-            Element.column Grid.section <|
-                [ -- HACK: Not Create
-                  infoBtn "Connect Wallet" Create
-
-                --, El.warningText errorMsg
-                , infoBtn "Register" Create
-                , globalrankingbtns searchterm searchResults userVal
-                ]
-
-        U.Registered _ ->
-            Element.column Grid.section <|
-                [ globalrankingbtns searchterm searchResults userVal ]
+    Element.column Grid.section <|
+        [ -- HACK: Not Create
+          infoBtn "Connect Wallet" Create
+        ]
 
 
 loginView : Model -> Html Msg
@@ -2154,7 +2019,6 @@ loginView model =
         Element.column Framework.container <|
             [ Element.el Heading.h5 <| Element.text "Haveno-Web"
             , Element.text "\n"
-            
             , infoBtn "Connect Wallet" <| ClickedLedgerConnect model.emailpassword
             , case model.errors of
                 [] ->
@@ -2423,11 +2287,6 @@ type alias CustomerDetails =
 
 
 
-
-
-
-
-
 -- NOTE: One off tick on init to give us today's datetime
 
 
@@ -2479,12 +2338,15 @@ type alias SuccessfullLNSConnectResult =
     , transport_type : String
     }
 
-    {- [ ( "context", E.object [ ( "function", E.string "send" ) ] )
-                , ( "date", E.string "Tue Aug 27 2024 12:56:47 GMT+0800 (Singapore Standard Time)" )
-                , ( "id", E.string "5" )
-                , ( "message", E.string "Received response from exchange" )
-                , ( "type", E.string "transport" )
-                ] -}
+
+
+{- [ ( "context", E.object [ ( "function", E.string "send" ) ] )
+   , ( "date", E.string "Tue Aug 27 2024 12:56:47 GMT+0800 (Singapore Standard Time)" )
+   , ( "id", E.string "5" )
+   , ( "message", E.string "Received response from exchange" )
+   , ( "type", E.string "transport" )
+   ]
+-}
 
 
 type alias FailedLocationResult =
@@ -2834,13 +2696,13 @@ lnsConnectRequest model =
     let
         -- NOTE: It's the ToMongoDBMWConfig that are a Maybe (not the body)
         {- toMongoDBMWConfig =
-            case model.toMongoDBMWConfig of
-                Just mongodbmwPrams ->
-                    mongodbmwPrams
+           case model.toMongoDBMWConfig of
+               Just mongodbmwPrams ->
+                   mongodbmwPrams
 
-                Nothing ->
-                    ToMongoDBMWConfig "" [] "testPostRequest error" Http.emptyBody Nothing Nothing -}
-
+               Nothing ->
+                   ToMongoDBMWConfig "" [] "testPostRequest error" Http.emptyBody Nothing Nothing
+        -}
         {- headers =
            -- NOTE: the 'Zoho-oauthtoken' sent at this point is the access token received after refresh
            [ Http.header "Authorization" ("Zoho-oauthtoken " ++ withDefault "No access token " model.apiSpecifics.accessToken) ]
@@ -2937,71 +2799,6 @@ prepareEmailPwordLogin emailPword =
 -- REVIEW: This and sendRankingId have identical functionality (cos the data difference is in the POST data)
 
 
-sendPostDataToMongoDBMW : Model -> Cmd Msg
-sendPostDataToMongoDBMW model =
-    let
-        -- NOTE: It's the ToMongoDBMWConfig that are a Maybe (not the body)
-        toMongoDBMWConfig =
-            case model.toMongoDBMWConfig of
-                Just mongodbmwPrams ->
-                    mongodbmwPrams
-
-                Nothing ->
-                    ToMongoDBMWConfig "" [] "testPostRequest error" Http.emptyBody Nothing Nothing
-
-        headers =
-            -- NOTE: Bearer (access) token should be received on init of Hardware page (for anon users) and/or after login
-            [ Http.header "Authorization" ("Bearer " ++ withDefault "No access token 1" model.apiSpecifics.accessToken)
-            , Http.header "Accept" "application/json"
-            ]
-
-        {- mongoAtlasAPISearchIndexPath : String
-           mongoAtlasAPISearchIndexPath =
-               "api/atlas/v1.0/orgs/" ++ mongoOrdId ++ "/clusters/" ++ mongoClusterName ++ "/fts/indexes/" ++ mongoSearchIndexName
-
-
-
-
-           --https://cloud.mongodb.com/api/atlas/v1.0/orgs/{ORG-ID}/clusters/{CLUSTER-NAME}/fts/indexes/{INDEX-NAME}/search
-
-
-           -- NOTE: When you're accessing the actual API base is:
-
-           mongodbSearchURL : Url
-           mongodbSearchURL =
-               Url Https mongoCloudHost Nothing (mongoAtlasAPISearchIndexPath ++ "/search") Nothing Nothing
-        -}
-        expectData =
-            case model.queryType of
-                Login _ ->
-                    --Http.expectJson SearchResponse searchResultsDecoder
-                    Http.expectJson LoginResponse successfullLoginResultDecoder
-
-                SpectatorSelectedView ->
-                    Http.expectJson SpectatorRankingResponse R.rankingDecoder
-
-                -- REVIEW: Handle better?
-                _ ->
-                    Http.expectJson SearchResponse searchResultsDecoder
-
-        therequest =
-            Http.request
-                { body = toMongoDBMWConfig.body
-
-                --, method = toMongoDBMWConfig.method
-                , method = "POST"
-                , headers = headers
-
-                --, url = "https://cloud.mongodb.com/api/atlas/v1.0/orgs/sr-espa1-snonq/clusters/Cluster0/fts/indexes/searchRankings/search?q=Birt"
-                , url = "http://localhost:3000/middleware"
-
-                -- toMongoDBMWConfig.url
-                , expect = expectData
-                , timeout = Nothing
-                , tracker = Nothing
-                }
-    in
-    therequest
 
 
 
@@ -3397,46 +3194,9 @@ displayLoginBtns : Model -> Element Msg
 displayLoginBtns model =
     Element.column Grid.section <|
         [ Element.el [] <| Element.text " Please login, register or view \n search rankings as a spectator (below):"
-        , Element.wrappedRow (Card.fill ++ Grid.simple)
-            [ Element.column
-                Grid.simple
-                -- NOTE: You have changed this text ONLY to email from username
-                [ Input.text (Input.simple ++ [ Element.htmlAttribute <| Attr.id "email", Input.focusedOnLoad ])
-                    { onChange = UserLoginEmailInputChg
-                    , text = model.emailpassword.email
-                    , placeholder = Just <| Input.placeholder [] (Element.text "Email")
-                    , label = Input.labelLeft (Input.label ++ [ Element.moveLeft 11.0 ]) (Element.text "Email")
-                    }
-                , Input.currentPassword (Input.simple ++ [ Element.htmlAttribute (Attr.id "Password") ])
-                    { onChange = UserLoginPasswordInputChg
-                    , text = model.emailpassword.password
-                    , placeholder = Just <| Input.placeholder [] (Element.text "Password")
-                    , label = Input.labelLeft (Input.label ++ [ Element.moveLeft 11.0 ]) (Element.text "Password")
-                    , show = False
-                    }
-                ]
-            ]
+        
         , infoBtn "Connect Wallet" <| ClickedLedgerConnect model.emailpassword
-        , infoBtn "Register" Create
-        , Element.wrappedRow (Card.fill ++ Grid.simple)
-            [ Element.column
-                Grid.simple
-                -- NOTE: You have changed this text ONLY to email from username
-                [ Input.text (Input.simple ++ [ Element.htmlAttribute <| Attr.id "searchRankings", Input.focusedOnLoad ])
-                    { -- NOTE: onChange will make a new api call on each keypress once
-                      -- auto complete search is implemented (no need for button then)
-                      onChange = SubmitSearchForm --SearchInputChg
-                    , text = model.searchterm
-                    , placeholder = Just <| Input.placeholder [] (Element.text "Enter ranking name")
-                    , label = Input.labelLeft (Input.label ++ [ Element.moveLeft 11.0 ]) (Element.text "Search Hardware")
-                    }
-                ]
-            ]
-
-        -- TODO: When the inputs have been changed above SubmitSearchForm will handle the inputs
-        --, infoBtn "Search" SubmitSearchForm
-        , Element.column (Card.simple ++ Grid.simple) <|
-            List.map spectatorRankingBtn model.searchResults
+        
         ]
 
 
@@ -3619,9 +3379,6 @@ updateNewUserRegistrationFormField msg queryType model =
 
 
 -- NOTE: Theses are generic. If you want specific errors customize in the relevant update
-
-
-
 
 
 validateName : Maybe String -> Result String String
@@ -3838,5 +3595,3 @@ rankingDetailsConfirmPanel ranking userInfo =
                     ]
                 ]
             ]
-
-

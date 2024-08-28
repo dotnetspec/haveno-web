@@ -1,12 +1,7 @@
 // often this may be index.js or main.js - it's the entry point for the Elm app
 import { Elm } from '../src/Main.elm';
 import { setupElmPorts } from './ledgerInterop';
-/* import { Buffer } from 'buffer';
-globalThis.Buffer = Buffer;
 
-console.log(globalThis.Buffer); */
-
-//window.Buffer = Buffer;
 
 document.addEventListener('DOMContentLoaded', () => {
     const eapp = Elm.Main.init({
@@ -44,16 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         handleMessageFromElm(message);
     });
 
-    async function sendWebSocketChangeEventFromMongoDbToElmPort(applicationData) {
-        console.log('applicationData in sendWebSocketChangeEventFromMongoDbToElmPort', applicationData);
-        additionalDataObjExtendibleIfRequired = { userid: '', nickname: '' }
-        jsonMsgToElm = {
-            operationEventMsg: 'webSocket',
-            dataFromMongo: applicationData,
-            additionalDataFromJs: additionalDataObjExtendibleIfRequired,
-        }
-        eapp.ports.messageReceiver.send(jsonMsgToElm)
-    }
+
 
     // Setup Ledger ports
     setupElmPorts(eapp);

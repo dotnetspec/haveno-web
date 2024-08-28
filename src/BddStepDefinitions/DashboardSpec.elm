@@ -60,7 +60,7 @@ runSpecTests =
                 (Setup.init
                     -- NOTE: We have to use testInit cos we don't have a Nav.Key to initialize with
                     -- TODO: RF remove 'time' from Pages.Dashboard.init
-                    -- RF: We won't be using a mongoMWUrl moving forwards
+                    
                     (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.placeholderUrl })
                     |> Setup.withView Pages.Dashboard.view
                     |> Setup.withUpdate Pages.Dashboard.update
@@ -118,7 +118,7 @@ runSpecTests =
         {- , scenario "3. Connecting the Dashboard Wallet"
            (given
                (Setup.init
-                   (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
+                   (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.placeholderUrl })
                    |> Setup.withView Pages.Dashboard.view
                    |> Setup.withUpdate Pages.Dashboard.update
                    |> Stub.serve [ TestData.successfullLocationFetch ]
@@ -152,7 +152,7 @@ runSpecTests =
         {- , scenario "3. Display An Active User On Login Succeed"
            (given
                (Setup.init
-                   (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.mongoMWUrl })
+                   (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.placeholderUrl })
                    |> Setup.withView Pages.Dashboard.view
                    |> Setup.withUpdate Pages.Dashboard.update
                    |> Stub.serve
@@ -180,7 +180,7 @@ runSpecTests =
                                (Claim.isListWhere
                                    [ Spec.Http.url <|
                                        -- HACK: These are not good tests currently:
-                                       Claim.isStringContaining 1 "realm.mongodb.com"
+                                       Claim.isStringContaining 1 ""
                                    ]
                                )
                        )

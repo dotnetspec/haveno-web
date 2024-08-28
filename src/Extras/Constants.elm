@@ -19,6 +19,10 @@ localorproductionServerAutoCheck : String
 localorproductionServerAutoCheck =
     "haveno-web.squashpassion"
 
+placeholderUrl : Url
+placeholderUrl =
+    Url Http "localhost" (Just 3000) "" Nothing Nothing
+
 
 post : String
 post =
@@ -188,19 +192,19 @@ mongoCloudHost =
     "cloud.mongodb.com"
 
 
-mongoAtlasAPISearchIndexPath : String
+{- mongoAtlasAPISearchIndexPath : String
 mongoAtlasAPISearchIndexPath =
     "api/atlas/v1.0/orgs/" ++ mongoOrdId ++ "/clusters/" ++ mongoClusterName ++ "/fts/indexes/" ++ mongoSearchIndexName
-
+ -}
 
 
 --https://cloud.mongodb.com/api/atlas/v1.0/orgs/{ORG-ID}/clusters/{CLUSTER-NAME}/fts/indexes/{INDEX-NAME}/search
 -- NOTE: When you're accessing the actual API base is:
 
 
-mongodbSearchURL : Url
+{- mongodbSearchURL : Url
 mongodbSearchURL =
-    Url Https mongoCloudHost Nothing (mongoAtlasAPISearchIndexPath ++ "/search") Nothing Nothing
+    Url Https mongoCloudHost Nothing (mongoAtlasAPISearchIndexPath ++ "/search") Nothing Nothing -}
 
 
 zohoAccountsPath : String
