@@ -2020,6 +2020,8 @@ loginView model =
             [ Element.el Heading.h5 <| Element.text "Haveno-Web"
             , Element.text "\n"
             , infoBtn "Connect Wallet" <| ClickedLedgerConnect model.emailpassword
+            , Element.text "\n"
+            , Element.el Heading.h6 <| Element.text "Not connected yet"
             , case model.errors of
                 [] ->
                     Element.text ""
@@ -2483,7 +2485,7 @@ failedLoginResultDecoder =
 lnsResponseDecoder : Decoder SuccessfullLNSConnectResult
 lnsResponseDecoder =
     D.map5 SuccessfullLNSConnectResult
-        (field "function" D.string)
+        (D.field "context" (D.field "function" D.string))
         (field "date" D.string)
         (field "id" D.string)
         (field "message" D.string)
@@ -2712,7 +2714,7 @@ lnsConnectRequest model =
                 { body = Http.emptyBody
                 , method = "POST"
                 , headers = []
-                , url = "http://localhost:1234"
+                , url = "http://localhost:1234/hardware"
                 , expect = Http.expectJson LNSConnectResponse lnsResponseDecoder
                 , timeout = Nothing
                 , tracker = Nothing

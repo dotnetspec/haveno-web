@@ -10565,7 +10565,10 @@ var $elm$json$Json$Decode$map5 = _Json_map5;
 var $author$project$Pages$Hardware$lnsResponseDecoder = A6(
 	$elm$json$Json$Decode$map5,
 	$author$project$Pages$Hardware$SuccessfullLNSConnectResult,
-	A2($elm$json$Json$Decode$field, 'function', $elm$json$Json$Decode$string),
+	A2(
+		$elm$json$Json$Decode$field,
+		'context',
+		A2($elm$json$Json$Decode$field, 'function', $elm$json$Json$Decode$string)),
 	A2($elm$json$Json$Decode$field, 'date', $elm$json$Json$Decode$string),
 	A2($elm$json$Json$Decode$field, 'id', $elm$json$Json$Decode$string),
 	A2($elm$json$Json$Decode$field, 'message', $elm$json$Json$Decode$string),
@@ -10579,7 +10582,7 @@ var $author$project$Pages$Hardware$lnsConnectRequest = function (model) {
 			uM: 'POST',
 			wo: $elm$core$Maybe$Nothing,
 			wu: $elm$core$Maybe$Nothing,
-			bF: 'http://localhost:1234'
+			bF: 'http://localhost:1234/hardware'
 		});
 	return therequest;
 };
@@ -21567,7 +21570,7 @@ var $author$project$SR$Elements$globalHeading = function (user) {
 		return A2(
 			$mdgriffith$elm_ui$Element$el,
 			$Orasund$elm_ui_framework$Framework$Heading$h5,
-			$mdgriffith$elm_ui$Element$text('Successfully talking to the hardware wallet'));
+			$mdgriffith$elm_ui$Element$text('Spectator in global heading'));
 	} else {
 		var userInfo = user.a;
 		return A2(
@@ -21629,6 +21632,11 @@ var $author$project$Pages$Hardware$loginView = function (model) {
 					$author$project$Pages$Hardware$infoBtn,
 					'Connect Wallet',
 					$author$project$Pages$Hardware$ClickedLedgerConnect(model.dJ)),
+					$mdgriffith$elm_ui$Element$text('\n'),
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					$Orasund$elm_ui_framework$Framework$Heading$h6,
+					$mdgriffith$elm_ui$Element$text('Not connected yet')),
 					function () {
 					var _v0 = model.d$;
 					if (!_v0.b) {

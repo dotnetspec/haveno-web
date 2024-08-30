@@ -1044,7 +1044,7 @@ subscriptions _ =
 -- NAV: Ports
 
 port initializeLedger : (Int -> msg) -> Sub msg
-port getAccountInfo : (Int -> msg) -> Sub msg
+port getAccountInfoFromLNS : (Int -> msg) -> Sub msg
 
 -- Handle the responses from the ports
 port ledgerInitialized : (JD.Value -> msg) -> Sub msg

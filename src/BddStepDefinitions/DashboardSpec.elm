@@ -115,38 +115,6 @@ runSpecTests =
                     ]
             )
 
-        {- , scenario "3. Connecting the Dashboard Wallet"
-           (given
-               (Setup.init
-                   (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.placeholderUrl })
-                   |> Setup.withView Pages.Dashboard.view
-                   |> Setup.withUpdate Pages.Dashboard.update
-                   |> Stub.serve [ TestData.successfullLocationFetch ]
-               )
-               |> when "we simulate clicking the login button"
-                   [ Spec.Command.send <| Spec.Command.fake (Pages.Dashboard.ClickedLogInUser
-                   --{ email = "k223445687@k.com", password = "nonExistent" }
-                       { email = "", password = "" }
-                   ) ]
-               {- |> Spec.when "we log the http requests"
-                  [ Spec.Http.logRequests
-                  ]
-               -}
-               |> Spec.observeThat
-                   [ it "displays a 'successfully talking to the hardware wallet' message from the Dashboard page"
-                       (Markup.observeElement
-                           |> Markup.query
-                           -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
-                           << by [ tag "h5" ]
-                           |> Spec.expect
-                               (Claim.isSomethingWhere <|
-                                   Markup.text <|
-                                       Claim.isStringContaining 1 "Successfully talking to the hardware wallet"
-                               )
-                       )
-                   ]
-           )
-        -}
         --Runner.pick <|
         --, Runner.skip <|
         {- , scenario "3. Display An Active User On Login Succeed"

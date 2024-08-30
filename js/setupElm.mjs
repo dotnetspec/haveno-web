@@ -1,7 +1,10 @@
-// often this may be index.js or main.js - it's the entry point for the Elm app
-import { Elm } from '../src/Main.elm';
-import { setupElmPorts } from './ledgerInterop';
 
+import { Elm } from '../src/Main.elm';
+//import { setupElmPorts, connectLNS } from './ledgerInterop.js';
+import { setupElmPorts } from './ledgerInterop.js';
+
+
+// often above may be index.js or main.js - it's the entry point for the Elm app
 
 document.addEventListener('DOMContentLoaded', () => {
     const eapp = Elm.Main.init({
@@ -39,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         handleMessageFromElm(message);
     });
 
-
+    //connectLNS();
 
     // Setup Ledger ports
     setupElmPorts(eapp);

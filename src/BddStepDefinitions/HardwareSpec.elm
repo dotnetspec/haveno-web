@@ -37,7 +37,7 @@ runSpecTests =
         "Scenarios based on a Haveno Web App MVP"
         [ --Runner.pick <|
           --,
-          Runner.skip <|
+          --Runner.skip <|
             scenario "1. Connecting the Hardware Wallet"
                 (given
                     (Setup.init
@@ -61,11 +61,11 @@ runSpecTests =
                             (Markup.observeElement
                                 |> Markup.query
                                 -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
-                                << by [ tag "h1" ]
+                                << by [ tag "h6" ]
                                 |> Spec.expect
                                     (Claim.isSomethingWhere <|
                                         Markup.text <|
-                                            Claim.isStringContaining 1 "Connect your Nano and open the Bitcoin app. Click anywhere to start..."
+                                            Claim.isStringContaining 1 "1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS"
                                     )
                             )
                         ]

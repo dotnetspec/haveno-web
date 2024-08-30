@@ -291,6 +291,6 @@ successfulLnsResponseStub =
                 , ( "type", E.string "transport" )
                 ]
     in
-    Stub.for (Route.post "http://localhost:1234/")
+    Stub.for (Route.post "http://localhost:1234/hardware")
         |> Stub.withHeader ( "Content-Type", "application/json" )
         |> Stub.withBody (Stub.withJson jsonResponse)
