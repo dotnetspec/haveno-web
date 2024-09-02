@@ -10,29 +10,27 @@ import Browser.Navigation as Nav exposing (..)
 import Data.Ranking as R
 import Data.User as U exposing (User(..))
 import Erl exposing (..)
-import Extras.Constants as Consts
+import Extras.Constants as Constants
 import Html exposing (Html, a, br, button, div, footer, header, i, img, li, nav, node, p, source, span, text, ul, video)
 import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick)
 import Json.Decode as JD
 import Json.Encode as JE
-import Pages.Market
-
-import Pages.Dashboard
-import Pages.Support
 import Pages.Buy
+import Pages.Dashboard
 import Pages.Funds
 import Pages.Hardware
+import Pages.Market
+import Pages.PingPong
 import Pages.Portfolio
 import Pages.Sell
-import Pages.PingPong
+import Pages.Support
 import Task
 import Time
 import Types.DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 import Url.Parser exposing ((</>), (<?>), oneOf, s)
 import Url.Parser.Query as Query exposing (..)
-import Extras.Constants as Constants
 
 
 
@@ -135,6 +133,7 @@ testInit flag url =
 type alias Model =
     { page : Page, key : Url -> Cmd Msg, flag : Url, time : Time.Posix, zone : Maybe Time.Zone, errors : List String }
 
+
 placeholderModel : Model
 placeholderModel =
     { page = SupportPage Pages.Support.initialModel -- Support page arbitrary for now
@@ -144,6 +143,8 @@ placeholderModel =
     , zone = Nothing -- Replace with the actual time zone if available
     , errors = []
     }
+
+
 
 -- NAV: Msg
 -- REVIEW: Move these notes to a separate file somewhere?
@@ -157,7 +158,7 @@ placeholderModel =
    and you would use a function when you want to perform some computation or operation.
 
    All the below are constructor functions for the Msg type. They are not functions in the traditional sense,
-   e.g. 
+   e.g.
    port receiveMessageFromJs : (String -> msg) -> Sub msg
    ReceivedFromJs String
 
@@ -167,7 +168,7 @@ placeholderModel =
     -- and returns a Msg. This is what ReceivedFromJs was 'constructed' to be
     receiveMessageFromJs ReceivedFromJs
 
-    
+
 
     update : Msg -> Model -> (Model, Cmd Msg)
     update msg model =
@@ -207,11 +208,8 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    
     case msg of
-        
         RecvText textMessageFromJs ->
-            
             ( model, Cmd.none )
 
         -- NAV: Recv rawJsonMessage
@@ -230,7 +228,6 @@ update msg model =
                 ( { model | errors = model.errors ++ [ "Problem fetching data" ] }, Cmd.none )
 
             else if String.contains "LOGINDENIED" (fromJsonToString rawJsonMessage) then
-                
                 ( { model | errors = model.errors ++ [ "Login Denied - Please try again ..." ] }, Cmd.none )
 
             else
@@ -328,8 +325,6 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        
-
         GotBuyMsg pricingMsg ->
             case model.page of
                 BuyPage pricing ->
@@ -354,259 +349,26 @@ update msg model =
         -- NOTE: Make changes to the Hardware model, cmds etc. in toHardware (more options)
         GotHardwareMsg hardwareMsg ->
             case model.page of
-                HardwarePage rankings ->
+                HardwarePage hardwareModel ->
                     -- NOTE: Example of handling data coming from sub module to main
                     -- If the message is one that needs to be handled in Main (e.g. sends message to port)
                     -- then handle it here:
                     case hardwareMsg of
-                        Pages.Hardware.ConfirmNewRanking ranking user ->
+                        Pages.Hardware.ClickedLedgerConnect ->
                             let
-                                -- rankings is the model. Need to update here:
-                                newRankingsModel =
-                                    { rankings | queryType = Pages.Hardware.LoggedInUser }
+                                newHardwareModel =
+                                    { hardwareModel | queryType = Pages.Hardware.LoggedInUser }
                             in
-                            -- WARN: Password currently hard coded
-                            ( { model | page = HardwarePage newRankingsModel }
+                            ( { model | page = HardwarePage newHardwareModel }
                             , --Debug.log "Sending new ranking details"
+                            -- NOTE: Old msg showing formatting - 'sendMessageToJs ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")'
                               sendMessageToJs
-                                ("createRanking"
-                                    ++ "~^&"
-                                    ++ ranking.name
-                                    ++ "~^&"
-                                    -- NOTE: sometimes these cannot be ""
-                                    ++ (if ranking.baseaddress.street == "" then
-                                            "Unspecified"
-
-                                        else
-                                            ranking.baseaddress.street
-                                       )
-                                    ++ "~^&"
-                                    ++ (if ranking.baseaddress.city == "" then
-                                            "Unspecified"
-
-                                        else
-                                            ranking.baseaddress.city
-                                       )
-                                )
-                            )
-
-                        
-
-                        Pages.Hardware.FetchOwned ownedRanking ->
-                            -- NOTE: when this message returns, we will have full Ranking with all the details
-                            ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.OwnedSelectedView } }
-                            , --Debug.log "Sending message"
-                              sendMessageToJs ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")
-                            )
-
-                        Pages.Hardware.FetchMember memberRanking ->
-                            -- NOTE: when this message returns, we will have full Ranking with all the details
-                            ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.MemberSelectedView } }
-                            , --Debug.log "Sending message"
-                              sendMessageToJs ("fetchRanking" ++ "~^&" ++ memberRanking.id ++ "~^&memberranking")
-                            )
-
-                        Pages.Hardware.ConfirmJoin rankingWantToJoin userid lastRank ->
-                            let
-                                newRank =
-                                    { rank = lastRank + 1
-                                    , player = { id = userid, nickname = U.gotNickName rankings.user } -- Replace with actual player data
-
-                                    -- RF: hard coded for now
-                                    , challenger = { id = "6353e8b6aedf80653eb34191", nickname = "No Challenger" } -- Replace with actual challenger data
-                                    }
-
-                                updatedRanking =
-                                    { rankingWantToJoin | ladder = rankingWantToJoin.ladder ++ [ newRank ] }
-
-                                updatedUser =
-                                    U.addNewLadderToMemberRankings rankings.user rankingWantToJoin
-                            in
-                            -- NOTE: when this message returns, we will have full Ranking with all the details
-                            ( { model
-                                | page =
-                                    HardwarePage
-                                        { rankings
-                                            | queryType = Pages.Hardware.MemberSelectedView
-                                            , selectedranking = R.Member { rankingWantToJoin | ladder = updatedRanking.ladder }
-                                            , user = updatedUser
-                                            , searchterm = ""
-                                            , searchResults = []
-                                        }
-                              }
-                            , --Debug.log "Sending message"
-                              sendMessageToJs
-                                ("joinRanking"
-                                    ++ "~^&"
-                                    ++ rankingWantToJoin.id
-                                    ++ "~^&"
-                                    -- NOTE: + 1 to lastRank, to make the new member the LAST in the list, before sending to js
-                                    ++ userid
-                                    ++ "~^&"
-                                    ++ String.fromInt (lastRank + 1)
-                                )
-                            )
-
-                        -- REVIEW: Can rankingWantToLeave be replaced with rankings.selectedranking?
-                        -- and userid from model.user?
-                        Pages.Hardware.ConfirmLeaveMemberRanking rankingWantToLeave userid ->
-                            let
-                                updatedRankingList =
-                                    U.deleteRankingFromMemberRankings rankings.user rankingWantToLeave.id
-
-                                updatedUserInfo =
-                                    U.updatedMemberRankings (U.gotUserInfo rankings.user) updatedRankingList
-
-                                rankingWithAnyCurrentChallengesRemoved =
-                                    R.abandonSingleUserChallenge userid rankingWantToLeave.ladder
-
-                                updatedRanking =
-                                    { rankingWantToLeave | ladder = R.removeRank userid rankingWithAnyCurrentChallengesRemoved }
-
-                                --_ =
-                                --  Debug.log "encoded updatedRanking" (JE.encode 0 <| R.jsonUpdatedRanking updatedRanking)
-                            in
-                            -- NOTE: update the UI selectedranking and user (list of rankings) immediately
-                            ( { model
-                                | page =
-                                    HardwarePage
-                                        { rankings
-                                            | queryType = Pages.Hardware.SpectatorSelectedView
-                                            , selectedranking = R.Spectator updatedRanking
-                                            , user = Registered updatedUserInfo
-                                        }
-                              }
-                            , --Debug.log "Sending message"
-                              sendMessageToJs
-                                ("leaveRanking"
-                                    ++ "~^&"
-                                    ++ rankingWantToLeave.id
-                                    ++ "~^&"
-                                    ++ userid
-                                    ++ "~^&"
-                                    ++ (JE.encode 0 <| R.jsonUpdatedRanking updatedRanking)
-                                )
-                            )
-
-                        
-                        Pages.Hardware.ConfirmChallenge selectedRanking rank ->
-                            let
-                                -- TODO: Handle the default
-                                gotRankBelow =
-                                    Maybe.withDefault R.emptyRank (R.gotRankBelow rank selectedRanking.ladder)
-
-                                updatedRanks =
-                                    R.createSingleUserChallenge rank.player.id gotRankBelow.player selectedRanking.ladder
-
-                                updatedRanking =
-                                    { selectedRanking | ladder = updatedRanks }
-
-                                {- updatedUserInfo =
-                                   U.updatedMemberRankings (U.gotUserInfo rankings.user) updatedRanking
-                                -}
-                                --_ =
-                                --  Debug.log "encoded updatedRanking" (JE.encode 0 <| R.jsonUpdatedRanking updatedRanking)
-                            in
-                            -- NOTE: update the UI selectedranking and user (list of rankings) immediately
-                            ( { model
-                                | page =
-                                    HardwarePage
-                                        { rankings
-                                            | queryType = Pages.Hardware.MemberSelectedView
-                                            , selectedranking = R.Member updatedRanking
-
-                                            --, user = newUserMemberRankingListWithUpdatedRankingAdded
-                                        }
-                              }
-                            , --Debug.log "Sending message"
-                              sendMessageToJs
-                                -- REVIEW: It may become possible to have a more generic 'updateRanking' message
-                                ("updateRanking"
-                                    ++ "~^&"
-                                    ++ selectedRanking.id
-                                    ++ "~^&"
-                                    ++ (JE.encode 0 <| R.jsonUpdatedRanking updatedRanking)
-                                )
-                            )
-
-                        Pages.Hardware.ConfirmResult result ->
-                            let
-                                -- TODO: We have to update the user's List of Hardware here
-                                selectedRanking =
-                                    R.gotRanking rankings.selectedranking
-
-                                updatedRanks =
-                                    R.handleResult result (U.gotId rankings.user) selectedRanking.ladder
-
-                                updatedRanking =
-                                    { selectedRanking | ladder = updatedRanks }
-
-                                --_ =
-                                --  Debug.log "encoded updatedRanking" (JE.encode 0 <| R.jsonUpdatedRanking updatedRanking)
-                            in
-                            -- NOTE: update the UI selectedranking and user (list of rankings) immediately
-                            ( { model
-                                | page =
-                                    HardwarePage
-                                        { rankings
-                                            | queryType = Pages.Hardware.MemberSelectedView
-                                            , selectedranking = R.Member updatedRanking
-                                        }
-                              }
-                            , --Debug.log "Sending message"
-                              sendMessageToJs
-                                -- REVIEW: It may become possible to have a more generic 'updateRanking' message
-                                ("updateRanking"
-                                    ++ "~^&"
-                                    ++ selectedRanking.id
-                                    ++ "~^&"
-                                    ++ (JE.encode 0 <| R.jsonUpdatedRanking updatedRanking)
-                                )
-                            )
-
-                        Pages.Hardware.LogOut ->
-                            -- REVIEW: do we need apispecs for this app? or just queryType at top level?
-                            ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.Login Consts.emptyEmailPassword } }
-                            , --Debug.log "Sending message"
-                              sendMessageToJs "logout"
-                            )
-
-                        --updateForChallenge
-                        Pages.Hardware.RegisUser newUserRegistrationDetails ->
-                            ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.RegisterUser newUserRegistrationDetails } }
-                            , --Debug.log "Sending registration details"
-                              sendMessageToJs ("register" ++ "~^&" ++ Maybe.withDefault "" newUserRegistrationDetails.email ++ "~^&" ++ newUserRegistrationDetails.password ++ "~^&" ++ newUserRegistrationDetails.nickname)
-                            )
-
-                        -- REVIEW: This will be implemented if it is not possible to implement delete via API
-                        Pages.Hardware.DeleteOwnedRanking ->
-                            let
-                                ownedRanking =
-                                    case rankings.selectedranking of
-                                        R.Owned ownedRnking ->
-                                            ownedRnking
-
-                                        _ ->
-                                            R.emptyRanking
-
-                                newUser =
-                                    U.deleteRankingFromOwnedRankings rankings.user ownedRanking.id
-                            in
-                            ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.LoggedInUser, user = newUser } }
-                            , --Debug.log "Sending message"
-                              sendMessageToJs ("deleteRanking" ++ "~^&" ++ R.gotRankingId (R.gotRanking rankings.selectedranking))
-                            )
-
-                        Pages.Hardware.DeleteAccount ->
-                            ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.Login Consts.emptyEmailPassword } }
-                            , --Debug.log "Sending message"
-                              sendMessageToJs ("deleteAccount" ++ "~^&" ++ U.gotId rankings.user)
+                                "connectLNS"
                             )
 
                         _ ->
-                            
                             -- otherwise operate within the Hardware sub module:
-                            toHardware model (Pages.Hardware.update hardwareMsg rankings)
+                            toHardware model (Pages.Hardware.update hardwareMsg hardwareModel)
 
                 _ ->
                     ( model, Cmd.none )
@@ -853,12 +615,9 @@ updateUrl url model =
 
         oauthCode =
             gotCodeFromUrl url
-
-        
     in
     case Url.Parser.parse urlAsPageParser urlMinusQueryStr of
         Just Dashboard ->
-            
             -- TODO: Review below as we don't use Oauth.Callback any more:
             -- NOTE: When we get an oauth code we want to move program control to Oauth.Callback
             -- so that we can manage the UI with the user separately from Main.elm.
@@ -916,10 +675,8 @@ updateUrl url model =
             -- REVIEW: Time is sent through here as it may speed up the slots fetch in Hardware - tbc
             -- RF: Change name flagUrl to domainUrl
             Pages.Hardware.init { time = Nothing, flagUrl = model.flag }
-            -- Model -> ( Pages.Hardware.Model, Cmd Pages.Hardware.Msg ) -> ( Model, Cmd Msg )
+                -- Model -> ( Pages.Hardware.Model, Cmd Pages.Hardware.Msg ) -> ( Model, Cmd Msg )
                 |> toHardware model
-
-                
 
         Nothing ->
             ( { model | page = NotFound }, Cmd.none )
@@ -1024,7 +781,6 @@ toHardware model ( hardware, cmd ) =
          function to create new values.
       -}
     , Cmd.map GotHardwareMsg cmd
-    
     )
 
 
@@ -1068,27 +824,27 @@ subscriptions _ =
     -- NOTE: You have to get time from main, cos only main has subscription.
     -- It is anyway best practice to send data top down
     Sub.batch [ Time.every 900000 (\posixTime -> GotHardwareMsg (Pages.Hardware.Tick posixTime)), messageReceiver Recv ]
-    --Sub.none
 
 
+
+--Sub.none
 -- NAV: Ports - once defined here they can be used in js with app.ports.<portname>.send/subscribe(<data>)
+
 
 port sendMessageToJs : String -> Cmd msg
 
+
 port receiveMessageFromJs : (String -> msg) -> Sub msg
 
+
+
 {- port initializeLedger : (Int -> msg) -> Sub msg
-port getAccountInfoFromLNS : (Int -> msg) -> Sub msg
+   port getAccountInfoFromLNS : (Int -> msg) -> Sub msg
 
--- Handle the responses from the ports
-port ledgerInitialized : (JD.Value -> msg) -> Sub msg
-port accountInfoReceived : (JD.Value -> msg) -> Sub msg -}
-
-
-
-
-
-
+   -- Handle the responses from the ports
+   port ledgerInitialized : (JD.Value -> msg) -> Sub msg
+   port accountInfoReceived : (JD.Value -> msg) -> Sub msg
+-}
 {- -- NOTE: messageReceiver: You could have just recieved a string here (String -> msg),
    but now we're getting a JSON object from js, created like this in the js:
 
@@ -1307,7 +1063,6 @@ navLinks page =
                 , navLink Sell { url = "sell", caption = "Sell" }
                 , navLink Buy { url = "buy", caption = "Buy" }
                 , navLink Hardware { url = "hardware", caption = "Hardware" }
-                
                 , navLink Portfolio { url = "portfolio", caption = "Portfolio" }
                 ]
 
@@ -1363,9 +1118,6 @@ logOutUser =
 
 
 -- NAV: Video
-
-
-
 
 
 footerContent : Html msg
@@ -1433,7 +1185,6 @@ isActive { link, page } =
         ( PingPong, _ ) ->
             False
 
-      
         ( Buy, BuyPage _ ) ->
             True
 
@@ -1457,7 +1208,10 @@ isActive { link, page } =
 I think it needs a dismissErrors function to go with it ...
 -}
 
+
+
 -- NOTE: Did this as an example of currying and partial application:
+
 
 errorMessages : List String -> List (Html msg)
 errorMessages errors =
@@ -1481,4 +1235,3 @@ viewErrors dismissErrors errors =
         <|
             errorMessages errors
                 ++ [ okButton dismissErrors ]
-

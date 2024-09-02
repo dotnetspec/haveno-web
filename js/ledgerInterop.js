@@ -33,10 +33,10 @@ export function getAccountInfo() {
 const $main = document.getElementById("main");
 $main.innerHTML = initial; */
 
-document.body.addEventListener("click", async () => {
+//document.body.addEventListener("click", async () => {
   //$main.innerHTML = initial; */
   //export function setupElmPorts(app) {
-//export function connectLNS(){
+export function connectLNS(){
   try {
     
     console.log('hello there');
@@ -76,11 +76,13 @@ document.body.addEventListener("click", async () => {
     //$main.appendChild($err);
     console.log('connectLNS errors:', e.message);
   }
-});
+}
+//);
 
 export function setupElmPorts(app) {
   console.log("setupElmPorts called", app);
   app.ports.sendMessageToJs.subscribe((message) => {
+    console.log ('message from elm : ', message);
     initializeLedger()
       .then(() => {
         app.ports.receiveMessageFromJs.send({ Ok: null });

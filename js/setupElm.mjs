@@ -1,7 +1,8 @@
 
 import { Elm } from '../src/Main.elm';
-//import { setupElmPorts, connectLNS } from './ledgerInterop.js';
-import { setupElmPorts } from './ledgerInterop.js';
+
+//import { setupElmPorts } from './ledgerInterop.js';
+import { handleMessageFromElm } from './handleElmMessages.js';
 
 
 // often above may be index.js or main.js - it's the entry point for the Elm app
@@ -34,16 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const hostnm = environmentInfo.hostname;
     const prt = environmentInfo.port;
 
+    // Setup Ledger ports
+    //setupElmPorts(eapp);
+
     var jsonUrl = JSON.stringify(protocol + "//" + hostnm + ":" + prt);
     console.log("jsonUrl:", jsonUrl);
 
-    eapp.ports.sendMessage.subscribe(function (message) {
+    eapp.ports.sendMessageToJs.subscribe(function (message) {
         console.log("Message sent to js ", message);
         handleMessageFromElm(message);
     });
-
-    //connectLNS();
-
-    // Setup Ledger ports
-    setupElmPorts(eapp);
 });

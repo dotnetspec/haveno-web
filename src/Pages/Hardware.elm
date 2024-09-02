@@ -203,7 +203,7 @@ type Msg
       -- NOTE: Start of new Msg variants from espa1
     | UserLoginEmailInputChg String
     | UserLoginPasswordInputChg String
-    | ClickedLedgerConnect EmailPasswordLogin
+    | ClickedLedgerConnect
       -- NOTE: ResponseDataFromMain is a Msg from the port
     | ResponseDataFromMain D.Value
     | LogOut
@@ -250,7 +250,6 @@ type Msg
     | LNSConnectResponse (Result Http.Error SuccessfullLNSConnectResult)
     | ProfileResponse (Result Http.Error SuccessfullProfileResult)
     | CallResponse (Result Http.Error U.UserInfo)
- 
 
 
 
@@ -266,7 +265,7 @@ update msg model =
     -- handleCancel you get flexibility and precision (can deal with specific model state in handleCancel)
     case msg of
         NoOp ->
-            (model, Cmd.none)
+            ( model, Cmd.none )
 
         CancelDialoguePrepareResultView ->
             ( { model
@@ -832,34 +831,11 @@ update msg model =
         LogOut ->
             ( model, Cmd.none )
 
-        -- NOTE: Previously -> Will be handled in Main/GotRankingsMsg
-        -- because needs data from the port, but now go straight to sendPostDataToMongoDBMW
-        ClickedLedgerConnect emailpword ->
-            {- let
-                   -- REVIEW: Probably don't need emailpword in the body yet - only need for the login post
-                   -- but we do add to the model below so it's ready to use
-                   newBody =
-                       prepareEmailPwordLogin emailpword
-
-                   -- RF
-                   updatedFlagUrlToIncludeMongoDBMWSvr =
-                       -- TODO: Replace with sportsrank for production:
-                       if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
-                           Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
-
-                       else
-                           Url.toString <| Url model.flagUrl.protocol model.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
-
-                   newToMongoDBMWConfig =
-                       ToMongoDBMWConfig Consts.post [] updatedFlagUrlToIncludeMongoDBMWSvr (Http.jsonBody newBody) Nothing Nothing
-
-                   newModel =
-                       { model | searchResults = [], searchterm = "", toMongoDBMWConfig = Just newToMongoDBMWConfig, emailpassword = emailpword }
-               in
-            -}
-            ( --newModel
-              model
-            , lnsConnectRequest model
+        -- NOTE: Will be handled in Main/GotHardwareMsg
+        -- because needs data from the port
+        ClickedLedgerConnect ->
+            ( model
+            , Cmd.none
             )
 
         -- NOTE: Will be handled in Main/GotRankingsMsg
@@ -940,7 +916,6 @@ update msg model =
 
         DismissErrors ->
             ( { model | errors = [] }, Cmd.none )
-
 
         CallResponse (Ok auth) ->
             let
@@ -1107,8 +1082,6 @@ update msg model =
             ( model
             , Cmd.none
             )
-
-        
 
         LoginResponse (Ok auth) ->
             let
@@ -1289,8 +1262,7 @@ update msg model =
             -- NOTE: set isWaitingForResponse to disable button in case user presses submit multiple times
             -- NOTE: rankingId - straight from the UI into the model
             ( updatModelWithNewPostData
-            , 
-              -- NOTE: Until figure out why browsers are prejudiced against elm (cors), although this Msg enables updating the model
+            , -- NOTE: Until figure out why browsers are prejudiced against elm (cors), although this Msg enables updating the model
               -- the 'work' is done in sendMessageToJs in Main as usual.
               Cmd.none
             )
@@ -2021,7 +1993,7 @@ loginView model =
         Element.column Framework.container <|
             [ Element.el Heading.h5 <| Element.text "Haveno-Web"
             , Element.text "\n"
-            , infoBtn "Connect Wallet" <| ClickedLedgerConnect model.emailpassword
+            , infoBtn "Connect Wallet" <| ClickedLedgerConnect
             , Element.text "\n"
             , Element.el Heading.h6 <| Element.text "Not connected yet"
             , case model.errors of
@@ -2670,6 +2642,8 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
 
+
+
 {- -- NOTE: CORS restrictions are imposed by a web browser on the SENDING of a request from a web page hosted on one domain to a different domain.
    They can be overcome by the API server resonding with friendly headers - but most servers don't want to do this so end up back with mongodbMW
 -}
@@ -2804,11 +2778,6 @@ prepareEmailPwordLogin emailPword =
 
 
 -- REVIEW: This and sendRankingId have identical functionality (cos the data difference is in the POST data)
-
-
-
-
-
 --Cmd.none
 -- NOTE: This will be run against all 5 possible venue types
 --Cmd.none
@@ -3201,9 +3170,7 @@ displayLoginBtns : Model -> Element Msg
 displayLoginBtns model =
     Element.column Grid.section <|
         [ Element.el [] <| Element.text " Please login, register or view \n search rankings as a spectator (below):"
-        
-        , infoBtn "Connect Wallet" <| ClickedLedgerConnect model.emailpassword
-        
+        , infoBtn "Connect Wallet" <| ClickedLedgerConnect 
         ]
 
 
