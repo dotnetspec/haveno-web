@@ -250,6 +250,7 @@ type Msg
     | LNSConnectResponse (Result Http.Error SuccessfullLNSConnectResult)
     | ProfileResponse (Result Http.Error SuccessfullProfileResult)
     | CallResponse (Result Http.Error U.UserInfo)
+ 
 
 
 
@@ -264,6 +265,9 @@ update msg model =
     -- NOTE: (msg, model) as per espa1 can be tricky. If you use helper functions like
     -- handleCancel you get flexibility and precision (can deal with specific model state in handleCancel)
     case msg of
+        NoOp ->
+            (model, Cmd.none)
+
         CancelDialoguePrepareResultView ->
             ( { model
                 | queryType = MemberSelectedView
@@ -937,8 +941,6 @@ update msg model =
         DismissErrors ->
             ( { model | errors = [] }, Cmd.none )
 
-        NoOp ->
-            ( model, Cmd.none )
 
         CallResponse (Ok auth) ->
             let
@@ -1289,7 +1291,7 @@ update msg model =
             ( updatModelWithNewPostData
             , 
               -- NOTE: Until figure out why browsers are prejudiced against elm (cors), although this Msg enables updating the model
-              -- the 'work' is done in sendMessage in Main as usual.
+              -- the 'work' is done in sendMessageToJs in Main as usual.
               Cmd.none
             )
 
@@ -2664,6 +2666,9 @@ decodeApply =
     D.map2 (|>)
 
 
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
 
 {- -- NOTE: CORS restrictions are imposed by a web browser on the SENDING of a request from a web page hosted on one domain to a different domain.
    They can be overcome by the API server resonding with friendly headers - but most servers don't want to do this so end up back with mongodbMW

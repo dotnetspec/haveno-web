@@ -6,12 +6,13 @@ import Browser.Navigation as Nav exposing (..)
 import Dict
 import Extras.Constants as Consts exposing (..)
 import Extras.TestData as TestData
-import Html exposing (Html)
+import Html exposing (Html, sub)
 import Http
 import Json.Decode as D
 import Json.Encode as E
 import Main
 import Pages.Hardware
+import Pages.Support
 import Spec exposing (Flags, Spec, describe, expect, given, it, scenario, when)
 import Spec.Claim as Claim exposing (Claim, Verdict)
 import Spec.Command exposing (..)
@@ -31,6 +32,30 @@ import Types.DateType as DateType
 import Url exposing (Protocol(..), Url)
 
 
+
+-- Define a wrapper function for Main.subscriptions
+
+
+hardwareSubscriptions : Pages.Hardware.Model -> Sub Pages.Hardware.Msg
+hardwareSubscriptions _ =
+    Sub.map toHardwareMsg (Main.subscriptions Main.placeholderModel)
+
+
+
+-- Define a function to convert Main.Msg to Pages.Hardware.Msg
+
+
+toHardwareMsg : Main.Msg -> Pages.Hardware.Msg
+toHardwareMsg mainMsg =
+    case mainMsg of
+        -- Add cases to convert Main.Msg to Pages.Hardware.Msg
+        Main.Recv message ->
+            Pages.Hardware.ResponseDataFromMain message
+
+        _ ->
+            Pages.Hardware.NoOp
+
+
 runSpecTests : Spec Pages.Hardware.Model Pages.Hardware.Msg
 runSpecTests =
     describe
@@ -38,38 +63,38 @@ runSpecTests =
         [ --Runner.pick <|
           --,
           --Runner.skip <|
-            scenario "1. Connecting the Hardware Wallet"
-                (given
-                    (Setup.init
-                        (Pages.Hardware.init { time = Nothing, flagUrl = TestData.placeholderUrl })
-                        |> Setup.withView Pages.Hardware.view
-                        |> Setup.withUpdate Pages.Hardware.update
-                        |> Stub.serve [ TestData.successfulLnsResponseStub ]
-                    )
-                    |> when "we simulate clicking the ledger connect button"
-                        [ Spec.Command.send <|
-                            Spec.Command.fake
-                                (Pages.Hardware.ClickedLedgerConnect
-                                    { email = "", password = "" }
-                                )
-                        ]
-                    |> Spec.when "we log the http requests"
-                        [ Spec.Http.logRequests
-                        ]
-                    |> Spec.observeThat
-                        [ it "displays a message indicating the lns is connected and initialized"
-                            (Markup.observeElement
-                                |> Markup.query
-                                -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
-                                << by [ tag "h6" ]
-                                |> Spec.expect
-                                    (Claim.isSomethingWhere <|
-                                        Markup.text <|
-                                            Claim.isStringContaining 1 "1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS"
-                                    )
-                            )
-                        ]
+          scenario "1. Connecting the Hardware Wallet"
+            (given
+                (Setup.init
+                    (Pages.Hardware.init { time = Nothing, flagUrl = TestData.placeholderUrl })
+                    |> Setup.withView Pages.Hardware.view
+                    |> Setup.withSubscriptions hardwareSubscriptions
+                 
                 )
+                |> when "we simulate clicking the ledger connect button"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            (Pages.Hardware.ClickedLedgerConnect
+                                { email = "", password = "" }
+                            )
+                    ]
+                |> Spec.when "we log the http requests"
+                    [ Spec.Http.logRequests
+                    ]
+                |> Spec.observeThat
+                    [ it "displays a message indicating the lns is connected and initialized"
+                        (Markup.observeElement
+                            |> Markup.query
+                            -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
+                            << by [ tag "h6" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS"
+                                )
+                        )
+                    ]
+            )
 
         --Runner.pick <|
         --, Runner.skip <|

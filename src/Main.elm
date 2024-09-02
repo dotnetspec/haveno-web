@@ -32,6 +32,7 @@ import Types.DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 import Url.Parser exposing ((</>), (<?>), oneOf, s)
 import Url.Parser.Query as Query exposing (..)
+import Extras.Constants as Constants
 
 
 
@@ -134,9 +135,18 @@ testInit flag url =
 type alias Model =
     { page : Page, key : Url -> Cmd Msg, flag : Url, time : Time.Posix, zone : Maybe Time.Zone, errors : List String }
 
-
+placeholderModel : Model
+placeholderModel =
+    { page = SupportPage Pages.Support.initialModel -- Support page arbitrary for now
+    , key = \_ -> Cmd.none -- Replace with an appropriate command
+    , flag = Constants.emptyDefaultUrl
+    , time = Time.millisToPosix 0
+    , zone = Nothing -- Replace with the actual time zone if available
+    , errors = []
+    }
 
 -- NAV: Msg
+-- REVIEW: Move these notes to a separate file somewhere?
 -- We 'talk' (e.g. send time to schedule) to the other pages via the Msgs defined here and in those pages.
 {- -- NOTE: each variant of a custom type can be considered a type constructor. They are not functions in the
    traditional sense, but they behave similarly in that they take arguments and produce a value of the custom type.
@@ -145,6 +155,26 @@ type alias Model =
 
    In practical terms, you would use a type constructor when you want to create a new value of a specific type,
    and you would use a function when you want to perform some computation or operation.
+
+   All the below are constructor functions for the Msg type. They are not functions in the traditional sense,
+   e.g. 
+   port receiveMessageFromJs : (String -> msg) -> Sub msg
+   ReceivedFromJs String
+
+   subscriptions : Model -> Sub Msg
+    subscriptions _ =
+    -- NOTE: ReceivedFromJs has no String here cos receiveMessageFromJs wants a function that takes a String
+    -- and returns a Msg. This is what ReceivedFromJs was 'constructed' to be
+    receiveMessageFromJs ReceivedFromJs
+
+    
+
+    update : Msg -> Model -> (Model, Cmd Msg)
+    update msg model =
+    case msg of
+        ReceivedFromJs message ->
+            -- Handle the message from JavaScript
+            (model, Cmd.none)
 -}
 
 
@@ -316,19 +346,19 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        -- NOTE: GotHardwareMsg is triggered by toRankings, which is triggered by updateUrl
+        -- NOTE: GotHardwareMsg is triggered by toHardware, which is triggered by updateUrl
         -- which is triggered by init. updateUrl is sent the url and uses the parser to parse it.
         -- The parser outputs the Hardware page so that the case in updateUrl can branch on Hardware.
-        -- Hardware.init can then be run to init the page and the page can, through toRankings, be added
+        -- Hardware.init can then be run to init the page and the page can, through toHardware, be added
         -- to the model in Main (as the current page).
-        -- NOTE: Make changes to the Hardware model, cmds etc. in toRankings (more options)
-        GotHardwareMsg rankingsMsg ->
+        -- NOTE: Make changes to the Hardware model, cmds etc. in toHardware (more options)
+        GotHardwareMsg hardwareMsg ->
             case model.page of
                 HardwarePage rankings ->
                     -- NOTE: Example of handling data coming from sub module to main
                     -- If the message is one that needs to be handled in Main (e.g. sends message to port)
                     -- then handle it here:
-                    case rankingsMsg of
+                    case hardwareMsg of
                         Pages.Hardware.ConfirmNewRanking ranking user ->
                             let
                                 -- rankings is the model. Need to update here:
@@ -338,7 +368,7 @@ update msg model =
                             -- WARN: Password currently hard coded
                             ( { model | page = HardwarePage newRankingsModel }
                             , --Debug.log "Sending new ranking details"
-                              sendMessage
+                              sendMessageToJs
                                 ("createRanking"
                                     ++ "~^&"
                                     ++ ranking.name
@@ -366,14 +396,14 @@ update msg model =
                             -- NOTE: when this message returns, we will have full Ranking with all the details
                             ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.OwnedSelectedView } }
                             , --Debug.log "Sending message"
-                              sendMessage ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")
+                              sendMessageToJs ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")
                             )
 
                         Pages.Hardware.FetchMember memberRanking ->
                             -- NOTE: when this message returns, we will have full Ranking with all the details
                             ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.MemberSelectedView } }
                             , --Debug.log "Sending message"
-                              sendMessage ("fetchRanking" ++ "~^&" ++ memberRanking.id ++ "~^&memberranking")
+                              sendMessageToJs ("fetchRanking" ++ "~^&" ++ memberRanking.id ++ "~^&memberranking")
                             )
 
                         Pages.Hardware.ConfirmJoin rankingWantToJoin userid lastRank ->
@@ -405,7 +435,7 @@ update msg model =
                                         }
                               }
                             , --Debug.log "Sending message"
-                              sendMessage
+                              sendMessageToJs
                                 ("joinRanking"
                                     ++ "~^&"
                                     ++ rankingWantToJoin.id
@@ -447,7 +477,7 @@ update msg model =
                                         }
                               }
                             , --Debug.log "Sending message"
-                              sendMessage
+                              sendMessageToJs
                                 ("leaveRanking"
                                     ++ "~^&"
                                     ++ rankingWantToLeave.id
@@ -489,7 +519,7 @@ update msg model =
                                         }
                               }
                             , --Debug.log "Sending message"
-                              sendMessage
+                              sendMessageToJs
                                 -- REVIEW: It may become possible to have a more generic 'updateRanking' message
                                 ("updateRanking"
                                     ++ "~^&"
@@ -524,7 +554,7 @@ update msg model =
                                         }
                               }
                             , --Debug.log "Sending message"
-                              sendMessage
+                              sendMessageToJs
                                 -- REVIEW: It may become possible to have a more generic 'updateRanking' message
                                 ("updateRanking"
                                     ++ "~^&"
@@ -538,14 +568,14 @@ update msg model =
                             -- REVIEW: do we need apispecs for this app? or just queryType at top level?
                             ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.Login Consts.emptyEmailPassword } }
                             , --Debug.log "Sending message"
-                              sendMessage "logout"
+                              sendMessageToJs "logout"
                             )
 
                         --updateForChallenge
                         Pages.Hardware.RegisUser newUserRegistrationDetails ->
                             ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.RegisterUser newUserRegistrationDetails } }
                             , --Debug.log "Sending registration details"
-                              sendMessage ("register" ++ "~^&" ++ Maybe.withDefault "" newUserRegistrationDetails.email ++ "~^&" ++ newUserRegistrationDetails.password ++ "~^&" ++ newUserRegistrationDetails.nickname)
+                              sendMessageToJs ("register" ++ "~^&" ++ Maybe.withDefault "" newUserRegistrationDetails.email ++ "~^&" ++ newUserRegistrationDetails.password ++ "~^&" ++ newUserRegistrationDetails.nickname)
                             )
 
                         -- REVIEW: This will be implemented if it is not possible to implement delete via API
@@ -564,19 +594,19 @@ update msg model =
                             in
                             ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.LoggedInUser, user = newUser } }
                             , --Debug.log "Sending message"
-                              sendMessage ("deleteRanking" ++ "~^&" ++ R.gotRankingId (R.gotRanking rankings.selectedranking))
+                              sendMessageToJs ("deleteRanking" ++ "~^&" ++ R.gotRankingId (R.gotRanking rankings.selectedranking))
                             )
 
                         Pages.Hardware.DeleteAccount ->
                             ( { model | page = HardwarePage { rankings | queryType = Pages.Hardware.Login Consts.emptyEmailPassword } }
                             , --Debug.log "Sending message"
-                              sendMessage ("deleteAccount" ++ "~^&" ++ U.gotId rankings.user)
+                              sendMessageToJs ("deleteAccount" ++ "~^&" ++ U.gotId rankings.user)
                             )
 
                         _ ->
                             
                             -- otherwise operate within the Hardware sub module:
-                            toHardware model (Pages.Hardware.update rankingsMsg rankings)
+                            toHardware model (Pages.Hardware.update hardwareMsg rankings)
 
                 _ ->
                     ( model, Cmd.none )
@@ -1038,20 +1068,24 @@ subscriptions _ =
     -- NOTE: You have to get time from main, cos only main has subscription.
     -- It is anyway best practice to send data top down
     Sub.batch [ Time.every 900000 (\posixTime -> GotHardwareMsg (Pages.Hardware.Tick posixTime)), messageReceiver Recv ]
+    --Sub.none
 
 
+-- NAV: Ports - once defined here they can be used in js with app.ports.<portname>.send/subscribe(<data>)
 
--- NAV: Ports
+port sendMessageToJs : String -> Cmd msg
 
-port initializeLedger : (Int -> msg) -> Sub msg
+port receiveMessageFromJs : (String -> msg) -> Sub msg
+
+{- port initializeLedger : (Int -> msg) -> Sub msg
 port getAccountInfoFromLNS : (Int -> msg) -> Sub msg
 
 -- Handle the responses from the ports
 port ledgerInitialized : (JD.Value -> msg) -> Sub msg
-port accountInfoReceived : (JD.Value -> msg) -> Sub msg
+port accountInfoReceived : (JD.Value -> msg) -> Sub msg -}
 
 
-port sendMessage : String -> Cmd msg
+
 
 
 
@@ -1324,7 +1358,7 @@ topLinksLeft =
 
 logOutUser : Cmd Msg
 logOutUser =
-    sendMessage "logOut"
+    sendMessageToJs "logOut"
 
 
 

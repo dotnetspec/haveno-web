@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.v$.jy === region.U.jy)
+	if (region.v$.jz === region.U.jz)
 	{
-		return 'on line ' + region.v$.jy;
+		return 'on line ' + region.v$.jz;
 	}
-	return 'on lines ' + region.v$.jy + ' through ' + region.U.jy;
+	return 'on lines ' + region.v$.jz + ' through ' + region.U.jz;
 }
 
 
@@ -4074,9 +4074,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.ni === next.ni
+							&& curr.nj === next.nj
 							&& curr.fr === next.fr
-							&& curr.ku.a === next.ku.a
+							&& curr.kv.a === next.kv.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4251,7 +4251,7 @@ function _Browser_getViewport()
 		se: {
 			so: _Browser_window.pageXOffset,
 			sq: _Browser_window.pageYOffset,
-			dn: _Browser_doc.documentElement.clientWidth,
+			$7: _Browser_doc.documentElement.clientWidth,
 			iR: _Browser_doc.documentElement.clientHeight
 		}
 	};
@@ -4262,7 +4262,7 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		dn: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		$7: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
 		iR: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
@@ -4287,13 +4287,13 @@ function _Browser_getViewportOf(id)
 	{
 		return {
 			rq: {
-				dn: node.scrollWidth,
+				$7: node.scrollWidth,
 				iR: node.scrollHeight
 			},
 			se: {
 				so: node.scrollLeft,
 				sq: node.scrollTop,
-				dn: node.clientWidth,
+				$7: node.clientWidth,
 				iR: node.clientHeight
 			}
 		};
@@ -4328,13 +4328,13 @@ function _Browser_getElement(id)
 			se: {
 				so: x,
 				sq: y,
-				dn: _Browser_doc.documentElement.clientWidth,
+				$7: _Browser_doc.documentElement.clientWidth,
 				iR: _Browser_doc.documentElement.clientHeight
 			},
-			dq: {
+			dr: {
 				so: x + rect.left,
 				sq: y + rect.top,
-				dn: rect.width,
+				$7: rect.width,
 				iR: rect.height
 			}
 		};
@@ -4498,13 +4498,13 @@ var _Http_toTask = F3(function(router, toTask, request)
 	return _Scheduler_binding(function(callback)
 	{
 		function done(response) {
-			callback(toTask(request.m2.a(response)));
+			callback(toTask(request.m4.a(response)));
 		}
 
 		var xhr = new XMLHttpRequest();
 		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.m2.b, xhr)); });
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.m4.b, xhr)); });
 		$elm$core$Maybe$isJust(request.wu) && _Http_track(router, xhr, request.wu.a);
 
 		try {
@@ -4532,7 +4532,7 @@ function _Http_configureRequest(xhr, request)
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
 	xhr.timeout = request.wo.a || 0;
-	xhr.responseType = request.m2.d;
+	xhr.responseType = request.m4.d;
 	xhr.withCredentials = request.sF;
 }
 
@@ -5434,7 +5434,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {tT: fragment, fr: host, f3: path, ku: port_, ni: protocol, vp: query};
+		return {tT: fragment, fr: host, f3: path, kv: port_, nj: protocol, vp: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5740,7 +5740,7 @@ var $elm$url$Url$addPrefixed = F3(
 	});
 var $elm$url$Url$toString = function (url) {
 	var http = function () {
-		var _v0 = url.ni;
+		var _v0 = url.nj;
 		if (!_v0) {
 			return 'http://';
 		} else {
@@ -5758,7 +5758,7 @@ var $elm$url$Url$toString = function (url) {
 			_Utils_ap(
 				A2(
 					$elm$url$Url$addPort,
-					url.ku,
+					url.kv,
 					_Utils_ap(http, url.fr)),
 				url.f3)));
 };
@@ -6116,14 +6116,14 @@ var $RomanErnst$erl$Erl$queryFromAll = function (all) {
 };
 var $RomanErnst$erl$Erl$parse = function (str) {
 	return {
-		m4: $RomanErnst$erl$Erl$hasLeadingSlashFromAll(str),
-		m5: $RomanErnst$erl$Erl$hasTrailingSlashFromAll(str),
+		m6: $RomanErnst$erl$Erl$hasLeadingSlashFromAll(str),
+		m7: $RomanErnst$erl$Erl$hasTrailingSlashFromAll(str),
 		ae: $RomanErnst$erl$Erl$hashFromAll(str),
 		fr: $RomanErnst$erl$Erl$host(str),
 		n4: '',
 		f3: $RomanErnst$erl$Erl$pathFromAll(str),
-		ku: $RomanErnst$erl$Erl$extractPort(str),
-		ni: $RomanErnst$erl$Erl$extractProtocol(str),
+		kv: $RomanErnst$erl$Erl$extractPort(str),
+		nj: $RomanErnst$erl$Erl$extractProtocol(str),
 		vp: $RomanErnst$erl$Erl$queryFromAll(str),
 		a6: ''
 	};
@@ -6163,7 +6163,7 @@ var $author$project$Pages$Dashboard$HavenoAPKHttpRequest = F6(
 var $author$project$Pages$Dashboard$Loading = 0;
 var $author$project$Pages$Dashboard$Model = F8(
 	function (status, title, root, balance, flagUrl, havenoAPKHttpRequest, version, errors) {
-		return {sO: balance, d$: errors, iI: flagUrl, pK: havenoAPKHttpRequest, rh: root, rL: status, wp: title, ez: version};
+		return {sO: balance, dK: errors, iI: flagUrl, pK: havenoAPKHttpRequest, rh: root, rL: status, wp: title, ez: version};
 	});
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -7098,7 +7098,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$unknownFieldDecoder = function
 };
 var $eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage = F2(
 	function (width, state) {
-		return (state.dn <= 0) ? ($elm$core$Set$isEmpty(state.kQ) ? $elm$bytes$Bytes$Decode$succeed(
+		return (state.$7 <= 0) ? ($elm$core$Set$isEmpty(state.kR) ? $elm$bytes$Bytes$Decode$succeed(
 			$elm$bytes$Bytes$Decode$Done(
 				_Utils_Tuple2(width, state.uQ))) : $elm$bytes$Bytes$Decode$fail) : A2(
 			$elm$bytes$Bytes$Decode$andThen,
@@ -7120,8 +7120,8 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage = F2(
 									state,
 									{
 										uQ: fn(state.uQ),
-										kQ: A2($elm$core$Set$remove, fieldNumber, state.kQ),
-										dn: (state.dn - usedBytes) - n
+										kR: A2($elm$core$Set$remove, fieldNumber, state.kR),
+										$7: (state.$7 - usedBytes) - n
 									}));
 						},
 						decoder(wireType));
@@ -7132,7 +7132,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage = F2(
 							return $elm$bytes$Bytes$Decode$Loop(
 								_Utils_update(
 									state,
-									{dn: (state.dn - usedBytes) - n}));
+									{$7: (state.$7 - usedBytes) - n}));
 						},
 						$eriktim$elm_protocol_buffers$Protobuf$Decode$unknownFieldDecoder(wireType));
 				}
@@ -7171,7 +7171,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$message = F2(
 				var width = wireType.a;
 				return A2(
 					$elm$bytes$Bytes$Decode$loop,
-					{nJ: dict, uQ: v, kQ: requiredSet, dn: width},
+					{nJ: dict, uQ: v, kR: requiredSet, $7: width},
 					$eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage(width));
 			} else {
 				return $elm$bytes$Bytes$Decode$fail;
@@ -7459,8 +7459,8 @@ var $anmolitor$elm_grpc$Grpc$new = F2(
 					A2($elm$http$Http$header, 'accept', $anmolitor$elm_grpc$Grpc$grpcContentType)
 				]),
 			fr: '',
-			nk: false,
-			kY: rpc,
+			nl: false,
+			kZ: rpc,
 			wo: $elm$core$Maybe$Nothing,
 			wu: $elm$core$Maybe$Nothing
 		};
@@ -7864,7 +7864,7 @@ var $elm$http$Http$cmdMap = F2(
 				{
 					sF: r.sF,
 					sV: r.sV,
-					m2: A2(_Http_mapExpect, func, r.m2),
+					m4: A2(_Http_mapExpect, func, r.m4),
 					t7: r.t7,
 					uM: r.uM,
 					wo: r.wo,
@@ -7892,12 +7892,12 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{sF: false, sV: r.sV, m2: r.m2, t7: r.t7, uM: r.uM, wo: r.wo, wu: r.wu, bF: r.bF}));
+			{sF: false, sV: r.sV, m4: r.m4, t7: r.t7, uM: r.uM, wo: r.wo, wu: r.wu, bF: r.bF}));
 };
 var $elm$http$Http$riskyRequest = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{sF: true, sV: r.sV, m2: r.m2, t7: r.t7, uM: r.uM, wo: r.wo, wu: r.wu, bF: r.bF}));
+			{sF: true, sV: r.sV, m4: r.m4, t7: r.t7, uM: r.uM, wo: r.wo, wu: r.wu, bF: r.bF}));
 };
 var $anmolitor$elm_grpc$Grpc$rpcPath = function (_v0) {
 	var service = _v0.vR;
@@ -7908,8 +7908,8 @@ var $anmolitor$elm_grpc$Grpc$rpcPath = function (_v0) {
 var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 	function (expect, _v0) {
 		var req = _v0;
-		var toHttpRequest = req.nk ? $elm$http$Http$riskyRequest : $elm$http$Http$request;
-		var _v1 = req.kY;
+		var toHttpRequest = req.nl ? $elm$http$Http$riskyRequest : $elm$http$Http$request;
+		var _v1 = req.kZ;
 		var rpc = _v1;
 		var body = A2(
 			$elm$http$Http$bytesBody,
@@ -7920,7 +7920,7 @@ var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 		return toHttpRequest(
 			{
 				sV: body,
-				m2: A2(
+				m4: A2(
 					$elm$http$Http$expectBytesResponse,
 					expect,
 					$anmolitor$elm_grpc$Grpc$handleResponse(rpc.tu)),
@@ -7930,7 +7930,7 @@ var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 				wu: req.wu,
 				bF: _Utils_ap(
 					req.fr,
-					$anmolitor$elm_grpc$Grpc$rpcPath(req.kY))
+					$anmolitor$elm_grpc$Grpc$rpcPath(req.kZ))
 			});
 	});
 var $author$project$Pages$Dashboard$sendVersionRequest = function (request) {
@@ -7956,9 +7956,9 @@ var $author$project$Pages$Dashboard$init = function (fromMainToDashboard) {
 			A6($author$project$Pages$Dashboard$HavenoAPKHttpRequest, $author$project$Extras$Constants$post, _List_Nil, '', $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)),
 		$elm$core$Maybe$Nothing,
 		_List_Nil);
-	var devOrProdServer = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, fromMainToDashboard.iI.fr) ? A6($elm$url$Url$Url, fromMainToDashboard.iI.ni, fromMainToDashboard.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$productionProxyConfig, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6(
+	var devOrProdServer = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, fromMainToDashboard.iI.fr) ? A6($elm$url$Url$Url, fromMainToDashboard.iI.nj, fromMainToDashboard.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$productionProxyConfig, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6(
 		$elm$url$Url$Url,
-		fromMainToDashboard.iI.ni,
+		fromMainToDashboard.iI.nj,
 		fromMainToDashboard.iI.fr,
 		$elm$core$Maybe$Just(3000),
 		$author$project$Extras$Constants$middleWarePath,
@@ -8012,7 +8012,7 @@ var $author$project$Pages$Hardware$Model = function (status) {
 																					return function (searchterm) {
 																						return function (searchResults) {
 																							return function (objectJSONfromJSPort) {
-																								return {at: apiSpecifics, sK: availableSlots, nG: datetimeFromMain, dJ: emailpassword, d$: errors, iI: flagUrl, uf: humanDateTime, nW: isReturnUser, uz: isValidBookingResponse, d8: isValidNewAccessToken, m9: isWaitingForResponse, qC: objectJSONfromJSPort, vj: posixTmes, bJ: queryType, vz: result, rh: root, vL: searchResults, vN: searchterm, oa: selectedSingleRank, er: selectedranking, rL: status, wp: title, gN: toMongoDBMWConfig, dl: user};
+																								return {at: apiSpecifics, sK: availableSlots, nG: datetimeFromMain, dJ: emailpassword, dK: errors, iI: flagUrl, uf: humanDateTime, nW: isReturnUser, uz: isValidBookingResponse, d8: isValidNewAccessToken, nb: isWaitingForResponse, qC: objectJSONfromJSPort, vj: posixTmes, bJ: queryType, vz: result, rh: root, vL: searchResults, vN: searchterm, oa: selectedSingleRank, er: selectedranking, rL: status, wp: title, gN: toMongoDBMWConfig, dm: user};
 																							};
 																						};
 																					};
@@ -8045,13 +8045,13 @@ var $author$project$Pages$Hardware$ToMongoDBMWConfig = F6(
 var $author$project$Data$Ranking$Undecided = 2;
 var $author$project$Pages$Hardware$ApiSpecifics = F2(
 	function (maxResults, accessToken) {
-		return {dR: accessToken, uI: maxResults};
+		return {dT: accessToken, uI: maxResults};
 	});
 var $author$project$Pages$Hardware$apiSpecsPlaceHolder = A2($author$project$Pages$Hardware$ApiSpecifics, '', $elm$core$Maybe$Nothing);
 var $author$project$Extras$Constants$emptyEmailPassword = {nN: '', n4: ''};
 var $author$project$Data$Ranking$emptyRank = {
-	an: {A: 'String', dw: 'String'},
-	aB: {A: 'String', dw: 'String'},
+	an: {A: 'String', dx: 'String'},
+	aB: {A: 'String', dx: 'String'},
 	bC: 0
 };
 var $author$project$Data$User$Spectator = function (a) {
@@ -8081,7 +8081,7 @@ var $author$project$Data$User$UserInfo = function (userid) {
 																				return function (description) {
 																					return function (credits) {
 																						return function (addInfo) {
-																							return {mO: active, st: addInfo, sw: age, tn: credits, tt: datestamp, dY: description, nN: email, tI: emailValidationError, tZ: gender, uw: isEmailInputFocused, ux: isMobileInputFocused, uy: isNameInputFocused, ea: memberRankings, n_: mobile, uO: mobileValidationError, uT: nameValidationError, dw: nickname, dK: ownedRankings, n4: password, ve: passwordValidationError, ws: token, wy: updatetext, r9: userid};
+																							return {mQ: active, st: addInfo, sw: age, tn: credits, tt: datestamp, d_: description, nN: email, tI: emailValidationError, tZ: gender, uw: isEmailInputFocused, ux: isMobileInputFocused, uy: isNameInputFocused, ea: memberRankings, n_: mobile, uO: mobileValidationError, uT: nameValidationError, dx: nickname, dM: ownedRankings, n4: password, ve: passwordValidationError, ws: token, wy: updatetext, r9: userid};
 																						};
 																					};
 																				};
@@ -8110,7 +8110,7 @@ var $author$project$Data$User$emptyUserInfo = $author$project$Data$User$UserInfo
 var $author$project$Data$User$emptySpectator = $author$project$Data$User$Spectator($author$project$Data$User$emptyUserInfo);
 var $AdrianRibao$elm_derberos_date$Derberos$Date$Core$DateRecord = F8(
 	function (year, month, day, hour, minute, second, millis, zone) {
-		return {m0: day, ub: hour, nd: millis, ne: minute, nf: month, no: second, ol: year, nz: zone};
+		return {m2: day, ub: hour, ne: millis, nf: minute, ng: month, np: second, ol: year, mO: zone};
 	});
 var $elm$time$Time$Zone = F2(
 	function (a, b) {
@@ -8119,9 +8119,9 @@ var $elm$time$Time$Zone = F2(
 var $elm$time$Time$utc = A2($elm$time$Time$Zone, 0, _List_Nil);
 var $author$project$Pages$Hardware$humandateTimePlaceholder = A8($AdrianRibao$elm_derberos_date$Derberos$Date$Core$DateRecord, 0, 0, 0, 0, 0, 0, 0, $elm$time$Time$utc);
 var $author$project$Pages$Hardware$init = function (fromMainToRankings) {
-	var updatedFlagUrlToIncludeMongoDBMWSvr = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, fromMainToRankings.iI.fr) ? A6($elm$url$Url$Url, fromMainToRankings.iI.ni, fromMainToRankings.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$productionProxyConfig, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6(
+	var updatedFlagUrlToIncludeMongoDBMWSvr = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, fromMainToRankings.iI.fr) ? A6($elm$url$Url$Url, fromMainToRankings.iI.nj, fromMainToRankings.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$productionProxyConfig, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6(
 		$elm$url$Url$Url,
-		fromMainToRankings.iI.ni,
+		fromMainToRankings.iI.nj,
 		fromMainToRankings.iI.fr,
 		$elm$core$Maybe$Just(3000),
 		$author$project$Extras$Constants$middleWarePath,
@@ -8133,7 +8133,7 @@ var $author$project$Pages$Hardware$init = function (fromMainToRankings) {
 			A2(
 				$elm$core$Maybe$withDefault,
 				$elm$core$Maybe$Nothing,
-				$elm$core$Maybe$Just(fromMainToRankings.dE)))($author$project$Pages$Hardware$humandateTimePlaceholder)(_List_Nil)($author$project$Pages$Hardware$apiSpecsPlaceHolder)(
+				$elm$core$Maybe$Just(fromMainToRankings.dg)))($author$project$Pages$Hardware$humandateTimePlaceholder)(_List_Nil)($author$project$Pages$Hardware$apiSpecsPlaceHolder)(
 			$author$project$Pages$Hardware$Login($author$project$Extras$Constants$emptyEmailPassword))(
 			$elm$core$Maybe$Just(
 				A6(
@@ -8223,7 +8223,7 @@ var $author$project$Pages$Support$init = function (_v0) {
 };
 var $elm$url$Url$Parser$State = F5(
 	function (visited, unvisited, params, frag, value) {
-		return {d5: frag, ei: params, dQ: unvisited, al: value, eA: visited};
+		return {d5: frag, ei: params, dS: unvisited, al: value, eA: visited};
 	});
 var $elm$url$Url$Parser$getFirstMatch = function (states) {
 	getFirstMatch:
@@ -8233,7 +8233,7 @@ var $elm$url$Url$Parser$getFirstMatch = function (states) {
 		} else {
 			var state = states.a;
 			var rest = states.b;
-			var _v1 = state.dQ;
+			var _v1 = state.dS;
 			if (!_v1.b) {
 				return $elm$core$Maybe$Just(state.al);
 			} else {
@@ -8365,7 +8365,7 @@ var $author$project$Main$toDashboard = F2(
 			_Utils_update(
 				model,
 				{
-					u: $author$project$Main$DashboardPage(dashboard)
+					r: $author$project$Main$DashboardPage(dashboard)
 				}),
 			$elm$core$Platform$Cmd$batch(
 				_List_fromArray(
@@ -8388,7 +8388,7 @@ var $author$project$Main$toFunds = F2(
 			_Utils_update(
 				model,
 				{
-					u: $author$project$Main$FundsPage(funds)
+					r: $author$project$Main$FundsPage(funds)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFundsMsg, cmd));
 	});
@@ -8406,7 +8406,7 @@ var $author$project$Main$toHardware = F2(
 			_Utils_update(
 				model,
 				{
-					u: $author$project$Main$HardwarePage(hardware)
+					r: $author$project$Main$HardwarePage(hardware)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotHardwareMsg, cmd));
 	});
@@ -8424,7 +8424,7 @@ var $author$project$Main$toMarket = F2(
 			_Utils_update(
 				model,
 				{
-					u: $author$project$Main$MarketPage(market)
+					r: $author$project$Main$MarketPage(market)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotMarketMsg, cmd));
 	});
@@ -8442,7 +8442,7 @@ var $author$project$Main$toPingPong = F2(
 			_Utils_update(
 				model,
 				{
-					u: $author$project$Main$PingPongPage(pingpong)
+					r: $author$project$Main$PingPongPage(pingpong)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotPingPongMsg, cmd));
 	});
@@ -8460,7 +8460,7 @@ var $author$project$Main$toPortfolio = F2(
 			_Utils_update(
 				model,
 				{
-					u: $author$project$Main$PortfolioPage(portfolio)
+					r: $author$project$Main$PortfolioPage(portfolio)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotPortfolioMsg, cmd));
 	});
@@ -8478,7 +8478,7 @@ var $author$project$Main$toPricing = F2(
 			_Utils_update(
 				model,
 				{
-					u: $author$project$Main$BuyPage(pricing)
+					r: $author$project$Main$BuyPage(pricing)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotBuyMsg, cmd));
 	});
@@ -8496,7 +8496,7 @@ var $author$project$Main$toSell = F2(
 			_Utils_update(
 				model,
 				{
-					u: $author$project$Main$SellPage(sell)
+					r: $author$project$Main$SellPage(sell)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotSellMsg, cmd));
 	});
@@ -8514,7 +8514,7 @@ var $author$project$Main$toSupport = F2(
 			_Utils_update(
 				model,
 				{
-					u: $author$project$Main$SupportPage(support)
+					r: $author$project$Main$SupportPage(support)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotSupportMsg, cmd));
 	});
@@ -8531,7 +8531,7 @@ var $elm$url$Url$Parser$Parser = $elm$core$Basics$identity;
 var $elm$url$Url$Parser$mapState = F2(
 	function (func, _v0) {
 		var visited = _v0.eA;
-		var unvisited = _v0.dQ;
+		var unvisited = _v0.dS;
 		var params = _v0.ei;
 		var frag = _v0.d5;
 		var value = _v0.al;
@@ -8548,7 +8548,7 @@ var $elm$url$Url$Parser$map = F2(
 		var parseArg = _v0;
 		return function (_v1) {
 			var visited = _v1.eA;
-			var unvisited = _v1.dQ;
+			var unvisited = _v1.dS;
 			var params = _v1.ei;
 			var frag = _v1.d5;
 			var value = _v1.al;
@@ -8589,7 +8589,7 @@ var $elm$url$Url$Parser$oneOf = function (parsers) {
 var $elm$url$Url$Parser$s = function (str) {
 	return function (_v0) {
 		var visited = _v0.eA;
-		var unvisited = _v0.dQ;
+		var unvisited = _v0.dS;
 		var params = _v0.ei;
 		var frag = _v0.d5;
 		var value = _v0.al;
@@ -8674,20 +8674,20 @@ var $author$project$Main$updateUrl = F2(
 							$author$project$Main$toDashboard,
 							model,
 							$author$project$Pages$Dashboard$init(
-								{iI: model.d4, dE: $elm$core$Maybe$Nothing}));
+								{iI: model.dL, dg: $elm$core$Maybe$Nothing}));
 					} else {
 						if (oauthCode.a === '') {
 							return A2(
 								$author$project$Main$toDashboard,
 								model,
 								$author$project$Pages$Dashboard$init(
-									{iI: model.d4, dE: $elm$core$Maybe$Nothing}));
+									{iI: model.dL, dg: $elm$core$Maybe$Nothing}));
 						} else {
 							return A2(
 								$author$project$Main$toDashboard,
 								model,
 								$author$project$Pages$Dashboard$init(
-									{iI: model.d4, dE: $elm$core$Maybe$Nothing}));
+									{iI: model.dL, dg: $elm$core$Maybe$Nothing}));
 						}
 					}
 				case 1:
@@ -8738,13 +8738,13 @@ var $author$project$Main$updateUrl = F2(
 						$author$project$Main$toHardware,
 						model,
 						$author$project$Pages$Hardware$init(
-							{iI: model.d4, dE: $elm$core$Maybe$Nothing}));
+							{iI: model.dL, dg: $elm$core$Maybe$Nothing}));
 			}
 		} else {
 			return _Utils_Tuple2(
 				_Utils_update(
 					model,
-					{u: $author$project$Main$NotFound}),
+					{r: $author$project$Main$NotFound}),
 				$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -8784,13 +8784,13 @@ var $author$project$Main$init = F3(
 			$author$project$Main$updateUrl,
 			url,
 			{
-				d$: _List_fromArray(
+				dK: _List_fromArray(
 					['']),
-				d4: decodedJsonFromIndexjs,
-				na: navigate,
-				u: $author$project$Main$NotFound,
-				dE: $elm$time$Time$millisToPosix(0),
-				nz: $elm$core$Maybe$Just($elm$time$Time$utc)
+				dL: decodedJsonFromIndexjs,
+				jw: navigate,
+				r: $author$project$Main$NotFound,
+				dg: $elm$time$Time$millisToPosix(0),
+				mO: $elm$core$Maybe$Just($elm$time$Time$utc)
 			});
 	});
 var $author$project$Main$Recv = function (a) {
@@ -9086,7 +9086,7 @@ var $author$project$Data$Ranking$Spectator = function (a) {
 };
 var $author$project$Pages$Hardware$SpectatorSelectedView = {$: 8};
 var $author$project$Extras$Constants$noCurrentChallengerId = '6353e8b6aedf80653eb34191';
-var $author$project$Data$Ranking$noChallengerCurrently = {A: $author$project$Extras$Constants$noCurrentChallengerId, dw: 'No Challenger'};
+var $author$project$Data$Ranking$noChallengerCurrently = {A: $author$project$Extras$Constants$noCurrentChallengerId, dx: 'No Challenger'};
 var $author$project$Data$Ranking$abandonSingleUserChallenge = F2(
 	function (userId, ranks) {
 		return A2(
@@ -9195,20 +9195,20 @@ var $author$project$Data$User$deleteRankingFromOwnedRankings = F2(
 				function (ranking) {
 					return !_Utils_eq(ranking.A, rankingid);
 				},
-				usrInfo.dK);
+				usrInfo.dM);
 			return $author$project$Data$User$Registered(
 				_Utils_update(
 					usrInfo,
-					{dK: newRankingList}));
+					{dM: newRankingList}));
 		} else {
 			return $author$project$Data$User$emptyRegisteredUser;
 		}
 	});
 var $author$project$Data$Ranking$emptyRanking = {
-	mO: false,
-	dG: {h0: '', lH: ''},
+	mQ: false,
+	dG: {h0: '', lI: ''},
 	A: '',
-	nb: _List_fromArray(
+	nc: _List_fromArray(
 		[$author$project$Data$Ranking$emptyRank]),
 	fR: '',
 	f0: '',
@@ -9229,10 +9229,10 @@ var $author$project$Data$User$gotId = function (user) {
 var $author$project$Data$User$gotNickName = function (user) {
 	if (!user.$) {
 		var userInfo = user.a;
-		return userInfo.dw;
+		return userInfo.dx;
 	} else {
 		var userInfo = user.a;
-		return userInfo.dw;
+		return userInfo.dx;
 	}
 };
 var $author$project$Data$Ranking$gotRankBelow = F2(
@@ -9290,12 +9290,12 @@ var $author$project$Data$Ranking$userLost = F2(
 				return _Utils_eq(rank.aB.A, userId) ? _Utils_update(
 					rank,
 					{
-						an: {A: $author$project$Extras$Constants$noCurrentChallengerId, dw: 'No Challenger'},
+						an: {A: $author$project$Extras$Constants$noCurrentChallengerId, dx: 'No Challenger'},
 						aB: rank.an
 					}) : (_Utils_eq(rank.an.A, userId) ? _Utils_update(
 					rank,
 					{
-						an: {A: $author$project$Extras$Constants$noCurrentChallengerId, dw: 'No Challenger'},
+						an: {A: $author$project$Extras$Constants$noCurrentChallengerId, dx: 'No Challenger'},
 						aB: rank.an
 					}) : rank);
 			},
@@ -9309,12 +9309,12 @@ var $author$project$Data$Ranking$userWon = F2(
 				return _Utils_eq(rank.an.A, userId) ? _Utils_update(
 					rank,
 					{
-						an: {A: $author$project$Extras$Constants$noCurrentChallengerId, dw: 'No Challenger'},
+						an: {A: $author$project$Extras$Constants$noCurrentChallengerId, dx: 'No Challenger'},
 						aB: rank.an
 					}) : (_Utils_eq(rank.aB.A, userId) ? _Utils_update(
 					rank,
 					{
-						an: {A: $author$project$Extras$Constants$noCurrentChallengerId, dw: 'No Challenger'},
+						an: {A: $author$project$Extras$Constants$noCurrentChallengerId, dx: 'No Challenger'},
 						aB: rank.an
 					}) : rank);
 			},
@@ -9352,7 +9352,7 @@ var $author$project$Data$Ranking$encodeBaseAddress = function (baseaddress) {
 			[
 				_Utils_Tuple2(
 				'street',
-				$elm$json$Json$Encode$string(baseaddress.lH)),
+				$elm$json$Json$Encode$string(baseaddress.lI)),
 				_Utils_Tuple2(
 				'city',
 				$elm$json$Json$Encode$string(baseaddress.h0))
@@ -9392,7 +9392,7 @@ var $author$project$Data$Ranking$jsonUpdatedRanking = function (updatedRanking) 
 				$elm$json$Json$Encode$string(updatedRanking.A)),
 				_Utils_Tuple2(
 				'active',
-				$elm$json$Json$Encode$bool(updatedRanking.mO)),
+				$elm$json$Json$Encode$bool(updatedRanking.mQ)),
 				_Utils_Tuple2(
 				'name',
 				$elm$json$Json$Encode$string(updatedRanking.fR)),
@@ -9404,7 +9404,7 @@ var $author$project$Data$Ranking$jsonUpdatedRanking = function (updatedRanking) 
 				$author$project$Data$Ranking$encodeBaseAddress(updatedRanking.dG)),
 				_Utils_Tuple2(
 				'players',
-				A2($elm$json$Json$Encode$list, $author$project$Data$Ranking$encodeRank, updatedRanking.nb)),
+				A2($elm$json$Json$Encode$list, $author$project$Data$Ranking$encodeRank, updatedRanking.nc)),
 				_Utils_Tuple2(
 				'lastUpdatedBy',
 				$elm$json$Json$Encode$string(updatedRanking.f0))
@@ -9497,10 +9497,10 @@ var $author$project$Pages$Dashboard$update = F2(
 								$elm$core$Maybe$Just(auth.pa)))
 						]);
 					var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.iI.fr) ? $elm$url$Url$toString(
-						A6($elm$url$Url$Url, model.iI.ni, model.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
+						A6($elm$url$Url$Url, model.iI.nj, model.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
 						A6(
 							$elm$url$Url$Url,
-							model.iI.ni,
+							model.iI.nj,
 							model.iI.fr,
 							$elm$core$Maybe$Just(3000),
 							$author$project$Extras$Constants$middleWarePath,
@@ -9520,8 +9520,8 @@ var $author$project$Pages$Dashboard$update = F2(
 						_Utils_update(
 							model,
 							{
-								d$: _Utils_ap(
-									model.d$,
+								dK: _Utils_ap(
+									model.dK,
 									_List_fromArray(
 										[respErr]))
 							}),
@@ -9602,15 +9602,15 @@ var $author$project$Data$User$addNewLadderToOwnedRankings = F2(
 				function (r) {
 					return _Utils_eq(r.A, ranking.A);
 				},
-				usrInfo.dK);
+				usrInfo.dM);
 			if (rankingExists) {
 				return user;
 			} else {
-				var newRankingList = A2($elm$core$List$cons, ranking, usrInfo.dK);
+				var newRankingList = A2($elm$core$List$cons, ranking, usrInfo.dM);
 				return $author$project$Data$User$Registered(
 					_Utils_update(
 						usrInfo,
-						{dK: newRankingList}));
+						{dM: newRankingList}));
 			}
 		} else {
 			return $author$project$Data$User$emptyRegisteredUser;
@@ -10070,11 +10070,11 @@ var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional = F4(
 	});
 var $author$project$Data$Ranking$Ranking = F8(
 	function (id, active, name, owner_id, baseaddress, ladder, player_count, owner_name) {
-		return {mO: active, dG: baseaddress, A: id, nb: ladder, fR: name, f0: owner_id, n3: owner_name, n6: player_count};
+		return {mQ: active, dG: baseaddress, A: id, nc: ladder, fR: name, f0: owner_id, n3: owner_name, n6: player_count};
 	});
 var $author$project$Data$Ranking$BaseAddress = F2(
 	function (street, city) {
-		return {h0: city, lH: street};
+		return {h0: city, lI: street};
 	});
 var $author$project$Data$Ranking$baseAddressDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
@@ -10090,7 +10090,7 @@ var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $author$project$Data$Ranking$ownerIdDecoder = A2($elm$json$Json$Decode$field, '$oid', $elm$json$Json$Decode$string);
 var $author$project$Data$Ranking$Player = F2(
 	function (id, nickname) {
-		return {A: id, dw: nickname};
+		return {A: id, dx: nickname};
 	});
 var $author$project$Data$Ranking$playerDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
@@ -10274,12 +10274,12 @@ var $author$project$Pages$Hardware$callRequest = function (model) {
 			A2(
 			$elm$http$Http$header,
 			'Authorization',
-			'Bearer ' + A2($elm$core$Maybe$withDefault, 'No access token ', model.at.dR))
+			'Bearer ' + A2($elm$core$Maybe$withDefault, 'No access token ', model.at.dT))
 		]);
 	var therequest = $elm$http$Http$request(
 		{
 			sV: $elm$http$Http$jsonBody($author$project$Extras$Constants$callRequestJson),
-			m2: A2(
+			m4: A2(
 				$elm$http$Http$expectJson,
 				$author$project$Pages$Hardware$CallResponse,
 				A2($elm$json$Json$Decode$index, 0, $author$project$Data$User$userInfoDecoder)),
@@ -10293,7 +10293,7 @@ var $author$project$Pages$Hardware$callRequest = function (model) {
 };
 var $author$project$Pages$Hardware$Change = F4(
 	function (operationType, documentKey, updateDescription, fullDocument) {
-		return {pg: documentKey, m3: fullDocument, ka: operationType, ny: updateDescription};
+		return {pg: documentKey, m5: fullDocument, kb: operationType, nz: updateDescription};
 	});
 var $author$project$Pages$Hardware$DocumentKey = function (id) {
 	return {A: id};
@@ -10304,7 +10304,7 @@ var $author$project$Pages$Hardware$documentKeyDecoder = A2(
 	A2($elm$json$Json$Decode$field, '_id', $elm$json$Json$Decode$string));
 var $author$project$Pages$Hardware$FullDocument = F7(
 	function (id, active, name, players, ownerId, baseAddress, lastUpdatedBy) {
-		return {mO: active, sP: baseAddress, A: id, p7: lastUpdatedBy, fR: name, vb: ownerId, qV: players};
+		return {mQ: active, sP: baseAddress, A: id, p7: lastUpdatedBy, fR: name, vb: ownerId, qV: players};
 	});
 var $author$project$Pages$Hardware$baseAddressDecoder = A3(
 	$elm$json$Json$Decode$map2,
@@ -10418,9 +10418,9 @@ var $author$project$Pages$Hardware$changeDecoder = A5(
 		$elm$json$Json$Decode$maybe($author$project$Pages$Hardware$fullDocumentDecoder)));
 var $author$project$Pages$Hardware$emptyChange = {
 	pg: {A: ''},
-	m3: $elm$core$Maybe$Nothing,
-	ka: '',
-	ny: {n9: _List_Nil, r2: _List_Nil, of: $elm$core$Dict$empty}
+	m5: $elm$core$Maybe$Nothing,
+	kb: '',
+	nz: {n9: _List_Nil, r2: _List_Nil, of: $elm$core$Dict$empty}
 };
 var $author$project$Pages$Hardware$ensureDataIsJsonObj = function (dataFromMongo) {
 	if (!dataFromMongo.$) {
@@ -10532,7 +10532,7 @@ var $author$project$Data$Ranking$isCurrentlyInAChallenge = function (rank) {
 };
 var $author$project$Pages$Hardware$AdditionalDataFromJs = F2(
 	function (userid, nickname) {
-		return {dw: nickname, r9: userid};
+		return {dx: nickname, r9: userid};
 	});
 var $author$project$Pages$Hardware$additonalDataFromJsDecoder = A3(
 	$elm$json$Json$Decode$map2,
@@ -10577,7 +10577,7 @@ var $author$project$Pages$Hardware$lnsConnectRequest = function (model) {
 	var therequest = $elm$http$Http$request(
 		{
 			sV: $elm$http$Http$emptyBody,
-			m2: A2($elm$http$Http$expectJson, $author$project$Pages$Hardware$LNSConnectResponse, $author$project$Pages$Hardware$lnsResponseDecoder),
+			m4: A2($elm$http$Http$expectJson, $author$project$Pages$Hardware$LNSConnectResponse, $author$project$Pages$Hardware$lnsResponseDecoder),
 			t7: _List_Nil,
 			uM: 'POST',
 			wo: $elm$core$Maybe$Nothing,
@@ -10648,12 +10648,12 @@ var $author$project$Pages$Hardware$profileRequest = function (model) {
 			A2(
 			$elm$http$Http$header,
 			'Authorization',
-			'Bearer ' + A2($elm$core$Maybe$withDefault, 'No access token ', model.at.dR))
+			'Bearer ' + A2($elm$core$Maybe$withDefault, 'No access token ', model.at.dT))
 		]);
 	var therequest = $elm$http$Http$request(
 		{
 			sV: $elm$http$Http$emptyBody,
-			m2: A2($elm$http$Http$expectJson, $author$project$Pages$Hardware$ProfileResponse, $author$project$Pages$Hardware$profileDecoder),
+			m4: A2($elm$http$Http$expectJson, $author$project$Pages$Hardware$ProfileResponse, $author$project$Pages$Hardware$profileDecoder),
 			t7: headers,
 			uM: 'GET',
 			wo: $elm$core$Maybe$Nothing,
@@ -10665,10 +10665,10 @@ var $author$project$Pages$Hardware$profileRequest = function (model) {
 var $author$project$Data$Ranking$tempNewlyCreatedRanking = F3(
 	function (id, owner_name, name) {
 		return {
-			mO: false,
-			dG: {h0: '', lH: ''},
+			mQ: false,
+			dG: {h0: '', lI: ''},
 			A: id,
-			nb: _List_fromArray(
+			nc: _List_fromArray(
 				[$author$project$Data$Ranking$emptyRank]),
 			fR: name,
 			f0: '0',
@@ -10679,7 +10679,7 @@ var $author$project$Data$Ranking$tempNewlyCreatedRanking = F3(
 var $author$project$Pages$Hardware$updateNewRankingOnChangeEvent = F2(
 	function (change, ranking) {
 		var updatedRanking = function () {
-			var _v0 = change.ka;
+			var _v0 = change.kb;
 			switch (_v0) {
 				case 'insert':
 					return $author$project$Data$Ranking$emptyRanking;
@@ -10763,7 +10763,7 @@ var $author$project$Pages$Hardware$updateNewUserRegistrationFormField = F3(
 						}();
 						return _Utils_update(
 							userDetails,
-							{uT: vldResult, dw: nme});
+							{uT: vldResult, dx: nme});
 					case 1:
 						var age = msg.a;
 						return _Utils_update(
@@ -10815,22 +10815,22 @@ var $author$project$Pages$Hardware$updateNewUserRegistrationFormField = F3(
 							{n4: pword, ve: vldResult});
 					case 6:
 						var value = msg.a;
-						var desc = userDetails.dY;
+						var desc = userDetails.d_;
 						var newDesc = _Utils_update(
 							desc,
 							{nX: value});
 						return _Utils_update(
 							userDetails,
-							{dY: newDesc});
+							{d_: newDesc});
 					case 7:
 						var value = msg.a;
-						var desc = userDetails.dY;
+						var desc = userDetails.d_;
 						var newDesc = _Utils_update(
 							desc,
 							{nF: value});
 						return _Utils_update(
 							userDetails,
-							{dY: newDesc});
+							{d_: newDesc});
 					case 8:
 						var value = msg.a;
 						return _Utils_update(
@@ -10882,7 +10882,7 @@ var $author$project$Data$Ranking$updatedStreet = F2(
 		var baseaddress = ranking.dG;
 		var newBaseAddress = _Utils_update(
 			baseaddress,
-			{lH: str});
+			{lI: str});
 		return _Utils_update(
 			ranking,
 			{dG: newBaseAddress});
@@ -10911,12 +10911,12 @@ var $author$project$Pages$Hardware$update = F2(
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 56:
-				var newUser = $author$project$Data$User$gotUserInfo(model.dl);
+				var newUser = $author$project$Data$User$gotUserInfo(model.dm);
 				var newMemberRankings = function () {
 					var _v1 = model.er;
 					if (_v1.$ === 1) {
 						var ranking = _v1.a;
-						return A2($author$project$Data$User$deleteRankingFromMemberRankings, model.dl, ranking.A);
+						return A2($author$project$Data$User$deleteRankingFromMemberRankings, model.dm, ranking.A);
 					} else {
 						return _List_fromArray(
 							[$author$project$Data$Ranking$emptyRanking]);
@@ -10930,7 +10930,7 @@ var $author$project$Pages$Hardware$update = F2(
 						model,
 						{
 							bJ: $author$project$Pages$Hardware$LoggedInUser,
-							dl: $author$project$Data$User$Registered(newUserInfo)
+							dm: $author$project$Data$User$Registered(newUserInfo)
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 54:
@@ -10954,7 +10954,7 @@ var $author$project$Pages$Hardware$update = F2(
 						{bJ: $author$project$Pages$Hardware$SpectatorSelectedView}),
 					$elm$core$Platform$Cmd$none);
 			case 53:
-				var _v2 = model.dl;
+				var _v2 = model.dm;
 				if (_v2.$ === 1) {
 					var userInfo = _v2.a;
 					return _Utils_Tuple2(
@@ -11084,8 +11084,8 @@ var $author$project$Pages$Hardware$update = F2(
 				var newRank = A3(
 					$author$project$Data$Ranking$Rank,
 					1,
-					{A: userInfo.r9, dw: userInfo.dw},
-					{A: $author$project$Extras$Constants$noCurrentChallengerId, dw: 'Challenger'});
+					{A: userInfo.r9, dx: userInfo.dx},
+					{A: $author$project$Extras$Constants$noCurrentChallengerId, dx: 'Challenger'});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -11095,11 +11095,11 @@ var $author$project$Pages$Hardware$update = F2(
 								_Utils_update(
 									newRanking,
 									{
-										mO: true,
-										nb: _List_fromArray(
+										mQ: true,
+										nc: _List_fromArray(
 											[newRank]),
 										f0: userInfo.r9,
-										n3: userInfo.dw,
+										n3: userInfo.dx,
 										n6: 1
 									}))
 						}),
@@ -11127,7 +11127,7 @@ var $author$project$Pages$Hardware$update = F2(
 							$author$project$Pages$Hardware$JsonData(
 								$elm$json$Json$Encode$object(_List_Nil)),
 							{
-								dw: $elm$json$Json$Decode$errorToString(err),
+								dx: $elm$json$Json$Decode$errorToString(err),
 								r9: $elm$json$Json$Decode$errorToString(err)
 							});
 					}
@@ -11180,7 +11180,7 @@ var $author$project$Pages$Hardware$update = F2(
 								}
 							}();
 							var playersFromChangeEvent = function () {
-								var _v20 = chnge.m3;
+								var _v20 = chnge.m5;
 								if (!_v20.$) {
 									var fullDoc = _v20.a;
 									var _v21 = fullDoc.qV;
@@ -11196,8 +11196,8 @@ var $author$project$Pages$Hardware$update = F2(
 							}();
 							var newLadder = A3(
 								$author$project$Pages$Hardware$filterAndSortRankingsOnLeaving,
-								$author$project$Data$User$gotId(model.dl),
-								currentSelectedRanking.nb,
+								$author$project$Data$User$gotId(model.dm),
+								currentSelectedRanking.nc,
 								_List_fromArray(
 									[
 										_Utils_Tuple2('players', playersFromChangeEvent)
@@ -11205,10 +11205,10 @@ var $author$project$Pages$Hardware$update = F2(
 							var newRking = _Utils_update(
 								currentSelectedRanking,
 								{
-									nb: newLadder,
+									nc: newLadder,
 									n6: $elm$core$List$length(newLadder)
 								});
-							var updatedFieldsList = $elm$core$Dict$toList(chnge.ny.of);
+							var updatedFieldsList = $elm$core$Dict$toList(chnge.nz.of);
 							var updatedRanking = A2($author$project$Pages$Hardware$updateNewRankingOnChangeEvent, chnge, newRking);
 							var _v19 = model.er;
 							switch (_v19.$) {
@@ -11266,18 +11266,18 @@ var $author$project$Pages$Hardware$update = F2(
 								var _v6 = A2($elm$json$Json$Decode$decodeValue, $author$project$Pages$Hardware$changeDecoder, json);
 								if (!_v6.$) {
 									var change = _v6.a;
-									return change.ka;
+									return change.kb;
 								} else {
 									var err = _v6.a;
 									return $elm$json$Json$Decode$errorToString(err);
 								}
 							}();
-							return $author$project$Data$User$gotUserInfo(model.dl);
+							return $author$project$Data$User$gotUserInfo(model.dm);
 						case 'NewUserCreationComplete':
 							var emptyUsrInfo = $author$project$Data$User$emptyUserInfo;
 							var newUsrInfo = _Utils_update(
 								emptyUsrInfo,
-								{dw: decodedJsObj.nB.dw, r9: decodedJsObj.nB.r9});
+								{dx: decodedJsObj.nB.dx, r9: decodedJsObj.nB.r9});
 							return newUsrInfo;
 						case 'LOGINCONFIRM':
 							return $author$project$Pages$Hardware$handleDecodeUser(json);
@@ -11289,7 +11289,7 @@ var $author$project$Pages$Hardware$update = F2(
 								if ($author$project$Pages$Hardware$is24AlphanumericChars(insertedId)) {
 									var userUpdatedWithNewRanking = A2(
 										$author$project$Data$User$addNewLadderToOwnedRankings,
-										model.dl,
+										model.dm,
 										A3(
 											$author$project$Data$Ranking$tempNewlyCreatedRanking,
 											insertedId,
@@ -11297,10 +11297,10 @@ var $author$project$Pages$Hardware$update = F2(
 											$author$project$Data$Ranking$gotRanking(model.er).fR));
 									return $author$project$Data$User$gotUserInfo(userUpdatedWithNewRanking);
 								} else {
-									return $author$project$Data$User$gotUserInfo(model.dl);
+									return $author$project$Data$User$gotUserInfo(model.dm);
 								}
 							} else {
-								return $author$project$Data$User$gotUserInfo(model.dl);
+								return $author$project$Data$User$gotUserInfo(model.dm);
 							}
 						case 'ownedranking':
 							var decodedRanking = function () {
@@ -11314,7 +11314,7 @@ var $author$project$Pages$Hardware$update = F2(
 								}
 							}();
 							return $author$project$Data$User$gotUserInfo(
-								A2($author$project$Data$User$addNewLadderToOwnedRankings, model.dl, decodedRanking));
+								A2($author$project$Data$User$addNewLadderToOwnedRankings, model.dm, decodedRanking));
 						case 'JoinedRankingConfirm':
 							var _v9 = $author$project$Pages$Hardware$handleNewlyJoinedDecodeRanking(json);
 							if (!_v9.$) {
@@ -11325,16 +11325,16 @@ var $author$project$Pages$Hardware$update = F2(
 									return _Utils_eq(
 										selrnking.A,
 										$author$project$Data$Ranking$newlyJoinedRankingIdAsValueManipulation(newlyJoinedRanking)) ? $author$project$Data$User$gotUserInfo(
-										A2($author$project$Data$User$addNewLadderToMemberRankings, model.dl, selrnking)) : $author$project$Data$User$gotUserInfo(model.dl);
+										A2($author$project$Data$User$addNewLadderToMemberRankings, model.dm, selrnking)) : $author$project$Data$User$gotUserInfo(model.dm);
 								} else {
-									return $author$project$Data$User$gotUserInfo(model.dl);
+									return $author$project$Data$User$gotUserInfo(model.dm);
 								}
 							} else {
 								var err = _v9.a;
-								return $author$project$Data$User$gotUserInfo(model.dl);
+								return $author$project$Data$User$gotUserInfo(model.dm);
 							}
 						case 'ResultSubmitted':
-							var _v11 = model.dl;
+							var _v11 = model.dm;
 							if (_v11.$ === 1) {
 								var userInfo = _v11.a;
 								return userInfo;
@@ -11342,7 +11342,7 @@ var $author$project$Pages$Hardware$update = F2(
 								return $author$project$Data$User$emptyUserInfo;
 							}
 						default:
-							var _v12 = model.dl;
+							var _v12 = model.dm;
 							if (_v12.$ === 1) {
 								var userInfo = _v12.a;
 								return userInfo;
@@ -11370,11 +11370,11 @@ var $author$project$Pages$Hardware$update = F2(
 					_Utils_update(
 						model,
 						{
-							d$: errors,
+							dK: errors,
 							qC: $elm$core$Maybe$Just(decodedJsObj),
 							bJ: updatedquerytype,
 							er: newRanking,
-							dl: newUser
+							dm: newUser
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 34:
@@ -11508,7 +11508,7 @@ var $author$project$Pages$Hardware$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{d$: _List_Nil}),
+						{dK: _List_Nil}),
 					$elm$core$Platform$Cmd$none);
 			case 14:
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -11523,10 +11523,10 @@ var $author$project$Pages$Hardware$update = F2(
 							'Bearer ' + A2($elm$core$Maybe$withDefault, 'No access token', auth.ws))
 						]);
 					var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.iI.fr) ? $elm$url$Url$toString(
-						A6($elm$url$Url$Url, model.iI.ni, model.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
+						A6($elm$url$Url$Url, model.iI.nj, model.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
 						A6(
 							$elm$url$Url$Url,
-							model.iI.ni,
+							model.iI.nj,
 							model.iI.fr,
 							$elm$core$Maybe$Just(3000),
 							$author$project$Extras$Constants$middleWarePath,
@@ -11539,7 +11539,7 @@ var $author$project$Pages$Hardware$update = F2(
 							d8: true,
 							bJ: $author$project$Pages$Hardware$LoggedInUser,
 							gN: $elm$core$Maybe$Just(newHttpParams),
-							dl: $author$project$Data$User$Registered(auth)
+							dm: $author$project$Data$User$Registered(auth)
 						});
 					var apiSpecs = model.at;
 					return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
@@ -11549,14 +11549,14 @@ var $author$project$Pages$Hardware$update = F2(
 					var apiSpecs = model.at;
 					var newapiSpecs = _Utils_update(
 						apiSpecs,
-						{dR: $elm$core$Maybe$Nothing});
+						{dT: $elm$core$Maybe$Nothing});
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
 								at: newapiSpecs,
-								d$: _Utils_ap(
-									model.d$,
+								dK: _Utils_ap(
+									model.dK,
 									_List_fromArray(
 										[respErr])),
 								d8: false
@@ -11577,10 +11577,10 @@ var $author$project$Pages$Hardware$update = F2(
 								$elm$core$Maybe$Just(auth.r3)))
 						]);
 					var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.iI.fr) ? $elm$url$Url$toString(
-						A6($elm$url$Url$Url, model.iI.ni, model.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
+						A6($elm$url$Url$Url, model.iI.nj, model.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
 						A6(
 							$elm$url$Url$Url,
-							model.iI.ni,
+							model.iI.nj,
 							model.iI.fr,
 							$elm$core$Maybe$Just(3000),
 							$author$project$Extras$Constants$middleWarePath,
@@ -11603,14 +11603,14 @@ var $author$project$Pages$Hardware$update = F2(
 					var apiSpecs = model.at;
 					var newapiSpecs = _Utils_update(
 						apiSpecs,
-						{dR: $elm$core$Maybe$Nothing});
+						{dT: $elm$core$Maybe$Nothing});
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
 								at: newapiSpecs,
-								d$: _Utils_ap(
-									model.d$,
+								dK: _Utils_ap(
+									model.dK,
 									_List_fromArray(
 										[respErr])),
 								d8: false
@@ -11622,10 +11622,10 @@ var $author$project$Pages$Hardware$update = F2(
 					var auth = msg.a.a;
 					var headers = _List_Nil;
 					var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.iI.fr) ? $elm$url$Url$toString(
-						A6($elm$url$Url$Url, model.iI.ni, model.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
+						A6($elm$url$Url$Url, model.iI.nj, model.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
 						A6(
 							$elm$url$Url$Url,
-							model.iI.ni,
+							model.iI.nj,
 							model.iI.fr,
 							$elm$core$Maybe$Just(3000),
 							$author$project$Extras$Constants$middleWarePath,
@@ -11646,14 +11646,14 @@ var $author$project$Pages$Hardware$update = F2(
 					var apiSpecs = model.at;
 					var newapiSpecs = _Utils_update(
 						apiSpecs,
-						{dR: $elm$core$Maybe$Nothing});
+						{dT: $elm$core$Maybe$Nothing});
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{
 								at: newapiSpecs,
-								d$: _Utils_ap(
-									model.d$,
+								dK: _Utils_ap(
+									model.dK,
 									_List_fromArray(
 										[respErr])),
 								d8: false
@@ -11678,10 +11678,10 @@ var $author$project$Pages$Hardware$update = F2(
 								$elm$core$Maybe$Just(auth.nA)))
 						]);
 					var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.iI.fr) ? $elm$url$Url$toString(
-						A6($elm$url$Url$Url, model.iI.ni, model.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
+						A6($elm$url$Url$Url, model.iI.nj, model.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
 						A6(
 							$elm$url$Url$Url,
-							model.iI.ni,
+							model.iI.nj,
 							model.iI.fr,
 							$elm$core$Maybe$Just(3000),
 							$author$project$Extras$Constants$middleWarePath,
@@ -11695,7 +11695,7 @@ var $author$project$Pages$Hardware$update = F2(
 							at: _Utils_update(
 								apiSpecs,
 								{
-									dR: $elm$core$Maybe$Just(auth.nA)
+									dT: $elm$core$Maybe$Just(auth.nA)
 								}),
 							d8: true,
 							bJ: $author$project$Pages$Hardware$LoggedInUser,
@@ -11704,7 +11704,7 @@ var $author$project$Pages$Hardware$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							newModel,
-							{m9: false}),
+							{nb: false}),
 						$author$project$Pages$Hardware$profileRequest(newModel));
 				} else {
 					var responseErr = msg.a.a;
@@ -11718,7 +11718,7 @@ var $author$project$Pages$Hardware$update = F2(
 					var newModel = _Utils_update(
 						model,
 						{
-							d$: _List_fromArray(
+							dK: _List_fromArray(
 								[newFailedErr])
 						});
 					return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
@@ -11730,7 +11730,7 @@ var $author$project$Pages$Hardware$update = F2(
 						_Utils_update(
 							model,
 							{
-								m9: false,
+								nb: false,
 								er: $author$project$Data$Ranking$Spectator(specRankingResult)
 							}),
 						$elm$core$Platform$Cmd$none);
@@ -11749,7 +11749,7 @@ var $author$project$Pages$Hardware$update = F2(
 					_Utils_update(
 						newModel,
 						{
-							d$: _List_fromArray(
+							dK: _List_fromArray(
 								[''])
 						}),
 					$elm$core$Platform$Cmd$none);
@@ -11825,10 +11825,10 @@ var $author$project$Pages$Hardware$update = F2(
 			case 51:
 				var rankingId = msg.a;
 				var updatedFlagUrlToIncludeMongoDBMWSvr = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.iI.fr) ? $elm$url$Url$toString(
-					A6($elm$url$Url$Url, model.iI.ni, model.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$productionProxyConfig, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
+					A6($elm$url$Url$Url, model.iI.nj, model.iI.fr, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$productionProxyConfig, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
 					A6(
 						$elm$url$Url$Url,
-						model.iI.ni,
+						model.iI.nj,
 						model.iI.fr,
 						$elm$core$Maybe$Just(3000),
 						$author$project$Extras$Constants$middleWarePath,
@@ -11851,9 +11851,9 @@ var $author$project$Pages$Hardware$update = F2(
 				var updatModelWithNewPostData = _Utils_update(
 					model,
 					{
-						d$: _List_fromArray(
+						dK: _List_fromArray(
 							['']),
-						m9: true,
+						nb: true,
 						bJ: $author$project$Pages$Hardware$SpectatorSelectedView,
 						er: $author$project$Data$Ranking$Spectator($author$project$Data$Ranking$emptyRanking),
 						gN: $elm$core$Maybe$Just(
@@ -11915,7 +11915,7 @@ var $author$project$Pages$PingPong$update = F2(
 						sV: $elm$http$Http$jsonBody(
 							$author$project$Pages$PingPong$encodePingRequest(
 								{uL: 'Ping'})),
-						m2: A2($elm$http$Http$expectJson, $author$project$Pages$PingPong$Receive, $author$project$Pages$PingPong$decodePongResponse),
+						m4: A2($elm$http$Http$expectJson, $author$project$Pages$PingPong$Receive, $author$project$Pages$PingPong$decodePongResponse),
 						t7: _List_Nil,
 						uM: 'POST',
 						wo: $elm$core$Maybe$Nothing,
@@ -11999,8 +11999,8 @@ var $author$project$Main$update = F2(
 						_Utils_update(
 							model,
 							{
-								d$: _Utils_ap(
-									model.d$,
+								dK: _Utils_ap(
+									model.dK,
 									_List_fromArray(
 										['Problem fetching data']))
 							}),
@@ -12014,14 +12014,14 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									d$: _Utils_ap(
-										model.d$,
+									dK: _Utils_ap(
+										model.dK,
 										_List_fromArray(
 											['Login Denied - Please try again ...']))
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						var _v1 = model.u;
+						var _v1 = model.r;
 						if (_v1.$ === 8) {
 							var hardware = _v1.a;
 							return A2(
@@ -12041,7 +12041,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{dE: newTime}),
+						{dg: newTime}),
 					A2($elm$core$Task$perform, $author$project$Main$AdjustTimeZone, $elm$time$Time$here));
 			case 12:
 				var newZone = msg.a;
@@ -12049,7 +12049,7 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							nz: $elm$core$Maybe$Just(newZone)
+							mO: $elm$core$Maybe$Just(newZone)
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 0:
@@ -12070,7 +12070,7 @@ var $author$project$Main$update = F2(
 					} else {
 						return _Utils_Tuple2(
 							model,
-							model.na(url));
+							model.jw(url));
 					}
 				}
 			case 10:
@@ -12078,7 +12078,7 @@ var $author$project$Main$update = F2(
 				return A2($author$project$Main$updateUrl, url, model);
 			case 1:
 				var dashboardMsg = msg.a;
-				var _v4 = model.u;
+				var _v4 = model.r;
 				if (!_v4.$) {
 					var dashboard = _v4.a;
 					return A2(
@@ -12090,7 +12090,7 @@ var $author$project$Main$update = F2(
 				}
 			case 2:
 				var sellMsg = msg.a;
-				var _v5 = model.u;
+				var _v5 = model.r;
 				if (_v5.$ === 1) {
 					var sell = _v5.a;
 					return A2(
@@ -12102,7 +12102,7 @@ var $author$project$Main$update = F2(
 				}
 			case 3:
 				var termsMsg = msg.a;
-				var _v6 = model.u;
+				var _v6 = model.r;
 				if (_v6.$ === 2) {
 					var terms = _v6.a;
 					return A2(
@@ -12114,7 +12114,7 @@ var $author$project$Main$update = F2(
 				}
 			case 4:
 				var privacyMsg = msg.a;
-				var _v7 = model.u;
+				var _v7 = model.r;
 				if (_v7.$ === 3) {
 					var privacy = _v7.a;
 					return A2(
@@ -12126,7 +12126,7 @@ var $author$project$Main$update = F2(
 				}
 			case 5:
 				var supportMsg = msg.a;
-				var _v8 = model.u;
+				var _v8 = model.r;
 				if (_v8.$ === 4) {
 					var support = _v8.a;
 					return A2(
@@ -12138,7 +12138,7 @@ var $author$project$Main$update = F2(
 				}
 			case 6:
 				var pingpongMsg = msg.a;
-				var _v9 = model.u;
+				var _v9 = model.r;
 				if (_v9.$ === 5) {
 					var pingpong = _v9.a;
 					return A2(
@@ -12150,7 +12150,7 @@ var $author$project$Main$update = F2(
 				}
 			case 7:
 				var pricingMsg = msg.a;
-				var _v10 = model.u;
+				var _v10 = model.r;
 				if (_v10.$ === 6) {
 					var pricing = _v10.a;
 					return A2(
@@ -12162,7 +12162,7 @@ var $author$project$Main$update = F2(
 				}
 			case 8:
 				var aboutMsg = msg.a;
-				var _v11 = model.u;
+				var _v11 = model.r;
 				if (_v11.$ === 7) {
 					var about = _v11.a;
 					return A2(
@@ -12174,7 +12174,7 @@ var $author$project$Main$update = F2(
 				}
 			default:
 				var rankingsMsg = msg.a;
-				var _v12 = model.u;
+				var _v12 = model.r;
 				if (_v12.$ === 8) {
 					var rankings = _v12.a;
 					switch (rankingsMsg.$) {
@@ -12188,17 +12188,17 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										u: $author$project$Main$HardwarePage(newRankingsModel)
+										r: $author$project$Main$HardwarePage(newRankingsModel)
 									}),
 								$author$project$Main$sendMessage(
-									'createRanking' + ('~^&' + (ranking.fR + ('~^&' + (((ranking.dG.lH === '') ? 'Unspecified' : ranking.dG.lH) + ('~^&' + ((ranking.dG.h0 === '') ? 'Unspecified' : ranking.dG.h0))))))));
+									'createRanking' + ('~^&' + (ranking.fR + ('~^&' + (((ranking.dG.lI === '') ? 'Unspecified' : ranking.dG.lI) + ('~^&' + ((ranking.dG.h0 === '') ? 'Unspecified' : ranking.dG.h0))))))));
 						case 35:
 							var ownedRanking = rankingsMsg.a;
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
-										u: $author$project$Main$HardwarePage(
+										r: $author$project$Main$HardwarePage(
 											_Utils_update(
 												rankings,
 												{bJ: $author$project$Pages$Hardware$OwnedSelectedView}))
@@ -12210,7 +12210,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										u: $author$project$Main$HardwarePage(
+										r: $author$project$Main$HardwarePage(
 											_Utils_update(
 												rankings,
 												{bJ: $author$project$Pages$Hardware$MemberSelectedView}))
@@ -12220,20 +12220,20 @@ var $author$project$Main$update = F2(
 							var rankingWantToJoin = rankingsMsg.a;
 							var userid = rankingsMsg.b;
 							var lastRank = rankingsMsg.c;
-							var updatedUser = A2($author$project$Data$User$addNewLadderToMemberRankings, rankings.dl, rankingWantToJoin);
+							var updatedUser = A2($author$project$Data$User$addNewLadderToMemberRankings, rankings.dm, rankingWantToJoin);
 							var newRank = {
-								an: {A: '6353e8b6aedf80653eb34191', dw: 'No Challenger'},
+								an: {A: '6353e8b6aedf80653eb34191', dx: 'No Challenger'},
 								aB: {
 									A: userid,
-									dw: $author$project$Data$User$gotNickName(rankings.dl)
+									dx: $author$project$Data$User$gotNickName(rankings.dm)
 								},
 								bC: lastRank + 1
 							};
 							var updatedRanking = _Utils_update(
 								rankingWantToJoin,
 								{
-									nb: _Utils_ap(
-										rankingWantToJoin.nb,
+									nc: _Utils_ap(
+										rankingWantToJoin.nc,
 										_List_fromArray(
 											[newRank]))
 								});
@@ -12241,7 +12241,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										u: $author$project$Main$HardwarePage(
+										r: $author$project$Main$HardwarePage(
 											_Utils_update(
 												rankings,
 												{
@@ -12251,8 +12251,8 @@ var $author$project$Main$update = F2(
 													er: $author$project$Data$Ranking$Member(
 														_Utils_update(
 															rankingWantToJoin,
-															{nb: updatedRanking.nb})),
-													dl: updatedUser
+															{nc: updatedRanking.nc})),
+													dm: updatedUser
 												}))
 									}),
 								$author$project$Main$sendMessage(
@@ -12260,28 +12260,28 @@ var $author$project$Main$update = F2(
 						case 56:
 							var rankingWantToLeave = rankingsMsg.a;
 							var userid = rankingsMsg.b;
-							var updatedRankingList = A2($author$project$Data$User$deleteRankingFromMemberRankings, rankings.dl, rankingWantToLeave.A);
+							var updatedRankingList = A2($author$project$Data$User$deleteRankingFromMemberRankings, rankings.dm, rankingWantToLeave.A);
 							var updatedUserInfo = A2(
 								$author$project$Data$User$updatedMemberRankings,
-								$author$project$Data$User$gotUserInfo(rankings.dl),
+								$author$project$Data$User$gotUserInfo(rankings.dm),
 								updatedRankingList);
-							var rankingWithAnyCurrentChallengesRemoved = A2($author$project$Data$Ranking$abandonSingleUserChallenge, userid, rankingWantToLeave.nb);
+							var rankingWithAnyCurrentChallengesRemoved = A2($author$project$Data$Ranking$abandonSingleUserChallenge, userid, rankingWantToLeave.nc);
 							var updatedRanking = _Utils_update(
 								rankingWantToLeave,
 								{
-									nb: A2($author$project$Data$Ranking$removeRank, userid, rankingWithAnyCurrentChallengesRemoved)
+									nc: A2($author$project$Data$Ranking$removeRank, userid, rankingWithAnyCurrentChallengesRemoved)
 								});
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
-										u: $author$project$Main$HardwarePage(
+										r: $author$project$Main$HardwarePage(
 											_Utils_update(
 												rankings,
 												{
 													bJ: $author$project$Pages$Hardware$SpectatorSelectedView,
 													er: $author$project$Data$Ranking$Spectator(updatedRanking),
-													dl: $author$project$Data$User$Registered(updatedUserInfo)
+													dm: $author$project$Data$User$Registered(updatedUserInfo)
 												}))
 									}),
 								$author$project$Main$sendMessage(
@@ -12295,16 +12295,16 @@ var $author$project$Main$update = F2(
 							var gotRankBelow = A2(
 								$elm$core$Maybe$withDefault,
 								$author$project$Data$Ranking$emptyRank,
-								A2($author$project$Data$Ranking$gotRankBelow, rank, selectedRanking.nb));
-							var updatedRanks = A3($author$project$Data$Ranking$createSingleUserChallenge, rank.aB.A, gotRankBelow.aB, selectedRanking.nb);
+								A2($author$project$Data$Ranking$gotRankBelow, rank, selectedRanking.nc));
+							var updatedRanks = A3($author$project$Data$Ranking$createSingleUserChallenge, rank.aB.A, gotRankBelow.aB, selectedRanking.nc);
 							var updatedRanking = _Utils_update(
 								selectedRanking,
-								{nb: updatedRanks});
+								{nc: updatedRanks});
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
-										u: $author$project$Main$HardwarePage(
+										r: $author$project$Main$HardwarePage(
 											_Utils_update(
 												rankings,
 												{
@@ -12323,16 +12323,16 @@ var $author$project$Main$update = F2(
 							var updatedRanks = A3(
 								$author$project$Data$Ranking$handleResult,
 								result,
-								$author$project$Data$User$gotId(rankings.dl),
-								selectedRanking.nb);
+								$author$project$Data$User$gotId(rankings.dm),
+								selectedRanking.nc);
 							var updatedRanking = _Utils_update(
 								selectedRanking,
-								{nb: updatedRanks});
+								{nc: updatedRanks});
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
-										u: $author$project$Main$HardwarePage(
+										r: $author$project$Main$HardwarePage(
 											_Utils_update(
 												rankings,
 												{
@@ -12350,7 +12350,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										u: $author$project$Main$HardwarePage(
+										r: $author$project$Main$HardwarePage(
 											_Utils_update(
 												rankings,
 												{
@@ -12364,7 +12364,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										u: $author$project$Main$HardwarePage(
+										r: $author$project$Main$HardwarePage(
 											_Utils_update(
 												rankings,
 												{
@@ -12372,7 +12372,7 @@ var $author$project$Main$update = F2(
 												}))
 									}),
 								$author$project$Main$sendMessage(
-									'register' + ('~^&' + (A2($elm$core$Maybe$withDefault, '', newUserRegistrationDetails.nN) + ('~^&' + (newUserRegistrationDetails.n4 + ('~^&' + newUserRegistrationDetails.dw)))))));
+									'register' + ('~^&' + (A2($elm$core$Maybe$withDefault, '', newUserRegistrationDetails.nN) + ('~^&' + (newUserRegistrationDetails.n4 + ('~^&' + newUserRegistrationDetails.dx)))))));
 						case 45:
 							var ownedRanking = function () {
 								var _v14 = rankings.er;
@@ -12383,15 +12383,15 @@ var $author$project$Main$update = F2(
 									return $author$project$Data$Ranking$emptyRanking;
 								}
 							}();
-							var newUser = A2($author$project$Data$User$deleteRankingFromOwnedRankings, rankings.dl, ownedRanking.A);
+							var newUser = A2($author$project$Data$User$deleteRankingFromOwnedRankings, rankings.dm, ownedRanking.A);
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
-										u: $author$project$Main$HardwarePage(
+										r: $author$project$Main$HardwarePage(
 											_Utils_update(
 												rankings,
-												{bJ: $author$project$Pages$Hardware$LoggedInUser, dl: newUser}))
+												{bJ: $author$project$Pages$Hardware$LoggedInUser, dm: newUser}))
 									}),
 								$author$project$Main$sendMessage(
 									'deleteRanking' + ('~^&' + $author$project$Data$Ranking$gotRankingId(
@@ -12401,7 +12401,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										u: $author$project$Main$HardwarePage(
+										r: $author$project$Main$HardwarePage(
 											_Utils_update(
 												rankings,
 												{
@@ -12409,7 +12409,7 @@ var $author$project$Main$update = F2(
 												}))
 									}),
 								$author$project$Main$sendMessage(
-									'deleteAccount' + ('~^&' + $author$project$Data$User$gotId(rankings.dl))));
+									'deleteAccount' + ('~^&' + $author$project$Data$User$gotId(rankings.dm))));
 						default:
 							return A2(
 								$author$project$Main$toHardware,
@@ -12503,7 +12503,7 @@ var $elm$html$Html$Attributes$classList = function (classes) {
 };
 var $author$project$Main$isActive = function (_v0) {
 	var link = _v0.qb;
-	var page = _v0.u;
+	var page = _v0.r;
 	var _v1 = _Utils_Tuple2(link, page);
 	switch (_v1.a) {
 		case 0:
@@ -12629,7 +12629,7 @@ var $author$project$Main$navLinks = function (page) {
 								_Utils_Tuple2(
 								'active',
 								$author$project$Main$isActive(
-									{qb: route, u: page})),
+									{qb: route, r: page})),
 								_Utils_Tuple2('navLink', true)
 							]))
 					]),
@@ -13229,13 +13229,13 @@ var $mdgriffith$elm_ui$Internal$Model$Unkeyed = function (a) {
 };
 var $mdgriffith$elm_ui$Internal$Model$AsColumn = 1;
 var $mdgriffith$elm_ui$Internal$Model$asColumn = 1;
-var $mdgriffith$elm_ui$Internal$Style$classes = {ss: 'a', mO: 'atv', sx: 'ab', sy: 'cx', sz: 'cy', sA: 'acb', sB: 'accx', sC: 'accy', sD: 'acr', oz: 'al', oA: 'ar', sE: 'at', nC: 'ah', nD: 'av', sH: 's', sR: 'bh', sS: 'b', sW: 'w7', sY: 'bd', sZ: 'bdt', mQ: 'bn', s_: 'bs', mU: 'cpe', s9: 'cp', ta: 'cpx', tb: 'cpy', dH: 'c', mX: 'ctr', mY: 'cb', mZ: 'ccx', dI: 'ccy', h4: 'cl', m_: 'cr', tl: 'ct', to: 'cptr', tp: 'ctxt', tS: 'fcs', pv: 'focus-within', tX: 'fs', t5: 'g', nR: 'hbh', nS: 'hc', pL: 'he', nT: 'hf', pM: 'hfp', uc: 'hv', ui: 'ic', uk: 'fr', m8: 'lbl', uo: 'iml', up: 'imlf', uq: 'imlp', ur: 'implw', us: 'it', uA: 'i', qb: 'lnk', fT: 'nb', qx: 'notxt', u1: 'ol', u2: 'or', eh: 'oq', va: 'oh', u: 'pg', qJ: 'p', vd: 'ppe', rh: 'ui', rj: 'r', vH: 'sb', vI: 'sbx', vJ: 'sby', vK: 'sbt', vU: 'e', vW: 'cap', vX: 'sev', v4: 'sk', dD: 't', wa: 'tc', wb: 'w8', wc: 'w2', wd: 'w9', we: 'tj', nt: 'tja', wf: 'tl', wg: 'w3', wh: 'w5', wi: 'w4', wj: 'tr', wk: 'w6', wl: 'w1', wm: 'tun', r1: 'ts', ew: 'clr', ww: 'u', oi: 'wc', sm: 'we', oj: 'wf', sn: 'wfp', ok: 'wrp'};
+var $mdgriffith$elm_ui$Internal$Style$classes = {ss: 'a', mQ: 'atv', sx: 'ab', sy: 'cx', sz: 'cy', sA: 'acb', sB: 'accx', sC: 'accy', sD: 'acr', oz: 'al', oA: 'ar', sE: 'at', nC: 'ah', nD: 'av', sH: 's', sR: 'bh', sS: 'b', sW: 'w7', sY: 'bd', sZ: 'bdt', mS: 'bn', s_: 'bs', mW: 'cpe', s9: 'cp', ta: 'cpx', tb: 'cpy', dH: 'c', mZ: 'ctr', m_: 'cb', m$: 'ccx', dI: 'ccy', h4: 'cl', m0: 'cr', tl: 'ct', to: 'cptr', tp: 'ctxt', tS: 'fcs', pv: 'focus-within', tX: 'fs', t5: 'g', nR: 'hbh', nS: 'hc', pL: 'he', nT: 'hf', pM: 'hfp', uc: 'hv', ui: 'ic', uk: 'fr', na: 'lbl', uo: 'iml', up: 'imlf', uq: 'imlp', ur: 'implw', us: 'it', uA: 'i', qb: 'lnk', fT: 'nb', qx: 'notxt', u1: 'ol', u2: 'or', eh: 'oq', va: 'oh', r: 'pg', qJ: 'p', vd: 'ppe', rh: 'ui', rj: 'r', vH: 'sb', vI: 'sbx', vJ: 'sby', vK: 'sbt', vU: 'e', vW: 'cap', vX: 'sev', v4: 'sk', dE: 't', wa: 'tc', wb: 'w8', wc: 'w2', wd: 'w9', we: 'tj', nu: 'tja', wf: 'tl', wg: 'w3', wh: 'w5', wi: 'w4', wj: 'tr', wk: 'w6', wl: 'w1', wm: 'tun', r1: 'ts', ew: 'clr', ww: 'u', oi: 'wc', sm: 'we', oj: 'wf', sn: 'wfp', ok: 'wrp'};
 var $mdgriffith$elm_ui$Internal$Model$Generic = {$: 0};
 var $mdgriffith$elm_ui$Internal$Model$div = $mdgriffith$elm_ui$Internal$Model$Generic;
 var $mdgriffith$elm_ui$Internal$Model$NoNearbyChildren = {$: 0};
 var $mdgriffith$elm_ui$Internal$Model$columnClass = $mdgriffith$elm_ui$Internal$Style$classes.sH + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.dH);
 var $mdgriffith$elm_ui$Internal$Model$gridClass = $mdgriffith$elm_ui$Internal$Style$classes.sH + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.t5);
-var $mdgriffith$elm_ui$Internal$Model$pageClass = $mdgriffith$elm_ui$Internal$Style$classes.sH + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.u);
+var $mdgriffith$elm_ui$Internal$Model$pageClass = $mdgriffith$elm_ui$Internal$Style$classes.sH + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.r);
 var $mdgriffith$elm_ui$Internal$Model$paragraphClass = $mdgriffith$elm_ui$Internal$Style$classes.sH + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.qJ);
 var $mdgriffith$elm_ui$Internal$Model$rowClass = $mdgriffith$elm_ui$Internal$Style$classes.sH + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.rj);
 var $mdgriffith$elm_ui$Internal$Model$singleClass = $mdgriffith$elm_ui$Internal$Style$classes.sH + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.vU);
@@ -13451,10 +13451,10 @@ var $mdgriffith$elm_ui$Internal$Model$getStyleName = function (style) {
 				A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.vE)) + ('-cols-' + (A2(
 				$elm$core$String$join,
 				'-',
-				A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.mW)) + ('-space-x-' + ($mdgriffith$elm_ui$Internal$Model$lengthClassName(template.vY.a) + ('-space-y-' + $mdgriffith$elm_ui$Internal$Model$lengthClassName(template.vY.b)))))));
+				A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.mY)) + ('-space-x-' + ($mdgriffith$elm_ui$Internal$Model$lengthClassName(template.vY.a) + ('-space-y-' + $mdgriffith$elm_ui$Internal$Model$lengthClassName(template.vY.b)))))));
 		case 9:
 			var pos = style.a;
-			return 'gp grid-pos-' + ($elm$core$String$fromInt(pos.rj) + ('-' + ($elm$core$String$fromInt(pos.o0) + ('-' + ($elm$core$String$fromInt(pos.dn) + ('-' + $elm$core$String$fromInt(pos.iR)))))));
+			return 'gp grid-pos-' + ($elm$core$String$fromInt(pos.rj) + ('-' + ($elm$core$String$fromInt(pos.o0) + ('-' + ($elm$core$String$fromInt(pos.$7) + ('-' + $elm$core$String$fromInt(pos.iR)))))));
 		case 11:
 			var selector = style.a;
 			var subStyle = style.b;
@@ -13547,9 +13547,9 @@ var $mdgriffith$elm_ui$Internal$Model$formatBoxShadow = function (shadow) {
 				[
 					shadow.pW ? $elm$core$Maybe$Just('inset') : $elm$core$Maybe$Nothing,
 					$elm$core$Maybe$Just(
-					$elm$core$String$fromFloat(shadow.j6.a) + 'px'),
+					$elm$core$String$fromFloat(shadow.j7.a) + 'px'),
 					$elm$core$Maybe$Just(
-					$elm$core$String$fromFloat(shadow.j6.b) + 'px'),
+					$elm$core$String$fromFloat(shadow.j7.b) + 'px'),
 					$elm$core$Maybe$Just(
 					$elm$core$String$fromFloat(shadow.sU) + 'px'),
 					$elm$core$Maybe$Just(
@@ -13598,10 +13598,10 @@ var $mdgriffith$elm_ui$Internal$Model$renderFocusStyle = function (focus) {
 										sU: shadow.sU,
 										td: shadow.td,
 										pW: false,
-										j6: A2(
+										j7: A2(
 											$elm$core$Tuple$mapSecond,
 											$elm$core$Basics$toFloat,
-											A2($elm$core$Tuple$mapFirst, $elm$core$Basics$toFloat, shadow.j6)),
+											A2($elm$core$Tuple$mapFirst, $elm$core$Basics$toFloat, shadow.j7)),
 										vV: shadow.vV
 									}));
 						},
@@ -13646,10 +13646,10 @@ var $mdgriffith$elm_ui$Internal$Model$renderFocusStyle = function (focus) {
 										sU: shadow.sU,
 										td: shadow.td,
 										pW: false,
-										j6: A2(
+										j7: A2(
 											$elm$core$Tuple$mapSecond,
 											$elm$core$Basics$toFloat,
-											A2($elm$core$Tuple$mapFirst, $elm$core$Basics$toFloat, shadow.j6)),
+											A2($elm$core$Tuple$mapFirst, $elm$core$Basics$toFloat, shadow.j7)),
 										vV: shadow.vV
 									}));
 						},
@@ -13710,16 +13710,16 @@ var $mdgriffith$elm_ui$Internal$Style$contentName = function (desc) {
 			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.tl);
 		case 1:
 			var _v2 = desc;
-			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mY);
+			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.m_);
 		case 2:
 			var _v3 = desc;
-			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.m_);
+			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.m0);
 		case 3:
 			var _v4 = desc;
 			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.h4);
 		case 4:
 			var _v5 = desc;
-			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mZ);
+			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.m$);
 		default:
 			var _v6 = desc;
 			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.dI);
@@ -13799,7 +13799,7 @@ var $mdgriffith$elm_ui$Internal$Style$elDescription = _List_fromArray(
 			[
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Child,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.dD),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.dE),
 				_List_fromArray(
 					[
 						A2(
@@ -14309,7 +14309,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 					])),
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mU),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mW),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'pointer-events', 'auto !important')
@@ -14363,7 +14363,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
 				$mdgriffith$elm_ui$Internal$Style$dot(
-					_Utils_ap($mdgriffith$elm_ui$Internal$Style$classes.mO, $mdgriffith$elm_ui$Internal$Style$classes.ew)) + ':active',
+					_Utils_ap($mdgriffith$elm_ui$Internal$Style$classes.mQ, $mdgriffith$elm_ui$Internal$Style$classes.ew)) + ':active',
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'opacity', '0')
@@ -14371,7 +14371,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
 				$mdgriffith$elm_ui$Internal$Style$dot(
-					_Utils_ap($mdgriffith$elm_ui$Internal$Style$classes.mO, $mdgriffith$elm_ui$Internal$Style$classes.eh)) + ':active',
+					_Utils_ap($mdgriffith$elm_ui$Internal$Style$classes.mQ, $mdgriffith$elm_ui$Internal$Style$classes.eh)) + ':active',
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'opacity', '1')
@@ -14468,7 +14468,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 					])),
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mQ),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mS),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'border-width', '0')
@@ -14496,7 +14496,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 					])),
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.dD),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.dE),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'white-space', 'pre'),
@@ -14566,7 +14566,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 							])),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Child,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mX),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mZ),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'flex-grow', '0'),
@@ -14702,7 +14702,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 							])),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Descriptor,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.m8),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.na),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'align-items', 'baseline')
@@ -14888,7 +14888,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 						}),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Child,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mX),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mZ),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'flex-grow', '0'),
@@ -14968,7 +14968,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 					])),
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.u),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.r),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'display', 'block'),
@@ -15104,7 +15104,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 							])),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$AllChildren,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.dD),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.dE),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'display', 'inline'),
@@ -15189,7 +15189,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 									])),
 								A2(
 								$mdgriffith$elm_ui$Internal$Style$Child,
-								$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.dD),
+								$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.dE),
 								_List_fromArray(
 									[
 										A2($mdgriffith$elm_ui$Internal$Style$Prop, 'display', 'inline'),
@@ -15365,7 +15365,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 					])),
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.nt),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.nu),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'text-align', 'justify-all')
@@ -15503,14 +15503,14 @@ var $mdgriffith$elm_ui$Internal$Style$inputTextReset = '\ninput[type="search"],\
 var $mdgriffith$elm_ui$Internal$Style$sliderReset = '\ninput[type=range] {\n  -webkit-appearance: none; \n  background: transparent;\n  position:absolute;\n  left:0;\n  top:0;\n  z-index:10;\n  width: 100%;\n  outline: dashed 1px;\n  height: 100%;\n  opacity: 0;\n}\n';
 var $mdgriffith$elm_ui$Internal$Style$thumbReset = '\ninput[type=range]::-webkit-slider-thumb {\n    -webkit-appearance: none;\n    opacity: 0.5;\n    width: 80px;\n    height: 80px;\n    background-color: black;\n    border:none;\n    border-radius: 5px;\n}\ninput[type=range]::-moz-range-thumb {\n    opacity: 0.5;\n    width: 80px;\n    height: 80px;\n    background-color: black;\n    border:none;\n    border-radius: 5px;\n}\ninput[type=range]::-ms-thumb {\n    opacity: 0.5;\n    width: 80px;\n    height: 80px;\n    background-color: black;\n    border:none;\n    border-radius: 5px;\n}\ninput[type=range][orient=vertical]{\n    writing-mode: bt-lr; /* IE */\n    -webkit-appearance: slider-vertical;  /* WebKit */\n}\n';
 var $mdgriffith$elm_ui$Internal$Style$trackReset = '\ninput[type=range]::-moz-range-track {\n    background: transparent;\n    cursor: pointer;\n}\ninput[type=range]::-ms-track {\n    background: transparent;\n    cursor: pointer;\n}\ninput[type=range]::-webkit-slider-runnable-track {\n    background: transparent;\n    cursor: pointer;\n}\n';
-var $mdgriffith$elm_ui$Internal$Style$overrides = '@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.sH) + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.rj) + (' > ' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.sH) + (' { flex-basis: auto !important; } ' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.sH) + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.rj) + (' > ' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.sH) + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mX) + (' { flex-basis: auto !important; }}' + ($mdgriffith$elm_ui$Internal$Style$inputTextReset + ($mdgriffith$elm_ui$Internal$Style$sliderReset + ($mdgriffith$elm_ui$Internal$Style$trackReset + ($mdgriffith$elm_ui$Internal$Style$thumbReset + $mdgriffith$elm_ui$Internal$Style$explainer)))))))))))))));
+var $mdgriffith$elm_ui$Internal$Style$overrides = '@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.sH) + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.rj) + (' > ' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.sH) + (' { flex-basis: auto !important; } ' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.sH) + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.rj) + (' > ' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.sH) + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mZ) + (' { flex-basis: auto !important; }}' + ($mdgriffith$elm_ui$Internal$Style$inputTextReset + ($mdgriffith$elm_ui$Internal$Style$sliderReset + ($mdgriffith$elm_ui$Internal$Style$trackReset + ($mdgriffith$elm_ui$Internal$Style$thumbReset + $mdgriffith$elm_ui$Internal$Style$explainer)))))))))))))));
 var $elm$core$String$concat = function (strings) {
 	return A2($elm$core$String$join, '', strings);
 };
 var $mdgriffith$elm_ui$Internal$Style$Intermediate = $elm$core$Basics$identity;
 var $mdgriffith$elm_ui$Internal$Style$emptyIntermediate = F2(
 	function (selector, closing) {
-		return {mV: closing, aA: _List_Nil, dN: _List_Nil, c_: selector};
+		return {mX: closing, aA: _List_Nil, dP: _List_Nil, c_: selector};
 	});
 var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 	function (_v0, rulesToRender) {
@@ -15524,10 +15524,10 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 						return _Utils_update(
 							rendered,
 							{
-								dN: A2(
+								dP: A2(
 									$elm$core$List$cons,
 									_Utils_Tuple2(name, val),
-									rendered.dN)
+									rendered.dP)
 							});
 					case 3:
 						var _v2 = rule.a;
@@ -15539,7 +15539,7 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 							{
 								aA: A2(
 									$elm$core$List$cons,
-									{mV: '\n}', aA: _List_Nil, dN: props, c_: '@supports (' + (prop + (':' + (value + (') {' + parent.c_))))},
+									{mX: '\n}', aA: _List_Nil, dP: props, c_: '@supports (' + (prop + (':' + (value + (') {' + parent.c_))))},
 									rendered.aA)
 							});
 					case 5:
@@ -15631,11 +15631,11 @@ var $mdgriffith$elm_ui$Internal$Style$renderCompact = function (styleClasses) {
 				values));
 	};
 	var renderClass = function (rule) {
-		var _v2 = rule.dN;
+		var _v2 = rule.dP;
 		if (!_v2.b) {
 			return '';
 		} else {
-			return rule.c_ + ('{' + (renderValues(rule.dN) + (rule.mV + '}')));
+			return rule.c_ + ('{' + (renderValues(rule.dP) + (rule.mX + '}')));
 		}
 	};
 	var renderIntermediate = function (_v0) {
@@ -15992,7 +15992,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 				var wrappedRow = '.' + ($mdgriffith$elm_ui$Internal$Style$classes.ok + row);
 				var right = '.' + $mdgriffith$elm_ui$Internal$Style$classes.oA;
 				var paragraph = '.' + $mdgriffith$elm_ui$Internal$Style$classes.qJ;
-				var page = '.' + $mdgriffith$elm_ui$Internal$Style$classes.u;
+				var page = '.' + $mdgriffith$elm_ui$Internal$Style$classes.r;
 				var left = '.' + $mdgriffith$elm_ui$Internal$Style$classes.oz;
 				var halfY = $elm$core$String$fromFloat(y / 2) + 'px';
 				var halfX = $elm$core$String$fromFloat(x / 2) + 'px';
@@ -16271,14 +16271,14 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 					A2(
 						$elm$core$String$join,
 						ySpacing,
-						A2($elm$core$List$map, toGridLength, template.mW)));
+						A2($elm$core$List$map, toGridLength, template.mY)));
 				var msColumns = function (x) {
 					return '-ms-grid-columns: ' + (x + ';');
 				}(
 					A2(
 						$elm$core$String$join,
 						ySpacing,
-						A2($elm$core$List$map, toGridLength, template.mW)));
+						A2($elm$core$List$map, toGridLength, template.mY)));
 				var gapY = 'grid-row-gap:' + (toGridLength(template.vY.b) + ';');
 				var gapX = 'grid-column-gap:' + (toGridLength(template.vY.a) + ';');
 				var columns = function (x) {
@@ -16287,14 +16287,14 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 					A2(
 						$elm$core$String$join,
 						' ',
-						A2($elm$core$List$map, toGridLength, template.mW)));
+						A2($elm$core$List$map, toGridLength, template.mY)));
 				var _class = '.grid-rows-' + (A2(
 					$elm$core$String$join,
 					'-',
 					A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.vE)) + ('-cols-' + (A2(
 					$elm$core$String$join,
 					'-',
-					A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.mW)) + ('-space-x-' + ($mdgriffith$elm_ui$Internal$Model$lengthClassName(template.vY.a) + ('-space-y-' + $mdgriffith$elm_ui$Internal$Model$lengthClassName(template.vY.b)))))));
+					A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.mY)) + ('-space-x-' + ($mdgriffith$elm_ui$Internal$Model$lengthClassName(template.vY.a) + ('-space-y-' + $mdgriffith$elm_ui$Internal$Model$lengthClassName(template.vY.b)))))));
 				var modernGrid = _class + ('{' + (columns + (rows + (gapX + (gapY + '}')))));
 				var supports = '@supports (display:grid) {' + (modernGrid + '}');
 				var base = _class + ('{' + (msColumns + (msRows + '}')));
@@ -16310,7 +16310,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 							'-ms-grid-row: ' + ($elm$core$String$fromInt(position.rj) + ';'),
 							'-ms-grid-row-span: ' + ($elm$core$String$fromInt(position.iR) + ';'),
 							'-ms-grid-column: ' + ($elm$core$String$fromInt(position.o0) + ';'),
-							'-ms-grid-column-span: ' + ($elm$core$String$fromInt(position.dn) + ';')
+							'-ms-grid-column-span: ' + ($elm$core$String$fromInt(position.$7) + ';')
 						]));
 				var modernPosition = A2(
 					$elm$core$String$join,
@@ -16318,9 +16318,9 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 					_List_fromArray(
 						[
 							'grid-row: ' + ($elm$core$String$fromInt(position.rj) + (' / ' + ($elm$core$String$fromInt(position.rj + position.iR) + ';'))),
-							'grid-column: ' + ($elm$core$String$fromInt(position.o0) + (' / ' + ($elm$core$String$fromInt(position.o0 + position.dn) + ';')))
+							'grid-column: ' + ($elm$core$String$fromInt(position.o0) + (' / ' + ($elm$core$String$fromInt(position.o0 + position.$7) + ';')))
 						]));
-				var _class = '.grid-pos-' + ($elm$core$String$fromInt(position.rj) + ('-' + ($elm$core$String$fromInt(position.o0) + ('-' + ($elm$core$String$fromInt(position.dn) + ('-' + $elm$core$String$fromInt(position.iR)))))));
+				var _class = '.grid-pos-' + ($elm$core$String$fromInt(position.rj) + ('-' + ($elm$core$String$fromInt(position.o0) + ('-' + ($elm$core$String$fromInt(position.$7) + ('-' + $elm$core$String$fromInt(position.iR)))))));
 				var modernGrid = _class + ('{' + (modernPosition + '}'));
 				var supports = '@supports (display:grid) {' + (modernGrid + '}');
 				var base = _class + ('{' + (msPosition + '}'));
@@ -16391,7 +16391,7 @@ var $mdgriffith$elm_ui$Internal$Model$fontRule = F3(
 		return _List_fromArray(
 			[
 				A2($mdgriffith$elm_ui$Internal$Model$bracket, '.' + (name + ('.' + (modifier + (', ' + ('.' + (name + (' .' + modifier))))))), parentAdj),
-				A2($mdgriffith$elm_ui$Internal$Model$bracket, '.' + (name + ('.' + (modifier + ('> .' + ($mdgriffith$elm_ui$Internal$Style$classes.dD + (', .' + (name + (' .' + (modifier + (' > .' + $mdgriffith$elm_ui$Internal$Style$classes.dD)))))))))), textAdjustment)
+				A2($mdgriffith$elm_ui$Internal$Model$bracket, '.' + (name + ('.' + (modifier + ('> .' + ($mdgriffith$elm_ui$Internal$Style$classes.dE + (', .' + (name + (' .' + (modifier + (' > .' + $mdgriffith$elm_ui$Internal$Style$classes.dE)))))))))), textAdjustment)
 			]);
 	});
 var $mdgriffith$elm_ui$Internal$Model$renderFontAdjustmentRule = F3(
@@ -16423,7 +16423,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderNullAdjustmentRule = F2(
 						])),
 					A2(
 					$mdgriffith$elm_ui$Internal$Model$bracket,
-					'.' + (name + ('.' + ($mdgriffith$elm_ui$Internal$Style$classes.vW + ('> .' + ($mdgriffith$elm_ui$Internal$Style$classes.dD + (', .' + (name + (' .' + ($mdgriffith$elm_ui$Internal$Style$classes.vW + (' > .' + $mdgriffith$elm_ui$Internal$Style$classes.dD)))))))))),
+					'.' + (name + ('.' + ($mdgriffith$elm_ui$Internal$Style$classes.vW + ('> .' + ($mdgriffith$elm_ui$Internal$Style$classes.dE + (', .' + (name + (' .' + ($mdgriffith$elm_ui$Internal$Style$classes.vW + (' > .' + $mdgriffith$elm_ui$Internal$Style$classes.dE)))))))))),
 					_List_fromArray(
 						[
 							_Utils_Tuple2('vertical-align', '0'),
@@ -16614,16 +16614,16 @@ var $mdgriffith$elm_ui$Internal$Model$toStyleSheetString = F2(
 		var combine = F2(
 			function (style, rendered) {
 				return {
-					nl: _Utils_ap(
-						rendered.nl,
+					nm: _Utils_ap(
+						rendered.nm,
 						A3($mdgriffith$elm_ui$Internal$Model$renderStyleRule, options, style, $elm$core$Maybe$Nothing)),
-					l0: function () {
+					l1: function () {
 						var _v1 = $mdgriffith$elm_ui$Internal$Model$topLevelValue(style);
 						if (_v1.$ === 1) {
-							return rendered.l0;
+							return rendered.l1;
 						} else {
 							var topLevel = _v1.a;
-							return A2($elm$core$List$cons, topLevel, rendered.l0);
+							return A2($elm$core$List$cons, topLevel, rendered.l1);
 						}
 					}()
 				};
@@ -16631,10 +16631,10 @@ var $mdgriffith$elm_ui$Internal$Model$toStyleSheetString = F2(
 		var _v0 = A3(
 			$elm$core$List$foldl,
 			combine,
-			{nl: _List_Nil, l0: _List_Nil},
+			{nm: _List_Nil, l1: _List_Nil},
 			stylesheet);
-		var topLevel = _v0.l0;
-		var rules = _v0.nl;
+		var topLevel = _v0.l1;
+		var rules = _v0.nm;
 		return _Utils_ap(
 			$mdgriffith$elm_ui$Internal$Model$renderTopLevelValues(topLevel),
 			$elm$core$String$concat(rules));
@@ -16846,7 +16846,7 @@ var $mdgriffith$elm_ui$Internal$Model$finalizeNode = F6(
 								$elm$core$String$join,
 								' ',
 								_List_fromArray(
-									[$mdgriffith$elm_ui$Internal$Style$classes.sH, $mdgriffith$elm_ui$Internal$Style$classes.vU, $mdgriffith$elm_ui$Internal$Style$classes.mX, $mdgriffith$elm_ui$Internal$Style$classes.dI, $mdgriffith$elm_ui$Internal$Style$classes.sD])))
+									[$mdgriffith$elm_ui$Internal$Style$classes.sH, $mdgriffith$elm_ui$Internal$Style$classes.vU, $mdgriffith$elm_ui$Internal$Style$classes.mZ, $mdgriffith$elm_ui$Internal$Style$classes.dI, $mdgriffith$elm_ui$Internal$Style$classes.sD])))
 						]),
 					_List_fromArray(
 						[html])) : (A2($mdgriffith$elm_ui$Internal$Flag$present, $mdgriffith$elm_ui$Internal$Flag$centerX, has) ? A2(
@@ -16858,7 +16858,7 @@ var $mdgriffith$elm_ui$Internal$Model$finalizeNode = F6(
 								$elm$core$String$join,
 								' ',
 								_List_fromArray(
-									[$mdgriffith$elm_ui$Internal$Style$classes.sH, $mdgriffith$elm_ui$Internal$Style$classes.vU, $mdgriffith$elm_ui$Internal$Style$classes.mX, $mdgriffith$elm_ui$Internal$Style$classes.dI, $mdgriffith$elm_ui$Internal$Style$classes.sB])))
+									[$mdgriffith$elm_ui$Internal$Style$classes.sH, $mdgriffith$elm_ui$Internal$Style$classes.vU, $mdgriffith$elm_ui$Internal$Style$classes.mZ, $mdgriffith$elm_ui$Internal$Style$classes.dI, $mdgriffith$elm_ui$Internal$Style$classes.sB])))
 						]),
 					_List_fromArray(
 						[html])) : html));
@@ -16872,7 +16872,7 @@ var $mdgriffith$elm_ui$Internal$Model$finalizeNode = F6(
 								$elm$core$String$join,
 								' ',
 								_List_fromArray(
-									[$mdgriffith$elm_ui$Internal$Style$classes.sH, $mdgriffith$elm_ui$Internal$Style$classes.vU, $mdgriffith$elm_ui$Internal$Style$classes.mX, $mdgriffith$elm_ui$Internal$Style$classes.sC])))
+									[$mdgriffith$elm_ui$Internal$Style$classes.sH, $mdgriffith$elm_ui$Internal$Style$classes.vU, $mdgriffith$elm_ui$Internal$Style$classes.mZ, $mdgriffith$elm_ui$Internal$Style$classes.sC])))
 						]),
 					_List_fromArray(
 						[html])) : (A2($mdgriffith$elm_ui$Internal$Flag$present, $mdgriffith$elm_ui$Internal$Flag$alignBottom, has) ? A2(
@@ -16884,7 +16884,7 @@ var $mdgriffith$elm_ui$Internal$Model$finalizeNode = F6(
 								$elm$core$String$join,
 								' ',
 								_List_fromArray(
-									[$mdgriffith$elm_ui$Internal$Style$classes.sH, $mdgriffith$elm_ui$Internal$Style$classes.vU, $mdgriffith$elm_ui$Internal$Style$classes.mX, $mdgriffith$elm_ui$Internal$Style$classes.sA])))
+									[$mdgriffith$elm_ui$Internal$Style$classes.sH, $mdgriffith$elm_ui$Internal$Style$classes.vU, $mdgriffith$elm_ui$Internal$Style$classes.mZ, $mdgriffith$elm_ui$Internal$Style$classes.sA])))
 						]),
 					_List_fromArray(
 						[html])) : html));
@@ -16899,7 +16899,7 @@ var $elm$core$List$isEmpty = function (xs) {
 		return false;
 	}
 };
-var $mdgriffith$elm_ui$Internal$Model$textElementClasses = $mdgriffith$elm_ui$Internal$Style$classes.sH + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.dD + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.oi + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.nS)))));
+var $mdgriffith$elm_ui$Internal$Model$textElementClasses = $mdgriffith$elm_ui$Internal$Style$classes.sH + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.dE + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.oi + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.nS)))));
 var $mdgriffith$elm_ui$Internal$Model$textElement = function (str) {
 	return A2(
 		$elm$html$Html$div,
@@ -16912,7 +16912,7 @@ var $mdgriffith$elm_ui$Internal$Model$textElement = function (str) {
 				$elm$html$Html$text(str)
 			]));
 };
-var $mdgriffith$elm_ui$Internal$Model$textElementFillClasses = $mdgriffith$elm_ui$Internal$Style$classes.sH + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.dD + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.oj + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.nT)))));
+var $mdgriffith$elm_ui$Internal$Model$textElementFillClasses = $mdgriffith$elm_ui$Internal$Style$classes.sH + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.dE + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.oj + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.nT)))));
 var $mdgriffith$elm_ui$Internal$Model$textElementFill = function (str) {
 	return A2(
 		$elm$html$Html$div,
@@ -17041,7 +17041,7 @@ var $mdgriffith$elm_ui$Internal$Model$createElement = F3(
 						$mdgriffith$elm_ui$Internal$Model$finalizeNode,
 						rendered.d7,
 						rendered.qy,
-						rendered.dV,
+						rendered.dX,
 						$mdgriffith$elm_ui$Internal$Model$Keyed(
 							A3($mdgriffith$elm_ui$Internal$Model$addKeyedChildren, 'nearby-element-pls', keyed, rendered.s6)),
 						$mdgriffith$elm_ui$Internal$Model$NoStyleSheet));
@@ -17053,7 +17053,7 @@ var $mdgriffith$elm_ui$Internal$Model$createElement = F3(
 							$mdgriffith$elm_ui$Internal$Model$finalizeNode,
 							rendered.d7,
 							rendered.qy,
-							rendered.dV,
+							rendered.dX,
 							$mdgriffith$elm_ui$Internal$Model$Keyed(
 								A3($mdgriffith$elm_ui$Internal$Model$addKeyedChildren, 'nearby-element-pls', keyed, rendered.s6))),
 						rP: allStyles
@@ -17075,7 +17075,7 @@ var $mdgriffith$elm_ui$Internal$Model$createElement = F3(
 						$mdgriffith$elm_ui$Internal$Model$finalizeNode,
 						rendered.d7,
 						rendered.qy,
-						rendered.dV,
+						rendered.dX,
 						$mdgriffith$elm_ui$Internal$Model$Unkeyed(
 							A2($mdgriffith$elm_ui$Internal$Model$addChildren, unkeyed, rendered.s6)),
 						$mdgriffith$elm_ui$Internal$Model$NoStyleSheet));
@@ -17087,7 +17087,7 @@ var $mdgriffith$elm_ui$Internal$Model$createElement = F3(
 							$mdgriffith$elm_ui$Internal$Model$finalizeNode,
 							rendered.d7,
 							rendered.qy,
-							rendered.dV,
+							rendered.dX,
 							$mdgriffith$elm_ui$Internal$Model$Unkeyed(
 								A2($mdgriffith$elm_ui$Internal$Model$addChildren, unkeyed, rendered.s6))),
 						rP: allStyles
@@ -17638,7 +17638,7 @@ var $mdgriffith$elm_ui$Internal$Model$gatherAttrRecursive = F8(
 				var _v1 = $mdgriffith$elm_ui$Internal$Model$transformClass(transform);
 				if (_v1.$ === 1) {
 					return {
-						dV: A2(
+						dX: A2(
 							$elm$core$List$cons,
 							$elm$html$Html$Attributes$class(classes),
 							attrs),
@@ -17650,7 +17650,7 @@ var $mdgriffith$elm_ui$Internal$Model$gatherAttrRecursive = F8(
 				} else {
 					var _class = _v1.a;
 					return {
-						dV: A2(
+						dX: A2(
 							$elm$core$List$cons,
 							$elm$html$Html$Attributes$class(classes + (' ' + _class)),
 							attrs),
@@ -18836,7 +18836,7 @@ var $mdgriffith$elm_ui$Element$Input$button = F2(
 					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
 					A2(
 						$elm$core$List$cons,
-						$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.mZ + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.dI + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.vK + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.qx)))))),
+						$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.m$ + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.dI + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.vK + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.qx)))))),
 						A2(
 							$elm$core$List$cons,
 							$mdgriffith$elm_ui$Element$pointer,
@@ -19073,8 +19073,8 @@ var $mdgriffith$elm_ui$Internal$Model$boxShadowClass = function (shadow) {
 		_List_fromArray(
 			[
 				shadow.pW ? 'box-inset' : 'box-',
-				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.j6.a) + 'px',
-				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.j6.b) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.j7.a) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.j7.b) + 'px',
 				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.sU) + 'px',
 				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.vV) + 'px',
 				$mdgriffith$elm_ui$Internal$Model$formatColorClass(shadow.td)
@@ -19082,7 +19082,7 @@ var $mdgriffith$elm_ui$Internal$Model$boxShadowClass = function (shadow) {
 };
 var $mdgriffith$elm_ui$Internal$Flag$shadows = $mdgriffith$elm_ui$Internal$Flag$flag(19);
 var $mdgriffith$elm_ui$Element$Border$shadow = function (almostShade) {
-	var shade = {sU: almostShade.sU, td: almostShade.td, pW: false, j6: almostShade.j6, vV: almostShade.vV};
+	var shade = {sU: almostShade.sU, td: almostShade.td, pW: false, j7: almostShade.j7, vV: almostShade.vV};
 	return A2(
 		$mdgriffith$elm_ui$Internal$Model$StyleClass,
 		$mdgriffith$elm_ui$Internal$Flag$shadows,
@@ -19141,7 +19141,7 @@ var $Orasund$elm_ui_framework$Framework$Card$simple = _Utils_ap(
 				{
 					sU: 10,
 					td: A4($mdgriffith$elm_ui$Element$rgba, 0, 0, 0, 0.05),
-					j6: _Utils_Tuple2(0, 2),
+					j7: _Utils_Tuple2(0, 2),
 					vV: 1
 				}),
 				$mdgriffith$elm_ui$Element$Border$width(1),
@@ -19229,7 +19229,7 @@ var $Orasund$elm_ui_framework$Framework$layoutOptions = $elm$core$List$singleton
 				{
 					sU: 10,
 					td: $Orasund$elm_ui_framework$Framework$Color$turquoise,
-					j6: _Utils_Tuple2(0, 0),
+					j7: _Utils_Tuple2(0, 0),
 					vV: 1
 				})
 		}));
@@ -19250,7 +19250,7 @@ var $mdgriffith$elm_ui$Internal$Model$focusDefaultStyle = {
 		{
 			sU: 0,
 			td: A4($mdgriffith$elm_ui$Internal$Model$Rgba, 155 / 255, 203 / 255, 1, 1),
-			j6: _Utils_Tuple2(0, 0),
+			j7: _Utils_Tuple2(0, 0),
 			vV: 3
 		})
 };
@@ -19545,7 +19545,7 @@ var $author$project$Pages$Hardware$confirmDeleteUserView = function (userInfo) {
 					A2(
 					$mdgriffith$elm_ui$Element$el,
 					$Orasund$elm_ui_framework$Framework$Heading$h5,
-					$mdgriffith$elm_ui$Element$text(userInfo.dw + ' - Are you sure you want to delete your account?\n            Please note that this will delete all your AND THE RANKING MEMBER\'S rankings and is IRREVERSIBLE!\n            (You may wish to inform them before deleting)')),
+					$mdgriffith$elm_ui$Element$text(userInfo.dx + ' - Are you sure you want to delete your account?\n            Please note that this will delete all your AND THE RANKING MEMBER\'S rankings and is IRREVERSIBLE!\n            (You may wish to inform them before deleting)')),
 					A2(
 					$mdgriffith$elm_ui$Element$column,
 					A2(
@@ -19609,7 +19609,7 @@ var $author$project$SR$Elements$spectatorSelectedRankingHeaderEl = F2(
 		return A2(
 			$mdgriffith$elm_ui$Element$el,
 			$Orasund$elm_ui_framework$Framework$Heading$h5,
-			$mdgriffith$elm_ui$Element$text(userInfo.dw + (' you\'re interested in joining' + (' - ' + (r.fR + (' Id no: ' + (r.A + (' . \n Which is owned by ' + (r.n3 + (' id no: ' + r.f0))))))))));
+			$mdgriffith$elm_ui$Element$text(userInfo.dx + (' you\'re interested in joining' + (' - ' + (r.fR + (' Id no: ' + (r.A + (' . \n Which is owned by ' + (r.n3 + (' id no: ' + r.f0))))))))));
 	});
 var $mdgriffith$elm_ui$Internal$Model$AsRow = 0;
 var $mdgriffith$elm_ui$Internal$Model$asRow = 0;
@@ -19821,7 +19821,7 @@ var $author$project$Pages$Hardware$confirmJoinView = F2(
 						A2(
 						$mdgriffith$elm_ui$Element$el,
 						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(userInfo.dw + (' - Are you sure you want to join' + (ranking.n3 + '\'s  ranking?')))),
+						$mdgriffith$elm_ui$Element$text(userInfo.dx + (' - Are you sure you want to join' + (ranking.n3 + '\'s  ranking?')))),
 						A2(
 						$mdgriffith$elm_ui$Element$column,
 						A2(
@@ -19840,7 +19840,7 @@ var $author$project$Pages$Hardware$confirmJoinView = F2(
 									A2(
 										$elm$core$Maybe$withDefault,
 										$author$project$Data$Ranking$emptyRank,
-										$author$project$Data$Ranking$gotLowestRank(ranking.nb)).bC)),
+										$author$project$Data$Ranking$gotLowestRank(ranking.nc)).bC)),
 								A2($author$project$Pages$Hardware$infoBtn, 'Cancel', $author$project$Pages$Hardware$CancelFetchedSpectator)
 							]))
 					])));
@@ -19854,7 +19854,7 @@ var $author$project$SR$Elements$memberSelectedRankingHeaderEl = F2(
 		return A2(
 			$mdgriffith$elm_ui$Element$el,
 			$Orasund$elm_ui_framework$Framework$Heading$h5,
-			$mdgriffith$elm_ui$Element$text(userInfo.dw + (' you\'re a member of' + (' - ' + (r.fR + (' Id no: ' + (r.A + (' . \n Which is owned by ' + (r.n3 + (' id no: ' + r.f0))))))))));
+			$mdgriffith$elm_ui$Element$text(userInfo.dx + (' you\'re a member of' + (' - ' + (r.fR + (' Id no: ' + (r.A + (' . \n Which is owned by ' + (r.n3 + (' id no: ' + r.f0))))))))));
 	});
 var $author$project$Pages$Hardware$confirmLeaveView = F2(
 	function (userInfo, ranking) {
@@ -19876,7 +19876,7 @@ var $author$project$Pages$Hardware$confirmLeaveView = F2(
 						A2(
 						$mdgriffith$elm_ui$Element$el,
 						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(userInfo.dw + (' - Are you sure you want to leave ' + (ranking.n3 + '\'s  ranking?')))),
+						$mdgriffith$elm_ui$Element$text(userInfo.dx + (' - Are you sure you want to leave ' + (ranking.n3 + '\'s  ranking?')))),
 						A2(
 						$mdgriffith$elm_ui$Element$column,
 						A2(
@@ -19918,7 +19918,7 @@ var $author$project$Pages$Hardware$isUserRankedHigher = F2(
 					function (r) {
 						return _Utils_eq(r.aB.A, userInfo.r9);
 					},
-					ranking.nb)));
+					ranking.nc)));
 		var otherRank = A2(
 			$elm$core$Maybe$map,
 			function ($) {
@@ -19930,7 +19930,7 @@ var $author$project$Pages$Hardware$isUserRankedHigher = F2(
 					function (r) {
 						return !_Utils_eq(r.aB.A, userInfo.r9);
 					},
-					ranking.nb)));
+					ranking.nc)));
 		var _v0 = _Utils_Tuple2(userRank, otherRank);
 		if ((!_v0.a.$) && (!_v0.b.$)) {
 			var ur = _v0.a.a;
@@ -20020,7 +20020,7 @@ var $author$project$Pages$Hardware$createChallengeView = F3(
 								A2(
 								$mdgriffith$elm_ui$Element$el,
 								_List_Nil,
-								$mdgriffith$elm_ui$Element$text(uinfo.dw + (' you are challenging ' + rank.aB.dw)))
+								$mdgriffith$elm_ui$Element$text(uinfo.dx + (' you are challenging ' + rank.aB.dx)))
 							])),
 						A2(
 						$mdgriffith$elm_ui$Element$el,
@@ -20093,7 +20093,7 @@ var $author$project$Pages$Hardware$createChallengeView = F3(
 								A2(
 								$mdgriffith$elm_ui$Element$el,
 								_List_Nil,
-								$mdgriffith$elm_ui$Element$text(uinfo.dw + ' aim high! Challenge up '))
+								$mdgriffith$elm_ui$Element$text(uinfo.dx + ' aim high! Challenge up '))
 							])),
 						A2(
 						$mdgriffith$elm_ui$Element$column,
@@ -20130,7 +20130,7 @@ var $author$project$Pages$Hardware$createChallengeView = F3(
 								A2(
 								$mdgriffith$elm_ui$Element$el,
 								_List_Nil,
-								$mdgriffith$elm_ui$Element$text(rank.aB.dw + ' you can\'t challenge yourself! '))
+								$mdgriffith$elm_ui$Element$text(rank.aB.dx + ' you can\'t challenge yourself! '))
 							])),
 						A2(
 						$mdgriffith$elm_ui$Element$column,
@@ -20183,7 +20183,7 @@ var $mdgriffith$elm_ui$Element$rgb = F3(
 	});
 var $author$project$SR$Elements$colors = {
 	oM: A3($mdgriffith$elm_ui$Element$rgb255, 0, 0, 0),
-	mP: A3($mdgriffith$elm_ui$Element$rgb255, 2, 7, 239),
+	mR: A3($mdgriffith$elm_ui$Element$rgb255, 2, 7, 239),
 	o2: A3($mdgriffith$elm_ui$Element$rgb255, 204, 75, 75),
 	o7: A3($mdgriffith$elm_ui$Element$rgb, 0, 0, 0.9),
 	pH: A3($mdgriffith$elm_ui$Element$rgb255, 0, 153, 0),
@@ -20244,7 +20244,7 @@ var $author$project$SR$Elements$ladderCityValidation = function (ranking) {
 					]),
 				_List_fromArray(
 					[
-						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.mP),
+						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.mR),
 						$mdgriffith$elm_ui$Element$Font$alignLeft
 					])),
 			_List_fromArray(
@@ -20295,7 +20295,7 @@ var $author$project$SR$Elements$ladderNameValidation = function (ranking) {
 		$mdgriffith$elm_ui$Element$text('Must be unique (4-20 continuous chars)'));
 };
 var $author$project$SR$Elements$ladderStreetValidation = function (ranking) {
-	return $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.dG.lH) ? A2(
+	return $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.dG.lI) ? A2(
 		$mdgriffith$elm_ui$Element$el,
 		_Utils_ap(
 			A2(
@@ -20326,7 +20326,7 @@ var $author$project$SR$Elements$ladderStreetValidation = function (ranking) {
 					]),
 				_List_fromArray(
 					[
-						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.mP),
+						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.mR),
 						$mdgriffith$elm_ui$Element$Font$alignLeft
 					])),
 			_List_fromArray(
@@ -20370,7 +20370,7 @@ var $author$project$Pages$Hardware$enableButton = function (enable) {
 	return enable ? $Orasund$elm_ui_framework$Framework$Color$info : $Orasund$elm_ui_framework$Framework$Color$disabled;
 };
 var $author$project$Pages$Hardware$isValidatedForAllLadderDetailsInput = function (ranking) {
-	return $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.fR) && (((ranking.dG.lH === '') || $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.dG.lH)) && ((ranking.dG.h0 === '') || $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.dG.h0)));
+	return $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.fR) && (((ranking.dG.lI === '') || $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.dG.lI)) && ((ranking.dG.h0 === '') || $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.dG.h0)));
 };
 var $Orasund$elm_ui_framework$Framework$Color$yellow = A3($mdgriffith$elm_ui$Element$rgb255, 255, 221, 87);
 var $Orasund$elm_ui_framework$Framework$Color$warning = _List_fromArray(
@@ -20417,7 +20417,7 @@ var $author$project$Pages$Hardware$rankingDetailsConfirmPanel = F2(
 			$Orasund$elm_ui_framework$Framework$Grid$section,
 			_List_fromArray(
 				[
-					((ranking.dG.lH === '') && (ranking.dG.h0 === '')) ? $author$project$SR$Elements$warningParagraph : $mdgriffith$elm_ui$Element$text('Click to continue ...'),
+					((ranking.dG.lI === '') && (ranking.dG.h0 === '')) ? $author$project$SR$Elements$warningParagraph : $mdgriffith$elm_ui$Element$text('Click to continue ...'),
 					A2(
 					$mdgriffith$elm_ui$Element$column,
 					_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple),
@@ -20525,7 +20525,7 @@ var $mdgriffith$elm_ui$Element$Input$applyLabel = F3(
 						$mdgriffith$elm_ui$Internal$Model$NodeName('label'),
 						A2(
 							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.m8),
+							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.na),
 							attrs),
 						$mdgriffith$elm_ui$Internal$Model$Unkeyed(
 							_List_fromArray(
@@ -20537,7 +20537,7 @@ var $mdgriffith$elm_ui$Element$Input$applyLabel = F3(
 						$mdgriffith$elm_ui$Internal$Model$NodeName('label'),
 						A2(
 							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.m8),
+							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.na),
 							attrs),
 						$mdgriffith$elm_ui$Internal$Model$Unkeyed(
 							_List_fromArray(
@@ -20549,7 +20549,7 @@ var $mdgriffith$elm_ui$Element$Input$applyLabel = F3(
 						$mdgriffith$elm_ui$Internal$Model$NodeName('label'),
 						A2(
 							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.m8),
+							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.na),
 							attrs),
 						$mdgriffith$elm_ui$Internal$Model$Unkeyed(
 							_List_fromArray(
@@ -20561,7 +20561,7 @@ var $mdgriffith$elm_ui$Element$Input$applyLabel = F3(
 						$mdgriffith$elm_ui$Internal$Model$NodeName('label'),
 						A2(
 							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.m8),
+							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.na),
 							attrs),
 						$mdgriffith$elm_ui$Internal$Model$Unkeyed(
 							_List_fromArray(
@@ -21164,9 +21164,9 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 				_Utils_ap(
 					_List_fromArray(
 						[
-							$mdgriffith$elm_ui$Element$Input$value(textOptions.dD),
+							$mdgriffith$elm_ui$Element$Input$value(textOptions.dE),
 							$mdgriffith$elm_ui$Internal$Model$Attr(
-							$elm$html$Html$Events$onInput(textOptions.dx)),
+							$elm$html$Html$Events$onInput(textOptions.dy)),
 							$mdgriffith$elm_ui$Element$Input$hiddenLabelAttribute(textOptions.I),
 							$mdgriffith$elm_ui$Element$Input$spellcheck(textInput.c5),
 							A2(
@@ -21214,8 +21214,8 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 												redistributed.g0)))),
 								$mdgriffith$elm_ui$Internal$Model$Unkeyed(
 									function () {
-										if (textOptions.dD === '') {
-											var _v1 = textOptions.dy;
+										if (textOptions.dE === '') {
+											var _v1 = textOptions.dz;
 											if (_v1.$ === 1) {
 												return _List_fromArray(
 													[
@@ -21225,7 +21225,7 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 												var place = _v1.a;
 												return _List_fromArray(
 													[
-														A3($mdgriffith$elm_ui$Element$Input$renderPlaceholder, place, _List_Nil, textOptions.dD === '')
+														A3($mdgriffith$elm_ui$Element$Input$renderPlaceholder, place, _List_Nil, textOptions.dE === '')
 													]);
 											}
 										} else {
@@ -21240,7 +21240,7 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 															]),
 														_List_fromArray(
 															[
-																$elm$html$Html$text(textOptions.dD + '\u00A0')
+																$elm$html$Html$text(textOptions.dE + '\u00A0')
 															])))
 												]);
 										}
@@ -21263,7 +21263,7 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 									[
 										redistributed.y,
 										function () {
-										var _v2 = textOptions.dy;
+										var _v2 = textOptions.dz;
 										if (_v2.$ === 1) {
 											return _List_Nil;
 										} else {
@@ -21271,7 +21271,7 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 											return _List_fromArray(
 												[
 													$mdgriffith$elm_ui$Element$behindContent(
-													A3($mdgriffith$elm_ui$Element$Input$renderPlaceholder, place, redistributed.bl, textOptions.dD === ''))
+													A3($mdgriffith$elm_ui$Element$Input$renderPlaceholder, place, redistributed.bl, textOptions.dE === ''))
 												]);
 										}
 									}()
@@ -21312,7 +21312,7 @@ var $author$project$Pages$Hardware$createLadderView = F2(
 						A2(
 						$mdgriffith$elm_ui$Element$el,
 						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(userInfo.dw + ' - Please Enter Your Ladder \nDetails And Click \'Create\' below:')),
+						$mdgriffith$elm_ui$Element$text(userInfo.dx + ' - Please Enter Your Ladder \nDetails And Click \'Create\' below:')),
 						A2(
 						$mdgriffith$elm_ui$Element$wrappedRow,
 						_Utils_ap($Orasund$elm_ui_framework$Framework$Card$fill, $Orasund$elm_ui_framework$Framework$Grid$simple),
@@ -21342,13 +21342,13 @@ var $author$project$Pages$Hardware$createLadderView = F2(
 															$mdgriffith$elm_ui$Element$moveLeft(11.0)
 														])),
 												$mdgriffith$elm_ui$Element$text('Ranking name*')),
-											dx: $author$project$Pages$Hardware$RankingNameChg,
-											dy: $elm$core$Maybe$Just(
+											dy: $author$project$Pages$Hardware$RankingNameChg,
+											dz: $elm$core$Maybe$Just(
 												A2(
 													$mdgriffith$elm_ui$Element$Input$placeholder,
 													_List_Nil,
 													$mdgriffith$elm_ui$Element$text('Ranking name*'))),
-											dD: ranking.fR
+											dE: ranking.fR
 										}),
 										$author$project$SR$Elements$ladderNameValidation(ranking),
 										A2(
@@ -21370,13 +21370,13 @@ var $author$project$Pages$Hardware$createLadderView = F2(
 															$mdgriffith$elm_ui$Element$moveLeft(11.0)
 														])),
 												$mdgriffith$elm_ui$Element$text('Street')),
-											dx: $author$project$Pages$Hardware$StreetAddressChg,
-											dy: $elm$core$Maybe$Just(
+											dy: $author$project$Pages$Hardware$StreetAddressChg,
+											dz: $elm$core$Maybe$Just(
 												A2(
 													$mdgriffith$elm_ui$Element$Input$placeholder,
 													_List_Nil,
 													$mdgriffith$elm_ui$Element$text('Street'))),
-											dD: ranking.dG.lH
+											dE: ranking.dG.lI
 										}),
 										$author$project$SR$Elements$ladderStreetValidation(ranking),
 										A2(
@@ -21398,13 +21398,13 @@ var $author$project$Pages$Hardware$createLadderView = F2(
 															$mdgriffith$elm_ui$Element$moveLeft(11.0)
 														])),
 												$mdgriffith$elm_ui$Element$text('City')),
-											dx: $author$project$Pages$Hardware$CityAddressChg,
-											dy: $elm$core$Maybe$Just(
+											dy: $author$project$Pages$Hardware$CityAddressChg,
+											dz: $elm$core$Maybe$Just(
 												A2(
 													$mdgriffith$elm_ui$Element$Input$placeholder,
 													_List_Nil,
 													$mdgriffith$elm_ui$Element$text('City'))),
-											dD: ranking.dG.h0
+											dE: ranking.dG.h0
 										}),
 										$author$project$SR$Elements$ladderCityValidation(ranking)
 									]))
@@ -21432,7 +21432,7 @@ var $author$project$Pages$Hardware$dialogueConfirmChallengeView = F3(
 						A2(
 						$mdgriffith$elm_ui$Element$el,
 						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(ranking.n3 + (' - Are you sure you want to challenge ' + (rank.aB.dw + '?')))),
+						$mdgriffith$elm_ui$Element$text(ranking.n3 + (' - Are you sure you want to challenge ' + (rank.aB.dx + '?')))),
 						A2(
 						$mdgriffith$elm_ui$Element$wrappedRow,
 						_List_Nil,
@@ -21514,7 +21514,7 @@ var $author$project$Pages$Hardware$dialoguePrepareResultView = F3(
 						A2(
 						$mdgriffith$elm_ui$Element$el,
 						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(uinfo.dw + (' - Are you ready to enter your result vs ' + (rank.an.dw + '?')))),
+						$mdgriffith$elm_ui$Element$text(uinfo.dx + (' - Are you ready to enter your result vs ' + (rank.an.dx + '?')))),
 						A2($author$project$Data$Ranking$isUserOwnerOfRankning, uinfo.r9, ranking) ? A2(
 						$mdgriffith$elm_ui$Element$wrappedRow,
 						_List_Nil,
@@ -21576,7 +21576,7 @@ var $author$project$SR$Elements$globalHeading = function (user) {
 		return A2(
 			$mdgriffith$elm_ui$Element$el,
 			$Orasund$elm_ui_framework$Framework$Heading$h5,
-			$mdgriffith$elm_ui$Element$text('SportRank - Welcome Back - ' + userInfo.dw));
+			$mdgriffith$elm_ui$Element$text('SportRank - Welcome Back - ' + userInfo.dx));
 	}
 };
 var $author$project$Pages$Hardware$globalView = F3(
@@ -21638,7 +21638,7 @@ var $author$project$Pages$Hardware$loginView = function (model) {
 					$Orasund$elm_ui_framework$Framework$Heading$h6,
 					$mdgriffith$elm_ui$Element$text('Not connected yet')),
 					function () {
-					var _v0 = model.d$;
+					var _v0 = model.dK;
 					if (!_v0.b) {
 						return $mdgriffith$elm_ui$Element$text('');
 					} else {
@@ -21653,7 +21653,7 @@ var $author$project$Pages$Hardware$loginView = function (model) {
 										$Orasund$elm_ui_framework$Framework$Heading$h6,
 										$mdgriffith$elm_ui$Element$text(error));
 								},
-								model.d$));
+								model.dK));
 					}
 				}()
 				])));
@@ -21675,7 +21675,7 @@ var $author$project$Pages$Hardware$challengeInProgressBtnDisabled = function (r)
 					$author$project$Pages$Hardware$enableButton(false)),
 				{
 					I: $mdgriffith$elm_ui$Element$text(
-						$elm$core$String$fromInt(r.bC) + ('. ' + (r.aB.dw + (' vs ' + r.an.dw)))),
+						$elm$core$String$fromInt(r.bC) + ('. ' + (r.aB.dx + (' vs ' + r.an.dx)))),
 					aq: $elm$core$Maybe$Just(
 						$author$project$Pages$Hardware$ViewRank(r))
 				})
@@ -21697,7 +21697,7 @@ var $author$project$Pages$Hardware$challengeInProgressBtnEnabled = function (r) 
 				_Utils_ap($Orasund$elm_ui_framework$Framework$Button$fill, $Orasund$elm_ui_framework$Framework$Color$primary),
 				{
 					I: $mdgriffith$elm_ui$Element$text(
-						$elm$core$String$fromInt(r.bC) + ('. ' + (r.aB.dw + (' vs ' + r.an.dw)))),
+						$elm$core$String$fromInt(r.bC) + ('. ' + (r.aB.dx + (' vs ' + r.an.dx)))),
 					aq: $elm$core$Maybe$Just(
 						$author$project$Pages$Hardware$ViewRank(r))
 				})
@@ -21722,7 +21722,7 @@ var $author$project$Pages$Hardware$singlePlayerBtnDisabled = function (r) {
 					$author$project$Pages$Hardware$enableButton(false)),
 				{
 					I: $mdgriffith$elm_ui$Element$text(
-						$elm$core$String$fromInt(r.bC) + ('. ' + r.aB.dw)),
+						$elm$core$String$fromInt(r.bC) + ('. ' + r.aB.dx)),
 					aq: $elm$core$Maybe$Just(
 						$author$project$Pages$Hardware$ViewRank(r))
 				})
@@ -21739,7 +21739,7 @@ var $author$project$Pages$Hardware$singlePlayerBtnEnabled = function (r) {
 				_Utils_ap($Orasund$elm_ui_framework$Framework$Button$fill, $Orasund$elm_ui_framework$Framework$Color$primary),
 				{
 					I: $mdgriffith$elm_ui$Element$text(
-						$elm$core$String$fromInt(r.bC) + ('. ' + r.aB.dw)),
+						$elm$core$String$fromInt(r.bC) + ('. ' + r.aB.dx)),
 					aq: $elm$core$Maybe$Just(
 						$author$project$Pages$Hardware$ViewRank(r))
 				})
@@ -21765,7 +21765,7 @@ var $author$project$Pages$Hardware$playerbuttons = F2(
 		var currentUserRank = A2(
 			$elm$core$Maybe$withDefault,
 			$author$project$Data$Ranking$emptyRank,
-			A2($author$project$Pages$Hardware$findUserRank, u.r9, r.nb));
+			A2($author$project$Pages$Hardware$findUserRank, u.r9, r.nc));
 		return A2(
 			$mdgriffith$elm_ui$Element$column,
 			$Orasund$elm_ui_framework$Framework$Grid$section,
@@ -21777,7 +21777,7 @@ var $author$project$Pages$Hardware$playerbuttons = F2(
 					A2(
 						$elm$core$List$map,
 						$author$project$Pages$Hardware$configureThenAddPlayerRankingBtns(currentUserRank),
-						r.nb))
+						r.nc))
 				]));
 	});
 var $author$project$Pages$Hardware$memberSelectedView = F2(
@@ -21959,7 +21959,7 @@ var $author$project$Utils$Validation$Validate$isValid4to8Chars = function (str) 
 		str);
 };
 var $author$project$SR$Elements$nameValidView = function (userInfo) {
-	return (!$elm$core$String$length(userInfo.dw)) ? A2(
+	return (!$elm$core$String$length(userInfo.dx)) ? A2(
 		$mdgriffith$elm_ui$Element$el,
 		_Utils_ap(
 			A2(
@@ -21978,7 +21978,7 @@ var $author$project$SR$Elements$nameValidView = function (userInfo) {
 				[
 					$mdgriffith$elm_ui$Element$moveLeft(1.0)
 				])),
-		$mdgriffith$elm_ui$Element$text('Anon OK!')) : ($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.dw) ? A2(
+		$mdgriffith$elm_ui$Element$text('Anon OK!')) : ($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.dx) ? A2(
 		$mdgriffith$elm_ui$Element$el,
 		_Utils_ap(
 			A2(
@@ -22029,7 +22029,7 @@ var $mdgriffith$elm_ui$Element$Input$newPassword = F2(
 					pass.vT ? 'text' : 'password')
 			},
 			attrs,
-			{I: pass.I, dx: pass.dx, dy: pass.dy, dD: pass.dD});
+			{I: pass.I, dy: pass.dy, dz: pass.dz, dE: pass.dE});
 	});
 var $author$project$SR$Elements$passwordValidView = function (userInfo) {
 	return $author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.n4) ? A2(
@@ -22059,14 +22059,14 @@ var $author$project$Utils$Validation$Validate$is20CharMax = function (str) {
 };
 var $author$project$Pages$Hardware$isValidatedForAllUserDetailsInput = function (userInfo) {
 	return ($author$project$Utils$Validation$Validate$isEmailValid(
-		A2($elm$core$Maybe$withDefault, '', userInfo.nN)) && ($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.dw) && ($author$project$Utils$Validation$Validate$is20CharMax('') && ($author$project$Utils$Validation$Validate$isEmailValid(
+		A2($elm$core$Maybe$withDefault, '', userInfo.nN)) && ($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.dx) && ($author$project$Utils$Validation$Validate$is20CharMax('') && ($author$project$Utils$Validation$Validate$isEmailValid(
 		A2($elm$core$Maybe$withDefault, '', userInfo.nN)) && $author$project$Utils$Validation$Validate$isMobileValid(
 		A2($elm$core$Maybe$withDefault, '', userInfo.n_)))))) ? true : false;
 };
 var $author$project$Pages$Hardware$userDetailsConfirmPanel = function (userInfo) {
 	return (($author$project$Utils$Validation$Validate$isEmailValid(
 		A2($elm$core$Maybe$withDefault, '', userInfo.nN)) && ($elm$core$String$length(
-		A2($elm$core$Maybe$withDefault, '', userInfo.nN)) > 0)) && (($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.n4) && ($elm$core$String$length(userInfo.n4) > 0)) && ((userInfo.dw === '') || $author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.dw)))) ? A2(
+		A2($elm$core$Maybe$withDefault, '', userInfo.nN)) > 0)) && (($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.n4) && ($elm$core$String$length(userInfo.n4) > 0)) && ((userInfo.dx === '') || $author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.dx)))) ? A2(
 		$mdgriffith$elm_ui$Element$column,
 		$Orasund$elm_ui_framework$Framework$Grid$section,
 		_List_fromArray(
@@ -22185,13 +22185,13 @@ var $author$project$Pages$Hardware$registerView = function (userInfo) {
 														$mdgriffith$elm_ui$Element$moveLeft(11.0)
 													])),
 											$mdgriffith$elm_ui$Element$text('Email*')),
-										dx: $author$project$Pages$Hardware$UpdateEmail,
-										dy: $elm$core$Maybe$Just(
+										dy: $author$project$Pages$Hardware$UpdateEmail,
+										dz: $elm$core$Maybe$Just(
 											A2(
 												$mdgriffith$elm_ui$Element$Input$placeholder,
 												_List_Nil,
 												$mdgriffith$elm_ui$Element$text('Email'))),
-										dD: A2($elm$core$Maybe$withDefault, '', userInfo.nN)
+										dE: A2($elm$core$Maybe$withDefault, '', userInfo.nN)
 									}),
 									$author$project$Pages$Hardware$emailValidationErr(
 									A2($elm$core$Maybe$withDefault, '', userInfo.nN)),
@@ -22214,14 +22214,14 @@ var $author$project$Pages$Hardware$registerView = function (userInfo) {
 														$mdgriffith$elm_ui$Element$moveLeft(11.0)
 													])),
 											$mdgriffith$elm_ui$Element$text('Password*')),
-										dx: $author$project$Pages$Hardware$UpdatePassword,
-										dy: $elm$core$Maybe$Just(
+										dy: $author$project$Pages$Hardware$UpdatePassword,
+										dz: $elm$core$Maybe$Just(
 											A2(
 												$mdgriffith$elm_ui$Element$Input$placeholder,
 												_List_Nil,
 												$mdgriffith$elm_ui$Element$text('Password'))),
 										vT: false,
-										dD: userInfo.n4
+										dE: userInfo.n4
 									}),
 									$author$project$SR$Elements$passwordValidView(userInfo),
 									A2(
@@ -22243,13 +22243,13 @@ var $author$project$Pages$Hardware$registerView = function (userInfo) {
 														$mdgriffith$elm_ui$Element$moveLeft(11.0)
 													])),
 											$mdgriffith$elm_ui$Element$text('Nickname')),
-										dx: $author$project$Pages$Hardware$UpdateNickName,
-										dy: $elm$core$Maybe$Just(
+										dy: $author$project$Pages$Hardware$UpdateNickName,
+										dz: $elm$core$Maybe$Just(
 											A2(
 												$mdgriffith$elm_ui$Element$Input$placeholder,
 												_List_Nil,
 												$mdgriffith$elm_ui$Element$text('Nickname'))),
-										dD: userInfo.dw
+										dE: userInfo.dx
 									}),
 									$author$project$SR$Elements$nameValidView(userInfo),
 									A2(
@@ -22271,13 +22271,13 @@ var $author$project$Pages$Hardware$registerView = function (userInfo) {
 														$mdgriffith$elm_ui$Element$moveLeft(11.0)
 													])),
 											$mdgriffith$elm_ui$Element$text('Level')),
-										dx: $author$project$Pages$Hardware$UpdateLevel,
-										dy: $elm$core$Maybe$Just(
+										dy: $author$project$Pages$Hardware$UpdateLevel,
+										dz: $elm$core$Maybe$Just(
 											A2(
 												$mdgriffith$elm_ui$Element$Input$placeholder,
 												_List_Nil,
 												$mdgriffith$elm_ui$Element$text('Level'))),
-										dD: userInfo.dY.nX
+										dE: userInfo.d_.nX
 									}),
 									A2(
 									$mdgriffith$elm_ui$Element$Input$text,
@@ -22298,13 +22298,13 @@ var $author$project$Pages$Hardware$registerView = function (userInfo) {
 														$mdgriffith$elm_ui$Element$moveLeft(11.0)
 													])),
 											$mdgriffith$elm_ui$Element$text('Comment')),
-										dx: $author$project$Pages$Hardware$UpdateComment,
-										dy: $elm$core$Maybe$Just(
+										dy: $author$project$Pages$Hardware$UpdateComment,
+										dz: $elm$core$Maybe$Just(
 											A2(
 												$mdgriffith$elm_ui$Element$Input$placeholder,
 												_List_Nil,
 												$mdgriffith$elm_ui$Element$text('Comment'))),
-										dD: userInfo.dY.nF
+										dE: userInfo.d_.nF
 									}),
 									A2(
 									$mdgriffith$elm_ui$Element$Input$text,
@@ -22325,13 +22325,13 @@ var $author$project$Pages$Hardware$registerView = function (userInfo) {
 														$mdgriffith$elm_ui$Element$moveLeft(11.0)
 													])),
 											$mdgriffith$elm_ui$Element$text('Mobile \n(inc. Int code\neg.+65)')),
-										dx: $author$project$Pages$Hardware$UpdateMobile,
-										dy: $elm$core$Maybe$Just(
+										dy: $author$project$Pages$Hardware$UpdateMobile,
+										dz: $elm$core$Maybe$Just(
 											A2(
 												$mdgriffith$elm_ui$Element$Input$placeholder,
 												_List_Nil,
 												$mdgriffith$elm_ui$Element$text('Mobile'))),
-										dD: A2(
+										dE: A2(
 											$author$project$Utils$Validation$Validate$validatedMaxTextLength,
 											A2($elm$core$Maybe$withDefault, '', userInfo.n_),
 											25)
@@ -22482,7 +22482,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 													var newUser = _v1.a;
 													return $author$project$Pages$Hardware$registerView(newUser);
 												case 4:
-													return A3($author$project$Pages$Hardware$globalView, model.vN, model.vL, model.dl);
+													return A3($author$project$Pages$Hardware$globalView, model.vN, model.vL, model.dm);
 												case 5:
 													var userInfo = _v1.a;
 													return A2(
@@ -22491,7 +22491,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 														$author$project$Data$Ranking$gotRanking(model.er));
 												case 6:
 													var userInfo = function () {
-														var _v2 = model.dl;
+														var _v2 = model.dm;
 														if (_v2.$ === 1) {
 															var usrInfo = _v2.a;
 															return usrInfo;
@@ -22505,7 +22505,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 														$author$project$Data$Ranking$gotRanking(model.er));
 												case 7:
 													var userInfo = function () {
-														var _v3 = model.dl;
+														var _v3 = model.dm;
 														if (_v3.$ === 1) {
 															var usrInfo = _v3.a;
 															return usrInfo;
@@ -22519,7 +22519,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 														$author$project$Data$Ranking$gotRanking(model.er));
 												case 8:
 													var userInfo = function () {
-														var _v5 = model.dl;
+														var _v5 = model.dm;
 														if (_v5.$ === 1) {
 															var usrInfo = _v5.a;
 															return usrInfo;
@@ -22539,7 +22539,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 													return A2($author$project$Pages$Hardware$spectatorSelectedView, userInfo, ranking);
 												case 9:
 													var userInfo = function () {
-														var _v6 = model.dl;
+														var _v6 = model.dm;
 														if (_v6.$ === 1) {
 															var usrInfo = _v6.a;
 															return usrInfo;
@@ -22555,7 +22555,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 													var rank = _v1.a;
 													var ranking = _v1.b;
 													var userInfo = function () {
-														var _v7 = model.dl;
+														var _v7 = model.dm;
 														if (_v7.$ === 1) {
 															var usrInfo = _v7.a;
 															return usrInfo;
@@ -22568,7 +22568,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 													var rank = _v1.a;
 													var ranking = _v1.b;
 													var userInfo = function () {
-														var _v8 = model.dl;
+														var _v8 = model.dm;
 														if (_v8.$ === 1) {
 															var usrInfo = _v8.a;
 															return usrInfo;
@@ -22579,7 +22579,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 													return A3($author$project$Pages$Hardware$dialogueConfirmChallengeView, userInfo, rank, ranking);
 												case 14:
 													var userInfo = function () {
-														var _v9 = model.dl;
+														var _v9 = model.dm;
 														if (_v9.$ === 1) {
 															var usrInfo = _v9.a;
 															return usrInfo;
@@ -22593,7 +22593,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 														$author$project$Data$Ranking$gotRanking(model.er));
 												case 15:
 													var userInfo = function () {
-														var _v10 = model.dl;
+														var _v10 = model.dm;
 														if (_v10.$ === 1) {
 															var usrInfo = _v10.a;
 															return usrInfo;
@@ -22607,7 +22607,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 														$author$project$Data$Ranking$gotRanking(model.er));
 												case 16:
 													var userInfo = function () {
-														var _v11 = model.dl;
+														var _v11 = model.dm;
 														if (_v11.$ === 1) {
 															var usrInfo = _v11.a;
 															return usrInfo;
@@ -22619,7 +22619,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 												case 12:
 													return A3(
 														$author$project$Pages$Hardware$dialoguePrepareResultView,
-														$author$project$Data$User$gotUserInfo(model.dl),
+														$author$project$Data$User$gotUserInfo(model.dm),
 														model.oa,
 														$author$project$Data$Ranking$gotRanking(model.er));
 												default:
@@ -22970,7 +22970,7 @@ var $author$project$Pages$Support$view = function (_v0) {
 };
 var $author$project$Main$view = function (model) {
 	var contentByPage = function () {
-		var _v0 = model.u;
+		var _v0 = model.r;
 		switch (_v0.$) {
 			case 0:
 				var dashboard = _v0.a;
@@ -23033,8 +23033,8 @@ var $author$project$Main$view = function (model) {
 	return {
 		sV: _List_fromArray(
 			[
-				$author$project$Main$pageHeader(model.u),
-				$author$project$Main$showVideoOrBanner(model.u),
+				$author$project$Main$pageHeader(model.r),
+				$author$project$Main$showVideoOrBanner(model.r),
 				contentByPage,
 				$author$project$Main$footerContent
 			]),

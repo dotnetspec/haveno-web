@@ -80,23 +80,23 @@ document.body.addEventListener("click", async () => {
 
 export function setupElmPorts(app) {
   console.log("setupElmPorts called", app);
-  app.ports.sendMessage.subscribe(() => {
+  app.ports.sendMessageToJs.subscribe((message) => {
     initializeLedger()
       .then(() => {
-        app.ports.sendMessage.send({ Ok: null });
+        app.ports.receiveMessageFromJs.send({ Ok: null });
       })
       .catch((error) => {
-        app.ports.sendMessage.send({ Err: error.message });
+        app.ports.receiveMessageFromJs.send({ Err: error.message });
       });
   });
 
-  app.ports.sendMessage.subscribe(() => {
+  app.ports.sendMessageToJs.subscribe((message) => {
     getAccountInfo()
       .then((info) => {
-        app.ports.sendMessage.send({ Ok: info });
+        app.ports.receiveMessageFromJs.send({ Ok: info });
       })
       .catch((error) => {
-        app.ports.sendMessage.send({ Err: error.message });
+        app.ports.receiveMessageFromJs.send({ Err: error.message });
       });
   });
 }

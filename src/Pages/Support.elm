@@ -1,4 +1,4 @@
-module Pages.Support exposing (Model, Msg, content, init, update, view)
+module Pages.Support exposing (Model, Msg, content, init, update, view, initialModel)
 
 import Buttons.Default exposing (defaultButton)
 import Html exposing (..)
