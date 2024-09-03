@@ -1342,7 +1342,7 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-6.12.0.tgz#ad903528bf3687a44da435d7b2479d724d374f5d"
   integrity sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==
 
-"@ledgerhq/wallet-api-client@^1.5.9":
+"@ledgerhq/wallet-api-client@1.5.10", "@ledgerhq/wallet-api-client@^1.5.9":
   version "1.5.10"
   resolved "https://registry.yarnpkg.com/@ledgerhq/wallet-api-client/-/wallet-api-client-1.5.10.tgz#cbb93cccf1f2f8294cefa679c8a1e200f7de4d6c"
   integrity sha512-cSTdNKBjlzium1tRS2+Q8Ev6T8MM0v8WtOF34+I/+GfkcerA9wR6l4ISGWP9fPneur3r+uGF1k4Y5LPbMN5pdw==
@@ -1360,6 +1360,27 @@
     bignumber.js "^9.1.2"
     uuid "^9.0.1"
     zod "^3.22.4"
+
+"@ledgerhq/wallet-api-server@1.5.11":
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/wallet-api-server/-/wallet-api-server-1.5.11.tgz#c193cbaf7848be916c26a46006fae0cef7c56cb2"
+  integrity sha512-BDiUxi+Za19v1aCJtEycLQePiMP7t3KY0yRIbL0QoIUIvKxhoLQuHVc6umIgzU3si4qvqs9foFvIakCm+OqMvA==
+  dependencies:
+    "@ledgerhq/wallet-api-core" "1.11.0"
+    bignumber.js "^9.1.2"
+    picomatch "^4.0.1"
+
+"@ledgerhq/wallet-api-simulator@^1.1.16":
+  version "1.1.16"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/wallet-api-simulator/-/wallet-api-simulator-1.1.16.tgz#db9da9c96e4e0520f7a959add19d78655f52473e"
+  integrity sha512-HtgDB5Gs4YCnvgpMKOTdo7AuDy/RV8l6OmInK3qLGwvLYQ9+ooOhHLbUt31PZbFPds6qL70aKXs1rFLsuYW5+g==
+  dependencies:
+    "@ledgerhq/hw-transport" "^6.30.4"
+    "@ledgerhq/wallet-api-client" "1.5.10"
+    "@ledgerhq/wallet-api-core" "1.11.0"
+    "@ledgerhq/wallet-api-server" "1.5.11"
+    rxjs "^7.8.1"
+    ws "^8.16.0"
 
 "@lezer/common@^1.0.0":
   version "1.2.1"
@@ -6182,6 +6203,11 @@ picomatch@^2.0.4, picomatch@^2.2.1, picomatch@^2.2.2, picomatch@^2.3.1:
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.3.1.tgz#3ba3833733646d9d3e4995946c1365a67fb07a42"
   integrity sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==
 
+picomatch@^4.0.1:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-4.0.2.tgz#77c742931e8f3b8820946c76cd0c1f13730d1dab"
+  integrity sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg==
+
 pidtree@~0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/pidtree/-/pidtree-0.6.0.tgz#90ad7b6d42d5841e69e0a2419ef38f8883aa057c"
@@ -7809,6 +7835,11 @@ ws@^7.0.1, ws@^7.4.6:
   version "7.5.10"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.10.tgz#58b5c20dc281633f6c19113f39b349bd8bd558d9"
   integrity sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ==
+
+ws@^8.16.0:
+  version "8.18.0"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-8.18.0.tgz#0d7505a6eafe2b0e712d232b42279f53bc289bbc"
+  integrity sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==
 
 xml-name-validator@^3.0.0:
   version "3.0.0"
