@@ -8,15 +8,14 @@ test:
   stage: test
   script:
     - apt-get update -qy # Update package list (for Debian/Ubuntu-based runners)
-    - apt-get install -qy nodejs npm # Install Node.js and npm
-    # Elm needs the latest npm version
-    - npm i -g npm@latest
-    - npm install -g elm@latest-0.19.1
+    - apt-get install -qy nodejs yarn # Install Node.js and Yarn
+    # Elm needs the latest Yarn version
+    - yarn global add elm@latest-0.19.1
     - elm make src/Main.elm --output=js/elm.js --optimize
-    - npm install -g elm-test
+    - yarn global add elm-test
     - elm-test 'src/**/Tests/Test*.elm'
     # Install project dependencies including Vite
-    - npm install
+    - yarn install
     # Run Vite build
     - npx vite build
 
@@ -24,16 +23,15 @@ integration_test:
   stage: integration_test
   script:
     - apt-get update -qy 
-    - apt-get install -qy nodejs npm 
-    - npm i -g npm@latest
-    - npm install elm@latest-0.19.1
+    - apt-get install -qy nodejs yarn
+    - yarn global add elm@latest-0.19.1
     # WARN: Haveno-Web-Zoho-Responsive has PATH variable set to PATH1
     - export PATH=./node_modules/.bin:$PATH
     - elm make src/Main.elm --output=js/elm.js --optimize 
-    - npm install elm-spec-runner
+    - yarn add elm-spec-runner
     - npx elm-spec --specRoot ./
     # Install project dependencies including Vite
-    - npm install
+    - yarn install
     # Run Vite build
     - npx vite build
     
