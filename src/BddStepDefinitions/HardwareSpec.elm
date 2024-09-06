@@ -21,82 +21,11 @@ import Spec.Step exposing (log)
 import Time exposing (..)
 
 
-
--- Define a wrapper function for Main.subscriptions
-{- hardwareSubscriptions : Pages.Hardware.Model -> Sub Pages.Hardware.Msg
-   hardwareSubscriptions _ =
-       let
-           placeholderModel =
-               Main.placeholderModel
-
-           ( haredwaremodel, theCmd ) =
-               Pages.Hardware.init { time = Nothing, flagUrl = TestData.placeholderUrl }
-
-           setPageToHardware =
-               { placeholderModel | page = Main.HardwarePage haredwaremodel }
-       in
-       Sub.map toHardwareMsg (Main.subscriptions setPageToHardware)
-
-
-
-   -- Define a function to convert Main.Msg to Pages.Hardware.Msg
-
-
-   toHardwareMsg : Main.Msg -> Pages.Hardware.Msg
-   toHardwareMsg mainMsg =
-       case mainMsg of
-           -- Add cases to convert Main.Msg to Pages.Hardware.Msg
-           Main.Recv message ->
-               let
-                   _ =
-                       Debug.log "Main.Recv message" (E.encode 0 message)
-
-                   --encodeMsg = (E.encode 0 message)
-               in
-               Pages.Hardware.ResponseDataFromMain message
-
-           _ ->
-               Pages.Hardware.NoOp
--}
-
-
 jsonObj : E.Value
 jsonObj =
     E.object
         [ ( "operationEventMsg", E.string "1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS" )
         ]
-
-
-
--- Define a decoder for the JSON structure
-
-
-decoder : D.Decoder String
-decoder =
-    D.field "operationEventMsg" D.string
-
-
-
--- Decode the JSON object
-
-
-decodedValue : Result D.Error String
-decodedValue =
-    D.decodeValue decoder jsonObj
-
-
-
--- Function to get the decoded value or handle the error
-
-
-getDecodedValue : String
-getDecodedValue =
-    case decodedValue of
-        Ok value ->
-            value
-
-        Err error ->
-            "Error: " ++ D.errorToString error
 
 
 runSpecTests : Spec Pages.Hardware.Model Pages.Hardware.Msg

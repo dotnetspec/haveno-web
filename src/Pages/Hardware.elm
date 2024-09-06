@@ -508,7 +508,7 @@ update msg model =
             let
                 -- NOTE: You can only see the rawJsonMessage in the console if you use JE.encode 2
                 -- but you can't decode it if you use it that way
-                _ = Debug.log "receivedJson" (E.encode 0 receivedJson)
+                --_ = Debug.log "receivedJson" (E.encode 0 receivedJson)
 
                 decodedConnectLNSPublicKey =
                     case D.decodeValue justmsgFieldFromJsonDecoder receivedJson of
@@ -518,7 +518,7 @@ update msg model =
                         Err err ->
                             --JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
                             "error"
-                --_ = Debug.log "decodedConnectLNSPublicKey" decodedConnectLNSPublicKey
+                
 
                 updatedIsConnected =
                     if decodedConnectLNSPublicKey == "1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS" then
@@ -718,7 +718,7 @@ update msg model =
 
         ProfileResponse (Ok auth) ->
             let
-                --_ = Debug.log "ProfileResponse" auth
+                
                 headers =
                     -- HACK: I don't know if need 'typeOfData here
                     [ Http.header "Authorization" ("Bearer " ++ withDefault "No access token 2" (Just auth.typeOfData)) ]

@@ -218,13 +218,7 @@ update msg model =
         Recv rawJsonMessage ->
             -- NOTE: rawJsonMessage is a Json value that is ready to be decoded. It does not need to be
             -- converted to a string.
-            {- let
-                   -- NOTE: You can only see the rawJsonMessage in the console if you use JE.encode 2
-                   -- but you can't decode it if you do that
-                   _ =
-                       Debug.log "rawJsonMessage in Main" (JE.encode 2 rawJsonMessage)
-               in
-            -}
+            
             if String.contains "Problem" (fromJsonToString rawJsonMessage) then
                 ( { model | errors = model.errors ++ [ "Problem fetching data" ] }, Cmd.none )
 
@@ -361,7 +355,7 @@ update msg model =
                                     { hardwareModel | queryType = Pages.Hardware.LoggedInUser }
                             in
                             ( { model | page = HardwarePage newHardwareModel }
-                            , --Debug.log "Sending new ranking details"
+                            , 
                               -- NOTE: Old msg showing formatting - 'sendMessageToJs ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")'
                               sendMessageToJs
                                 "connectLNS"
