@@ -1,4 +1,4 @@
-module Pages.Hardware exposing (..)
+port module Pages.Hardware exposing (..)
 
 --import Task
 -- REVIEW: Either here or DateType, but not both?
@@ -149,7 +149,7 @@ type alias Model =
     , queryType : QueryType
     , toMongoDBMWConfig : Maybe ToMongoDBMWConfig
     , isValidNewAccessToken : Bool
-    , isValidBookingResponse : Bool
+    , isHardwareConnected : Bool
     , errors : List String
     , availableSlots : List (Maybe String)
 
@@ -506,289 +506,36 @@ update msg model =
         -- with in dataFromMongo
         ResponseDataFromMain receivedJson ->
             let
-                decodedJsObj =
-                    case D.decodeValue jsonMsgFromJsDecoder receivedJson of
-                        Ok jsObj ->
-                            jsObj
+                -- NOTE: You can only see the rawJsonMessage in the console if you use JE.encode 2
+                -- but you can't decode it if you use it that way
+                _ = Debug.log "receivedJson" (E.encode 0 receivedJson)
+
+                decodedConnectLNSPublicKey =
+                    case D.decodeValue justmsgFieldFromJsonDecoder receivedJson of
+                        Ok message ->
+                             message.operationEventMsg
 
                         Err err ->
-                            JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
+                            --JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
+                            "error"
+                --_ = Debug.log "decodedConnectLNSPublicKey" decodedConnectLNSPublicKey
 
-                -- NOTE: dataFromMongo has been decoded into either a string or a value
-                -- we ensure that either way it's now a value
-                -- NOTE: Websocket msgs are stringified json objects and must
-                -- be converted to value objects before decoding
-                -- NOTE: ensureDataIsJsonObj is a tested function
-                json =
-                    ensureDataIsJsonObj decodedJsObj.dataFromMongo
+                updatedIsConnected =
+                    if decodedConnectLNSPublicKey == "1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS" then
+                        True
 
-                usrInfo =
-                    -- NOTE: all messages from js are handled as pure json e.g. decodedJsObj.operationEventMsg
-                    case decodedJsObj.operationEventMsg of
-                        -- NOTE: decodedJsObj.dataFromMongo will have different JSON structures
-                        -- how they are handled depends on these messages from js
-                        -- NOTE: 'webSocket': What we do here will sync this client to reflect db changes
-                        -- initiated by any other users (e.g. rank update)
-                        "webSocket" ->
-                            let
-                                operationType =
-                                    case D.decodeValue changeDecoder json of
-                                        Ok change ->
-                                            change.operationType
-
-                                        Err err ->
-                                            D.errorToString err
-                            in
-                            U.gotUserInfo model.user
-
-                        "NewUserCreationComplete" ->
-                            let
-                                -- NOTE: Whatever is available in additionalDataFromJs depends on which messageFromJs is sent
-                                -- here it's NEWUSERCREATIONCOMPLETE
-                                emptyUsrInfo =
-                                    U.emptyUserInfo
-
-                                newUsrInfo =
-                                    { emptyUsrInfo | userid = decodedJsObj.additionalDataFromJs.userid, nickname = decodedJsObj.additionalDataFromJs.nickname }
-                            in
-                            newUsrInfo
-
-                        "LOGINCONFIRM" ->
-                            handleDecodeUser json
-
-                        "CreatedNewRanking" ->
-                            let
-                                jsonString =
-                                    E.encode 0 json
-                            in
-                            case R.extractInsertedIdFromString jsonString of
-                                Just insertedId ->
-                                    if is24AlphanumericChars insertedId then
-                                        let
-                                            userUpdatedWithNewRanking =
-                                                U.addNewLadderToOwnedRankings model.user
-                                                    (R.tempNewlyCreatedRanking insertedId
-                                                        (R.gotRanking model.selectedranking).owner_name
-                                                        (R.gotRanking model.selectedranking).name
-                                                    )
-                                        in
-                                        U.gotUserInfo userUpdatedWithNewRanking
-
-                                    else
-                                        U.gotUserInfo model.user
-
-                                Nothing ->
-                                    U.gotUserInfo model.user
-
-                        "ownedranking" ->
-                            let
-                                decodedRanking =
-                                    case handleDecodeRanking json of
-                                        Ok rnking ->
-                                            rnking
-
-                                        Err err ->
-                                            R.emptyRanking
-                            in
-                            U.gotUserInfo (U.addNewLadderToOwnedRankings model.user decodedRanking)
-
-                        "JoinedRankingConfirm" ->
-                            -- NOTE: handleNewlyJoinedDecodeRanking ensures the ranking was joined without issue
-                            case handleNewlyJoinedDecodeRanking json of
-                                -- NOTE: newlyJoinedRanking is just the id number of the ranking
-                                Ok newlyJoinedRanking ->
-                                    case model.selectedranking of
-                                        R.Member selrnking ->
-                                            -- NOTE: Check the id returned from DB matches
-                                            -- the selected ranking id
-                                            if selrnking.id == R.newlyJoinedRankingIdAsValueManipulation newlyJoinedRanking then
-                                                U.gotUserInfo
-                                                    (U.addNewLadderToMemberRankings model.user selrnking)
-
-                                            else
-                                                U.gotUserInfo model.user
-
-                                        _ ->
-                                            U.gotUserInfo model.user
-
-                                -- TODO: Add err to the list
-                                Err err ->
-                                    U.gotUserInfo model.user
-
-                        "ResultSubmitted" ->
-                            case model.user of
-                                U.Registered userInfo ->
-                                    userInfo
-
-                                _ ->
-                                    U.emptyUserInfo
-
-                        _ ->
-                            case model.user of
-                                U.Registered userInfo ->
-                                    userInfo
-
-                                _ ->
-                                    U.emptyUserInfo
-
-                newUser =
-                    case decodedJsObj.operationEventMsg of
-                        "USERDELETECOMPLETE" ->
-                            U.emptySpectator
-
-                        "LOGINDENIED" ->
-                            U.emptySpectator
-
-                        "CreatedNewRanking" ->
-                            U.Registered usrInfo
-
-                        "NewUserCreationComplete" ->
-                            U.Registered usrInfo
-
-                        _ ->
-                            U.Registered usrInfo
-
-                errors =
-                    case decodedJsObj.operationEventMsg of
-                        "LOGINDENIED" ->
-                            [ "Login Denied - Please try again ..." ]
-
-                        _ ->
-                            []
-
-                -- NOTE: A selected ranking can come under this queryType cos it's
-                -- particular to it.
-                updatedquerytype =
-                    case decodedJsObj.operationEventMsg of
-                        -- NOTE: Newuser must login in to instantiate globalUser
-                        "NewUserCreationComplete" ->
-                            Login Consts.emptyEmailPassword
-
-                        "USERDELETECOMPLETE" ->
-                            Login Consts.emptyEmailPassword
-
-                        "LOGINDENIED" ->
-                            Login Consts.emptyEmailPassword
-
-                        "ownedranking" ->
-                            OwnedSelectedView
-
-                        "memberranking" ->
-                            MemberSelectedView
-
-                        "JoinedRankingConfirm" ->
-                            case model.selectedranking of
-                                R.Member selrnking ->
-                                    MemberSelectedView
-
-                                _ ->
-                                    LoggedInUser
-
-                        "webSocket" ->
-                            case model.selectedranking of
-                                R.Member _ ->
-                                    MemberSelectedView
-
-                                R.Owned _ ->
-                                    OwnedSelectedView
-
-                                _ ->
-                                    LoggedInUser
-
-                        _ ->
-                            Login Consts.emptyEmailPassword
-
-                -- can you assign (handleDecodeRanking json) to model.user.ownedRankings.ranking?
-                newRanking =
-                    case decodedJsObj.operationEventMsg of
-                        "ownedranking" ->
-                            case handleDecodeRanking json of
-                                Ok rnking ->
-                                    R.Owned rnking
-
-                                Err err ->
-                                    R.Owned R.emptyRanking
-
-                        "memberranking" ->
-                            case handleDecodeRanking json of
-                                Ok rnking ->
-                                    R.Member rnking
-
-                                Err err ->
-                                    R.Member R.emptyRanking
-
-                        "JoinedRankingConfirm" ->
-                            model.selectedranking
-
-                        "CreatedNewRanking" ->
-                            model.selectedranking
-
-                        "webSocket" ->
-                            -- NOTE:  when operationType is 'websocket' we don't know what the operation is.
-                            --we can only respond to the data we have in the ws change
-                            -- event. i.e. we have to put the ws json through a number of oneOf decoders and the
-                            -- result will indicate what the operation was & the
-                            -- actions to take here.
-                            let
-                                chnge =
-                                    case D.decodeValue changeDecoder json of
-                                        Ok change ->
-                                            change
-
-                                        Err err ->
-                                            emptyChange
-
-                                -- NAV: Current
-                                playersFromChangeEvent =
-                                    --Dict.toList chnge.fullDocument
-                                    case chnge.fullDocument of
-                                        Just fullDoc ->
-                                            case fullDoc.players of
-                                                Just players ->
-                                                    players
-
-                                                Nothing ->
-                                                    []
-
-                                        Nothing ->
-                                            []
-
-                                --PlayerFromChangeEvent "playerId" "challengerId" 1
-                                updatedFieldsList =
-                                    Dict.toList chnge.updateDescription.updatedFields
-
-                                currentSelectedRanking =
-                                    R.gotRanking model.selectedranking
-
-                                newLadder =
-                                    filterAndSortRankingsOnLeaving (U.gotId model.user) currentSelectedRanking.ladder [ ( "players", playersFromChangeEvent ) ]
-
-                                newRking =
-                                    { currentSelectedRanking | ladder = newLadder, player_count = List.length newLadder }
-
-                                updatedRanking =
-                                    updateNewRankingOnChangeEvent chnge newRking
-                            in
-                            case model.selectedranking of
-                                R.Member _ ->
-                                    R.Member updatedRanking
-
-                                R.Owned _ ->
-                                    R.Owned updatedRanking
-
-                                _ ->
-                                    R.Spectator updatedRanking
-
-                        --model.selectedranking
-                        _ ->
-                            R.None
+                    else
+                        False
             in
             ( { model
-                | user = newUser
-                , queryType = updatedquerytype
-                , selectedranking = newRanking
-                , objectJSONfromJSPort = Just decodedJsObj
-                , errors = errors
+                | --user = newUser
+                  --, queryType = updatedquerytype
+                  --,
+                  isHardwareConnected = updatedIsConnected
+
+                --, selectedranking = newRanking
+                --, objectJSONfromJSPort = Just decodedJsObj
+                --, errors = errors
               }
             , Cmd.none
             )
@@ -1339,16 +1086,17 @@ content model =
                             Login _ ->
                                 loginView model
 
-                            -- HACK: User or userInfo?
+                            -- HACK: We'll be getting rid of Spectator etc. this is just to keep us with the connect button for
                             Spectator ->
-                                spectatorView
+                                loginView model
 
                             RegisterUser newUser ->
                                 registerView newUser
 
-                            -- TODO: newUser needs to be converted to a User type
+                            -- HACK: We'll be getting rid of LoggedInUser etc. this is just to keep us with the connect button for
                             LoggedInUser ->
-                                globalView model.searchterm model.searchResults model.user
+                                --globalView model.searchterm model.searchResults model.user
+                                loginView model
 
                             CreatingNewLadder userInfo ->
                                 createLadderView userInfo <| R.gotRanking model.selectedranking
@@ -1995,7 +1743,14 @@ loginView model =
             , Element.text "\n"
             , infoBtn "Connect Wallet" <| ClickedLedgerConnect
             , Element.text "\n"
-            , Element.el Heading.h6 <| Element.text "Not connected yet"
+            , Element.el Heading.h6 <|
+                Element.text
+                    (if model.isHardwareConnected then
+                        "Connected"
+
+                     else
+                        "Not connected yet"
+                    )
             , case model.errors of
                 [] ->
                     Element.text ""
@@ -2372,6 +2127,10 @@ type alias JsonMsgFromJs =
     , additionalDataFromJs : AdditionalDataFromJs
     }
 
+type alias OperationEventMsg = 
+    { operationEventMsg : String
+    }
+
 
 type DataFromMongo
     = JsonData D.Value
@@ -2385,18 +2144,12 @@ type alias AdditionalDataFromJs =
 
 -- NAV: Json decoders
 -- NOTE: decoders match values, they don't convert them. They are like a doorman.
+-- NOTE: decide if you want them to return elm types or json values. Usually the former.
 -- NOTE: If some json comes from outside elm, e.g. resulting from an http request
 -- these decoders will be the first thing it meets. They are like doormen ensuring
 -- the json that comes in at least has all the fields the types need. The json will be passed
 -- from 'doorman' to 'doorman' as the decoders drill into the levels of the json. If all min
 -- requirements are satisfied return Ok, otherwise Err.
-{- -- NOTE: the decoders you have in Elm are for decoding data that has been processed either in .js or mondodb. They are NOT for representing
-   the db structure as is cos the db structure alone doesn't yield data like user names that are players in rankings. We want to work with the
-   names in Elm, but in mongodb they're just id numbers. That's why it goes through the pipeline.
-
-   Pipeline needs to be developed in js initially for ease of development. Later it could be put on mongodb as a function and called with
-   minimal js just sending the result back to Elm.
--}
 -- REVIEW: Does this work?
 
 
@@ -2421,9 +2174,10 @@ jsonMsgFromJsDecoder =
         (field "additionalDataFromJs" additonalDataFromJsDecoder)
 
 
-justmsgFieldFromJsonDecoder : Decoder D.Value
+justmsgFieldFromJsonDecoder : Decoder OperationEventMsg
 justmsgFieldFromJsonDecoder =
-    D.field "operationEventMsg" D.value
+    D.map OperationEventMsg 
+        (D.field "operationEventMsg" D.string)
 
 
 additonalDataFromJsDecoder : Decoder AdditionalDataFromJs
@@ -2491,6 +2245,15 @@ profileDecoder =
         (D.field "data" providerDataDecoder)
         (D.field "type" D.string)
 
+-- NAV: Subscriptions
+    
+-- Define the subscription function
+hardwareSubscriptions : Model -> Sub Msg
+hardwareSubscriptions _ =
+    -- Replace with your actual subscription logic
+    Sub.batch [receiveMessageFromJs ResponseDataFromMain]
+-- NAV: Ports
+port receiveMessageFromJs : (D.Value -> msg) -> Sub msg
 
 
 -- NAV: Websocket decoders
@@ -2638,9 +2401,7 @@ decodeApply =
     D.map2 (|>)
 
 
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
+
 
 
 
@@ -3170,7 +2931,7 @@ displayLoginBtns : Model -> Element Msg
 displayLoginBtns model =
     Element.column Grid.section <|
         [ Element.el [] <| Element.text " Please login, register or view \n search rankings as a spectator (below):"
-        , infoBtn "Connect Wallet" <| ClickedLedgerConnect 
+        , infoBtn "Connect Wallet" <| ClickedLedgerConnect
         ]
 
 

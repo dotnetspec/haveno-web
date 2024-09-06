@@ -43,6 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     eapp.ports.sendMessageToJs.subscribe(function (message) {
         console.log("Message sent to js ", message);
-        handleMessageFromElm(message);
+        handleMessageFromElm(message, eapp);
     });
 });

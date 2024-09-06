@@ -11,6 +11,7 @@ import Data.Ranking as R
 import Data.User as U exposing (User(..))
 import Erl exposing (..)
 import Extras.Constants as Constants
+import Extras.TestData as TestData exposing (placeholderUrl)
 import Html exposing (Html, a, br, button, div, footer, header, i, img, li, nav, node, p, source, span, text, ul, video)
 import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick)
@@ -19,7 +20,7 @@ import Json.Encode as JE
 import Pages.Buy
 import Pages.Dashboard
 import Pages.Funds
-import Pages.Hardware
+import Pages.Hardware exposing (hardwareSubscriptions)
 import Pages.Market
 import Pages.PingPong
 import Pages.Portfolio
@@ -361,7 +362,7 @@ update msg model =
                             in
                             ( { model | page = HardwarePage newHardwareModel }
                             , --Debug.log "Sending new ranking details"
-                            -- NOTE: Old msg showing formatting - 'sendMessageToJs ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")'
+                              -- NOTE: Old msg showing formatting - 'sendMessageToJs ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")'
                               sendMessageToJs
                                 "connectLNS"
                             )
@@ -818,23 +819,21 @@ gotCodeFromUrl url =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    --Time.every 10000 Tick
-    -- Update Hardware model on every Tick
-    --15 minutes in seconds = 15 minutes * 60 seconds/minute = 900 seconds
-    -- NOTE: You have to get time from main, cos only main has subscription.
-    -- It is anyway best practice to send data top down
-    Sub.batch [ Time.every 900000 (\posixTime -> GotHardwareMsg (Pages.Hardware.Tick posixTime)), messageReceiver Recv ]
+    let
+        ( hardwaremodel, _ ) =
+            Pages.Hardware.init { time = Nothing, flagUrl = TestData.placeholderUrl }
+    in
+    Sub.batch
+        [ hardwareSubscriptions hardwaremodel
+            |> Sub.map GotHardwareMsg
+        ]
 
 
 
---Sub.none
 -- NAV: Ports - once defined here they can be used in js with app.ports.<portname>.send/subscribe(<data>)
 
 
 port sendMessageToJs : String -> Cmd msg
-
-
-port receiveMessageFromJs : (String -> msg) -> Sub msg
 
 
 
@@ -1132,7 +1131,7 @@ footerContent =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.3" ]
+                , p [] [ text "Version 0.0.4" ]
                 ]
             ]
         ]

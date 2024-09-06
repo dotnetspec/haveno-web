@@ -3,7 +3,7 @@ import { listen } from "@ledgerhq/logs";
 import AppBtc from "@ledgerhq/hw-app-btc";
 import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 
-export async function connectLNS() {
+export async function connectLNS(app) {
   try {
 
     // Keep if you chose the USB protocol
@@ -20,6 +20,18 @@ export async function connectLNS() {
     );
 
     console.log("Btc address: ", bitcoinAddress);
+
+    //app.ports.receiveMessageFromJs.send({ operationEventMsg: bitcoinAddress });
+    try {
+      const message = { operationEventMsg: bitcoinAddress };
+      console.log("Sending message:", message);
+      app.ports.receiveMessageFromJs.send(message);
+  }
+  catch(error) {
+      const errorMessage = { Err: error.message };
+      console.log("Sending error message:", errorMessage);
+      app.ports.receiveMessageFromJs.send(errorMessage);
+  }
 
     //Display the address on the Ledger device and ask to verify the address
     await appBtc.getWalletPublicKey("44'/0'/0'/0/0", {
@@ -38,25 +50,18 @@ export async function connectLNS() {
 }
 
 export function setupElmPorts(app) {
-  console.log("setupElmPorts called", app);
-  app.ports.sendMessageToJs.subscribe((message) => {
-    console.log("message from elm : ", message);
-    initializeLedger()
-      .then(() => {
-        app.ports.receiveMessageFromJs.send({ Ok: null });
-      })
-      .catch((error) => {
-        app.ports.receiveMessageFromJs.send({ Err: error.message });
-      });
-  });
 
-  app.ports.sendMessageToJs.subscribe((message) => {
-    getAccountInfo()
-      .then((info) => {
-        app.ports.receiveMessageFromJs.send({ Ok: info });
-      })
-      .catch((error) => {
-        app.ports.receiveMessageFromJs.send({ Err: error.message });
-      });
-  });
+  jsonMsgToElm = {
+    operationEventMsg: operationEvent,
+    //NOTE: dataFromMongo is what we originally sent to Elm alone
+    // Now it is sent with these other fields for added context
+    dataFromMongo: userData,
+    
+    //NOTE: Each 'additionalDataFromJs' will have it's own decoder in Elm 
+    // Which decoder will be determined by the 'msg' type above
+    additionalDataFromJs: additionalDataObjExtendibleIfRequired,
+  }
+
+
+  
 }

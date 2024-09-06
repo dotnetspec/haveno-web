@@ -1,59 +1,102 @@
 module BddStepDefinitions.HardwareSpec exposing (main)
 
+--import Spec.Setup exposing (Setup, init, withView, withSubscriptions)
+
 import BddStepDefinitions.Extra exposing (..)
 import BddStepDefinitions.Runner as Runner exposing (..)
-import Browser.Navigation as Nav exposing (..)
-import Dict
-import Extras.Constants as Consts exposing (..)
-import Extras.TestData as TestData
-import Html exposing (Html, sub)
-import Http
+import Expect exposing (equal)
+import Extras.TestData exposing (placeholderUrl)
 import Json.Decode as D
 import Json.Encode as E
-import Main
-import Pages.Hardware
-import Pages.Support
-import Spec exposing (Flags, Spec, describe, expect, given, it, scenario, when)
-import Spec.Claim as Claim exposing (Claim, Verdict)
+import Pages.Hardware exposing (Model, Msg, hardwareSubscriptions, init, view)
+import Spec exposing (..)
+import Spec.Claim as Claim exposing (Claim)
 import Spec.Command exposing (..)
-import Spec.Http
-import Spec.Http.Route as Route exposing (HttpRoute)
-import Spec.Http.Stub as Stub
 import Spec.Markup as Markup
-import Spec.Markup.Event as Event
 import Spec.Markup.Selector exposing (..)
-import Spec.Observer as Observer exposing (Observer)
-import Spec.Report as Report exposing (Report)
+import Spec.Port exposing (..)
+import Spec.Report exposing (note)
 import Spec.Setup as Setup
-import Spec.Step as Step exposing (Step)
-import Spec.Time
+import Spec.Step exposing (log)
 import Time exposing (..)
-import Types.DateType as DateType
-import Url exposing (Protocol(..), Url)
 
 
 
 -- Define a wrapper function for Main.subscriptions
+{- hardwareSubscriptions : Pages.Hardware.Model -> Sub Pages.Hardware.Msg
+   hardwareSubscriptions _ =
+       let
+           placeholderModel =
+               Main.placeholderModel
+
+           ( haredwaremodel, theCmd ) =
+               Pages.Hardware.init { time = Nothing, flagUrl = TestData.placeholderUrl }
+
+           setPageToHardware =
+               { placeholderModel | page = Main.HardwarePage haredwaremodel }
+       in
+       Sub.map toHardwareMsg (Main.subscriptions setPageToHardware)
 
 
-hardwareSubscriptions : Pages.Hardware.Model -> Sub Pages.Hardware.Msg
-hardwareSubscriptions _ =
-    Sub.map toHardwareMsg (Main.subscriptions Main.placeholderModel)
+
+   -- Define a function to convert Main.Msg to Pages.Hardware.Msg
+
+
+   toHardwareMsg : Main.Msg -> Pages.Hardware.Msg
+   toHardwareMsg mainMsg =
+       case mainMsg of
+           -- Add cases to convert Main.Msg to Pages.Hardware.Msg
+           Main.Recv message ->
+               let
+                   _ =
+                       Debug.log "Main.Recv message" (E.encode 0 message)
+
+                   --encodeMsg = (E.encode 0 message)
+               in
+               Pages.Hardware.ResponseDataFromMain message
+
+           _ ->
+               Pages.Hardware.NoOp
+-}
+
+
+jsonObj : E.Value
+jsonObj =
+    E.object
+        [ ( "operationEventMsg", E.string "1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS" )
+        ]
 
 
 
--- Define a function to convert Main.Msg to Pages.Hardware.Msg
+-- Define a decoder for the JSON structure
 
 
-toHardwareMsg : Main.Msg -> Pages.Hardware.Msg
-toHardwareMsg mainMsg =
-    case mainMsg of
-        -- Add cases to convert Main.Msg to Pages.Hardware.Msg
-        Main.Recv message ->
-            Pages.Hardware.ResponseDataFromMain message
+decoder : D.Decoder String
+decoder =
+    D.field "operationEventMsg" D.string
 
-        _ ->
-            Pages.Hardware.NoOp
+
+
+-- Decode the JSON object
+
+
+decodedValue : Result D.Error String
+decodedValue =
+    D.decodeValue decoder jsonObj
+
+
+
+-- Function to get the decoded value or handle the error
+
+
+getDecodedValue : String
+getDecodedValue =
+    case decodedValue of
+        Ok value ->
+            value
+
+        Err error ->
+            "Error: " ++ D.errorToString error
 
 
 runSpecTests : Spec Pages.Hardware.Model Pages.Hardware.Msg
@@ -66,20 +109,20 @@ runSpecTests =
           scenario "1. Connecting the Hardware Wallet"
             (given
                 (Setup.init
-                    (Pages.Hardware.init { time = Nothing, flagUrl = TestData.placeholderUrl })
+                    (Pages.Hardware.init { time = Nothing, flagUrl = placeholderUrl })
                     |> Setup.withView Pages.Hardware.view
-                    |> Setup.withSubscriptions hardwareSubscriptions
-                 
+                    |> Setup.withUpdate Pages.Hardware.update
+                    |> Setup.withSubscriptions Pages.Hardware.hardwareSubscriptions
                 )
                 |> when "we simulate clicking the ledger connect button"
                     [ Spec.Command.send <|
                         Spec.Command.fake
-                            (Pages.Hardware.ClickedLedgerConnect
-                                { email = "", password = "" }
-                            )
+                            Pages.Hardware.ClickedLedgerConnect
                     ]
-                |> Spec.when "we log the http requests"
-                    [ Spec.Http.logRequests
+                |> when "sent the right message over the port"
+                    [ --sendMessageToJs is the other way
+                      -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonObj
                     ]
                 |> Spec.observeThat
                     [ it "displays a message indicating the lns is connected and initialized"
@@ -90,12 +133,29 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS"
+                                        Claim.isStringContaining 1 "Connected"
                                 )
                         )
                     ]
             )
 
+        {- , scenario "2. Ensure jsonObj matches the expected JSON string"
+           (given
+               (Setup.init
+                   (Pages.Hardware.init { time = Nothing, flagUrl = TestData.placeholderUrl })
+                   |> Setup.withView Pages.Hardware.view
+               )
+               {- |> when "log after sending the message over the port"
+                      [ Step.log (Report.note "After sending the message over the port") ]
+                  |> when "we encode the JSON object"
+                      [ Step.log (Report.note (E.encode 0 jsonObj)) ]
+               -}
+               |> Spec.observeThat
+                   [ it "matches the expected JSON string"
+                       (equals (E.encode 0 jsonObj) "{\"operationEventMsg\":\"1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS\"}")
+                   ]
+           )
+        -}
         --Runner.pick <|
         --, Runner.skip <|
         {- , scenario "3. Display An Active User On Login Succeed"
@@ -214,6 +274,14 @@ main =
 
 
 -- NAV: Helper functions:
+
+
+equals : a -> Claim a
+equals =
+    Claim.isEqual Debug.toString
+
+
+
 {- viewToHtml : Main.Model -> Html Main.Msg
    viewToHtml model =
        let

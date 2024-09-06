@@ -6,7 +6,7 @@ import { setupElmPorts, connectLNS } from './ledgerInterop.js';
 
 // NOTE: Messages from the Elm 'sendMessageToJs' port are received and parsed here to determine
 // which function (in the relevant .js file) to use to communicate with the hardware device
-export function handleMessageFromElm(message) {
+export function handleMessageFromElm(message, app) {
   console.log('here in handle : ', message)
 
   // NOTE: Use FF debugger to view 'message'
@@ -19,7 +19,7 @@ export function handleMessageFromElm(message) {
       
       console.log('attempting lns connect now : ')
 
-      connectLNS()
+      connectLNS(app)
       break
 
     //NOTE: We're going to talk to mongodb via the node application
