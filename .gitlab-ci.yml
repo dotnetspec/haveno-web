@@ -10,7 +10,6 @@ test:
     - apt-get update -qy # Update package list (for Debian/Ubuntu-based runners)
     - apt-get install -qy nodejs  # Install Node.js
     - apt-get install -qy yarn # Install Yarn
-    - gitlab-runner exec shell --cache-clear
 
     # Ensure the correct working directory
     - cd $CI_PROJECT_DIR
@@ -28,7 +27,6 @@ integration_test:
     - apt-get update -qy 
     - apt-get install -qy nodejs  # Install Node.js
     - apt-get install -qy yarn # Install Yarn
-    - gitlab-runner exec shell --cache-clear
     # Ensure the correct working directory
     - cd $CI_PROJECT_DIR
     - ls -la
