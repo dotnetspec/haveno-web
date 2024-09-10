@@ -1034,7 +1034,8 @@ pageHeader page =
 
 burgerMenu : Page -> Html msg
 burgerMenu page =
-    div [ class "menu-btn" ]
+    div [ class "menu-btn" , id "menu-btn" ]
+        
         [ div [ class "menu-btn_burger" ]
             []
         , nav [ class "below800pxnavlinks" ] [ navLinks page ]
@@ -1125,7 +1126,7 @@ footerContent =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.5" ]
+                , p [] [ text "Version 0.0.6" ]
                 ]
             ]
         ]

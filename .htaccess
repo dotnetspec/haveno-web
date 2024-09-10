@@ -10,9 +10,9 @@ RewriteEngine on
 RewriteCond %{HTTP_HOST} ^(www\.)?haveno-web-1\.squashpassion\.com$ [NC]
 RewriteRule ^/?$ /public_html/index.html [L]
 
-# Rewrite requests for /rankings to index.html
+# Rewrite requests for /hardware to index.html
 RewriteCond %{HTTP_HOST} ^(www\.)?squashpassion\.com$ [NC]
-RewriteRule ^rankings(/)?$ /public_html/index.html [L]
+RewriteRule ^hardware(/)?$ /public_html/index.html [L]
 
 # Rewrite other requests to preserve path structure
 RewriteCond %{HTTP_HOST} ^(www\.)?haveno-web-1\.squashpassion\.com$ [NC]
