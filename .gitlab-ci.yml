@@ -10,9 +10,12 @@ test:
     - apt-get update -qy # Update package list (for Debian/Ubuntu-based runners)
     - apt-get install -qy nodejs  # Install Node.js
     - apt-get install -qy yarn # Install Yarn
+    - gitlab-runner exec shell --cache-clear
+
     # Ensure the correct working directory
     - cd $CI_PROJECT_DIR
     # Install project dependencies including Elm and Parcel
+    - ls -la
     - yarn install
     - npx elm make src/Main.elm --output=js/elm.js --optimize
     - npx elm-test 'src/**/Tests/Test*.elm'
@@ -25,8 +28,10 @@ integration_test:
     - apt-get update -qy 
     - apt-get install -qy nodejs  # Install Node.js
     - apt-get install -qy yarn # Install Yarn
+    - gitlab-runner exec shell --cache-clear
     # Ensure the correct working directory
     - cd $CI_PROJECT_DIR
+    - ls -la
     # Install project dependencies including Elm and Parcel
     - yarn install
     # WARN: Haveno-Web-Zoho-Responsive has PATH variable set to PATH1
