@@ -18,14 +18,18 @@ install-yarn:
     # Cache Yarn and Node.js for reuse in other stages
     paths:
       - $HOME/.yarn
+      - $HOME/.config/yarn
       - node_modules
     expire_in: 1h
 
 test:
   stage: test
+  image: node:21  # Ensure the same node version or compatible version
   dependencies:
     - install-yarn  # Use artifacts from install-yarn stage
   script:
+    # Re-add the PATH to include yarn
+    - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
     # Ensure the correct working directory
     - cd $CI_PROJECT_DIR
     # Install project dependencies including Elm and Parcel
@@ -37,9 +41,12 @@ test:
 
 integration_test:
   stage: integration_test
+  image: node:21  # Ensure the same node version or compatible version
   dependencies:
     - install-yarn  # Use artifacts from install-yarn stage
   script:
+    # Re-add the PATH to include yarn
+    - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
     # Ensure the correct working directory
     - cd $CI_PROJECT_DIR
     # Install project dependencies including Elm and Parcel
