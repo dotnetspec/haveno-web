@@ -1,5 +1,9 @@
+# NOTE: This project is using the Gitlab runner assigned from the Zoho-Responsive scheduler project
 stages:
   - check-yarn
+  - test
+  - integration_test
+  - deploy
 
 install-yarn:
   stage: check-yarn
@@ -8,6 +12,56 @@ install-yarn:
     - curl -o- -L https://yarnpkg.com/install.sh | bash
     - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
     - yarn --version
-    - yarn help
   only:
     - master
+  artifacts:
+    # Cache Yarn and Node.js for reuse in other stages
+    paths:
+      - $HOME/.yarn
+      - node_modules
+    expire_in: 1h
+
+test:
+  stage: test
+  dependencies:
+    - install-yarn  # Use artifacts from install-yarn stage
+  script:
+    # Ensure the correct working directory
+    - cd $CI_PROJECT_DIR
+    # Install project dependencies including Elm and Parcel
+    - yarn install
+    - npx elm make src/Main.elm --output=js/elm.js --optimize
+    - npx elm-test 'src/**/Tests/Test*.elm'
+    # Run Parcel build
+    - yarn build
+
+integration_test:
+  stage: integration_test
+  dependencies:
+    - install-yarn  # Use artifacts from install-yarn stage
+  script:
+    # Ensure the correct working directory
+    - cd $CI_PROJECT_DIR
+    # Install project dependencies including Elm and Parcel
+    - yarn install
+    # WARN: Haveno-Web-Zoho-Responsive has PATH variable set to PATH1
+    - export PATH=./node_modules/.bin:$PATH
+    - npx elm make src/Main.elm --output=js/elm.js --optimize 
+    - yarn add elm-spec-runner
+    - npx elm-spec --specRoot ./
+    # Run Parcel build
+    - yarn build
+    
+deploy:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - apk add --update lftp
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - lftp -d -u "$FTP_USERNAME,$FTP_PASSWORD" "$FTP_SERVER:21098" -e "set sftp:connect-program 'ssh -a -x -s -l squastgr -p 21098 -oHostKeyAlgorithms=+ssh-rsa -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null'; mirror -R ./dist /home/squastgr/haveno-web.squashpassion.com/public_html; quit"
+  only:
+    - master
+  dependencies:
+    - test
+    - integration_test
