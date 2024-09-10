@@ -10,6 +10,5 @@ pwa/android/*
 
 package-lock.json
 .parcel-cache
-dist
 
 
