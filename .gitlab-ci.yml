@@ -15,6 +15,8 @@ test:
     - cd $CI_PROJECT_DIR
     # Install project dependencies including Elm and Parcel
     - ls -la
+    - which yarn
+    - yarn --version
     - yarn install
     - npx elm make src/Main.elm --output=js/elm.js --optimize
     - npx elm-test 'src/**/Tests/Test*.elm'
