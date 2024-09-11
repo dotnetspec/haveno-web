@@ -7,6 +7,7 @@ resources/Video/*
 proxy/node_modules
 node_modules
 pwa/android/*
+Docs/*
 
 package-lock.json
 .parcel-cache

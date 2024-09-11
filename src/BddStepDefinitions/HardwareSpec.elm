@@ -21,12 +21,17 @@ import Spec.Step exposing (log)
 import Time exposing (..)
 
 
-jsonObj : E.Value
-jsonObj =
+jsonObjBTC : E.Value
+jsonObjBTC =
     E.object
         [ ( "operationEventMsg", E.string "1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS" )
         ]
 
+jsonObjXMR : E.Value
+jsonObjXMR =
+    E.object
+        [ ( "operationEventMsg", E.string "xmr wallet address placeholder" )
+        ]
 
 runSpecTests : Spec Pages.Hardware.Model Pages.Hardware.Msg
 runSpecTests =
@@ -35,7 +40,7 @@ runSpecTests =
         [ --Runner.pick <|
           --,
           --Runner.skip <|
-          scenario "1. Connecting the Hardware Wallet"
+          scenario "1. Connecting the BTC Hardware Wallet"
             (given
                 (Setup.init
                     (Pages.Hardware.init { time = Nothing, flagUrl = placeholderUrl })
@@ -51,7 +56,7 @@ runSpecTests =
                 |> when "sent the right message over the port"
                     [ --sendMessageToJs is the other way
                       -- NOTE: 'send' here means send from js to elm
-                      Spec.Port.send "receiveMessageFromJs" jsonObj
+                      Spec.Port.send "receiveMessageFromJs" jsonObjBTC
                     ]
                 |> Spec.observeThat
                     [ it "displays a message indicating the lns is connected and initialized"
@@ -62,29 +67,44 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Connected"
+                                        Claim.isStringContaining 1 "BTC Connected"
                                 )
                         )
                     ]
             )
 
-        {- , scenario "2. Ensure jsonObj matches the expected JSON string"
-           (given
-               (Setup.init
-                   (Pages.Hardware.init { time = Nothing, flagUrl = TestData.placeholderUrl })
-                   |> Setup.withView Pages.Hardware.view
-               )
-               {- |> when "log after sending the message over the port"
-                      [ Step.log (Report.note "After sending the message over the port") ]
-                  |> when "we encode the JSON object"
-                      [ Step.log (Report.note (E.encode 0 jsonObj)) ]
-               -}
-               |> Spec.observeThat
-                   [ it "matches the expected JSON string"
-                       (equals (E.encode 0 jsonObj) "{\"operationEventMsg\":\"1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS\"}")
-                   ]
-           )
-        -}
+        , scenario "2. Connecting the XMR Hardware Wallet"
+            (given
+                (Setup.init
+                    (Pages.Hardware.init { time = Nothing, flagUrl = placeholderUrl })
+                    |> Setup.withView Pages.Hardware.view
+                    |> Setup.withUpdate Pages.Hardware.update
+                    |> Setup.withSubscriptions Pages.Hardware.hardwareSubscriptions
+                )
+                |> when "we simulate clicking the ledger connect button"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            Pages.Hardware.ClickedLedgerConnect
+                    ]
+                |> when "sent the right message over the port"
+                    [ --sendMessageToJs is the other way
+                      -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonObjXMR
+                    ]
+                |> Spec.observeThat
+                    [ it "displays a message indicating the lns is connected and initialized"
+                        (Markup.observeElement
+                            |> Markup.query
+                            -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
+                            << by [ tag "h6" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "XMR Connected"
+                                )
+                        )
+                    ]
+            )
         --Runner.pick <|
         --, Runner.skip <|
         {- , scenario "3. Display An Active User On Login Succeed"

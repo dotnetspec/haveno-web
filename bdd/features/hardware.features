@@ -10,13 +10,25 @@ And the APK is connected to a Haveno daemon for handling transactions
 
 ---
 
-#### **Scenario 1: Connecting the Hardware Wallet**
+#### **Scenario 1: Connecting the BTC Hardware Wallet**
 
-**Given** the user has the hardware wallet connected to their mobile device 
+**Given** the user has the hardware device connected to their mobile device
+**And** the user has opened the BTC wallet on the device
 **When** the user accesses the Hardware page
-**And** the user clicks the "Connect Wallet" feature
-**Then** the web app should detect the connected hardware wallet 
-**And** the web app should display a confirmation message indicating successful wallet connection 
+**And** the user clicks the "Connect BTC Wallet" feature
+**Then** the web app should detect the connected hardware BTC wallet 
+**And** the web app should display a confirmation message indicating successful BTC wallet connection 
+
+---
+
+#### **Scenario 2: Connecting the XMR Hardware Wallet**
+
+**Given** the user has the hardware device connected to their mobile device
+**And** the user has opened the XMR wallet on the device
+**When** the user accesses the Hardware page
+**And** the user clicks the "Connect XMR Wallet" feature
+**Then** the web app should detect the connected hardware XMR wallet 
+**And** the web app should display a confirmation message indicating successful XMR wallet connection  
 
 ---
 

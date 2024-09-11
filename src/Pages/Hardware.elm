@@ -113,6 +113,7 @@ init fromMainToRankings =
         (Just (ToMongoDBMWConfig Consts.post [] (Url.toString updatedFlagUrlToIncludeMongoDBMWSvr) Http.emptyBody Nothing Nothing))
         False
         False
+        False
         [ "" ]
         [ Nothing ]
         False
@@ -149,7 +150,8 @@ type alias Model =
     , queryType : QueryType
     , toMongoDBMWConfig : Maybe ToMongoDBMWConfig
     , isValidNewAccessToken : Bool
-    , isHardwareConnected : Bool
+    , isBTCHardwareConnected : Bool
+    , isXMRHardwareConnected : Bool
     , errors : List String
     , availableSlots : List (Maybe String)
 
@@ -520,8 +522,15 @@ update msg model =
                             "error"
                 
 
-                updatedIsConnected =
+                updatedIsBTCConnected =
                     if decodedConnectLNSPublicKey == "1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS" then
+                        True
+
+                    else
+                        False
+
+                updatedIsXMRConnected =
+                    if decodedConnectLNSPublicKey == "real xmr wallet address to be added here" then
                         True
 
                     else
@@ -531,7 +540,8 @@ update msg model =
                 | --user = newUser
                   --, queryType = updatedquerytype
                   --,
-                  isHardwareConnected = updatedIsConnected
+                  isBTCHardwareConnected = updatedIsBTCConnected,
+                  isXMRHardwareConnected = updatedIsXMRConnected
 
                 --, selectedranking = newRanking
                 --, objectJSONfromJSPort = Just decodedJsObj
@@ -1745,8 +1755,10 @@ loginView model =
             , Element.text "\n"
             , Element.el Heading.h6 <|
                 Element.text
-                    (if model.isHardwareConnected then
-                        "Connected"
+                    (if model.isBTCHardwareConnected then
+                        "BTC Connected"
+                    else if model.isXMRHardwareConnected then
+                        "XMR Connected"
 
                      else
                         "Not connected yet"
