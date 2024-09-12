@@ -218,7 +218,6 @@ update msg model =
         Recv rawJsonMessage ->
             -- NOTE: rawJsonMessage is a Json value that is ready to be decoded. It does not need to be
             -- converted to a string.
-            
             if String.contains "Problem" (fromJsonToString rawJsonMessage) then
                 ( { model | errors = model.errors ++ [ "Problem fetching data" ] }, Cmd.none )
 
@@ -355,10 +354,19 @@ update msg model =
                                     { hardwareModel | queryType = Pages.Hardware.LoggedInUser }
                             in
                             ( { model | page = HardwarePage newHardwareModel }
-                            , 
-                              -- NOTE: Old msg showing formatting - 'sendMessageToJs ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")'
+                            , -- NOTE: Old msg showing formatting - 'sendMessageToJs ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")'
                               sendMessageToJs
                                 "connectLNS"
+                            )
+
+                        Pages.Hardware.ClickedXMRWalletConnect ->
+                            let
+                                newHardwareModel =
+                                    { hardwareModel | queryType = Pages.Hardware.LoggedInUser }
+                            in
+                            ( { model | page = HardwarePage newHardwareModel }
+                            , sendMessageToJs
+                                "getMoneroAddress"
                             )
 
                         _ ->
@@ -1034,8 +1042,7 @@ pageHeader page =
 
 burgerMenu : Page -> Html msg
 burgerMenu page =
-    div [ class "menu-btn" , id "menu-btn" ]
-        
+    div [ class "menu-btn", id "menu-btn" ]
         [ div [ class "menu-btn_burger" ]
             []
         , nav [ class "below800pxnavlinks" ] [ navLinks page ]
@@ -1126,7 +1133,7 @@ footerContent =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.7" ]
+                , p [] [ text "Version 0.0.8" ]
                 ]
             ]
         ]

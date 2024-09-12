@@ -27,11 +27,13 @@ jsonObjConnectNanoS =
         [ ( "operationEventMsg", E.string "nanoS" )
         ]
 
+
 jsonObjXMR : E.Value
 jsonObjXMR =
     E.object
         [ ( "operationEventMsg", E.string "xmr wallet address placeholder" )
         ]
+
 
 runSpecTests : Spec Pages.Hardware.Model Pages.Hardware.Msg
 runSpecTests =
@@ -48,18 +50,18 @@ runSpecTests =
                     |> Setup.withUpdate Pages.Hardware.update
                     |> Setup.withSubscriptions Pages.Hardware.hardwareSubscriptions
                 )
-                |> when "we simulate clicking the ledger connect button"
+                |> when "the user clicks the 'Connect Hardware Device' feature"
                     [ Spec.Command.send <|
                         Spec.Command.fake
                             Pages.Hardware.ClickedHardwareDeviceConnect
                     ]
-                |> when "sent the right message over the port"
+                |> when "the web app should detect the connected hardware device"
                     [ --sendMessageToJs is the other way
                       -- NOTE: 'send' here means send from js to elm
                       Spec.Port.send "receiveMessageFromJs" jsonObjConnectNanoS
                     ]
                 |> Spec.observeThat
-                    [ it "displays a message indicating the lns is connected and initialized"
+                    [ it "displays a message indicating the hardware device is connected and initialized"
                         (Markup.observeElement
                             |> Markup.query
                             -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
@@ -72,8 +74,7 @@ runSpecTests =
                         )
                     ]
             )
-
-        {- , scenario "2. Connecting the XMR Hardware Wallet"
+        , scenario "2. Connecting the XMR Hardware Wallet"
             (given
                 (Setup.init
                     (Pages.Hardware.init { time = Nothing, flagUrl = placeholderUrl })
@@ -81,18 +82,16 @@ runSpecTests =
                     |> Setup.withUpdate Pages.Hardware.update
                     |> Setup.withSubscriptions Pages.Hardware.hardwareSubscriptions
                 )
-                |> when "we simulate clicking the ledger connect button"
+                |> when "the user clicks the 'Connect XMR Wallet' feature"
                     [ Spec.Command.send <|
                         Spec.Command.fake
-                            Pages.Hardware.ClickedHardwareDeviceConnect
+                            Pages.Hardware.ClickedXMRWalletConnect
                     ]
-                |> when "sent the right message over the port"
-                    [ --sendMessageToJs is the other way
-                      -- NOTE: 'send' here means send from js to elm
-                      Spec.Port.send "receiveMessageFromJs" jsonObjXMR
+                |> when "the hardware XMR wallet is connected"
+                    [ Spec.Port.send "receiveMessageFromJs" jsonObjXMR
                     ]
                 |> Spec.observeThat
-                    [ it "displays a message indicating the lns is connected and initialized"
+                    [ it "should display a confirmation message indicating successful XMR wallet connection"
                         (Markup.observeElement
                             |> Markup.query
                             -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
@@ -100,11 +99,12 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "XMR Connected"
+                                        Claim.isStringContaining 1 "XMR Wallet Connected"
                                 )
                         )
                     ]
-            ) -}
+            )
+
         --Runner.pick <|
         --, Runner.skip <|
         {- , scenario "3. Display An Active User On Login Succeed"

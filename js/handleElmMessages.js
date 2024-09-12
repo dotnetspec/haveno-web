@@ -1,5 +1,6 @@
 import { setupElmPorts, connectLNS } from "./ledgerInterop.js";
 import { checkDeviceConnection } from "./checkDeviceConnect.js";
+import { getMoneroAddress } from "./xmrHardwareInterop.js";
 // NOTE: This is the main file for communicating with Elm. It receives messages from Elm and
 // then calls the relevant function in the relevant .js file to communicate with the hardware device
 // NOTE: This file is imported in setupElm.mjs
@@ -23,6 +24,19 @@ export async function handleMessageFromElm(message, app) {
       try {
         // Perform further actions with the device
         checkDeviceConnection(app);
+      } catch (error) {
+        console.error("Device connection error:", error);
+      }
+      break;
+
+    case "getMoneroAddress":
+      console.log("attempting getMoneroAddress now : ");
+
+      //connectLNS(app)
+
+      try {
+        // Perform further actions with the device
+        getMoneroAddress(app);
       } catch (error) {
         console.error("Device connection error:", error);
       }

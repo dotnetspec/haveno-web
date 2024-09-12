@@ -114,6 +114,7 @@ init fromMainToRankings =
         False
         False
         False
+        False
         [ "" ]
         [ Nothing ]
         False
@@ -150,7 +151,8 @@ type alias Model =
     , queryType : QueryType
     , toMongoDBMWConfig : Maybe ToMongoDBMWConfig
     , isValidNewAccessToken : Bool
-    , isHardwareConnected : Bool
+    , isHardwareLNSConnected : Bool
+    , isHardwareLNXConnected : Bool
     , isXMRWalletConnected : Bool
     , errors : List String
     , availableSlots : List (Maybe String)
@@ -206,6 +208,7 @@ type Msg
     | UserLoginEmailInputChg String
     | UserLoginPasswordInputChg String
     | ClickedHardwareDeviceConnect
+    | ClickedXMRWalletConnect
       -- NOTE: ResponseDataFromMain is a Msg from the port
     | ResponseDataFromMain D.Value
     | LogOut
@@ -511,7 +514,7 @@ update msg model =
                 -- NOTE: You can only see the rawJsonMessage in the console if you use JE.encode 2
                 -- but you can't decode it if you use it that way
                 --_ = Debug.log "receivedJson" (E.encode 0 receivedJson)
-                decodedConnectLNSPublicKey =
+                decodedHardwareDeviceMsg =
                     case D.decodeValue justmsgFieldFromJsonDecoder receivedJson of
                         Ok message ->
                             message.operationEventMsg
@@ -520,15 +523,22 @@ update msg model =
                             --JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
                             "error"
 
-                updatedIsBTCConnected =
-                    if decodedConnectLNSPublicKey == "nanoS" then
+                updatedIsLNSConnected =
+                    if decodedHardwareDeviceMsg == "nanoS" then
+                        True
+
+                    else
+                        False
+
+                updatedIsLNXConnected =
+                    if decodedHardwareDeviceMsg == "nanoX" then
                         True
 
                     else
                         False
 
                 updatedIsXMRConnected =
-                    if decodedConnectLNSPublicKey == "real xmr wallet address to be added here" then
+                    if decodedHardwareDeviceMsg == "real xmr wallet address to be added here" then
                         True
 
                     else
@@ -538,7 +548,8 @@ update msg model =
                 | --user = newUser
                   --, queryType = updatedquerytype
                   --,
-                  isHardwareConnected = updatedIsBTCConnected
+                  isHardwareLNSConnected = updatedIsLNSConnected
+                , isHardwareLNXConnected = updatedIsLNXConnected
                 , isXMRWalletConnected = updatedIsXMRConnected
 
                 --, selectedranking = newRanking
@@ -589,6 +600,11 @@ update msg model =
         -- NOTE: Will be handled in Main/GotHardwareMsg
         -- because needs data from the port
         ClickedHardwareDeviceConnect ->
+            ( model
+            , Cmd.none
+            )
+
+        ClickedXMRWalletConnect ->
             ( model
             , Cmd.none
             )
@@ -1741,10 +1757,18 @@ hardwareWalletView model =
             , Element.text "\n"
             , infoBtn "Connect Hardware Device" <| ClickedHardwareDeviceConnect
             , Element.text "\n"
+            , infoBtn "Connect XMR Wallet" <| ClickedXMRWalletConnect
+            , Element.text "\n"
             , Element.el Heading.h6 <|
                 Element.text
-                    (if model.isHardwareConnected then
+                    (if model.isHardwareLNSConnected then
                         "Nano S Connected"
+
+                    else if model.isHardwareLNXConnected then
+                        "Nano X Connected"
+
+                    else if model.isXMRWalletConnected then
+                        "XMR Wallet Connected"
 
                      else
                         "Not connected yet"
