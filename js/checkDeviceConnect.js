@@ -24,7 +24,7 @@ export async function checkDeviceConnection(app) {
         const response = "";
 
         try {
-            const message = { operationEventMsg: response };
+            const message = { operationEventMsg: transport.deviceModel.id };
             console.log("Sending message:", message);
             app.ports.receiveMessageFromJs.send(message);
         }

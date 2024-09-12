@@ -349,7 +349,7 @@ update msg model =
                     -- If the message is one that needs to be handled in Main (e.g. sends message to port)
                     -- then handle it here:
                     case hardwareMsg of
-                        Pages.Hardware.ClickedLedgerConnect ->
+                        Pages.Hardware.ClickedHardwareDeviceConnect ->
                             let
                                 newHardwareModel =
                                     { hardwareModel | queryType = Pages.Hardware.LoggedInUser }

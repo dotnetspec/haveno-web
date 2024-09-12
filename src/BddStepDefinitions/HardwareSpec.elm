@@ -21,10 +21,10 @@ import Spec.Step exposing (log)
 import Time exposing (..)
 
 
-jsonObjBTC : E.Value
-jsonObjBTC =
+jsonObjConnectNanoS : E.Value
+jsonObjConnectNanoS =
     E.object
-        [ ( "operationEventMsg", E.string "1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS" )
+        [ ( "operationEventMsg", E.string "nanoS" )
         ]
 
 jsonObjXMR : E.Value
@@ -40,7 +40,7 @@ runSpecTests =
         [ --Runner.pick <|
           --,
           --Runner.skip <|
-          scenario "1. Connecting the BTC Hardware Wallet"
+          scenario "1. Connecting the Hardware Wallet"
             (given
                 (Setup.init
                     (Pages.Hardware.init { time = Nothing, flagUrl = placeholderUrl })
@@ -51,12 +51,12 @@ runSpecTests =
                 |> when "we simulate clicking the ledger connect button"
                     [ Spec.Command.send <|
                         Spec.Command.fake
-                            Pages.Hardware.ClickedLedgerConnect
+                            Pages.Hardware.ClickedHardwareDeviceConnect
                     ]
                 |> when "sent the right message over the port"
                     [ --sendMessageToJs is the other way
                       -- NOTE: 'send' here means send from js to elm
-                      Spec.Port.send "receiveMessageFromJs" jsonObjBTC
+                      Spec.Port.send "receiveMessageFromJs" jsonObjConnectNanoS
                     ]
                 |> Spec.observeThat
                     [ it "displays a message indicating the lns is connected and initialized"
@@ -67,13 +67,13 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "BTC Connected"
+                                        Claim.isStringContaining 1 "Nano S Connected"
                                 )
                         )
                     ]
             )
 
-        , scenario "2. Connecting the XMR Hardware Wallet"
+        {- , scenario "2. Connecting the XMR Hardware Wallet"
             (given
                 (Setup.init
                     (Pages.Hardware.init { time = Nothing, flagUrl = placeholderUrl })
@@ -84,7 +84,7 @@ runSpecTests =
                 |> when "we simulate clicking the ledger connect button"
                     [ Spec.Command.send <|
                         Spec.Command.fake
-                            Pages.Hardware.ClickedLedgerConnect
+                            Pages.Hardware.ClickedHardwareDeviceConnect
                     ]
                 |> when "sent the right message over the port"
                     [ --sendMessageToJs is the other way
@@ -104,7 +104,7 @@ runSpecTests =
                                 )
                         )
                     ]
-            )
+            ) -}
         --Runner.pick <|
         --, Runner.skip <|
         {- , scenario "3. Display An Active User On Login Succeed"

@@ -150,8 +150,8 @@ type alias Model =
     , queryType : QueryType
     , toMongoDBMWConfig : Maybe ToMongoDBMWConfig
     , isValidNewAccessToken : Bool
-    , isBTCHardwareConnected : Bool
-    , isXMRHardwareConnected : Bool
+    , isHardwareConnected : Bool
+    , isXMRWalletConnected : Bool
     , errors : List String
     , availableSlots : List (Maybe String)
 
@@ -205,7 +205,7 @@ type Msg
       -- NOTE: Start of new Msg variants from espa1
     | UserLoginEmailInputChg String
     | UserLoginPasswordInputChg String
-    | ClickedLedgerConnect
+    | ClickedHardwareDeviceConnect
       -- NOTE: ResponseDataFromMain is a Msg from the port
     | ResponseDataFromMain D.Value
     | LogOut
@@ -511,19 +511,17 @@ update msg model =
                 -- NOTE: You can only see the rawJsonMessage in the console if you use JE.encode 2
                 -- but you can't decode it if you use it that way
                 --_ = Debug.log "receivedJson" (E.encode 0 receivedJson)
-
                 decodedConnectLNSPublicKey =
                     case D.decodeValue justmsgFieldFromJsonDecoder receivedJson of
                         Ok message ->
-                             message.operationEventMsg
+                            message.operationEventMsg
 
                         Err err ->
                             --JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
                             "error"
-                
 
                 updatedIsBTCConnected =
-                    if decodedConnectLNSPublicKey == "1KrEBrdLTotPZWDRQN1WUn7PDbXA7fwfsS" then
+                    if decodedConnectLNSPublicKey == "nanoS" then
                         True
 
                     else
@@ -540,8 +538,8 @@ update msg model =
                 | --user = newUser
                   --, queryType = updatedquerytype
                   --,
-                  isBTCHardwareConnected = updatedIsBTCConnected,
-                  isXMRHardwareConnected = updatedIsXMRConnected
+                  isHardwareConnected = updatedIsBTCConnected
+                , isXMRWalletConnected = updatedIsXMRConnected
 
                 --, selectedranking = newRanking
                 --, objectJSONfromJSPort = Just decodedJsObj
@@ -590,7 +588,7 @@ update msg model =
 
         -- NOTE: Will be handled in Main/GotHardwareMsg
         -- because needs data from the port
-        ClickedLedgerConnect ->
+        ClickedHardwareDeviceConnect ->
             ( model
             , Cmd.none
             )
@@ -728,7 +726,6 @@ update msg model =
 
         ProfileResponse (Ok auth) ->
             let
-                
                 headers =
                     -- HACK: I don't know if need 'typeOfData here
                     [ Http.header "Authorization" ("Bearer " ++ withDefault "No access token 2" (Just auth.typeOfData)) ]
@@ -1094,11 +1091,11 @@ content model =
 
                             -- NAV: View - Login
                             Login _ ->
-                                loginView model
+                                hardwareWalletView model
 
                             -- HACK: We'll be getting rid of Spectator etc. this is just to keep us with the connect button for
                             Spectator ->
-                                loginView model
+                                hardwareWalletView model
 
                             RegisterUser newUser ->
                                 registerView newUser
@@ -1106,7 +1103,7 @@ content model =
                             -- HACK: We'll be getting rid of LoggedInUser etc. this is just to keep us with the connect button for
                             LoggedInUser ->
                                 --globalView model.searchterm model.searchResults model.user
-                                loginView model
+                                hardwareWalletView model
 
                             CreatingNewLadder userInfo ->
                                 createLadderView userInfo <| R.gotRanking model.selectedranking
@@ -1733,32 +1730,21 @@ globalView searchterm searchResults userVal =
                     , infoBtn "Log Out" LogOut
                     , Element.text "\n"
                     , infoBtn "Delete Account" DialogueConfirmDeleteAccount
-                    , displayGlobalRankingBtns searchterm searchResults userVal
                     ]
 
 
-displayGlobalRankingBtns : String -> List R.RankingSearchResult -> U.User -> Element Msg
-displayGlobalRankingBtns searchterm searchResults userVal =
-    Element.column Grid.section <|
-        [ -- HACK: Not Create
-          infoBtn "Connect Wallet" Create
-        ]
-
-
-loginView : Model -> Html Msg
-loginView model =
+hardwareWalletView : Model -> Html Msg
+hardwareWalletView model =
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
             [ Element.el Heading.h5 <| Element.text "Haveno-Web"
             , Element.text "\n"
-            , infoBtn "Connect Wallet" <| ClickedLedgerConnect
+            , infoBtn "Connect Hardware Device" <| ClickedHardwareDeviceConnect
             , Element.text "\n"
             , Element.el Heading.h6 <|
                 Element.text
-                    (if model.isBTCHardwareConnected then
-                        "BTC Connected"
-                    else if model.isXMRHardwareConnected then
-                        "XMR Connected"
+                    (if model.isHardwareConnected then
+                        "Nano S Connected"
 
                      else
                         "Not connected yet"
@@ -2139,7 +2125,8 @@ type alias JsonMsgFromJs =
     , additionalDataFromJs : AdditionalDataFromJs
     }
 
-type alias OperationEventMsg = 
+
+type alias OperationEventMsg =
     { operationEventMsg : String
     }
 
@@ -2188,7 +2175,7 @@ jsonMsgFromJsDecoder =
 
 justmsgFieldFromJsonDecoder : Decoder OperationEventMsg
 justmsgFieldFromJsonDecoder =
-    D.map OperationEventMsg 
+    D.map OperationEventMsg
         (D.field "operationEventMsg" D.string)
 
 
@@ -2257,15 +2244,24 @@ profileDecoder =
         (D.field "data" providerDataDecoder)
         (D.field "type" D.string)
 
+
+
 -- NAV: Subscriptions
-    
 -- Define the subscription function
+
+
 hardwareSubscriptions : Model -> Sub Msg
 hardwareSubscriptions _ =
     -- Replace with your actual subscription logic
-    Sub.batch [receiveMessageFromJs ResponseDataFromMain]
+    Sub.batch [ receiveMessageFromJs ResponseDataFromMain ]
+
+
+
 -- NAV: Ports
+
+
 port receiveMessageFromJs : (D.Value -> msg) -> Sub msg
+
 
 
 -- NAV: Websocket decoders
@@ -2411,9 +2407,6 @@ required fieldName itemDecoder functionDecoder =
 decodeApply : Decoder a -> Decoder (a -> b) -> Decoder b
 decodeApply =
     D.map2 (|>)
-
-
-
 
 
 
@@ -2943,7 +2936,7 @@ displayLoginBtns : Model -> Element Msg
 displayLoginBtns model =
     Element.column Grid.section <|
         [ Element.el [] <| Element.text " Please login, register or view \n search rankings as a spectator (below):"
-        , infoBtn "Connect Wallet" <| ClickedLedgerConnect
+        , infoBtn "Connect Wallet" <| ClickedHardwareDeviceConnect
         ]
 
 
