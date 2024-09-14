@@ -905,7 +905,7 @@ topLinksLogo =
 topLinksLogoImage : Html msg
 topLinksLogoImage =
     img
-        [ Attr.src "resources/Logos/monero_icon.jpeg"
+        [ Attr.src "resources/Logos/monero_icon.jpg"
 
         -- NOTE: always define the width and height of images. This reduces flickering,
         -- because the browser can reserve space for the image before loading.
@@ -920,7 +920,7 @@ topLinksLogoImage =
 logoImage : Html msg
 logoImage =
     img
-        [ Attr.src "resources/Logos/monero_icon.jpeg"
+        [ Attr.src "resources/Logos/monero_icon.jpg"
 
         -- NOTE: always define the width and height of images. This reduces flickering,
         -- because the browser can reserve space for the image before loading.

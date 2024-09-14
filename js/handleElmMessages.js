@@ -17,21 +17,17 @@ export async function handleMessageFromElm(message, app) {
 
   switch (messageArr[0]) {
     case "connectLNS":
-      console.log("attempting lns connect now : ");
-
-      //connectLNS(app)
+      connectLNS(app);
 
       try {
         // Perform further actions with the device
-        checkDeviceConnection(app);
+        //checkDeviceConnection(app);
       } catch (error) {
         console.error("Device connection error:", error);
       }
       break;
 
     case "getMoneroAddress":
-      console.log("attempting getMoneroAddress now : ");
-
       //connectLNS(app)
 
       try {
