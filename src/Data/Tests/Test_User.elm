@@ -1,7 +1,7 @@
 module Data.Tests.Test_User exposing (suite)
 
 import Data.User exposing (User(..))
-import Data.Ranking exposing (Ranking)
+import Data.Hardware exposing (Ranking)
 import Expect
 import Test exposing (Test, describe, test)
 import Json.Decode as D exposing (..)

@@ -1,7 +1,7 @@
 -- Rankings is an opaque type - create and expose functions to work with it
 
 
-module Data.Ranking exposing (..)
+module Data.Hardware exposing (..)
 
 import Extras.Constants as Consts
 import Json.Decode as D

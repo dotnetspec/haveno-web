@@ -7,7 +7,7 @@ port module Main exposing (..)
 
 import Browser
 import Browser.Navigation as Nav exposing (..)
-import Data.Ranking as R
+import Data.Hardware as R
 import Data.User as U exposing (User(..))
 import Erl exposing (..)
 import Extras.Constants as Constants

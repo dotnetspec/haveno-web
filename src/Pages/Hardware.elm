@@ -5,7 +5,7 @@ port module Pages.Hardware exposing (..)
 
 import Array exposing (empty)
 import Buttons.Default
-import Data.Ranking as R exposing (rankingDecoder, rankingSearchResultDecoder)
+import Data.Hardware as R exposing (rankingDecoder, rankingSearchResultDecoder)
 import Data.User as U
 import Derberos.Date.Core as DD
 import Dict exposing (Dict)
