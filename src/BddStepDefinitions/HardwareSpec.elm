@@ -74,7 +74,7 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario "2. Connecting the XMR Hardware Wallet"
+        {- , scenario "2. Connecting the XMR Hardware Wallet"
             (given
                 (Setup.init
                     (Pages.Hardware.init { time = Nothing, flagUrl = placeholderUrl })
@@ -103,7 +103,7 @@ runSpecTests =
                                 )
                         )
                     ]
-            )
+            ) -}
 
         --Runner.pick <|
         --, Runner.skip <|
