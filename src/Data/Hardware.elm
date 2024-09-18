@@ -7,6 +7,9 @@ import Extras.Constants as Consts
 import Json.Decode as D
 import Json.Decode.Pipeline as P exposing (required)
 import Json.Encode as E
+import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
+import Char exposing (isAlphaNum)
+
 
 
 
@@ -566,6 +569,23 @@ tempNewlyCreatedRanking id owner_name name =
 
 
 -- NAV: Helper functions
+
+validXMRAddressParser : Parser String
+validXMRAddressParser =
+    getChompedString (chompWhile isAlphaNum)
+        |> Parser.andThen
+            (\str ->
+                if String.length str == 95 then
+                    Parser.succeed str
+
+                else
+                    Parser.problem "Invalid length"
+            )
+        |> Parser.andThen
+            (\str ->
+                end
+                    |> Parser.map (\_ -> str)
+            )
 
 -- NOTE: JSON/string manipulation functions
 -- En/decoding doesn't always work out as expected

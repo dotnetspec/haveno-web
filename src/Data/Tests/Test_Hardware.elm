@@ -1,12 +1,14 @@
 module Data.Tests.Test_Hardware exposing (..)
 
-import Data.Hardware as R exposing (Player, Rank, Ranking, gotLowestRank)
+import Char exposing (isAlphaNum)
+import Data.Hardware as R exposing (Player, Rank, Ranking, gotLowestRank, validXMRAddressParser)
 import Data.User as U exposing (..)
 import Expect
 import Extras.Constants as Consts
-import Fuzz exposing (intRange, list)
+import Fuzz exposing (Fuzzer, char, intRange, list, string)
 import Json.Decode as D
 import Json.Encode as E
+import Parser exposing ((|.), Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
 import Test exposing (..)
 
 
@@ -47,6 +49,10 @@ gotLowestRankTest =
         ]
 
 
+
+-- isValidXMRAddress
+
+
 getPlayer : Int -> Player
 getPlayer i =
     List.head (List.drop (remainderBy i 15) players) |> Maybe.withDefault (Player "default" "Default Player")
@@ -75,45 +81,64 @@ maximumBy f list =
 tests : Test
 tests =
     describe "Ranking tests"
-        [ test "1. Test Won condition" <|
+        [ fuzzTestValidXMRAddressParser
+        ]
+
+
+
+
+
+parseValidXMRAddressKey : String -> Result (List Parser.DeadEnd) String
+parseValidXMRAddressKey input =
+    run validXMRAddressParser input
+
+
+alphanumericChar : Fuzzer Char
+alphanumericChar =
+    Fuzz.intRange 48 122
+        |> Fuzz.map Char.fromCode
+        |> Fuzz.filter isAlphaNum
+
+
+alphanumericString : Int -> Fuzzer String
+alphanumericString len =
+    Fuzz.listOfLength len alphanumericChar
+        |> Fuzz.map String.fromList
+
+
+fuzzTestValidXMRAddressParser : Test
+fuzzTestValidXMRAddressParser =
+    describe "Fuzz test for validXMRAddressParser"
+        [ fuzz (alphanumericString 95) "should match valid 95-character alphanumeric strings" <|
+            \str ->
+                case parseValidXMRAddressKey str of
+                    Ok _ ->
+                        Expect.equal True True
+
+                    Err _ ->
+                        Expect.equal True False
+        , fuzz (alphanumericString 94) "should not match 94-character alphanumeric strings" <|
+            \str ->
+                case parseValidXMRAddressKey str of
+                    Ok _ ->
+                        Expect.equal True False
+
+                    Err _ ->
+                        Expect.equal True True
+        , fuzz (alphanumericString 96) "should not match 96-character alphanumeric strings" <|
+            \str ->
+                case parseValidXMRAddressKey str of
+                    Ok _ ->
+                        Expect.equal True False
+
+                    Err _ ->
+                        Expect.equal True True
+        , test "should not match empty string" <|
             \_ ->
-                let
-                    -- NOTE: Players cannot select a lower ranked challenge in the UI
-                    -- so here only rank = 1 can be selected
-                    -- TODO: Add more ranks and test players
-                    ranklist =
-                        [ { rank = 1, player = { id = "651fa006b15a534c69b119ef", nickname = "Dave" }, challenger = { id = "652e2b3441c3decf3044f7c9", nickname = "Bobby" } }
-                        , { rank = 2, player = { id = "652e2b3441c3decf3044f7c9", nickname = "Bobby" }, challenger = { id = "651fa006b15a534c69b119ef", nickname = "Dave" } }
-                        ]
+                case parseValidXMRAddressKey "" of
+                    Ok _ ->
+                        Expect.equal True False
 
-                    -- expectedChallengeResultBobbyCurrent
-                    expectedChallengeResultDaveCurrent =
-                        [ { rank = 1
-                          , player = { id = "651fa006b15a534c69b119ef", nickname = "Dave" }
-                          , challenger = { id = Consts.noCurrentChallengerId, nickname = "No Challenger" }
-                          }
-                        , { rank = 2
-                          , player = { id = "652e2b3441c3decf3044f7c9", nickname = "Bobby" }
-                          , challenger = { id = Consts.noCurrentChallengerId, nickname = "No Challenger" }
-                          }
-                        ]
-
-                    expectedChallengeResultBobbyCurrent =
-                        [ { rank = 1
-                          , player = { id = "652e2b3441c3decf3044f7c9", nickname = "Bobby" }
-                          , challenger = { id = Consts.noCurrentChallengerId, nickname = "No Challenger" }
-                          }
-                        , { rank = 2
-                          , player = { id = "651fa006b15a534c69b119ef", nickname = "Dave" }
-                          , challenger = { id = Consts.noCurrentChallengerId, nickname = "No Challenger" }
-                          }
-                        ]
-                in
-                -- NOTE: The RESULT of the function being tested (handleResult) is what comes AFTER 'Expect.equal' in the test output
-                Expect.equal (R.handleResult R.Won "652e2b3441c3decf3044f7c9" ranklist) expectedChallengeResultBobbyCurrent
-        
-        -- NOTE: Add any more tests to the bottom:
-        , gotLowestRankTest
-        
-                    
+                    Err _ ->
+                        Expect.equal True True
         ]

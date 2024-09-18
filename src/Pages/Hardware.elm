@@ -5,7 +5,7 @@ port module Pages.Hardware exposing (..)
 
 import Array exposing (empty)
 import Buttons.Default
-import Data.Hardware as R exposing (rankingDecoder, rankingSearchResultDecoder)
+import Data.Hardware as R exposing (rankingDecoder, rankingSearchResultDecoder, validXMRAddressParser)
 import Data.User as U
 import Derberos.Date.Core as DD
 import Dict exposing (Dict)
@@ -37,6 +37,7 @@ import Tuple
 import Types.DateType as DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 import Utils.Validation.Validate as V
+import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
 
 
 
@@ -538,7 +539,7 @@ update msg model =
                         False
 
                 updatedIsXMRConnected =
-                    if decodedHardwareDeviceMsg == "real xmr wallet address to be added here" then
+                    if isValidXMRAddress decodedHardwareDeviceMsg then
                         True
 
                     else
@@ -2575,6 +2576,9 @@ prepareEmailPwordLogin emailPword =
 -- NOTE: tested function
 
 
+
+
+
 filterAndSortRankingsOnLeaving : String -> List R.Rank -> List ( String, List PlayerFromChangeEvent ) -> List R.Rank
 filterAndSortRankingsOnLeaving userid rankings changes =
     let
@@ -2688,13 +2692,15 @@ removeExtraEscapeCharsEtcFromJsonStringifiedDataFromJs jsonString =
             "err in removeExtraEscapeCharsEtcFromJsonStringifiedDataFromJs"
 
 
-is24AlphanumericChars : String -> Bool
-is24AlphanumericChars str =
-    let
-        regex =
-            Maybe.withDefault Regex.never <| Regex.fromString "^[a-zA-Z0-9]{24}$"
-    in
-    Regex.contains regex str
+
+isValidXMRAddress : String -> Bool
+isValidXMRAddress str =
+    
+   case run R.validXMRAddressParser str of
+    Ok _ -> 
+        True
+    Err _ ->
+        False
 
 
 

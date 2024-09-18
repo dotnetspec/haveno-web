@@ -28,10 +28,10 @@ jsonObjConnectNanoS =
         ]
 
 
-jsonObjXMR : E.Value
-jsonObjXMR =
+validXMRWalletAddress : E.Value
+validXMRWalletAddress =
     E.object
-        [ ( "operationEventMsg", E.string "xmr wallet address placeholder" )
+        [ ( "operationEventMsg", E.string "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" )
         ]
 
 
@@ -74,7 +74,7 @@ runSpecTests =
                         )
                     ]
             )
-        {- , scenario "2. Connecting the XMR Hardware Wallet"
+        , scenario "2. Connecting the XMR Hardware Wallet"
             (given
                 (Setup.init
                     (Pages.Hardware.init { time = Nothing, flagUrl = placeholderUrl })
@@ -88,7 +88,7 @@ runSpecTests =
                             Pages.Hardware.ClickedXMRWalletConnect
                     ]
                 |> when "the hardware XMR wallet is connected"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonObjXMR
+                    [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
                     ]
                 |> Spec.observeThat
                     [ it "should display a confirmation message indicating successful XMR wallet connection"
@@ -103,7 +103,7 @@ runSpecTests =
                                 )
                         )
                     ]
-            ) -}
+            )
 
         --Runner.pick <|
         --, Runner.skip <|
