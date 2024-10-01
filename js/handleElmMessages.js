@@ -1,6 +1,6 @@
-import { setupElmPorts, connectLNS } from "./ledgerInterop.js";
-import { checkDeviceConnection } from "./checkDeviceConnect.js";
-import { getMoneroAddress } from "./xmrHardwareInterop.js";
+import { setupElmPorts, connectLNS } from "./hardware/ledgerInterop.js";
+import { checkDeviceConnection } from "./hardware/checkDeviceConnect.js";
+import { getMoneroAddress } from "./hardware/xmrHardwareInterop.js";
 // NOTE: This is the main file for communicating with Elm. It receives messages from Elm and
 // then calls the relevant function in the relevant .js file to communicate with the hardware device
 // NOTE: This file is imported in setupElm.mjs

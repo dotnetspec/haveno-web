@@ -19663,9 +19663,9 @@ parcelHelpers.defineInteropFlag(exports);
 // NOTE: Messages from the Elm 'sendMessageToJs' port are received and parsed here to determine
 // which function (in the relevant .js file) to use to communicate with the hardware device
 parcelHelpers.export(exports, "handleMessageFromElm", ()=>handleMessageFromElm);
-var _ledgerInteropJs = require("./ledgerInterop.js");
-var _checkDeviceConnectJs = require("./checkDeviceConnect.js");
-var _xmrHardwareInteropJs = require("./xmrHardwareInterop.js");
+var _ledgerInteropJs = require("./hardware/ledgerInterop.js");
+var _checkDeviceConnectJs = require("./hardware/checkDeviceConnect.js");
+var _xmrHardwareInteropJs = require("./hardware/xmrHardwareInterop.js");
 async function handleMessageFromElm(message, app) {
     console.log("here in handle : ", message);
     // NOTE: Use FF debugger to view 'message'
@@ -19703,7 +19703,37 @@ async function handleMessageFromElm(message, app) {
     }
 }
 
-},{"./ledgerInterop.js":"1M2mx","./checkDeviceConnect.js":"aIoai","./xmrHardwareInterop.js":"f8KJB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1M2mx":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./hardware/ledgerInterop.js":"8DXR1","./hardware/xmrHardwareInterop.js":"2JAI7","./hardware/checkDeviceConnect.js":"2sLhv"}],"gkKU3":[function(require,module,exports) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, "__esModule", {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === "default" || key === "__esModule" || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"8DXR1":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "connectLNS", ()=>connectLNS);
@@ -21408,37 +21438,7 @@ function dispatch(log) {
 }
 if (typeof window !== "undefined") window.__ledgerLogsListen = listen;
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, "__esModule", {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === "default" || key === "__esModule" || Object.prototype.hasOwnProperty.call(dest, key)) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}],"f39ni":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"f39ni":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _semver = require("semver");
@@ -50682,52 +50682,66 @@ function getFirstLedgerDevice() {
 }
 const isSupported = ()=>Promise.resolve(!!navigator && !!navigator.usb && typeof navigator.usb.getDevices === "function");
 
-},{"@ledgerhq/devices":"fnHxP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aIoai":[function(require,module,exports) {
+},{"@ledgerhq/devices":"fnHxP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2JAI7":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "checkDeviceConnection", ()=>checkDeviceConnection) //checkDeviceConnection();
-;
+parcelHelpers.export(exports, "getMoneroAddress", ()=>getMoneroAddress);
+parcelHelpers.export(exports, "sum", ()=>sum);
+var _esnextMapGroupByJs = require("core-js/modules/esnext.map.group-by.js");
+var _esnextSymbolDisposeJs = require("core-js/modules/esnext.symbol.dispose.js");
+var _webImmediateJs = require("core-js/modules/web.immediate.js");
+var _logs = require("@ledgerhq/logs");
 var _hwTransportWebhid = require("@ledgerhq/hw-transport-webhid");
 var _hwTransportWebhidDefault = parcelHelpers.interopDefault(_hwTransportWebhid);
-async function checkDeviceConnection(app) {
+async function getMoneroAddress(app) {
     try {
+        console.log("Attempting to get Monero address now...");
         // Request access to the Ledger device
         const transport = await (0, _hwTransportWebhidDefault.default).create();
-        console.log("Device connected:", transport);
-        console.log("Device Model:", transport.deviceModel);
-        console.log("Device Model ID:", transport.deviceModel ? transport.deviceModel.id : "Not Available");
-        // Define the Get Device Version APDU command
-        const cla = 0x00; // Class byte
-        const ins = 0x01; // Instruction byte for Get Device Version
-        const p1 = 0x00; // Parameter 1
-        const p2 = 0x00; // Parameter 2
-        const data = new Uint8Array([]); // No data needed
-        // Send the command to the Ledger device
-        /* const response = await transport.send(cla, ins, p1, p2, data);
-
-        // Process the response
-        console.log("Device Response:", response.deviceModel.id);
-        console.log("Device Model:", response.deviceModel);
-        console.log("Device Model ID:", response.deviceModel ? response.deviceModel.id : 'Not Available'); */ const response = "";
-        try {
-            const message = {
-                operationEventMsg: transport.deviceModel.id
-            };
-            console.log("Sending message:", message);
-            app.ports.receiveMessageFromJs.send(message);
-        } catch (error) {
-            const errorMessage = {
-                Err: error.message
-            };
-            console.log("Sending error message:", errorMessage);
-            app.ports.receiveMessageFromJs.send(errorMessage);
+        // Define APDU command parameters
+        const cla = 0xE0; // Class byte for Ledger Monero app
+        const ins = 0x46; // INS_DERIVE_SUBADDRESS_PUBLIC_KEY
+        const p1 = 0x00; // First parameter
+        const p2 = 0x00; // Second parameter
+        // Derivation path: 44'/128'/0'/0/0
+        const derivationPath = [
+            0x8000002c,
+            0x80000080,
+            0x80000000,
+            0x00000000,
+            0x00000000
+        ];
+        const data = serializeDerivationPath(derivationPath);
+        console.log("Serialized Derivation Path:", data);
+        // Send the APDU command to the Ledger device
+        const response = await transport.send(cla, ins, p1, p2, data);
+        // Listen to Ledger logs for debugging
+        (0, _logs.listen)((log)=>console.log(log));
+        //console.log("Monero Address Response:", response);
+        if (response.length > 2) {
+            const statusCode = response.slice(-2); // Last 2 bytes are the status word
+            if (statusCode[0] === 0x90 && statusCode[1] === 0x00) console.log("Success:", response);
+            else console.error("Error with status code:", statusCode);
         }
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error getting Monero address:", error);
     }
 }
+// Helper function to serialize the derivation path
+function serializeDerivationPath(path) {
+    const buffer = new ArrayBuffer(1 + path.length * 4); // 1 byte for path length + 4 bytes for each path element
+    const dataView = new DataView(buffer);
+    dataView.setUint8(0, path.length); // First byte: path length
+    path.forEach((element, index)=>{
+        dataView.setUint32(1 + index * 4, element);
+    });
+    return new Uint8Array(buffer);
+}
+function sum(a, b) {
+    return a + b;
+}
 
-},{"@ledgerhq/hw-transport-webhid":"8O295","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8O295":[function(require,module,exports) {
+},{"core-js/modules/esnext.map.group-by.js":"3AR1K","core-js/modules/esnext.symbol.dispose.js":"b9ez5","core-js/modules/web.immediate.js":"49tUX","@ledgerhq/logs":"i4OI0","@ledgerhq/hw-transport-webhid":"8O295","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8O295":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _hwTransport = require("@ledgerhq/hw-transport");
@@ -50947,66 +50961,52 @@ function getFirstLedgerDevice() {
 };
 exports.default = TransportWebHID;
 
-},{"3666b9e986722ce4":"bwvMq","@ledgerhq/hw-transport":"59Ey9","@ledgerhq/devices/hid-framing":"3BsQA","@ledgerhq/devices":"fnHxP","@ledgerhq/logs":"i4OI0","@ledgerhq/errors":"EVZMy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"f8KJB":[function(require,module,exports) {
+},{"3666b9e986722ce4":"bwvMq","@ledgerhq/hw-transport":"59Ey9","@ledgerhq/devices/hid-framing":"3BsQA","@ledgerhq/devices":"fnHxP","@ledgerhq/logs":"i4OI0","@ledgerhq/errors":"EVZMy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2sLhv":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "getMoneroAddress", ()=>getMoneroAddress);
-parcelHelpers.export(exports, "sum", ()=>sum);
-var _esnextMapGroupByJs = require("core-js/modules/esnext.map.group-by.js");
-var _esnextSymbolDisposeJs = require("core-js/modules/esnext.symbol.dispose.js");
-var _webImmediateJs = require("core-js/modules/web.immediate.js");
-var _logs = require("@ledgerhq/logs");
+parcelHelpers.export(exports, "checkDeviceConnection", ()=>checkDeviceConnection) //checkDeviceConnection();
+;
 var _hwTransportWebhid = require("@ledgerhq/hw-transport-webhid");
 var _hwTransportWebhidDefault = parcelHelpers.interopDefault(_hwTransportWebhid);
-async function getMoneroAddress(app) {
+async function checkDeviceConnection(app) {
     try {
-        console.log("Attempting to get Monero address now...");
         // Request access to the Ledger device
         const transport = await (0, _hwTransportWebhidDefault.default).create();
-        // Define APDU command parameters
-        const cla = 0xE0; // Class byte for Ledger Monero app
-        const ins = 0x46; // INS_DERIVE_SUBADDRESS_PUBLIC_KEY
-        const p1 = 0x00; // First parameter
-        const p2 = 0x00; // Second parameter
-        // Derivation path: 44'/128'/0'/0/0
-        const derivationPath = [
-            0x8000002c,
-            0x80000080,
-            0x80000000,
-            0x00000000,
-            0x00000000
-        ];
-        const data = serializeDerivationPath(derivationPath);
-        console.log("Serialized Derivation Path:", data);
-        // Send the APDU command to the Ledger device
-        const response = await transport.send(cla, ins, p1, p2, data);
-        // Listen to Ledger logs for debugging
-        (0, _logs.listen)((log)=>console.log(log));
-        //console.log("Monero Address Response:", response);
-        if (response.length > 2) {
-            const statusCode = response.slice(-2); // Last 2 bytes are the status word
-            if (statusCode[0] === 0x90 && statusCode[1] === 0x00) console.log("Success:", response);
-            else console.error("Error with status code:", statusCode);
+        console.log("Device connected:", transport);
+        console.log("Device Model:", transport.deviceModel);
+        console.log("Device Model ID:", transport.deviceModel ? transport.deviceModel.id : "Not Available");
+        // Define the Get Device Version APDU command
+        const cla = 0x00; // Class byte
+        const ins = 0x01; // Instruction byte for Get Device Version
+        const p1 = 0x00; // Parameter 1
+        const p2 = 0x00; // Parameter 2
+        const data = new Uint8Array([]); // No data needed
+        // Send the command to the Ledger device
+        /* const response = await transport.send(cla, ins, p1, p2, data);
+
+        // Process the response
+        console.log("Device Response:", response.deviceModel.id);
+        console.log("Device Model:", response.deviceModel);
+        console.log("Device Model ID:", response.deviceModel ? response.deviceModel.id : 'Not Available'); */ const response = "";
+        try {
+            const message = {
+                operationEventMsg: transport.deviceModel.id
+            };
+            console.log("Sending message:", message);
+            app.ports.receiveMessageFromJs.send(message);
+        } catch (error) {
+            const errorMessage = {
+                Err: error.message
+            };
+            console.log("Sending error message:", errorMessage);
+            app.ports.receiveMessageFromJs.send(errorMessage);
         }
     } catch (error) {
-        console.error("Error getting Monero address:", error);
+        console.error("Error:", error);
     }
 }
-// Helper function to serialize the derivation path
-function serializeDerivationPath(path) {
-    const buffer = new ArrayBuffer(1 + path.length * 4); // 1 byte for path length + 4 bytes for each path element
-    const dataView = new DataView(buffer);
-    dataView.setUint8(0, path.length); // First byte: path length
-    path.forEach((element, index)=>{
-        dataView.setUint32(1 + index * 4, element);
-    });
-    return new Uint8Array(buffer);
-}
-function sum(a, b) {
-    return a + b;
-}
 
-},{"core-js/modules/esnext.map.group-by.js":"3AR1K","core-js/modules/esnext.symbol.dispose.js":"b9ez5","core-js/modules/web.immediate.js":"49tUX","@ledgerhq/logs":"i4OI0","@ledgerhq/hw-transport-webhid":"8O295","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"X1LcC":[function(require,module,exports) {
+},{"@ledgerhq/hw-transport-webhid":"8O295","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"X1LcC":[function(require,module,exports) {
 $(window).on("scroll", function() {
     if ($(window).scrollTop() > 50) {
         $("div.nav-section-above800px").addClass("headeronscrolldown");
