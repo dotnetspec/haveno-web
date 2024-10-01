@@ -2042,20 +2042,6 @@
     lightningcss "^1.22.1"
     nullthrows "^1.1.1"
 
-"@parcel/transformer-elm@2.12.0":
-  version "2.12.0"
-  resolved "https://registry.yarnpkg.com/@parcel/transformer-elm/-/transformer-elm-2.12.0.tgz#a9dc2a56f27a83061ae736cc0ae980199ca51a8b"
-  integrity sha512-qqVTsP860FghYTLBrJkrFKD7qbNUq/EqUCofFKLWgWSrMXfzTmsNwMCOStTF4NyclLWcC9KBVjNU+fGS5I519Q==
-  dependencies:
-    "@parcel/diagnostic" "2.12.0"
-    "@parcel/plugin" "2.12.0"
-    command-exists "^1.2.8"
-    cross-spawn "^7.0.3"
-    elm-hot "^1.1.5"
-    node-elm-compiler "^5.0.5"
-    nullthrows "^1.1.1"
-    terser "^5.14.2"
-
 "@parcel/transformer-html@2.12.0":
   version "2.12.0"
   resolved "https://registry.yarnpkg.com/@parcel/transformer-html/-/transformer-html-2.12.0.tgz#8681b089e2b20c5fda1c966cefb8de4d8fb2ce80"
@@ -3942,11 +3928,6 @@ elm-esm@1.1.4:
   integrity sha512-dGWDtgsdDrhn3GFl/uT6Yt5DIBgnvOmakLNl6brkoYqb7i8mQ/beHoR+emx3ux4M4sq3GpRfRvzMoiRHVcaWKw==
   dependencies:
     which "^2.0.2"
-
-elm-hot@^1.1.5:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/elm-hot/-/elm-hot-1.1.6.tgz#93e3962b40670e65f0a3640951b3add2702bfd0e"
-  integrity sha512-zYZJlfs7Gt4BdjA+D+857K+XAWzwwySJmXCgFpHW1dIEfaHSZCIPYPf7/jinZBLfKRkOAlKzI32AA84DY50g7Q==
 
 elm-spec-core@^8.1.1:
   version "8.1.1"
@@ -5857,7 +5838,7 @@ node-addon-api@^7.0.0:
   resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-7.1.1.tgz#1aba6693b0f255258a049d621329329322aad558"
   integrity sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==
 
-node-elm-compiler@5.0.6, node-elm-compiler@^5.0.5, node-elm-compiler@^5.0.6:
+node-elm-compiler@5.0.6, node-elm-compiler@^5.0.6:
   version "5.0.6"
   resolved "https://registry.yarnpkg.com/node-elm-compiler/-/node-elm-compiler-5.0.6.tgz#d4a6e6c9d9a26dba4211ccd2aeae7d5e34057f0c"
   integrity sha512-DWTRQR8b54rvschcZRREdsz7K84lnS8A6YJu8du3QLQ8f204SJbyTaA6NzYYbfUG97OTRKRv/0KZl82cTfpLhA==
@@ -7237,7 +7218,7 @@ term-size@^2.2.1:
   resolved "https://registry.yarnpkg.com/term-size/-/term-size-2.2.1.tgz#2a6a54840432c2fb6320fea0f415531e90189f54"
   integrity sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==
 
-terser@^5.10.0, terser@^5.14.2, terser@^5.17.4:
+terser@^5.10.0, terser@^5.17.4:
   version "5.31.6"
   resolved "https://registry.yarnpkg.com/terser/-/terser-5.31.6.tgz#c63858a0f0703988d0266a82fcbf2d7ba76422b1"
   integrity sha512-PQ4DAriWzKj+qgehQ7LK5bQqCFNMmlhjR2PFFLuqGCpuCAauxemVBWwWOxo3UIwWQx8+Pr61Df++r76wDmkQBg==
