@@ -36,11 +36,11 @@
     "core-js": "^3.38.1",
     "cors": "^2.8.5",
     "elm-spec-runner": "^2.5.1",
-    "esbuild": "^0.23.1",
     "grpc-web": "^1.5.0",
     "mime": "^3.0.0"
   },
   "devDependencies": {
+    "@parcel/transformer-elm": "2.12.0",
     "buffer": "^6.0.3",
     "elm": "^0.19.1-5",
     "husky": "^9.1.4",
