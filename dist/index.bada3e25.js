@@ -23874,22 +23874,22 @@ function isPathNormal(path) {
     return false;
 }
 
-},{"4f9d6f069b552aa3":"bwvMq","bitcoinjs-lib":"cl7fJ","tiny-secp256k1":"aaqVm","./bip32":"hSMer","./buffertools":"fvT7D","./newops/accounttype":"iMehs","./newops/policy":"jcnpd","./newops/psbtExtractor":"468CX","./newops/psbtFinalizer":"82GTK","./newops/psbtv2":"hOmf5","./serializeTransaction":"c5bE0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bwvMq":[function(require,module,exports) {
+},{"4f9d6f069b552aa3":"fCgem","bitcoinjs-lib":"cl7fJ","tiny-secp256k1":"aaqVm","./bip32":"hSMer","./buffertools":"fvT7D","./newops/accounttype":"iMehs","./newops/policy":"jcnpd","./newops/psbtExtractor":"468CX","./newops/psbtFinalizer":"82GTK","./newops/psbtv2":"hOmf5","./serializeTransaction":"c5bE0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fCgem":[function(require,module,exports) {
 /*!
  * The buffer module from node.js, for the browser.
  *
  * @author   Feross Aboukhadijeh <https://feross.org>
  * @license  MIT
  */ /* eslint-disable no-proto */ "use strict";
-var base64 = require("c0c4ccd62345e942");
-var ieee754 = require("17af44d17d72d12");
-var customInspectSymbol = typeof Symbol === "function" && typeof Symbol["for"] === "function" // eslint-disable-line dot-notation
+const base64 = require("9c62938f1dccc73c");
+const ieee754 = require("aceacb6a4531a9d2");
+const customInspectSymbol = typeof Symbol === "function" && typeof Symbol["for"] === "function" // eslint-disable-line dot-notation
  ? Symbol["for"]("nodejs.util.inspect.custom") // eslint-disable-line dot-notation
  : null;
 exports.Buffer = Buffer;
 exports.SlowBuffer = SlowBuffer;
 exports.INSPECT_MAX_BYTES = 50;
-var K_MAX_LENGTH = 0x7fffffff;
+const K_MAX_LENGTH = 0x7fffffff;
 exports.kMaxLength = K_MAX_LENGTH;
 /**
  * If `Buffer.TYPED_ARRAY_SUPPORT`:
@@ -23909,8 +23909,8 @@ if (!Buffer.TYPED_ARRAY_SUPPORT && typeof console !== "undefined" && typeof cons
 function typedArraySupport() {
     // Can typed array instances can be augmented?
     try {
-        var arr = new Uint8Array(1);
-        var proto = {
+        const arr = new Uint8Array(1);
+        const proto = {
             foo: function() {
                 return 42;
             }
@@ -23939,7 +23939,7 @@ Object.defineProperty(Buffer.prototype, "offset", {
 function createBuffer(length) {
     if (length > K_MAX_LENGTH) throw new RangeError('The value "' + length + '" is invalid for option "size"');
     // Return an augmented `Uint8Array` instance
-    var buf = new Uint8Array(length);
+    const buf = new Uint8Array(length);
     Object.setPrototypeOf(buf, Buffer.prototype);
     return buf;
 }
@@ -23968,9 +23968,9 @@ function from(value, encodingOrOffset, length) {
     if (isInstance(value, ArrayBuffer) || value && isInstance(value.buffer, ArrayBuffer)) return fromArrayBuffer(value, encodingOrOffset, length);
     if (typeof SharedArrayBuffer !== "undefined" && (isInstance(value, SharedArrayBuffer) || value && isInstance(value.buffer, SharedArrayBuffer))) return fromArrayBuffer(value, encodingOrOffset, length);
     if (typeof value === "number") throw new TypeError('The "value" argument must not be of type number. Received type number');
-    var valueOf = value.valueOf && value.valueOf();
+    const valueOf = value.valueOf && value.valueOf();
     if (valueOf != null && valueOf !== value) return Buffer.from(valueOf, encodingOrOffset, length);
-    var b = fromObject(value);
+    const b = fromObject(value);
     if (b) return b;
     if (typeof Symbol !== "undefined" && Symbol.toPrimitive != null && typeof value[Symbol.toPrimitive] === "function") return Buffer.from(value[Symbol.toPrimitive]("string"), encodingOrOffset, length);
     throw new TypeError("The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object. Received type " + typeof value);
@@ -24025,9 +24025,9 @@ function allocUnsafe(size) {
 function fromString(string, encoding) {
     if (typeof encoding !== "string" || encoding === "") encoding = "utf8";
     if (!Buffer.isEncoding(encoding)) throw new TypeError("Unknown encoding: " + encoding);
-    var length = byteLength(string, encoding) | 0;
-    var buf = createBuffer(length);
-    var actual = buf.write(string, encoding);
+    const length = byteLength(string, encoding) | 0;
+    let buf = createBuffer(length);
+    const actual = buf.write(string, encoding);
     if (actual !== length) // Writing a hex string, for example, that contains invalid characters will
     // cause everything after the first invalid character to be ignored. (e.g.
     // 'abxxcd' will be treated as 'ab')
@@ -24035,14 +24035,14 @@ function fromString(string, encoding) {
     return buf;
 }
 function fromArrayLike(array) {
-    var length = array.length < 0 ? 0 : checked(array.length) | 0;
-    var buf = createBuffer(length);
-    for(var i = 0; i < length; i += 1)buf[i] = array[i] & 255;
+    const length = array.length < 0 ? 0 : checked(array.length) | 0;
+    const buf = createBuffer(length);
+    for(let i = 0; i < length; i += 1)buf[i] = array[i] & 255;
     return buf;
 }
 function fromArrayView(arrayView) {
     if (isInstance(arrayView, Uint8Array)) {
-        var copy = new Uint8Array(arrayView);
+        const copy = new Uint8Array(arrayView);
         return fromArrayBuffer(copy.buffer, copy.byteOffset, copy.byteLength);
     }
     return fromArrayLike(arrayView);
@@ -24050,7 +24050,7 @@ function fromArrayView(arrayView) {
 function fromArrayBuffer(array, byteOffset, length) {
     if (byteOffset < 0 || array.byteLength < byteOffset) throw new RangeError('"offset" is outside of buffer bounds');
     if (array.byteLength < byteOffset + (length || 0)) throw new RangeError('"length" is outside of buffer bounds');
-    var buf;
+    let buf;
     if (byteOffset === undefined && length === undefined) buf = new Uint8Array(array);
     else if (length === undefined) buf = new Uint8Array(array, byteOffset);
     else buf = new Uint8Array(array, byteOffset, length);
@@ -24060,8 +24060,8 @@ function fromArrayBuffer(array, byteOffset, length) {
 }
 function fromObject(obj) {
     if (Buffer.isBuffer(obj)) {
-        var len = checked(obj.length) | 0;
-        var buf = createBuffer(len);
+        const len = checked(obj.length) | 0;
+        const buf = createBuffer(len);
         if (buf.length === 0) return buf;
         obj.copy(buf, 0, 0, len);
         return buf;
@@ -24091,9 +24091,9 @@ Buffer.compare = function compare(a, b) {
     if (isInstance(b, Uint8Array)) b = Buffer.from(b, b.offset, b.byteLength);
     if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) throw new TypeError('The "buf1", "buf2" arguments must be one of type Buffer or Uint8Array');
     if (a === b) return 0;
-    var x = a.length;
-    var y = b.length;
-    for(var i = 0, len = Math.min(x, y); i < len; ++i)if (a[i] !== b[i]) {
+    let x = a.length;
+    let y = b.length;
+    for(let i = 0, len = Math.min(x, y); i < len; ++i)if (a[i] !== b[i]) {
         x = a[i];
         y = b[i];
         break;
@@ -24123,18 +24123,20 @@ Buffer.isEncoding = function isEncoding(encoding) {
 Buffer.concat = function concat(list, length) {
     if (!Array.isArray(list)) throw new TypeError('"list" argument must be an Array of Buffers');
     if (list.length === 0) return Buffer.alloc(0);
-    var i;
+    let i;
     if (length === undefined) {
         length = 0;
         for(i = 0; i < list.length; ++i)length += list[i].length;
     }
-    var buffer = Buffer.allocUnsafe(length);
-    var pos = 0;
+    const buffer = Buffer.allocUnsafe(length);
+    let pos = 0;
     for(i = 0; i < list.length; ++i){
-        var buf = list[i];
+        let buf = list[i];
         if (isInstance(buf, Uint8Array)) {
-            if (pos + buf.length > buffer.length) Buffer.from(buf).copy(buffer, pos);
-            else Uint8Array.prototype.set.call(buffer, buf, pos);
+            if (pos + buf.length > buffer.length) {
+                if (!Buffer.isBuffer(buf)) buf = Buffer.from(buf);
+                buf.copy(buffer, pos);
+            } else Uint8Array.prototype.set.call(buffer, buf, pos);
         } else if (!Buffer.isBuffer(buf)) throw new TypeError('"list" argument must be an Array of Buffers');
         else buf.copy(buffer, pos);
         pos += buf.length;
@@ -24145,11 +24147,11 @@ function byteLength(string, encoding) {
     if (Buffer.isBuffer(string)) return string.length;
     if (ArrayBuffer.isView(string) || isInstance(string, ArrayBuffer)) return string.byteLength;
     if (typeof string !== "string") throw new TypeError('The "string" argument must be one of type string, Buffer, or ArrayBuffer. Received type ' + typeof string);
-    var len = string.length;
-    var mustMatch = arguments.length > 2 && arguments[2] === true;
+    const len = string.length;
+    const mustMatch = arguments.length > 2 && arguments[2] === true;
     if (!mustMatch && len === 0) return 0;
     // Use a for loop to avoid recursion
-    var loweredCase = false;
+    let loweredCase = false;
     for(;;)switch(encoding){
         case "ascii":
         case "latin1":
@@ -24176,7 +24178,7 @@ function byteLength(string, encoding) {
 }
 Buffer.byteLength = byteLength;
 function slowToString(encoding, start, end) {
-    var loweredCase = false;
+    let loweredCase = false;
     // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
     // property of a typed array.
     // This behaves neither like String nor Uint8Array in that we set start/end
@@ -24226,29 +24228,29 @@ function slowToString(encoding, start, end) {
 // See: https://github.com/feross/buffer/issues/154
 Buffer.prototype._isBuffer = true;
 function swap(b, n, m) {
-    var i = b[n];
+    const i = b[n];
     b[n] = b[m];
     b[m] = i;
 }
 Buffer.prototype.swap16 = function swap16() {
-    var len = this.length;
+    const len = this.length;
     if (len % 2 !== 0) throw new RangeError("Buffer size must be a multiple of 16-bits");
-    for(var i = 0; i < len; i += 2)swap(this, i, i + 1);
+    for(let i = 0; i < len; i += 2)swap(this, i, i + 1);
     return this;
 };
 Buffer.prototype.swap32 = function swap32() {
-    var len = this.length;
+    const len = this.length;
     if (len % 4 !== 0) throw new RangeError("Buffer size must be a multiple of 32-bits");
-    for(var i = 0; i < len; i += 4){
+    for(let i = 0; i < len; i += 4){
         swap(this, i, i + 3);
         swap(this, i + 1, i + 2);
     }
     return this;
 };
 Buffer.prototype.swap64 = function swap64() {
-    var len = this.length;
+    const len = this.length;
     if (len % 8 !== 0) throw new RangeError("Buffer size must be a multiple of 64-bits");
-    for(var i = 0; i < len; i += 8){
+    for(let i = 0; i < len; i += 8){
         swap(this, i, i + 7);
         swap(this, i + 1, i + 6);
         swap(this, i + 2, i + 5);
@@ -24257,7 +24259,7 @@ Buffer.prototype.swap64 = function swap64() {
     return this;
 };
 Buffer.prototype.toString = function toString() {
-    var length = this.length;
+    const length = this.length;
     if (length === 0) return "";
     if (arguments.length === 0) return utf8Slice(this, 0, length);
     return slowToString.apply(this, arguments);
@@ -24269,8 +24271,8 @@ Buffer.prototype.equals = function equals(b) {
     return Buffer.compare(this, b) === 0;
 };
 Buffer.prototype.inspect = function inspect() {
-    var str = "";
-    var max = exports.INSPECT_MAX_BYTES;
+    let str = "";
+    const max = exports.INSPECT_MAX_BYTES;
     str = this.toString("hex", 0, max).replace(/(.{2})/g, "$1 ").trim();
     if (this.length > max) str += " ... ";
     return "<Buffer " + str + ">";
@@ -24292,12 +24294,12 @@ Buffer.prototype.compare = function compare(target, start, end, thisStart, thisE
     thisStart >>>= 0;
     thisEnd >>>= 0;
     if (this === target) return 0;
-    var x = thisEnd - thisStart;
-    var y = end - start;
-    var len = Math.min(x, y);
-    var thisCopy = this.slice(thisStart, thisEnd);
-    var targetCopy = target.slice(start, end);
-    for(var i = 0; i < len; ++i)if (thisCopy[i] !== targetCopy[i]) {
+    let x = thisEnd - thisStart;
+    let y = end - start;
+    const len = Math.min(x, y);
+    const thisCopy = this.slice(thisStart, thisEnd);
+    const targetCopy = target.slice(start, end);
+    for(let i = 0; i < len; ++i)if (thisCopy[i] !== targetCopy[i]) {
         x = thisCopy[i];
         y = targetCopy[i];
         break;
@@ -24358,9 +24360,9 @@ function bidirectionalIndexOf(buffer, val, byteOffset, encoding, dir) {
     throw new TypeError("val must be string, number or Buffer");
 }
 function arrayIndexOf(arr, val, byteOffset, encoding, dir) {
-    var indexSize = 1;
-    var arrLength = arr.length;
-    var valLength = val.length;
+    let indexSize = 1;
+    let arrLength = arr.length;
+    let valLength = val.length;
     if (encoding !== undefined) {
         encoding = String(encoding).toLowerCase();
         if (encoding === "ucs2" || encoding === "ucs-2" || encoding === "utf16le" || encoding === "utf-16le") {
@@ -24375,9 +24377,9 @@ function arrayIndexOf(arr, val, byteOffset, encoding, dir) {
         if (indexSize === 1) return buf[i];
         else return buf.readUInt16BE(i * indexSize);
     }
-    var i;
+    let i;
     if (dir) {
-        var foundIndex = -1;
+        let foundIndex = -1;
         for(i = byteOffset; i < arrLength; i++)if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
             if (foundIndex === -1) foundIndex = i;
             if (i - foundIndex + 1 === valLength) return foundIndex * indexSize;
@@ -24388,8 +24390,8 @@ function arrayIndexOf(arr, val, byteOffset, encoding, dir) {
     } else {
         if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength;
         for(i = byteOffset; i >= 0; i--){
-            var found = true;
-            for(var j = 0; j < valLength; j++)if (read(arr, i + j) !== read(val, j)) {
+            let found = true;
+            for(let j = 0; j < valLength; j++)if (read(arr, i + j) !== read(val, j)) {
                 found = false;
                 break;
             }
@@ -24409,16 +24411,17 @@ Buffer.prototype.lastIndexOf = function lastIndexOf(val, byteOffset, encoding) {
 };
 function hexWrite(buf, string, offset, length) {
     offset = Number(offset) || 0;
-    var remaining = buf.length - offset;
+    const remaining = buf.length - offset;
     if (!length) length = remaining;
     else {
         length = Number(length);
         if (length > remaining) length = remaining;
     }
-    var strLen = string.length;
+    const strLen = string.length;
     if (length > strLen / 2) length = strLen / 2;
-    for(var i = 0; i < length; ++i){
-        var parsed = parseInt(string.substr(i * 2, 2), 16);
+    let i;
+    for(i = 0; i < length; ++i){
+        const parsed = parseInt(string.substr(i * 2, 2), 16);
         if (numberIsNaN(parsed)) return i;
         buf[offset + i] = parsed;
     }
@@ -24458,11 +24461,11 @@ Buffer.prototype.write = function write(string, offset, length, encoding) {
             length = undefined;
         }
     } else throw new Error("Buffer.write(string, encoding, offset[, length]) is no longer supported");
-    var remaining = this.length - offset;
+    const remaining = this.length - offset;
     if (length === undefined || length > remaining) length = remaining;
     if (string.length > 0 && (length < 0 || offset < 0) || offset > this.length) throw new RangeError("Attempt to write outside buffer bounds");
     if (!encoding) encoding = "utf8";
-    var loweredCase = false;
+    let loweredCase = false;
     for(;;)switch(encoding){
         case "hex":
             return hexWrite(this, string, offset, length);
@@ -24499,14 +24502,14 @@ function base64Slice(buf, start, end) {
 }
 function utf8Slice(buf, start, end) {
     end = Math.min(buf.length, end);
-    var res = [];
-    var i = start;
+    const res = [];
+    let i = start;
     while(i < end){
-        var firstByte = buf[i];
-        var codePoint = null;
-        var bytesPerSequence = firstByte > 0xEF ? 4 : firstByte > 0xDF ? 3 : firstByte > 0xBF ? 2 : 1;
+        const firstByte = buf[i];
+        let codePoint = null;
+        let bytesPerSequence = firstByte > 0xEF ? 4 : firstByte > 0xDF ? 3 : firstByte > 0xBF ? 2 : 1;
         if (i + bytesPerSequence <= end) {
-            var secondByte, thirdByte, fourthByte, tempCodePoint;
+            let secondByte, thirdByte, fourthByte, tempCodePoint;
             switch(bytesPerSequence){
                 case 1:
                     if (firstByte < 0x80) codePoint = firstByte;
@@ -24555,46 +24558,46 @@ function utf8Slice(buf, start, end) {
 // Based on http://stackoverflow.com/a/22747272/680742, the browser with
 // the lowest limit is Chrome, with 0x10000 args.
 // We go 1 magnitude less, for safety
-var MAX_ARGUMENTS_LENGTH = 0x1000;
+const MAX_ARGUMENTS_LENGTH = 0x1000;
 function decodeCodePointsArray(codePoints) {
-    var len = codePoints.length;
+    const len = codePoints.length;
     if (len <= MAX_ARGUMENTS_LENGTH) return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
     ;
     // Decode in chunks to avoid "call stack size exceeded".
-    var res = "";
-    var i = 0;
+    let res = "";
+    let i = 0;
     while(i < len)res += String.fromCharCode.apply(String, codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH));
     return res;
 }
 function asciiSlice(buf, start, end) {
-    var ret = "";
+    let ret = "";
     end = Math.min(buf.length, end);
-    for(var i = start; i < end; ++i)ret += String.fromCharCode(buf[i] & 0x7F);
+    for(let i = start; i < end; ++i)ret += String.fromCharCode(buf[i] & 0x7F);
     return ret;
 }
 function latin1Slice(buf, start, end) {
-    var ret = "";
+    let ret = "";
     end = Math.min(buf.length, end);
-    for(var i = start; i < end; ++i)ret += String.fromCharCode(buf[i]);
+    for(let i = start; i < end; ++i)ret += String.fromCharCode(buf[i]);
     return ret;
 }
 function hexSlice(buf, start, end) {
-    var len = buf.length;
+    const len = buf.length;
     if (!start || start < 0) start = 0;
     if (!end || end < 0 || end > len) end = len;
-    var out = "";
-    for(var i = start; i < end; ++i)out += hexSliceLookupTable[buf[i]];
+    let out = "";
+    for(let i = start; i < end; ++i)out += hexSliceLookupTable[buf[i]];
     return out;
 }
 function utf16leSlice(buf, start, end) {
-    var bytes = buf.slice(start, end);
-    var res = "";
+    const bytes = buf.slice(start, end);
+    let res = "";
     // If bytes.length is odd, the last 8 bits must be ignored (same as node.js)
-    for(var i = 0; i < bytes.length - 1; i += 2)res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256);
+    for(let i = 0; i < bytes.length - 1; i += 2)res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256);
     return res;
 }
 Buffer.prototype.slice = function slice(start, end) {
-    var len = this.length;
+    const len = this.length;
     start = ~~start;
     end = end === undefined ? len : ~~end;
     if (start < 0) {
@@ -24606,7 +24609,7 @@ Buffer.prototype.slice = function slice(start, end) {
         if (end < 0) end = 0;
     } else if (end > len) end = len;
     if (end < start) end = start;
-    var newBuf = this.subarray(start, end);
+    const newBuf = this.subarray(start, end);
     // Return an augmented `Uint8Array` instance
     Object.setPrototypeOf(newBuf, Buffer.prototype);
     return newBuf;
@@ -24621,9 +24624,9 @@ Buffer.prototype.readUintLE = Buffer.prototype.readUIntLE = function readUIntLE(
     offset = offset >>> 0;
     byteLength = byteLength >>> 0;
     if (!noAssert) checkOffset(offset, byteLength, this.length);
-    var val = this[offset];
-    var mul = 1;
-    var i = 0;
+    let val = this[offset];
+    let mul = 1;
+    let i = 0;
     while(++i < byteLength && (mul *= 0x100))val += this[offset + i] * mul;
     return val;
 };
@@ -24631,8 +24634,8 @@ Buffer.prototype.readUintBE = Buffer.prototype.readUIntBE = function readUIntBE(
     offset = offset >>> 0;
     byteLength = byteLength >>> 0;
     if (!noAssert) checkOffset(offset, byteLength, this.length);
-    var val = this[offset + --byteLength];
-    var mul = 1;
+    let val = this[offset + --byteLength];
+    let mul = 1;
     while(byteLength > 0 && (mul *= 0x100))val += this[offset + --byteLength] * mul;
     return val;
 };
@@ -24661,13 +24664,33 @@ Buffer.prototype.readUint32BE = Buffer.prototype.readUInt32BE = function readUIn
     if (!noAssert) checkOffset(offset, 4, this.length);
     return this[offset] * 0x1000000 + (this[offset + 1] << 16 | this[offset + 2] << 8 | this[offset + 3]);
 };
+Buffer.prototype.readBigUInt64LE = defineBigIntMethod(function readBigUInt64LE(offset) {
+    offset = offset >>> 0;
+    validateNumber(offset, "offset");
+    const first = this[offset];
+    const last = this[offset + 7];
+    if (first === undefined || last === undefined) boundsError(offset, this.length - 8);
+    const lo = first + this[++offset] * 256 + this[++offset] * 2 ** 16 + this[++offset] * 2 ** 24;
+    const hi = this[++offset] + this[++offset] * 256 + this[++offset] * 2 ** 16 + last * 2 ** 24;
+    return BigInt(lo) + (BigInt(hi) << BigInt(32));
+});
+Buffer.prototype.readBigUInt64BE = defineBigIntMethod(function readBigUInt64BE(offset) {
+    offset = offset >>> 0;
+    validateNumber(offset, "offset");
+    const first = this[offset];
+    const last = this[offset + 7];
+    if (first === undefined || last === undefined) boundsError(offset, this.length - 8);
+    const hi = first * 2 ** 24 + this[++offset] * 2 ** 16 + this[++offset] * 256 + this[++offset];
+    const lo = this[++offset] * 2 ** 24 + this[++offset] * 2 ** 16 + this[++offset] * 256 + last;
+    return (BigInt(hi) << BigInt(32)) + BigInt(lo);
+});
 Buffer.prototype.readIntLE = function readIntLE(offset, byteLength, noAssert) {
     offset = offset >>> 0;
     byteLength = byteLength >>> 0;
     if (!noAssert) checkOffset(offset, byteLength, this.length);
-    var val = this[offset];
-    var mul = 1;
-    var i = 0;
+    let val = this[offset];
+    let mul = 1;
+    let i = 0;
     while(++i < byteLength && (mul *= 0x100))val += this[offset + i] * mul;
     mul *= 0x80;
     if (val >= mul) val -= Math.pow(2, 8 * byteLength);
@@ -24677,9 +24700,9 @@ Buffer.prototype.readIntBE = function readIntBE(offset, byteLength, noAssert) {
     offset = offset >>> 0;
     byteLength = byteLength >>> 0;
     if (!noAssert) checkOffset(offset, byteLength, this.length);
-    var i = byteLength;
-    var mul = 1;
-    var val = this[offset + --i];
+    let i = byteLength;
+    let mul = 1;
+    let val = this[offset + --i];
     while(i > 0 && (mul *= 0x100))val += this[offset + --i] * mul;
     mul *= 0x80;
     if (val >= mul) val -= Math.pow(2, 8 * byteLength);
@@ -24694,13 +24717,13 @@ Buffer.prototype.readInt8 = function readInt8(offset, noAssert) {
 Buffer.prototype.readInt16LE = function readInt16LE(offset, noAssert) {
     offset = offset >>> 0;
     if (!noAssert) checkOffset(offset, 2, this.length);
-    var val = this[offset] | this[offset + 1] << 8;
+    const val = this[offset] | this[offset + 1] << 8;
     return val & 0x8000 ? val | 0xFFFF0000 : val;
 };
 Buffer.prototype.readInt16BE = function readInt16BE(offset, noAssert) {
     offset = offset >>> 0;
     if (!noAssert) checkOffset(offset, 2, this.length);
-    var val = this[offset + 1] | this[offset] << 8;
+    const val = this[offset + 1] | this[offset] << 8;
     return val & 0x8000 ? val | 0xFFFF0000 : val;
 };
 Buffer.prototype.readInt32LE = function readInt32LE(offset, noAssert) {
@@ -24713,6 +24736,26 @@ Buffer.prototype.readInt32BE = function readInt32BE(offset, noAssert) {
     if (!noAssert) checkOffset(offset, 4, this.length);
     return this[offset] << 24 | this[offset + 1] << 16 | this[offset + 2] << 8 | this[offset + 3];
 };
+Buffer.prototype.readBigInt64LE = defineBigIntMethod(function readBigInt64LE(offset) {
+    offset = offset >>> 0;
+    validateNumber(offset, "offset");
+    const first = this[offset];
+    const last = this[offset + 7];
+    if (first === undefined || last === undefined) boundsError(offset, this.length - 8);
+    const val = this[offset + 4] + this[offset + 5] * 256 + this[offset + 6] * 2 ** 16 + (last << 24 // Overflow
+    );
+    return (BigInt(val) << BigInt(32)) + BigInt(first + this[++offset] * 256 + this[++offset] * 2 ** 16 + this[++offset] * 2 ** 24);
+});
+Buffer.prototype.readBigInt64BE = defineBigIntMethod(function readBigInt64BE(offset) {
+    offset = offset >>> 0;
+    validateNumber(offset, "offset");
+    const first = this[offset];
+    const last = this[offset + 7];
+    if (first === undefined || last === undefined) boundsError(offset, this.length - 8);
+    const val = (first << 24) + // Overflow
+    this[++offset] * 2 ** 16 + this[++offset] * 256 + this[++offset];
+    return (BigInt(val) << BigInt(32)) + BigInt(this[++offset] * 2 ** 24 + this[++offset] * 2 ** 16 + this[++offset] * 256 + last);
+});
 Buffer.prototype.readFloatLE = function readFloatLE(offset, noAssert) {
     offset = offset >>> 0;
     if (!noAssert) checkOffset(offset, 4, this.length);
@@ -24743,11 +24786,11 @@ Buffer.prototype.writeUintLE = Buffer.prototype.writeUIntLE = function writeUInt
     offset = offset >>> 0;
     byteLength = byteLength >>> 0;
     if (!noAssert) {
-        var maxBytes = Math.pow(2, 8 * byteLength) - 1;
+        const maxBytes = Math.pow(2, 8 * byteLength) - 1;
         checkInt(this, value, offset, byteLength, maxBytes, 0);
     }
-    var mul = 1;
-    var i = 0;
+    let mul = 1;
+    let i = 0;
     this[offset] = value & 0xFF;
     while(++i < byteLength && (mul *= 0x100))this[offset + i] = value / mul & 0xFF;
     return offset + byteLength;
@@ -24757,11 +24800,11 @@ Buffer.prototype.writeUintBE = Buffer.prototype.writeUIntBE = function writeUInt
     offset = offset >>> 0;
     byteLength = byteLength >>> 0;
     if (!noAssert) {
-        var maxBytes = Math.pow(2, 8 * byteLength) - 1;
+        const maxBytes = Math.pow(2, 8 * byteLength) - 1;
         checkInt(this, value, offset, byteLength, maxBytes, 0);
     }
-    var i = byteLength - 1;
-    var mul = 1;
+    let i = byteLength - 1;
+    let mul = 1;
     this[offset + i] = value & 0xFF;
     while(--i >= 0 && (mul *= 0x100))this[offset + i] = value / mul & 0xFF;
     return offset + byteLength;
@@ -24809,16 +24852,62 @@ Buffer.prototype.writeUint32BE = Buffer.prototype.writeUInt32BE = function write
     this[offset + 3] = value & 0xff;
     return offset + 4;
 };
+function wrtBigUInt64LE(buf, value, offset, min, max) {
+    checkIntBI(value, min, max, buf, offset, 7);
+    let lo = Number(value & BigInt(0xffffffff));
+    buf[offset++] = lo;
+    lo = lo >> 8;
+    buf[offset++] = lo;
+    lo = lo >> 8;
+    buf[offset++] = lo;
+    lo = lo >> 8;
+    buf[offset++] = lo;
+    let hi = Number(value >> BigInt(32) & BigInt(0xffffffff));
+    buf[offset++] = hi;
+    hi = hi >> 8;
+    buf[offset++] = hi;
+    hi = hi >> 8;
+    buf[offset++] = hi;
+    hi = hi >> 8;
+    buf[offset++] = hi;
+    return offset;
+}
+function wrtBigUInt64BE(buf, value, offset, min, max) {
+    checkIntBI(value, min, max, buf, offset, 7);
+    let lo = Number(value & BigInt(0xffffffff));
+    buf[offset + 7] = lo;
+    lo = lo >> 8;
+    buf[offset + 6] = lo;
+    lo = lo >> 8;
+    buf[offset + 5] = lo;
+    lo = lo >> 8;
+    buf[offset + 4] = lo;
+    let hi = Number(value >> BigInt(32) & BigInt(0xffffffff));
+    buf[offset + 3] = hi;
+    hi = hi >> 8;
+    buf[offset + 2] = hi;
+    hi = hi >> 8;
+    buf[offset + 1] = hi;
+    hi = hi >> 8;
+    buf[offset] = hi;
+    return offset + 8;
+}
+Buffer.prototype.writeBigUInt64LE = defineBigIntMethod(function writeBigUInt64LE(value, offset = 0) {
+    return wrtBigUInt64LE(this, value, offset, BigInt(0), BigInt("0xffffffffffffffff"));
+});
+Buffer.prototype.writeBigUInt64BE = defineBigIntMethod(function writeBigUInt64BE(value, offset = 0) {
+    return wrtBigUInt64BE(this, value, offset, BigInt(0), BigInt("0xffffffffffffffff"));
+});
 Buffer.prototype.writeIntLE = function writeIntLE(value, offset, byteLength, noAssert) {
     value = +value;
     offset = offset >>> 0;
     if (!noAssert) {
-        var limit = Math.pow(2, 8 * byteLength - 1);
+        const limit = Math.pow(2, 8 * byteLength - 1);
         checkInt(this, value, offset, byteLength, limit - 1, -limit);
     }
-    var i = 0;
-    var mul = 1;
-    var sub = 0;
+    let i = 0;
+    let mul = 1;
+    let sub = 0;
     this[offset] = value & 0xFF;
     while(++i < byteLength && (mul *= 0x100)){
         if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) sub = 1;
@@ -24830,12 +24919,12 @@ Buffer.prototype.writeIntBE = function writeIntBE(value, offset, byteLength, noA
     value = +value;
     offset = offset >>> 0;
     if (!noAssert) {
-        var limit = Math.pow(2, 8 * byteLength - 1);
+        const limit = Math.pow(2, 8 * byteLength - 1);
         checkInt(this, value, offset, byteLength, limit - 1, -limit);
     }
-    var i = byteLength - 1;
-    var mul = 1;
-    var sub = 0;
+    let i = byteLength - 1;
+    let mul = 1;
+    let sub = 0;
     this[offset + i] = value & 0xFF;
     while(--i >= 0 && (mul *= 0x100)){
         if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) sub = 1;
@@ -24888,6 +24977,12 @@ Buffer.prototype.writeInt32BE = function writeInt32BE(value, offset, noAssert) {
     this[offset + 3] = value & 0xff;
     return offset + 4;
 };
+Buffer.prototype.writeBigInt64LE = defineBigIntMethod(function writeBigInt64LE(value, offset = 0) {
+    return wrtBigUInt64LE(this, value, offset, -BigInt("0x8000000000000000"), BigInt("0x7fffffffffffffff"));
+});
+Buffer.prototype.writeBigInt64BE = defineBigIntMethod(function writeBigInt64BE(value, offset = 0) {
+    return wrtBigUInt64BE(this, value, offset, -BigInt("0x8000000000000000"), BigInt("0x7fffffffffffffff"));
+});
 function checkIEEE754(buf, value, offset, ext, max, min) {
     if (offset + ext > buf.length) throw new RangeError("Index out of range");
     if (offset < 0) throw new RangeError("Index out of range");
@@ -24936,7 +25031,7 @@ Buffer.prototype.copy = function copy(target, targetStart, start, end) {
     // Are we oob?
     if (end > this.length) end = this.length;
     if (target.length - targetStart < end - start) end = target.length - targetStart + start;
-    var len = end - start;
+    const len = end - start;
     if (this === target && typeof Uint8Array.prototype.copyWithin === "function") // Use built-in when available, missing from IE11
     this.copyWithin(targetStart, start, end);
     else Uint8Array.prototype.set.call(target, this.subarray(start, end), targetStart);
@@ -24960,7 +25055,7 @@ Buffer.prototype.fill = function fill(val, start, end, encoding) {
         if (encoding !== undefined && typeof encoding !== "string") throw new TypeError("encoding must be a string");
         if (typeof encoding === "string" && !Buffer.isEncoding(encoding)) throw new TypeError("Unknown encoding: " + encoding);
         if (val.length === 1) {
-            var code = val.charCodeAt(0);
+            const code = val.charCodeAt(0);
             if (encoding === "utf8" && code < 128 || encoding === "latin1") // Fast path: If `val` fits into a single byte, use that numeric value.
             val = code;
         }
@@ -24972,19 +25067,112 @@ Buffer.prototype.fill = function fill(val, start, end, encoding) {
     start = start >>> 0;
     end = end === undefined ? this.length : end >>> 0;
     if (!val) val = 0;
-    var i;
+    let i;
     if (typeof val === "number") for(i = start; i < end; ++i)this[i] = val;
     else {
-        var bytes = Buffer.isBuffer(val) ? val : Buffer.from(val, encoding);
-        var len = bytes.length;
+        const bytes = Buffer.isBuffer(val) ? val : Buffer.from(val, encoding);
+        const len = bytes.length;
         if (len === 0) throw new TypeError('The value "' + val + '" is invalid for argument "value"');
         for(i = 0; i < end - start; ++i)this[i + start] = bytes[i % len];
     }
     return this;
 };
+// CUSTOM ERRORS
+// =============
+// Simplified versions from Node, changed for Buffer-only usage
+const errors = {};
+function E(sym, getMessage, Base) {
+    errors[sym] = class NodeError extends Base {
+        constructor(){
+            super();
+            Object.defineProperty(this, "message", {
+                value: getMessage.apply(this, arguments),
+                writable: true,
+                configurable: true
+            });
+            // Add the error code to the name to include it in the stack trace.
+            this.name = `${this.name} [${sym}]`;
+            // Access the stack to generate the error message including the error code
+            // from the name.
+            this.stack // eslint-disable-line no-unused-expressions
+            ;
+            // Reset the name to the actual name.
+            delete this.name;
+        }
+        get code() {
+            return sym;
+        }
+        set code(value) {
+            Object.defineProperty(this, "code", {
+                configurable: true,
+                enumerable: true,
+                value,
+                writable: true
+            });
+        }
+        toString() {
+            return `${this.name} [${sym}]: ${this.message}`;
+        }
+    };
+}
+E("ERR_BUFFER_OUT_OF_BOUNDS", function(name) {
+    if (name) return `${name} is outside of buffer bounds`;
+    return "Attempt to access memory outside buffer bounds";
+}, RangeError);
+E("ERR_INVALID_ARG_TYPE", function(name, actual) {
+    return `The "${name}" argument must be of type number. Received type ${typeof actual}`;
+}, TypeError);
+E("ERR_OUT_OF_RANGE", function(str, range, input) {
+    let msg = `The value of "${str}" is out of range.`;
+    let received = input;
+    if (Number.isInteger(input) && Math.abs(input) > 2 ** 32) received = addNumericalSeparator(String(input));
+    else if (typeof input === "bigint") {
+        received = String(input);
+        if (input > BigInt(2) ** BigInt(32) || input < -(BigInt(2) ** BigInt(32))) received = addNumericalSeparator(received);
+        received += "n";
+    }
+    msg += ` It must be ${range}. Received ${received}`;
+    return msg;
+}, RangeError);
+function addNumericalSeparator(val) {
+    let res = "";
+    let i = val.length;
+    const start = val[0] === "-" ? 1 : 0;
+    for(; i >= start + 4; i -= 3)res = `_${val.slice(i - 3, i)}${res}`;
+    return `${val.slice(0, i)}${res}`;
+}
+// CHECK FUNCTIONS
+// ===============
+function checkBounds(buf, offset, byteLength) {
+    validateNumber(offset, "offset");
+    if (buf[offset] === undefined || buf[offset + byteLength] === undefined) boundsError(offset, buf.length - (byteLength + 1));
+}
+function checkIntBI(value, min, max, buf, offset, byteLength) {
+    if (value > max || value < min) {
+        const n = typeof min === "bigint" ? "n" : "";
+        let range;
+        if (byteLength > 3) {
+            if (min === 0 || min === BigInt(0)) range = `>= 0${n} and < 2${n} ** ${(byteLength + 1) * 8}${n}`;
+            else range = `>= -(2${n} ** ${(byteLength + 1) * 8 - 1}${n}) and < 2 ** ` + `${(byteLength + 1) * 8 - 1}${n}`;
+        } else range = `>= ${min}${n} and <= ${max}${n}`;
+        throw new errors.ERR_OUT_OF_RANGE("value", range, value);
+    }
+    checkBounds(buf, offset, byteLength);
+}
+function validateNumber(value, name) {
+    if (typeof value !== "number") throw new errors.ERR_INVALID_ARG_TYPE(name, "number", value);
+}
+function boundsError(value, length, type) {
+    if (Math.floor(value) !== value) {
+        validateNumber(value, type);
+        throw new errors.ERR_OUT_OF_RANGE(type || "offset", "an integer", value);
+    }
+    if (length < 0) throw new errors.ERR_BUFFER_OUT_OF_BOUNDS();
+    throw new errors.ERR_OUT_OF_RANGE(type || "offset", `>= ${type ? 1 : 0} and <= ${length}`, value);
+}
 // HELPER FUNCTIONS
 // ================
-var INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g;
+const INVALID_BASE64_RE = /[^+/0-9A-Za-z-_]/g;
 function base64clean(str) {
     // Node takes equal signs as end of the Base64 encoding
     str = str.split("=")[0];
@@ -24998,11 +25186,11 @@ function base64clean(str) {
 }
 function utf8ToBytes(string, units) {
     units = units || Infinity;
-    var codePoint;
-    var length = string.length;
-    var leadSurrogate = null;
-    var bytes = [];
-    for(var i = 0; i < length; ++i){
+    let codePoint;
+    const length = string.length;
+    let leadSurrogate = null;
+    const bytes = [];
+    for(let i = 0; i < length; ++i){
         codePoint = string.charCodeAt(i);
         // is surrogate component
         if (codePoint > 0xD7FF && codePoint < 0xE000) {
@@ -25053,15 +25241,15 @@ function utf8ToBytes(string, units) {
     return bytes;
 }
 function asciiToBytes(str) {
-    var byteArray = [];
-    for(var i = 0; i < str.length; ++i)// Node's code seems to be doing this and not & 0x7F..
+    const byteArray = [];
+    for(let i = 0; i < str.length; ++i)// Node's code seems to be doing this and not & 0x7F..
     byteArray.push(str.charCodeAt(i) & 0xFF);
     return byteArray;
 }
 function utf16leToBytes(str, units) {
-    var c, hi, lo;
-    var byteArray = [];
-    for(var i = 0; i < str.length; ++i){
+    let c, hi, lo;
+    const byteArray = [];
+    for(let i = 0; i < str.length; ++i){
         if ((units -= 2) < 0) break;
         c = str.charCodeAt(i);
         hi = c >> 8;
@@ -25075,7 +25263,8 @@ function base64ToBytes(str) {
     return base64.toByteArray(base64clean(str));
 }
 function blitBuffer(src, dst, offset, length) {
-    for(var i = 0; i < length; ++i){
+    let i;
+    for(i = 0; i < length; ++i){
         if (i + offset >= dst.length || i >= src.length) break;
         dst[i + offset] = src[i];
     }
@@ -25094,17 +25283,24 @@ function numberIsNaN(obj) {
 }
 // Create lookup table for `toString('hex')`
 // See: https://github.com/feross/buffer/issues/219
-var hexSliceLookupTable = function() {
-    var alphabet = "0123456789abcdef";
-    var table = new Array(256);
-    for(var i = 0; i < 16; ++i){
-        var i16 = i * 16;
-        for(var j = 0; j < 16; ++j)table[i16 + j] = alphabet[i] + alphabet[j];
+const hexSliceLookupTable = function() {
+    const alphabet = "0123456789abcdef";
+    const table = new Array(256);
+    for(let i = 0; i < 16; ++i){
+        const i16 = i * 16;
+        for(let j = 0; j < 16; ++j)table[i16 + j] = alphabet[i] + alphabet[j];
     }
     return table;
 }();
+// Return not function with Error if BigInt not supported
+function defineBigIntMethod(fn) {
+    return typeof BigInt === "undefined" ? BufferBigIntNotDefined : fn;
+}
+function BufferBigIntNotDefined() {
+    throw new Error("BigInt not supported");
+}
 
-},{"c0c4ccd62345e942":"RRIdj","17af44d17d72d12":"dB87t"}],"RRIdj":[function(require,module,exports) {
+},{"9c62938f1dccc73c":"eIiSV","aceacb6a4531a9d2":"cO95r"}],"eIiSV":[function(require,module,exports) {
 "use strict";
 exports.byteLength = byteLength;
 exports.toByteArray = toByteArray;
@@ -25204,7 +25400,7 @@ function fromByteArray(uint8) {
     return parts.join("");
 }
 
-},{}],"dB87t":[function(require,module,exports) {
+},{}],"cO95r":[function(require,module,exports) {
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */ exports.read = function(buffer, offset, isLE, mLen, nBytes) {
     var e, m;
     var eLen = nBytes * 8 - mLen - 1;
@@ -25594,7 +25790,7 @@ function fromSeed(seed, network) {
 }
 exports.fromSeed = fromSeed;
 
-},{"42e5d43ee9aee513":"bwvMq","95952e8f0adda786":"26Ger","5bdc33e3f4886ee4":"d8uT8","94a4dbaa640b1aa9":"aaqVm","9a19d0b6b447724e":"86sQP","8f23340f049c623e":"89Dvm"}],"26Ger":[function(require,module,exports) {
+},{"42e5d43ee9aee513":"fCgem","95952e8f0adda786":"26Ger","5bdc33e3f4886ee4":"d8uT8","94a4dbaa640b1aa9":"aaqVm","9a19d0b6b447724e":"86sQP","8f23340f049c623e":"89Dvm"}],"26Ger":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -25915,7 +26111,7 @@ SafeBuffer.allocUnsafeSlow = function(size) {
     return buffer.SlowBuffer(size);
 };
 
-},{"7e0d6ecd698c3ca6":"bwvMq"}],"jXNWE":[function(require,module,exports) {
+},{"7e0d6ecd698c3ca6":"fCgem"}],"jXNWE":[function(require,module,exports) {
 exports = module.exports = require("68bb3bdae87803ec");
 exports.Stream = exports;
 exports.Readable = exports;
@@ -26848,7 +27044,7 @@ function indexOf(xs, x) {
     return -1;
 }
 
-},{"896ff8d56553f7a":"d5jf4","16782d660ac22e0c":"1VQLm","9a34f23fa53f83f7":"60BLS","fb95ecaa88342eae":"bwvMq","a4a723b7297c7152":"jhUEF","7a14cc1689b8c63e":"hf3P2","efa8155386cc4283":"YI8DF","994c984d08c7bbf2":"61BRN","8de60461b822641b":"aJlwj","19affa8ce41f090d":"bRL3M","f1c95f846e94e4eb":"kKNA3","6392acd10886f115":"3vmkr","830c56f840811f05":"k019Y","7451b8c4bf72370":"ak0YH"}],"1VQLm":[function(require,module,exports) {
+},{"896ff8d56553f7a":"d5jf4","16782d660ac22e0c":"1VQLm","9a34f23fa53f83f7":"60BLS","fb95ecaa88342eae":"fCgem","a4a723b7297c7152":"jhUEF","7a14cc1689b8c63e":"hf3P2","efa8155386cc4283":"YI8DF","994c984d08c7bbf2":"61BRN","8de60461b822641b":"aJlwj","19affa8ce41f090d":"bRL3M","f1c95f846e94e4eb":"kKNA3","6392acd10886f115":"3vmkr","830c56f840811f05":"k019Y","7451b8c4bf72370":"ak0YH"}],"1VQLm":[function(require,module,exports) {
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27455,7 +27651,7 @@ module.exports = /*#__PURE__*/ function() {
     return BufferList;
 }();
 
-},{"59f5d0111b7fa075":"bwvMq","eef6a677577349b8":"jhUEF"}],"YI8DF":[function(require,module,exports) {
+},{"59f5d0111b7fa075":"fCgem","eef6a677577349b8":"jhUEF"}],"YI8DF":[function(require,module,exports) {
 var process = require("4284522496af5dfb");
 "use strict";
 // undocumented cb() API, needed for core, not for public API
@@ -28331,7 +28527,7 @@ Writable.prototype._destroy = function(err, cb) {
     cb(err);
 };
 
-},{"f05a2a5a09d4d8b0":"d5jf4","dc51171b07b54af1":"j92NQ","44a3cc22ec64fcd3":"60BLS","de8f7fb7ccda8086":"bwvMq","acf48fb5d9dc6204":"YI8DF","9d146cd974da0f53":"61BRN","3c574b8881abcf86":"aJlwj","10dad555ffe77dde":"bRL3M","c5e7171d6f58d3c0":"kKNA3"}],"j92NQ":[function(require,module,exports) {
+},{"f05a2a5a09d4d8b0":"d5jf4","dc51171b07b54af1":"j92NQ","44a3cc22ec64fcd3":"60BLS","de8f7fb7ccda8086":"fCgem","acf48fb5d9dc6204":"YI8DF","9d146cd974da0f53":"61BRN","3c574b8881abcf86":"aJlwj","10dad555ffe77dde":"bRL3M","c5e7171d6f58d3c0":"kKNA3"}],"j92NQ":[function(require,module,exports) {
 /**
  * Module exports.
  */ var global = arguments[3];
@@ -29681,7 +29877,7 @@ function fn5(a, b, c, d, e, m, k, s) {
 }
 module.exports = RIPEMD160;
 
-},{"c813c8075bcf823e":"bwvMq","84928993e7c3934b":"bRL3M","4b3519823770a56d":"51qBP"}],"jkn7m":[function(require,module,exports) {
+},{"c813c8075bcf823e":"fCgem","84928993e7c3934b":"bRL3M","4b3519823770a56d":"51qBP"}],"jkn7m":[function(require,module,exports) {
 var exports = module.exports = function SHA(algorithm) {
     algorithm = algorithm.toLowerCase();
     var Algorithm = exports[algorithm];
@@ -31160,7 +31356,7 @@ module.exports = {
     verify
 };
 
-},{"995d7b11bd614984":"bwvMq","b5ae502c9c4825e7":"VopIn","4ecf11176bc2b9a1":"1NKsH","d64e7ab9ef7ce426":"fFC9R"}],"VopIn":[function(require,module,exports) {
+},{"995d7b11bd614984":"fCgem","b5ae502c9c4825e7":"VopIn","4ecf11176bc2b9a1":"1NKsH","d64e7ab9ef7ce426":"fFC9R"}],"VopIn":[function(require,module,exports) {
 (function(module1, exports) {
     "use strict";
     // Utils
@@ -38765,7 +38961,7 @@ function deterministicGenerateK(hash, x, checkSig, isPrivate, extraEntropy) {
 }
 module.exports = deterministicGenerateK;
 
-},{"aed508cc231766da":"bwvMq","6954d4e6c8944741":"k1utz"}],"86sQP":[function(require,module,exports) {
+},{"aed508cc231766da":"fCgem","6954d4e6c8944741":"k1utz"}],"86sQP":[function(require,module,exports) {
 var ERRORS = require("b6b8244aff228baf");
 var NATIVE = require("627493ef8c0ede79");
 // short-hand
@@ -39168,7 +39364,7 @@ for(var typeName in types)types[typeName].toJSON = (function(t) {
 }).bind(null, typeName);
 module.exports = types;
 
-},{"d58f6654640fbefb":"bwvMq","5dc3b5f7dd2c9307":"2i9Gd","98ebbf3663d2f194":"6yFEF"}],"89Dvm":[function(require,module,exports) {
+},{"d58f6654640fbefb":"fCgem","5dc3b5f7dd2c9307":"2i9Gd","98ebbf3663d2f194":"6yFEF"}],"89Dvm":[function(require,module,exports) {
 var Buffer = require("19b618fdd5466574").Buffer;
 var bs58check = require("d9f788be23573a8e");
 function decodeRaw(buffer, version) {
@@ -39211,7 +39407,7 @@ module.exports = {
     encodeRaw: encodeRaw
 };
 
-},{"19b618fdd5466574":"bwvMq","d9f788be23573a8e":"d8uT8"}],"2Me89":[function(require,module,exports) {
+},{"19b618fdd5466574":"fCgem","d9f788be23573a8e":"d8uT8"}],"2Me89":[function(require,module,exports) {
 var Buffer = require("1151eb098bb7a030").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -39325,7 +39521,7 @@ function toOutputScript(address, network) {
 }
 exports.toOutputScript = toOutputScript;
 
-},{"1151eb098bb7a030":"bwvMq","e5503de4f312d02f":"hpO0s","9d9899e083f04905":"g5Tn6","1f2ac8b3b271aea8":"28LFb","e26cacb94a21d4c1":"eFC2X","e06484115deaf226":"2C5n6","d7ce81ef0379eea5":"d8uT8","a3fa5ac1e947b3c8":"86sQP"}],"hpO0s":[function(require,module,exports) {
+},{"1151eb098bb7a030":"fCgem","e5503de4f312d02f":"hpO0s","9d9899e083f04905":"g5Tn6","1f2ac8b3b271aea8":"28LFb","e26cacb94a21d4c1":"eFC2X","e06484115deaf226":"2C5n6","d7ce81ef0379eea5":"d8uT8","a3fa5ac1e947b3c8":"86sQP"}],"hpO0s":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -39606,7 +39802,7 @@ exports.isCanonicalScriptSignature = isCanonicalScriptSignature;
 exports.number = scriptNumber;
 exports.signature = scriptSignature;
 
-},{"8c814422076f049b":"bwvMq","6964cf95aaccf14e":"dXm7r","aa6504b1b3c1222a":"cel67","9416e6598c14cc94":"eFC2X","bedd8de3c334506f":"kvzde","bbc05c7f790e84b0":"aaqVm","8b89b0b9dae24bd8":"8a51R","a87fe090b6f4d463":"86sQP","d2cdce37ffd194fe":"hfVdq","671f5ccde5643465":"66bxy"}],"dXm7r":[function(require,module,exports) {
+},{"8c814422076f049b":"fCgem","6964cf95aaccf14e":"dXm7r","aa6504b1b3c1222a":"cel67","9416e6598c14cc94":"eFC2X","bedd8de3c334506f":"kvzde","bbc05c7f790e84b0":"aaqVm","8b89b0b9dae24bd8":"8a51R","a87fe090b6f4d463":"86sQP","d2cdce37ffd194fe":"hfVdq","671f5ccde5643465":"66bxy"}],"dXm7r":[function(require,module,exports) {
 var Buffer = require("3e6b6f0a13264aa6").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -39655,7 +39851,7 @@ function encode(_number) {
 }
 exports.encode = encode;
 
-},{"3e6b6f0a13264aa6":"bwvMq"}],"cel67":[function(require,module,exports) {
+},{"3e6b6f0a13264aa6":"fCgem"}],"cel67":[function(require,module,exports) {
 var Buffer = require("9d0276df3a9f61d8").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -39722,7 +39918,7 @@ function encode(signature, hashType) {
 }
 exports.encode = encode;
 
-},{"9d0276df3a9f61d8":"bwvMq","2c36b22e1bc51145":"eFC2X","3c5b1c6bffbce407":"kvzde","4ac18855f31cc203":"86sQP"}],"eFC2X":[function(require,module,exports) {
+},{"9d0276df3a9f61d8":"fCgem","2c36b22e1bc51145":"eFC2X","3c5b1c6bffbce407":"kvzde","4ac18855f31cc203":"86sQP"}],"eFC2X":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -40309,7 +40505,7 @@ function p2pkh(a, opts) {
 }
 exports.p2pkh = p2pkh;
 
-},{"7cd63e6e4ad49018":"bwvMq","2ed83564aa1e3b7e":"4BCCF","93f088a32c181dff":"hpO0s","8faff36ab611fa24":"28LFb","a8c6c65f4f76d29b":"cHER6","6d855cc5eac5534b":"86sQP","6ae67344cd6217b2":"aaqVm","d9ed3806a3280851":"d8uT8"}],"4BCCF":[function(require,module,exports) {
+},{"7cd63e6e4ad49018":"fCgem","2ed83564aa1e3b7e":"4BCCF","93f088a32c181dff":"hpO0s","8faff36ab611fa24":"28LFb","a8c6c65f4f76d29b":"cHER6","6d855cc5eac5534b":"86sQP","6ae67344cd6217b2":"aaqVm","d9ed3806a3280851":"d8uT8"}],"4BCCF":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -40511,7 +40707,7 @@ function p2sh(a, opts) {
 }
 exports.p2sh = p2sh;
 
-},{"c6b571691afe0e89":"bwvMq","91194c2f7e31c985":"4BCCF","9002de76ada6b23c":"hpO0s","8f74fc4c7d847f80":"28LFb","de67a085acdb2528":"cHER6","e4b68fec44748056":"86sQP","ef6a72781420c06f":"d8uT8"}],"6H3XB":[function(require,module,exports) {
+},{"c6b571691afe0e89":"fCgem","91194c2f7e31c985":"4BCCF","9002de76ada6b23c":"hpO0s","8f74fc4c7d847f80":"28LFb","de67a085acdb2528":"cHER6","e4b68fec44748056":"86sQP","ef6a72781420c06f":"d8uT8"}],"6H3XB":[function(require,module,exports) {
 var Buffer = require("405049649d0ed172").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -40636,7 +40832,7 @@ function p2wpkh(a, opts) {
 }
 exports.p2wpkh = p2wpkh;
 
-},{"405049649d0ed172":"bwvMq","7d172418db599bc7":"4BCCF","487e81bda7841c55":"hpO0s","fe665ce0401f37da":"28LFb","6134b4e9abd36ea8":"cHER6","41319bf0aaba1a7b":"86sQP","665a4f6a3a31b45":"aaqVm","82b22dca455ebf20":"2C5n6"}],"2C5n6":[function(require,module,exports) {
+},{"405049649d0ed172":"fCgem","7d172418db599bc7":"4BCCF","487e81bda7841c55":"hpO0s","fe665ce0401f37da":"28LFb","6134b4e9abd36ea8":"cHER6","41319bf0aaba1a7b":"86sQP","665a4f6a3a31b45":"aaqVm","82b22dca455ebf20":"2C5n6"}],"2C5n6":[function(require,module,exports) {
 "use strict";
 var ALPHABET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
 // pre-compute lookup table
@@ -40940,7 +41136,7 @@ function p2wsh(a, opts) {
 }
 exports.p2wsh = p2wsh;
 
-},{"bb9f882c70e1b5bf":"bwvMq","d335bb5dae17dfa4":"4BCCF","2a1cc648109dcd25":"hpO0s","5c43b28c6434a577":"28LFb","fdce9f2206aeaf6d":"cHER6","4651e7474ce37c":"86sQP","e0e594c51eadafca":"aaqVm","a06364c18ec07c74":"2C5n6"}],"aiXsq":[function(require,module,exports) {
+},{"bb9f882c70e1b5bf":"fCgem","d335bb5dae17dfa4":"4BCCF","2a1cc648109dcd25":"hpO0s","5c43b28c6434a577":"28LFb","fdce9f2206aeaf6d":"cHER6","4651e7474ce37c":"86sQP","e0e594c51eadafca":"aaqVm","a06364c18ec07c74":"2C5n6"}],"aiXsq":[function(require,module,exports) {
 var Buffer = require("12045adc01a7b740").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -41045,7 +41241,7 @@ function makeRandom(options) {
 }
 exports.makeRandom = makeRandom;
 
-},{"12045adc01a7b740":"bwvMq","9bae410ccb22d4c7":"hpO0s","7f3010f45742cf71":"eFC2X","df55d08bce8c41be":"aaqVm","1ff233ec464df909":"8hjhE","52fc57226706ea61":"86sQP","7560f99ad921c0d5":"89Dvm"}],"8hjhE":[function(require,module,exports) {
+},{"12045adc01a7b740":"fCgem","9bae410ccb22d4c7":"hpO0s","7f3010f45742cf71":"eFC2X","df55d08bce8c41be":"aaqVm","1ff233ec464df909":"8hjhE","52fc57226706ea61":"86sQP","7560f99ad921c0d5":"89Dvm"}],"8hjhE":[function(require,module,exports) {
 var global = arguments[3];
 var process = require("9f5c61be6bd9c67a");
 "use strict";
@@ -41253,7 +41449,7 @@ function anyTxHasWitness(transactions) {
     return transactions instanceof Array && transactions.some((tx)=>typeof tx === "object" && tx.ins instanceof Array && tx.ins.some((input)=>typeof input === "object" && input.witness instanceof Array && input.witness.length > 0));
 }
 
-},{"fef6b6883393c515":"bwvMq","10eab07fce0d349f":"jR49q","af0c09a3af6e6266":"4BCCF","a511779c7da90ef7":"arhmj","23d107f566cf4d90":"eFC2X","f30799fa1cee4f50":"6C2pB","5623ba6035827161":"86sQP","83ddb0d1e8848c0f":"amF5b"}],"jR49q":[function(require,module,exports) {
+},{"fef6b6883393c515":"fCgem","10eab07fce0d349f":"jR49q","af0c09a3af6e6266":"4BCCF","a511779c7da90ef7":"arhmj","23d107f566cf4d90":"eFC2X","f30799fa1cee4f50":"6C2pB","5623ba6035827161":"86sQP","83ddb0d1e8848c0f":"amF5b"}],"jR49q":[function(require,module,exports) {
 var Buffer = require("f9c7c081959e55ca").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -41398,7 +41594,7 @@ exports.BufferWriter = BufferWriter;
 }
 exports.BufferReader = BufferReader;
 
-},{"f9c7c081959e55ca":"bwvMq","900ff40b113a19a8":"eFC2X","e5c27ab1ef4432da":"86sQP","701e1d136911cf67":"amF5b"}],"amF5b":[function(require,module,exports) {
+},{"f9c7c081959e55ca":"fCgem","900ff40b113a19a8":"eFC2X","e5c27ab1ef4432da":"86sQP","701e1d136911cf67":"amF5b"}],"amF5b":[function(require,module,exports) {
 "use strict";
 var Buffer = require("76b962a3a7f16e3a").Buffer;
 // Number.MAX_SAFE_INTEGER
@@ -41803,7 +41999,7 @@ Transaction.ADVANCED_TRANSACTION_MARKER = 0x00;
 Transaction.ADVANCED_TRANSACTION_FLAG = 0x01;
 exports.Transaction = Transaction;
 
-},{"f552bdfda8ba655c":"bwvMq","625058161ca49b3":"jR49q","dabb1ff0618850bf":"4BCCF","49bb4306cdf0edaf":"28LFb","89755d038b59b4e0":"eFC2X","608af24578d66084":"86sQP","d7bf53864da2c0ff":"amF5b"}],"6C2pB":[function(require,module,exports) {
+},{"f552bdfda8ba655c":"fCgem","625058161ca49b3":"jR49q","dabb1ff0618850bf":"4BCCF","49bb4306cdf0edaf":"28LFb","89755d038b59b4e0":"eFC2X","608af24578d66084":"86sQP","d7bf53864da2c0ff":"amF5b"}],"6C2pB":[function(require,module,exports) {
 // constant-space merkle root calculation algorithm
 var Buffer = require("b639cf66b489e70e").Buffer;
 module.exports = function fastRoot(values, digestFn) {
@@ -41827,7 +42023,7 @@ module.exports = function fastRoot(values, digestFn) {
     return results[0];
 };
 
-},{"b639cf66b489e70e":"bwvMq"}],"90Km1":[function(require,module,exports) {
+},{"b639cf66b489e70e":"fCgem"}],"90Km1":[function(require,module,exports) {
 var Buffer = require("bd04018dc1652f62").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -42882,7 +43078,7 @@ function range(n) {
     ];
 }
 
-},{"bd04018dc1652f62":"bwvMq","3cdabce7cf751469":"8k3Hp","7f0c469e1295416c":"1mjPW","15e876c92e186c9a":"f992a","206460bdf6f8e224":"2Me89","c66b4b428f6e9b6c":"jR49q","2c0de14d737e7f5c":"4BCCF","bc92084ba24790e4":"aiXsq","d819d635cf774913":"hpO0s","147d6fa1a977536e":"g5Tn6","2f149948dde5be71":"28LFb","a441c63dce14b7a7":"arhmj"}],"8k3Hp":[function(require,module,exports) {
+},{"bd04018dc1652f62":"fCgem","3cdabce7cf751469":"8k3Hp","7f0c469e1295416c":"1mjPW","15e876c92e186c9a":"f992a","206460bdf6f8e224":"2Me89","c66b4b428f6e9b6c":"jR49q","2c0de14d737e7f5c":"4BCCF","bc92084ba24790e4":"aiXsq","d819d635cf774913":"hpO0s","147d6fa1a977536e":"g5Tn6","2f149948dde5be71":"28LFb","a441c63dce14b7a7":"arhmj"}],"8k3Hp":[function(require,module,exports) {
 var Buffer = require("9f7dbb5a1a52093b").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -43011,7 +43207,7 @@ class Psbt {
 }
 exports.Psbt = Psbt;
 
-},{"9f7dbb5a1a52093b":"bwvMq","66e97b846feca30a":"aHjAQ","c05d7c91183f6ebd":"2GuBB","f50e19d1acfe2b7e":"3089x","627662a4106d5e06":"f992a"}],"aHjAQ":[function(require,module,exports) {
+},{"9f7dbb5a1a52093b":"fCgem","66e97b846feca30a":"aHjAQ","c05d7c91183f6ebd":"2GuBB","f50e19d1acfe2b7e":"3089x","627662a4106d5e06":"f992a"}],"aHjAQ":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -43333,7 +43529,7 @@ function psbtFromKeyVals(unsignedTx, { globalMapKeyVals, inputKeyVals, outputKey
 }
 exports.psbtFromKeyVals = psbtFromKeyVals;
 
-},{"27cc1123cac1870d":"bwvMq","fa12ea4f9abfc39d":"31Gpb","7ea84d5fdd09890b":"5okq8","a37bcc3f403dd8ac":"1mjPW","ad0cb35bafe0b747":"3089x"}],"31Gpb":[function(require,module,exports) {
+},{"27cc1123cac1870d":"fCgem","fa12ea4f9abfc39d":"31Gpb","7ea84d5fdd09890b":"5okq8","a37bcc3f403dd8ac":"1mjPW","ad0cb35bafe0b747":"3089x"}],"31Gpb":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -43547,7 +43743,7 @@ function canAddToArray(array, item, dupeSet) {
 }
 exports.canAddToArray = canAddToArray;
 
-},{"a2ab83522979293b":"bwvMq","72cdd17df1cb35db":"3089x"}],"kPyZn":[function(require,module,exports) {
+},{"a2ab83522979293b":"fCgem","72cdd17df1cb35db":"3089x"}],"kPyZn":[function(require,module,exports) {
 var Buffer = require("a94cdebb019e5fea").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -43564,7 +43760,7 @@ function encode(data) {
 }
 exports.encode = encode;
 
-},{"a94cdebb019e5fea":"bwvMq","c321222a52320541":"3089x"}],"jXPYu":[function(require,module,exports) {
+},{"a94cdebb019e5fea":"fCgem","c321222a52320541":"3089x"}],"jXPYu":[function(require,module,exports) {
 var Buffer = require("8e9f5dee508c45ae").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -43596,7 +43792,7 @@ function canAdd(currentData, newData) {
 }
 exports.canAdd = canAdd;
 
-},{"8e9f5dee508c45ae":"bwvMq","68548f774361c4f7":"3089x"}],"4MksQ":[function(require,module,exports) {
+},{"8e9f5dee508c45ae":"fCgem","68548f774361c4f7":"3089x"}],"4MksQ":[function(require,module,exports) {
 var Buffer = require("f31e1b14ccb200e7").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -43628,7 +43824,7 @@ function canAdd(currentData, newData) {
 }
 exports.canAdd = canAdd;
 
-},{"f31e1b14ccb200e7":"bwvMq","845fd5f9f0a63745":"3089x"}],"djKIf":[function(require,module,exports) {
+},{"f31e1b14ccb200e7":"fCgem","845fd5f9f0a63745":"3089x"}],"djKIf":[function(require,module,exports) {
 var Buffer = require("7661f74626de43ee").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -43659,7 +43855,7 @@ function canAdd(currentData, newData) {
 }
 exports.canAdd = canAdd;
 
-},{"7661f74626de43ee":"bwvMq","4b725b965390e6ad":"3089x"}],"4Eb9z":[function(require,module,exports) {
+},{"7661f74626de43ee":"fCgem","4b725b965390e6ad":"3089x"}],"4Eb9z":[function(require,module,exports) {
 var Buffer = require("ab65f4cb1a43027e").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -43726,7 +43922,7 @@ function canAddToArray(array, item, dupeSet) {
 }
 exports.canAddToArray = canAddToArray;
 
-},{"ab65f4cb1a43027e":"bwvMq","2319fc790acc3089":"3089x"}],"aRknq":[function(require,module,exports) {
+},{"ab65f4cb1a43027e":"fCgem","2319fc790acc3089":"3089x"}],"aRknq":[function(require,module,exports) {
 var Buffer = require("d31ec771dff282e9").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -43758,7 +43954,7 @@ function canAdd(currentData, newData) {
 }
 exports.canAdd = canAdd;
 
-},{"d31ec771dff282e9":"bwvMq","719ea9236a680ec":"3089x"}],"bnHKd":[function(require,module,exports) {
+},{"d31ec771dff282e9":"fCgem","719ea9236a680ec":"3089x"}],"bnHKd":[function(require,module,exports) {
 var Buffer = require("96d9b72362899a80").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -43792,7 +43988,7 @@ function canAdd(currentData, newData) {
 }
 exports.canAdd = canAdd;
 
-},{"96d9b72362899a80":"bwvMq","280e64761d0aef24":"3089x"}],"6koTX":[function(require,module,exports) {
+},{"96d9b72362899a80":"fCgem","280e64761d0aef24":"3089x"}],"6koTX":[function(require,module,exports) {
 var Buffer = require("abeae0f61abbe7e4").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -43825,7 +44021,7 @@ function canAdd(currentData, newData) {
 }
 exports.canAdd = canAdd;
 
-},{"abeae0f61abbe7e4":"bwvMq","4ef7e0bcad67ca99":"3089x"}],"lpl9n":[function(require,module,exports) {
+},{"abeae0f61abbe7e4":"fCgem","4ef7e0bcad67ca99":"3089x"}],"lpl9n":[function(require,module,exports) {
 var Buffer = require("143e5785a75c31f4").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -43878,7 +44074,7 @@ function canAddToArray(array, item, dupeSet) {
 }
 exports.canAddToArray = canAddToArray;
 
-},{"143e5785a75c31f4":"bwvMq","c9279336d3a74745":"3089x"}],"6kUou":[function(require,module,exports) {
+},{"143e5785a75c31f4":"fCgem","c9279336d3a74745":"3089x"}],"6kUou":[function(require,module,exports) {
 var Buffer = require("8589f69570a4bdac").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -43911,7 +44107,7 @@ function canAdd(currentData, newData) {
 }
 exports.canAdd = canAdd;
 
-},{"8589f69570a4bdac":"bwvMq","2cae3356ba7a8de7":"3089x"}],"3DeoD":[function(require,module,exports) {
+},{"8589f69570a4bdac":"fCgem","2cae3356ba7a8de7":"3089x"}],"3DeoD":[function(require,module,exports) {
 var Buffer = require("7f168173e8d729f3").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -43958,7 +44154,7 @@ function canAddToArray(array, item, dupeSet) {
 }
 exports.canAddToArray = canAddToArray;
 
-},{"7f168173e8d729f3":"bwvMq","4b0303628738a9bb":"3089x"}],"kZrBw":[function(require,module,exports) {
+},{"7f168173e8d729f3":"fCgem","4b0303628738a9bb":"3089x"}],"kZrBw":[function(require,module,exports) {
 var Buffer = require("a6e6247f8794a6bd").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -44006,7 +44202,7 @@ function canAdd(currentData, newData) {
 }
 exports.canAdd = canAdd;
 
-},{"a6e6247f8794a6bd":"bwvMq","8a18eb38147e221e":"3089x","1dcac9ee5df22d54":"5okq8","2915bb7f19f5fe46":"1mjPW"}],"5okq8":[function(require,module,exports) {
+},{"a6e6247f8794a6bd":"fCgem","8a18eb38147e221e":"3089x","1dcac9ee5df22d54":"5okq8","2915bb7f19f5fe46":"1mjPW"}],"5okq8":[function(require,module,exports) {
 var Buffer = require("6c809102e8f63b72").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -44073,7 +44269,7 @@ function writeUInt64LE(buffer, value, offset) {
 }
 exports.writeUInt64LE = writeUInt64LE;
 
-},{"6c809102e8f63b72":"bwvMq","da35a02d1d632300":"1mjPW"}],"1mjPW":[function(require,module,exports) {
+},{"6c809102e8f63b72":"fCgem","da35a02d1d632300":"1mjPW"}],"1mjPW":[function(require,module,exports) {
 var Buffer = require("dbbbaae54d1fc4b3").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -44162,7 +44358,7 @@ function encodingLength(_number) {
 }
 exports.encodingLength = encodingLength;
 
-},{"dbbbaae54d1fc4b3":"bwvMq"}],"bS0Du":[function(require,module,exports) {
+},{"dbbbaae54d1fc4b3":"fCgem"}],"bS0Du":[function(require,module,exports) {
 var Buffer = require("408bf6f64e6bc6e").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -44216,7 +44412,7 @@ function canAdd(currentData, newData) {
 }
 exports.canAdd = canAdd;
 
-},{"408bf6f64e6bc6e":"bwvMq","4a68f387b600a601":"3089x","11be3cac4fccd00e":"1mjPW"}],"257pN":[function(require,module,exports) {
+},{"408bf6f64e6bc6e":"fCgem","4a68f387b600a601":"3089x","11be3cac4fccd00e":"1mjPW"}],"257pN":[function(require,module,exports) {
 var Buffer = require("8d84916f39fa78a2").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -44292,7 +44488,7 @@ function makeConverter(TYPE_BYTE, isValidPubkey = isValidDERKey) {
 }
 exports.makeConverter = makeConverter;
 
-},{"8d84916f39fa78a2":"bwvMq"}],"guzzQ":[function(require,module,exports) {
+},{"8d84916f39fa78a2":"fCgem"}],"guzzQ":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -44351,7 +44547,7 @@ function makeConverter(TYPE_BYTE) {
 }
 exports.makeConverter = makeConverter;
 
-},{"c00a0cff7132dc57":"bwvMq"}],"4v2dA":[function(require,module,exports) {
+},{"c00a0cff7132dc57":"fCgem"}],"4v2dA":[function(require,module,exports) {
 var Buffer = require("219254e58bfcd582").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -44403,7 +44599,7 @@ function makeConverter(TYPE_BYTE) {
 }
 exports.makeConverter = makeConverter;
 
-},{"219254e58bfcd582":"bwvMq","fa8868fa49cf66d6":"1mjPW","60a8dc54cbe5d3f2":"257pN"}],"cvCQq":[function(require,module,exports) {
+},{"219254e58bfcd582":"fCgem","fa8868fa49cf66d6":"1mjPW","60a8dc54cbe5d3f2":"257pN"}],"cvCQq":[function(require,module,exports) {
 var Buffer = require("942bce34a8710cfc").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -44441,7 +44637,7 @@ function makeConverter(TYPE_BYTE) {
 }
 exports.makeConverter = makeConverter;
 
-},{"942bce34a8710cfc":"bwvMq"}],"9pdcz":[function(require,module,exports) {
+},{"942bce34a8710cfc":"fCgem"}],"9pdcz":[function(require,module,exports) {
 var Buffer = require("e2201fd1a4ddc4bd").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -44478,7 +44674,7 @@ function makeConverter(TYPE_BYTE) {
 }
 exports.makeConverter = makeConverter;
 
-},{"e2201fd1a4ddc4bd":"bwvMq"}],"jUzwk":[function(require,module,exports) {
+},{"e2201fd1a4ddc4bd":"fCgem"}],"jUzwk":[function(require,module,exports) {
 var Buffer = require("92b568f299bbc988").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -44546,7 +44742,7 @@ function psbtToKeyVals({ globalMap, inputs, outputs }) {
 }
 exports.psbtToKeyVals = psbtToKeyVals;
 
-},{"92b568f299bbc988":"bwvMq","2ed8aa87e4b5e66c":"31Gpb","22a4c89c36c959c9":"5okq8"}],"f992a":[function(require,module,exports) {
+},{"92b568f299bbc988":"fCgem","2ed8aa87e4b5e66c":"31Gpb","22a4c89c36c959c9":"5okq8"}],"f992a":[function(require,module,exports) {
 var Buffer = require("2833a8b71f7b13ec").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -44653,7 +44849,7 @@ function defaultLocktimeSetter(locktime, txBuf) {
 }
 exports.defaultLocktimeSetter = defaultLocktimeSetter;
 
-},{"2833a8b71f7b13ec":"bwvMq","2bdc21d0bef9f86d":"31Gpb"}],"ivOLs":[function(require,module,exports) {
+},{"2833a8b71f7b13ec":"fCgem","2bdc21d0bef9f86d":"31Gpb"}],"ivOLs":[function(require,module,exports) {
 var Buffer = require("899c7969573f3d1a").Buffer;
 "use strict";
 Object.defineProperty(exports, "__esModule", {
@@ -45470,7 +45666,7 @@ function getSigningData(network, inputs, needsOutputs, tx, signParams, keyPair, 
     };
 }
 
-},{"899c7969573f3d1a":"bwvMq","d821e82d1f0adb2d":"2Me89","ce95362deb013974":"jR49q","a1d0e7ca99bbf224":"ebCN0","585be5af7902ca43":"4BCCF","3d998f91003e1f0d":"aiXsq","e74999778bd48497":"hpO0s","3de09dbe5f913c1f":"g5Tn6","8a8e3175a4f7f54d":"28LFb","eb1d2004a5a108ed":"arhmj","2a20500d3b5c9647":"eFC2X","c3033d5fe48ad925":"86sQP"}],"ebCN0":[function(require,module,exports) {
+},{"899c7969573f3d1a":"fCgem","d821e82d1f0adb2d":"2Me89","ce95362deb013974":"jR49q","a1d0e7ca99bbf224":"ebCN0","585be5af7902ca43":"4BCCF","3d998f91003e1f0d":"aiXsq","e74999778bd48497":"hpO0s","3de09dbe5f913c1f":"g5Tn6","8a8e3175a4f7f54d":"28LFb","eb1d2004a5a108ed":"arhmj","2a20500d3b5c9647":"eFC2X","c3033d5fe48ad925":"86sQP"}],"ebCN0":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -45750,7 +45946,7 @@ check.toJSON = ()=>{
     return "scriptHash input";
 };
 
-},{"561c4757286b24a1":"bwvMq","3af24145bf367e32":"28LFb","6d09f0a7e9023155":"jWHzs","9be20a3ad4ad60c2":"foVSp","658b94803bbaa5a0":"10EtC","4aa56c1403bab75b":"1naSP","57aea1ab25204bed":"deEbp"}],"1naSP":[function(require,module,exports) {
+},{"561c4757286b24a1":"fCgem","3af24145bf367e32":"28LFb","6d09f0a7e9023155":"jWHzs","9be20a3ad4ad60c2":"foVSp","658b94803bbaa5a0":"10EtC","4aa56c1403bab75b":"1naSP","57aea1ab25204bed":"deEbp"}],"1naSP":[function(require,module,exports) {
 "use strict";
 // OP_0 {pubKeyHash}
 Object.defineProperty(exports, "__esModule", {
@@ -45846,7 +46042,7 @@ function decode(buffer) {
 }
 exports.decode = decode;
 
-},{"4eaef35a50c88789":"bwvMq","3f6f20a9dbe84879":"28LFb","670baf0e948abccd":"eFC2X","b63434d77148aa3d":"86sQP"}],"bV7bK":[function(require,module,exports) {
+},{"4eaef35a50c88789":"fCgem","3f6f20a9dbe84879":"28LFb","670baf0e948abccd":"eFC2X","b63434d77148aa3d":"86sQP"}],"bV7bK":[function(require,module,exports) {
 "use strict";
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -45917,7 +46113,7 @@ check.toJSON = ()=>{
     return "witnessScriptHash input";
 };
 
-},{"e8b838dd755703fa":"bwvMq","578bae61332d8f1f":"28LFb","d5123562602372e0":"86sQP","530d6d6312863945":"jWHzs","6de09fa4684f4b4e":"foVSp","23fa5d9cf982dd00":"10EtC"}],"hSMer":[function(require,module,exports) {
+},{"e8b838dd755703fa":"fCgem","578bae61332d8f1f":"28LFb","d5123562602372e0":"86sQP","530d6d6312863945":"jWHzs","6de09fa4684f4b4e":"foVSp","23fa5d9cf982dd00":"10EtC"}],"hSMer":[function(require,module,exports) {
 /**
  * @file bip32.ts
  * @description BIP32 Path Handling for Bitcoin Wallets
@@ -45980,7 +46176,7 @@ function hardenedPathOf(pathElements) {
     return [];
 }
 
-},{"5e420757a688a32d":"bwvMq","bip32-path":"6n4iS","bs58check":"d8uT8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6n4iS":[function(require,module,exports) {
+},{"5e420757a688a32d":"fCgem","bip32-path":"6n4iS","bs58check":"d8uT8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6n4iS":[function(require,module,exports) {
 /*
  * Bitcoin BIP32 path helpers
  * (C) 2016 Alex Beregszaszi
@@ -46160,7 +46356,7 @@ class BufferReader {
     }
 }
 
-},{"9442fd702d288067":"bwvMq","varuint-bitcoin":"amF5b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iMehs":[function(require,module,exports) {
+},{"9442fd702d288067":"fCgem","varuint-bitcoin":"amF5b","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iMehs":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "p2pkh", ()=>p2pkh);
@@ -46367,7 +46563,7 @@ class p2wpkh extends SingleKeyAccount {
     }
 }
 
-},{"48af66094b1511ad":"bwvMq","bitcoinjs-lib":"cl7fJ","tiny-secp256k1":"aaqVm","../buffertools":"fvT7D","../constants":"6IGza","../hashPublicKey":"8CIgU","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6IGza":[function(require,module,exports) {
+},{"48af66094b1511ad":"fCgem","bitcoinjs-lib":"cl7fJ","tiny-secp256k1":"aaqVm","../buffertools":"fvT7D","../constants":"6IGza","../hashPublicKey":"8CIgU","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6IGza":[function(require,module,exports) {
 // the maximum number of bytes allowed in a single chunk when processing bitcoin script data.
 // if the Bitcoin script is too large, we will process it in several chunks.
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -46457,7 +46653,7 @@ function createKey(masterFingerprint, path, xpub) {
     return `[${masterFingerprint.toString("hex")}${accountPath.substring(1)}]${xpub}/**`;
 }
 
-},{"2312cd8c99664c51":"bwvMq","bitcoinjs-lib":"cl7fJ","../bip32":"hSMer","../buffertools":"fvT7D","./merkle":"7hIU1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7hIU1":[function(require,module,exports) {
+},{"2312cd8c99664c51":"fCgem","bitcoinjs-lib":"cl7fJ","../bip32":"hSMer","../buffertools":"fvT7D","./merkle":"7hIU1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7hIU1":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -46577,7 +46773,7 @@ function isPowerOf2(n) {
     return (n & n - 1) == 0;
 }
 
-},{"40326fa452f491b7":"bwvMq","bitcoinjs-lib":"cl7fJ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"468CX":[function(require,module,exports) {
+},{"40326fa452f491b7":"fCgem","bitcoinjs-lib":"cl7fJ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"468CX":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -46618,7 +46814,7 @@ function extract(psbt) {
     return tx.buffer();
 }
 
-},{"810789617797bbed":"bwvMq","../buffertools":"fvT7D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"82GTK":[function(require,module,exports) {
+},{"810789617797bbed":"fCgem","../buffertools":"fvT7D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"82GTK":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -46731,7 +46927,7 @@ function finalize(psbt) {
     buf.writeSlice(data);
 }
 
-},{"2de12fe731997fdf":"bwvMq","../buffertools":"fvT7D","./psbtv2":"hOmf5","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hOmf5":[function(require,module,exports) {
+},{"2de12fe731997fdf":"fCgem","../buffertools":"fvT7D","./psbtv2":"hOmf5","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hOmf5":[function(require,module,exports) {
 /* eslint-disable @typescript-eslint/no-non-null-assertion */ /* eslint-disable @typescript-eslint/explicit-module-boundary-types */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "psbtGlobal", ()=>psbtGlobal);
@@ -47198,7 +47394,7 @@ function fromVarint(buf) {
     return new (0, _buffertools.BufferReader)(buf).readVarInt();
 }
 
-},{"dbff9bbb1366e0f8":"bwvMq","../buffertools":"fvT7D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"c5bE0":[function(require,module,exports) {
+},{"dbff9bbb1366e0f8":"fCgem","../buffertools":"fvT7D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"c5bE0":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -47295,7 +47491,7 @@ function serializeTransaction(transaction, skipWitness, timestamp, additionals =
     ]);
 }
 
-},{"2569f3e5b068b62f":"bwvMq","./varint":"k9xXc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k9xXc":[function(require,module,exports) {
+},{"2569f3e5b068b62f":"fCgem","./varint":"k9xXc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k9xXc":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getVarint", ()=>getVarint);
@@ -47338,7 +47534,7 @@ function createVarint(value) {
     return buffer;
 }
 
-},{"6f830bdefc01a14f":"bwvMq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fRGXe":[function(require,module,exports) {
+},{"6f830bdefc01a14f":"fCgem","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fRGXe":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _bs58 = require("bs58");
@@ -47526,7 +47722,7 @@ function hash160(buffer) {
     return ripemd160(sha256(buffer));
 }
 
-},{"dbc97002bb52bcae":"bwvMq","bs58":"4ji3p","ripemd160":"bFDDq","sha.js":"jkn7m","./createTransaction":"cs0Wn","./getWalletPublicKey":"3Ipz1","./bip32":"hSMer","./signMessage":"b0Oru","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cs0Wn":[function(require,module,exports) {
+},{"dbc97002bb52bcae":"fCgem","bs58":"4ji3p","ripemd160":"bFDDq","sha.js":"jkn7m","./createTransaction":"cs0Wn","./getWalletPublicKey":"3Ipz1","./bip32":"hSMer","./signMessage":"b0Oru","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cs0Wn":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "createTransaction", ()=>createTransaction);
@@ -47877,7 +48073,7 @@ function createTransaction(transport, arg) {
     });
 }
 
-},{"e8c5face70df9d93":"bwvMq","@ledgerhq/logs":"i4OI0","./hashPublicKey":"8CIgU","./getWalletPublicKey":"3Ipz1","./getTrustedInput":"lWTUu","./startUntrustedHashTransactionInput":"efzFk","./serializeTransaction":"c5bE0","./getTrustedInputBIP143":"1HcMu","./compressPublicKey":"7SdGH","./signTransaction":"6fbEP","./finalizeInput":"eE3XW","./getAppAndVersion":"1B9q9","./constants":"6IGza","./shouldUseTrustedInputForSegwit":"5oYO6","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3Ipz1":[function(require,module,exports) {
+},{"e8c5face70df9d93":"fCgem","@ledgerhq/logs":"i4OI0","./hashPublicKey":"8CIgU","./getWalletPublicKey":"3Ipz1","./getTrustedInput":"lWTUu","./startUntrustedHashTransactionInput":"efzFk","./serializeTransaction":"c5bE0","./getTrustedInputBIP143":"1HcMu","./compressPublicKey":"7SdGH","./signTransaction":"6fbEP","./finalizeInput":"eE3XW","./getAppAndVersion":"1B9q9","./constants":"6IGza","./shouldUseTrustedInputForSegwit":"5oYO6","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3Ipz1":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getWalletPublicKey", ()=>getWalletPublicKey);
@@ -48077,7 +48273,7 @@ function getTrustedInput(transport_1, indexLookup_1, transaction_1) {
     });
 }
 
-},{"d6c555f7b8acc4fa":"bwvMq","invariant":"d1QgR","./constants":"6IGza","./varint":"k9xXc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"d1QgR":[function(require,module,exports) {
+},{"d6c555f7b8acc4fa":"fCgem","invariant":"d1QgR","./constants":"6IGza","./varint":"k9xXc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"d1QgR":[function(require,module,exports) {
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -48214,7 +48410,7 @@ function startUntrustedHashTransactionInput(transport_1, newTransaction_1, trans
     });
 }
 
-},{"3b24aa635a45459f":"bwvMq","./varint":"k9xXc","./constants":"6IGza","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1HcMu":[function(require,module,exports) {
+},{"3b24aa635a45459f":"fCgem","./varint":"k9xXc","./constants":"6IGza","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1HcMu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getTrustedInputBIP143", ()=>getTrustedInputBIP143);
@@ -48240,7 +48436,7 @@ function getTrustedInputBIP143(transport, indexLookup, transaction, additionals 
     return hash.toString("hex");
 }
 
-},{"8cdf0d4e8dbeef65":"bwvMq","sha.js":"jkn7m","./serializeTransaction":"c5bE0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7SdGH":[function(require,module,exports) {
+},{"8cdf0d4e8dbeef65":"fCgem","sha.js":"jkn7m","./serializeTransaction":"c5bE0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7SdGH":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "compressPublicKey", ()=>compressPublicKey);
@@ -48255,7 +48451,7 @@ function compressPublicKey(publicKey) {
     ]);
 }
 
-},{"4d1f2ef52237cabc":"bwvMq","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6fbEP":[function(require,module,exports) {
+},{"4d1f2ef52237cabc":"fCgem","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6fbEP":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "signTransaction", ()=>signTransaction);
@@ -48301,7 +48497,7 @@ function signTransaction(transport, path, lockTime, sigHashType, expiryHeight, a
     });
 }
 
-},{"f1d8573fd01c00e7":"bwvMq","./bip32":"hSMer","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eE3XW":[function(require,module,exports) {
+},{"f1d8573fd01c00e7":"fCgem","./bip32":"hSMer","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eE3XW":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "provideOutputFullChangePath", ()=>provideOutputFullChangePath);
@@ -48504,7 +48700,7 @@ function signMessage(transport_1, _a) {
     });
 }
 
-},{"d91a2a9236b213c6":"bwvMq","bip32-path":"6n4iS","./constants":"6IGza","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"04eej":[function(require,module,exports) {
+},{"d91a2a9236b213c6":"fCgem","bip32-path":"6n4iS","./constants":"6IGza","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"04eej":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -48677,7 +48873,7 @@ class AppClient {
     }
 }
 
-},{"24be17dfdf566e5e":"bwvMq","../bip32":"hSMer","./merkelizedPsbt":"3qgkq","./clientCommands":"agttq","../varint":"k9xXc","./merkle":"7hIU1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3qgkq":[function(require,module,exports) {
+},{"24be17dfdf566e5e":"fCgem","../bip32":"hSMer","./merkelizedPsbt":"3qgkq","./clientCommands":"agttq","../varint":"k9xXc","./merkle":"7hIU1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3qgkq":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -48732,7 +48928,7 @@ class MerkelizedPsbt extends (0, _psbtv2.PsbtV2) {
     }
 }
 
-},{"1e49592d5e0e0bf0":"bwvMq","./merkleMap":"jdNW8","./psbtv2":"hOmf5","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jdNW8":[function(require,module,exports) {
+},{"1e49592d5e0e0bf0":"fCgem","./merkleMap":"jdNW8","./psbtv2":"hOmf5","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jdNW8":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /**
@@ -48773,7 +48969,7 @@ class MerkleMap {
     }
 }
 
-},{"14163a53808bfc0e":"bwvMq","../varint":"k9xXc","./merkle":"7hIU1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"agttq":[function(require,module,exports) {
+},{"14163a53808bfc0e":"fCgem","../varint":"k9xXc","./merkle":"7hIU1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"agttq":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "YieldCommand", ()=>YieldCommand);
@@ -49014,7 +49210,7 @@ class ClientCommandInterpreter {
     }
 }
 
-},{"d4cb22f52a6b7add":"bwvMq","bitcoinjs-lib":"cl7fJ","../buffertools":"fvT7D","../varint":"k9xXc","./merkle":"7hIU1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8pUNG":[function(require,module,exports) {
+},{"d4cb22f52a6b7add":"fCgem","bitcoinjs-lib":"cl7fJ","../buffertools":"fvT7D","../varint":"k9xXc","./merkle":"7hIU1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8pUNG":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "splitTransaction", ()=>splitTransaction);
@@ -49163,7 +49359,7 @@ function splitTransaction(transactionHex, isSegwitSupported = false, hasExtraDat
     return t;
 }
 
-},{"d0b3d8a1c14f070c":"bwvMq","@ledgerhq/logs":"i4OI0","./varint":"k9xXc","./debug":"b977y","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"b977y":[function(require,module,exports) {
+},{"d0b3d8a1c14f070c":"fCgem","@ledgerhq/logs":"i4OI0","./varint":"k9xXc","./debug":"b977y","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"b977y":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "formatTransactionDebug", ()=>formatTransactionDebug);
@@ -49311,7 +49507,7 @@ function signP2SHTransaction(transport, arg) {
     });
 }
 
-},{"3172675180faf033":"bwvMq","./getTrustedInput":"lWTUu","./startUntrustedHashTransactionInput":"efzFk","./getTrustedInputBIP143":"1HcMu","./signTransaction":"6fbEP","./finalizeInput":"eE3XW","./constants":"6IGza","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9zmIA":[function(require,module,exports) {
+},{"3172675180faf033":"fCgem","./getTrustedInput":"lWTUu","./startUntrustedHashTransactionInput":"efzFk","./getTrustedInputBIP143":"1HcMu","./signTransaction":"6fbEP","./finalizeInput":"eE3XW","./constants":"6IGza","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9zmIA":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _hwTransport = require("@ledgerhq/hw-transport");
@@ -49511,7 +49707,7 @@ function gracefullyResetDevice(device) {
     });
 }
 
-},{"2f1c1569be106a3":"bwvMq","@ledgerhq/hw-transport":"59Ey9","@ledgerhq/devices/hid-framing":"3BsQA","@ledgerhq/devices":"fnHxP","@ledgerhq/logs":"i4OI0","@ledgerhq/errors":"EVZMy","./webusb":"7NNG8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"59Ey9":[function(require,module,exports) {
+},{"2f1c1569be106a3":"fCgem","@ledgerhq/hw-transport":"59Ey9","@ledgerhq/devices/hid-framing":"3BsQA","@ledgerhq/devices":"fnHxP","@ledgerhq/logs":"i4OI0","@ledgerhq/errors":"EVZMy","./webusb":"7NNG8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"59Ey9":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "TransportError", ()=>(0, _errors.TransportError));
@@ -49829,7 +50025,7 @@ Transport.ErrorMessage_ListenTimeout = "No Ledger device found (timeout)";
 Transport.ErrorMessage_NoDeviceFound = "No Ledger device found";
 exports.default = Transport;
 
-},{"88b312045e1ca92b":"bwvMq","events":"1VQLm","@ledgerhq/errors":"EVZMy","@ledgerhq/logs":"i4OI0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"EVZMy":[function(require,module,exports) {
+},{"88b312045e1ca92b":"fCgem","events":"1VQLm","@ledgerhq/errors":"EVZMy","@ledgerhq/logs":"i4OI0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"EVZMy":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "serializeError", ()=>(0, _helpers.serializeError));
@@ -50439,7 +50635,7 @@ const initialAcc = {
 };
 exports.default = createHIDframing;
 
-},{"ebb2a684f25c5c57":"bwvMq","@ledgerhq/errors":"EVZMy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fnHxP":[function(require,module,exports) {
+},{"ebb2a684f25c5c57":"fCgem","@ledgerhq/errors":"EVZMy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fnHxP":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "IIGenericHID", ()=>IIGenericHID);
@@ -50976,7 +51172,7 @@ function getFirstLedgerDevice() {
 };
 exports.default = TransportWebHID;
 
-},{"3666b9e986722ce4":"bwvMq","@ledgerhq/hw-transport":"59Ey9","@ledgerhq/devices/hid-framing":"3BsQA","@ledgerhq/devices":"fnHxP","@ledgerhq/logs":"i4OI0","@ledgerhq/errors":"EVZMy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"h5x5j":[function(require,module,exports) {
+},{"3666b9e986722ce4":"fCgem","@ledgerhq/hw-transport":"59Ey9","@ledgerhq/devices/hid-framing":"3BsQA","@ledgerhq/devices":"fnHxP","@ledgerhq/logs":"i4OI0","@ledgerhq/errors":"EVZMy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"h5x5j":[function(require,module,exports) {
 // src/hardware/serializeDerivationPath.js
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
