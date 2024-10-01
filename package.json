@@ -29,7 +29,6 @@
     ]
   },
   "dependencies": {
-    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@ledgerhq/hw-app-btc": "^10.4.1",
     "@ledgerhq/hw-transport-webhid": "^6.29.2",
     "@ledgerhq/hw-transport-webusb": "^6.28.4",
