@@ -25990,11 +25990,11 @@ function fnI(a, b, c, d, m, k, s) {
 }
 module.exports = MD5;
 
-},{"634114d48656c754":"bRL3M","4b170874b4cb8d4e":"f0Ury","72d4e45c6a42a2da":"eW7r9"}],"f0Ury":[function(require,module,exports) {
+},{"634114d48656c754":"bRL3M","4b170874b4cb8d4e":"51qBP","72d4e45c6a42a2da":"eW7r9"}],"51qBP":[function(require,module,exports) {
 "use strict";
-var Buffer = require("9f5afb677b3fbc5e").Buffer;
-var Transform = require("de762d1f5d444b96").Transform;
-var inherits = require("36ff0a89b58aeacf");
+var Buffer = require("27eaec8a721206a5").Buffer;
+var Transform = require("c5aab47d8f1d340a").Transform;
+var inherits = require("91e9fa68d440541e");
 function throwIfNotStringOrBuffer(val, prefix) {
     if (!Buffer.isBuffer(val) && typeof val !== "string") throw new TypeError(prefix + " must be a string or a buffer");
 }
@@ -26070,7 +26070,7 @@ HashBase.prototype._digest = function() {
 };
 module.exports = HashBase;
 
-},{"9f5afb677b3fbc5e":"eW7r9","de762d1f5d444b96":"jXNWE","36ff0a89b58aeacf":"bRL3M"}],"eW7r9":[function(require,module,exports) {
+},{"27eaec8a721206a5":"eW7r9","c5aab47d8f1d340a":"jXNWE","91e9fa68d440541e":"bRL3M"}],"eW7r9":[function(require,module,exports) {
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */ /* eslint-disable node/no-deprecated-api */ var buffer = require("7e0d6ecd698c3ca6");
 var Buffer = buffer.Buffer;
 // alternative to using Object.keys for old browsers
@@ -29877,87 +29877,7 @@ function fn5(a, b, c, d, e, m, k, s) {
 }
 module.exports = RIPEMD160;
 
-},{"c813c8075bcf823e":"fCgem","84928993e7c3934b":"bRL3M","4b3519823770a56d":"0dbsW"}],"0dbsW":[function(require,module,exports) {
-"use strict";
-var Buffer = require("ea4e3721a4f6adbf").Buffer;
-var Transform = require("2ab9181faebfff90").Transform;
-var inherits = require("e0af63c0b0b7ead5");
-function throwIfNotStringOrBuffer(val, prefix) {
-    if (!Buffer.isBuffer(val) && typeof val !== "string") throw new TypeError(prefix + " must be a string or a buffer");
-}
-function HashBase(blockSize) {
-    Transform.call(this);
-    this._block = Buffer.allocUnsafe(blockSize);
-    this._blockSize = blockSize;
-    this._blockOffset = 0;
-    this._length = [
-        0,
-        0,
-        0,
-        0
-    ];
-    this._finalized = false;
-}
-inherits(HashBase, Transform);
-HashBase.prototype._transform = function(chunk, encoding, callback) {
-    var error = null;
-    try {
-        this.update(chunk, encoding);
-    } catch (err) {
-        error = err;
-    }
-    callback(error);
-};
-HashBase.prototype._flush = function(callback) {
-    var error = null;
-    try {
-        this.push(this.digest());
-    } catch (err) {
-        error = err;
-    }
-    callback(error);
-};
-HashBase.prototype.update = function(data, encoding) {
-    throwIfNotStringOrBuffer(data, "Data");
-    if (this._finalized) throw new Error("Digest already called");
-    if (!Buffer.isBuffer(data)) data = Buffer.from(data, encoding);
-    // consume data
-    var block = this._block;
-    var offset = 0;
-    while(this._blockOffset + data.length - offset >= this._blockSize){
-        for(var i = this._blockOffset; i < this._blockSize;)block[i++] = data[offset++];
-        this._update();
-        this._blockOffset = 0;
-    }
-    while(offset < data.length)block[this._blockOffset++] = data[offset++];
-    // update length
-    for(var j = 0, carry = data.length * 8; carry > 0; ++j){
-        this._length[j] += carry;
-        carry = this._length[j] / 0x0100000000 | 0;
-        if (carry > 0) this._length[j] -= 0x0100000000 * carry;
-    }
-    return this;
-};
-HashBase.prototype._update = function() {
-    throw new Error("_update is not implemented");
-};
-HashBase.prototype.digest = function(encoding) {
-    if (this._finalized) throw new Error("Digest already called");
-    this._finalized = true;
-    var digest = this._digest();
-    if (encoding !== undefined) digest = digest.toString(encoding);
-    // reset state
-    this._block.fill(0);
-    this._blockOffset = 0;
-    for(var i = 0; i < 4; ++i)this._length[i] = 0;
-    return digest;
-};
-HashBase.prototype._digest = function() {
-    throw new Error("_digest is not implemented");
-};
-module.exports = HashBase;
-
-},{"ea4e3721a4f6adbf":"eW7r9","2ab9181faebfff90":"jXNWE","e0af63c0b0b7ead5":"bRL3M"}],"jkn7m":[function(require,module,exports) {
+},{"c813c8075bcf823e":"fCgem","84928993e7c3934b":"bRL3M","4b3519823770a56d":"51qBP"}],"jkn7m":[function(require,module,exports) {
 var exports = module.exports = function SHA(algorithm) {
     algorithm = algorithm.toLowerCase();
     var Algorithm = exports[algorithm];
