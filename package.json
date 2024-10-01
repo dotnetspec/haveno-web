@@ -42,7 +42,6 @@
     "esbuild": "^0.23.1",
     "grpc-web": "^1.5.0",
     "mime": "^3.0.0",
-    "rollup-plugin-node-polyfills": "^0.2.1",
     "vite": "^5.4.2",
     "vite-plugin-html": "^3.2.2"
   },
