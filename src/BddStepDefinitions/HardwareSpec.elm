@@ -119,8 +119,8 @@ runSpecTests =
 **Then** the APK should return the transaction status to the web app  -}
 
         --Runner.pick <|
-        , Runner.skip <|
-        --, 
+        --, Runner.skip <|
+        {- , 
         scenario "3. Initiating a Transaction"
            (given
                (Setup.init
@@ -218,7 +218,7 @@ runSpecTests =
                                )
                        )
                    ]
-           )
+           ) -}
        
         ]
 
