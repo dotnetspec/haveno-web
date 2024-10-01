@@ -49,7 +49,6 @@
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
-    "@parcel/transformer-webmanifest": "2.12.0",
     "@rollup/plugin-commonjs": "^26.0.1",
     "buffer": "^6.0.3",
     "elm": "^0.19.1-5",
