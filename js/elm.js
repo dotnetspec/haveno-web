@@ -5470,6 +5470,136 @@ function _Time_getZoneName()
 		callback(_Scheduler_succeed(name));
 	});
 }
+
+
+
+
+// STRINGS
+
+
+var _Parser_isSubString = F5(function(smallString, offset, row, col, bigString)
+{
+	var smallLength = smallString.length;
+	var isGood = offset + smallLength <= bigString.length;
+
+	for (var i = 0; isGood && i < smallLength; )
+	{
+		var code = bigString.charCodeAt(offset);
+		isGood =
+			smallString[i++] === bigString[offset++]
+			&& (
+				code === 0x000A /* \n */
+					? ( row++, col=1 )
+					: ( col++, (code & 0xF800) === 0xD800 ? smallString[i++] === bigString[offset++] : 1 )
+			)
+	}
+
+	return _Utils_Tuple3(isGood ? offset : -1, row, col);
+});
+
+
+
+// CHARS
+
+
+var _Parser_isSubChar = F3(function(predicate, offset, string)
+{
+	return (
+		string.length <= offset
+			? -1
+			:
+		(string.charCodeAt(offset) & 0xF800) === 0xD800
+			? (predicate(_Utils_chr(string.substr(offset, 2))) ? offset + 2 : -1)
+			:
+		(predicate(_Utils_chr(string[offset]))
+			? ((string[offset] === '\n') ? -2 : (offset + 1))
+			: -1
+		)
+	);
+});
+
+
+var _Parser_isAsciiCode = F3(function(code, offset, string)
+{
+	return string.charCodeAt(offset) === code;
+});
+
+
+
+// NUMBERS
+
+
+var _Parser_chompBase10 = F2(function(offset, string)
+{
+	for (; offset < string.length; offset++)
+	{
+		var code = string.charCodeAt(offset);
+		if (code < 0x30 || 0x39 < code)
+		{
+			return offset;
+		}
+	}
+	return offset;
+});
+
+
+var _Parser_consumeBase = F3(function(base, offset, string)
+{
+	for (var total = 0; offset < string.length; offset++)
+	{
+		var digit = string.charCodeAt(offset) - 0x30;
+		if (digit < 0 || base <= digit) break;
+		total = base * total + digit;
+	}
+	return _Utils_Tuple2(offset, total);
+});
+
+
+var _Parser_consumeBase16 = F2(function(offset, string)
+{
+	for (var total = 0; offset < string.length; offset++)
+	{
+		var code = string.charCodeAt(offset);
+		if (0x30 <= code && code <= 0x39)
+		{
+			total = 16 * total + code - 0x30;
+		}
+		else if (0x41 <= code && code <= 0x46)
+		{
+			total = 16 * total + code - 55;
+		}
+		else if (0x61 <= code && code <= 0x66)
+		{
+			total = 16 * total + code - 87;
+		}
+		else
+		{
+			break;
+		}
+	}
+	return _Utils_Tuple2(offset, total);
+});
+
+
+
+// FIND STRING
+
+
+var _Parser_findSubString = F5(function(smallString, offset, row, col, bigString)
+{
+	var newOffset = bigString.indexOf(smallString, offset);
+	var target = newOffset < 0 ? bigString.length : newOffset + smallString.length;
+
+	while (offset < target)
+	{
+		var code = bigString.charCodeAt(offset++);
+		code === 0x000A /* \n */
+			? ( col=1, row++ )
+			: ( col++, (code & 0xF800) === 0xD800 && offset++ )
+	}
+
+	return _Utils_Tuple3(newOffset, row, col);
+});
 var $author$project$Main$ChangedUrl = function (a) {
 	return {$: 'ChangedUrl', a: a};
 };
@@ -14552,6 +14682,284 @@ var $author$project$Extras$Constants$noCurrentChallengerId = '6353e8b6aedf80653e
 var $author$project$Data$Hardware$isCurrentlyInAChallenge = function (rank) {
 	return (_Utils_eq(rank.player.id, $author$project$Extras$Constants$noCurrentChallengerId) || _Utils_eq(rank.challenger.id, $author$project$Extras$Constants$noCurrentChallengerId)) ? false : true;
 };
+var $elm$parser$Parser$DeadEnd = F3(
+	function (row, col, problem) {
+		return {col: col, problem: problem, row: row};
+	});
+var $elm$parser$Parser$problemToDeadEnd = function (p) {
+	return A3($elm$parser$Parser$DeadEnd, p.row, p.col, p.problem);
+};
+var $elm$parser$Parser$Advanced$bagToList = F2(
+	function (bag, list) {
+		bagToList:
+		while (true) {
+			switch (bag.$) {
+				case 'Empty':
+					return list;
+				case 'AddRight':
+					var bag1 = bag.a;
+					var x = bag.b;
+					var $temp$bag = bag1,
+						$temp$list = A2($elm$core$List$cons, x, list);
+					bag = $temp$bag;
+					list = $temp$list;
+					continue bagToList;
+				default:
+					var bag1 = bag.a;
+					var bag2 = bag.b;
+					var $temp$bag = bag1,
+						$temp$list = A2($elm$parser$Parser$Advanced$bagToList, bag2, list);
+					bag = $temp$bag;
+					list = $temp$list;
+					continue bagToList;
+			}
+		}
+	});
+var $elm$parser$Parser$Advanced$run = F2(
+	function (_v0, src) {
+		var parse = _v0.a;
+		var _v1 = parse(
+			{col: 1, context: _List_Nil, indent: 1, offset: 0, row: 1, src: src});
+		if (_v1.$ === 'Good') {
+			var value = _v1.b;
+			return $elm$core$Result$Ok(value);
+		} else {
+			var bag = _v1.b;
+			return $elm$core$Result$Err(
+				A2($elm$parser$Parser$Advanced$bagToList, bag, _List_Nil));
+		}
+	});
+var $elm$parser$Parser$run = F2(
+	function (parser, source) {
+		var _v0 = A2($elm$parser$Parser$Advanced$run, parser, source);
+		if (_v0.$ === 'Ok') {
+			var a = _v0.a;
+			return $elm$core$Result$Ok(a);
+		} else {
+			var problems = _v0.a;
+			return $elm$core$Result$Err(
+				A2($elm$core$List$map, $elm$parser$Parser$problemToDeadEnd, problems));
+		}
+	});
+var $elm$parser$Parser$Advanced$Bad = F2(
+	function (a, b) {
+		return {$: 'Bad', a: a, b: b};
+	});
+var $elm$parser$Parser$Advanced$Good = F3(
+	function (a, b, c) {
+		return {$: 'Good', a: a, b: b, c: c};
+	});
+var $elm$parser$Parser$Advanced$Parser = function (a) {
+	return {$: 'Parser', a: a};
+};
+var $elm$parser$Parser$Advanced$andThen = F2(
+	function (callback, _v0) {
+		var parseA = _v0.a;
+		return $elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _v1 = parseA(s0);
+				if (_v1.$ === 'Bad') {
+					var p = _v1.a;
+					var x = _v1.b;
+					return A2($elm$parser$Parser$Advanced$Bad, p, x);
+				} else {
+					var p1 = _v1.a;
+					var a = _v1.b;
+					var s1 = _v1.c;
+					var _v2 = callback(a);
+					var parseB = _v2.a;
+					var _v3 = parseB(s1);
+					if (_v3.$ === 'Bad') {
+						var p2 = _v3.a;
+						var x = _v3.b;
+						return A2($elm$parser$Parser$Advanced$Bad, p1 || p2, x);
+					} else {
+						var p2 = _v3.a;
+						var b = _v3.b;
+						var s2 = _v3.c;
+						return A3($elm$parser$Parser$Advanced$Good, p1 || p2, b, s2);
+					}
+				}
+			});
+	});
+var $elm$parser$Parser$andThen = $elm$parser$Parser$Advanced$andThen;
+var $elm$parser$Parser$Advanced$isSubChar = _Parser_isSubChar;
+var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
+	function (isGood, offset, row, col, s0) {
+		chompWhileHelp:
+		while (true) {
+			var newOffset = A3($elm$parser$Parser$Advanced$isSubChar, isGood, offset, s0.src);
+			if (_Utils_eq(newOffset, -1)) {
+				return A3(
+					$elm$parser$Parser$Advanced$Good,
+					_Utils_cmp(s0.offset, offset) < 0,
+					_Utils_Tuple0,
+					{col: col, context: s0.context, indent: s0.indent, offset: offset, row: row, src: s0.src});
+			} else {
+				if (_Utils_eq(newOffset, -2)) {
+					var $temp$isGood = isGood,
+						$temp$offset = offset + 1,
+						$temp$row = row + 1,
+						$temp$col = 1,
+						$temp$s0 = s0;
+					isGood = $temp$isGood;
+					offset = $temp$offset;
+					row = $temp$row;
+					col = $temp$col;
+					s0 = $temp$s0;
+					continue chompWhileHelp;
+				} else {
+					var $temp$isGood = isGood,
+						$temp$offset = newOffset,
+						$temp$row = row,
+						$temp$col = col + 1,
+						$temp$s0 = s0;
+					isGood = $temp$isGood;
+					offset = $temp$offset;
+					row = $temp$row;
+					col = $temp$col;
+					s0 = $temp$s0;
+					continue chompWhileHelp;
+				}
+			}
+		}
+	});
+var $elm$parser$Parser$Advanced$chompWhile = function (isGood) {
+	return $elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.offset, s.row, s.col, s);
+		});
+};
+var $elm$parser$Parser$chompWhile = $elm$parser$Parser$Advanced$chompWhile;
+var $elm$parser$Parser$ExpectingEnd = {$: 'ExpectingEnd'};
+var $elm$parser$Parser$Advanced$AddRight = F2(
+	function (a, b) {
+		return {$: 'AddRight', a: a, b: b};
+	});
+var $elm$parser$Parser$Advanced$DeadEnd = F4(
+	function (row, col, problem, contextStack) {
+		return {col: col, contextStack: contextStack, problem: problem, row: row};
+	});
+var $elm$parser$Parser$Advanced$Empty = {$: 'Empty'};
+var $elm$parser$Parser$Advanced$fromState = F2(
+	function (s, x) {
+		return A2(
+			$elm$parser$Parser$Advanced$AddRight,
+			$elm$parser$Parser$Advanced$Empty,
+			A4($elm$parser$Parser$Advanced$DeadEnd, s.row, s.col, x, s.context));
+	});
+var $elm$parser$Parser$Advanced$end = function (x) {
+	return $elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return _Utils_eq(
+				$elm$core$String$length(s.src),
+				s.offset) ? A3($elm$parser$Parser$Advanced$Good, false, _Utils_Tuple0, s) : A2(
+				$elm$parser$Parser$Advanced$Bad,
+				false,
+				A2($elm$parser$Parser$Advanced$fromState, s, x));
+		});
+};
+var $elm$parser$Parser$end = $elm$parser$Parser$Advanced$end($elm$parser$Parser$ExpectingEnd);
+var $elm$parser$Parser$Advanced$mapChompedString = F2(
+	function (func, _v0) {
+		var parse = _v0.a;
+		return $elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _v1 = parse(s0);
+				if (_v1.$ === 'Bad') {
+					var p = _v1.a;
+					var x = _v1.b;
+					return A2($elm$parser$Parser$Advanced$Bad, p, x);
+				} else {
+					var p = _v1.a;
+					var a = _v1.b;
+					var s1 = _v1.c;
+					return A3(
+						$elm$parser$Parser$Advanced$Good,
+						p,
+						A2(
+							func,
+							A3($elm$core$String$slice, s0.offset, s1.offset, s0.src),
+							a),
+						s1);
+				}
+			});
+	});
+var $elm$parser$Parser$Advanced$getChompedString = function (parser) {
+	return A2($elm$parser$Parser$Advanced$mapChompedString, $elm$core$Basics$always, parser);
+};
+var $elm$parser$Parser$getChompedString = $elm$parser$Parser$Advanced$getChompedString;
+var $elm$parser$Parser$Advanced$map = F2(
+	function (func, _v0) {
+		var parse = _v0.a;
+		return $elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _v1 = parse(s0);
+				if (_v1.$ === 'Good') {
+					var p = _v1.a;
+					var a = _v1.b;
+					var s1 = _v1.c;
+					return A3(
+						$elm$parser$Parser$Advanced$Good,
+						p,
+						func(a),
+						s1);
+				} else {
+					var p = _v1.a;
+					var x = _v1.b;
+					return A2($elm$parser$Parser$Advanced$Bad, p, x);
+				}
+			});
+	});
+var $elm$parser$Parser$map = $elm$parser$Parser$Advanced$map;
+var $elm$parser$Parser$Problem = function (a) {
+	return {$: 'Problem', a: a};
+};
+var $elm$parser$Parser$Advanced$problem = function (x) {
+	return $elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return A2(
+				$elm$parser$Parser$Advanced$Bad,
+				false,
+				A2($elm$parser$Parser$Advanced$fromState, s, x));
+		});
+};
+var $elm$parser$Parser$problem = function (msg) {
+	return $elm$parser$Parser$Advanced$problem(
+		$elm$parser$Parser$Problem(msg));
+};
+var $elm$parser$Parser$Advanced$succeed = function (a) {
+	return $elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return A3($elm$parser$Parser$Advanced$Good, false, a, s);
+		});
+};
+var $elm$parser$Parser$succeed = $elm$parser$Parser$Advanced$succeed;
+var $author$project$Data$Hardware$validXMRAddressParser = A2(
+	$elm$parser$Parser$andThen,
+	function (str) {
+		return A2(
+			$elm$parser$Parser$map,
+			function (_v0) {
+				return str;
+			},
+			$elm$parser$Parser$end);
+	},
+	A2(
+		$elm$parser$Parser$andThen,
+		function (str) {
+			return ($elm$core$String$length(str) === 95) ? $elm$parser$Parser$succeed(str) : $elm$parser$Parser$problem('Invalid length');
+		},
+		$elm$parser$Parser$getChompedString(
+			$elm$parser$Parser$chompWhile($elm$core$Char$isAlphaNum))));
+var $author$project$Pages$Hardware$isValidXMRAddress = function (str) {
+	var _v0 = A2($elm$parser$Parser$run, $author$project$Data$Hardware$validXMRAddressParser, str);
+	if (_v0.$ === 'Ok') {
+		return true;
+	} else {
+		return false;
+	}
+};
 var $author$project$Pages$Hardware$OperationEventMsg = function (operationEventMsg) {
 	return {operationEventMsg: operationEventMsg};
 };
@@ -15059,7 +15467,7 @@ var $author$project$Pages$Hardware$update = F2(
 				}();
 				var updatedIsLNSConnected = (decodedHardwareDeviceMsg === 'nanoS') ? true : false;
 				var updatedIsLNXConnected = (decodedHardwareDeviceMsg === 'nanoX') ? true : false;
-				var updatedIsXMRConnected = (decodedHardwareDeviceMsg === 'real xmr wallet address to be added here') ? true : false;
+				var updatedIsXMRConnected = $author$project$Pages$Hardware$isValidXMRAddress(decodedHardwareDeviceMsg) ? true : false;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -15100,6 +15508,8 @@ var $author$project$Pages$Hardware$update = F2(
 			case 'ClickedHardwareDeviceConnect':
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'ClickedXMRWalletConnect':
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			case 'ClickedXMRInitiateTransaction':
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'RegisUser':
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -15882,6 +16292,18 @@ var $author$project$Main$update = F2(
 										page: $author$project$Main$HardwarePage(newHardwareModel)
 									}),
 								$author$project$Main$sendMessageToJs('getMoneroAddress'));
+						case 'ClickedXMRInitiateTransaction':
+							var amt = hardwareMsg.a;
+							var newHardwareModel = _Utils_update(
+								hardwareModel,
+								{queryType: $author$project$Pages$Hardware$LoggedInUser});
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										page: $author$project$Main$HardwarePage(newHardwareModel)
+									}),
+								$author$project$Main$sendMessageToJs('initiateXMRToBTCTrans ' + ('~^&' + amt)));
 						default:
 							return A2(
 								$author$project$Main$toHardware,
@@ -24964,6 +25386,9 @@ var $author$project$Pages$Hardware$dialoguePrepareResultView = F3(
 					])));
 	});
 var $author$project$Pages$Hardware$ClickedHardwareDeviceConnect = {$: 'ClickedHardwareDeviceConnect'};
+var $author$project$Pages$Hardware$ClickedXMRInitiateTransaction = function (a) {
+	return {$: 'ClickedXMRInitiateTransaction', a: a};
+};
 var $author$project$Pages$Hardware$ClickedXMRWalletConnect = {$: 'ClickedXMRWalletConnect'};
 var $author$project$Pages$Hardware$hardwareWalletView = function (model) {
 	return A2(
@@ -24988,6 +25413,11 @@ var $author$project$Pages$Hardware$hardwareWalletView = function (model) {
 					$Orasund$elm_ui_framework$Framework$Heading$h6,
 					$mdgriffith$elm_ui$Element$text(
 						model.isHardwareLNSConnected ? 'Nano S Connected' : (model.isHardwareLNXConnected ? 'Nano X Connected' : (model.isXMRWalletConnected ? 'XMR Wallet Connected' : 'Not connected yet')))),
+					$mdgriffith$elm_ui$Element$text('\n'),
+					A2(
+					$author$project$Pages$Hardware$infoBtn,
+					'Connect XMR Wallet',
+					$author$project$Pages$Hardware$ClickedXMRInitiateTransaction('0.01')),
 					function () {
 					var _v0 = model.errors;
 					if (!_v0.b) {
@@ -26385,4 +26815,4 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$ChangedUrl, onUrlRequest: $author$project$Main$ClickedLink, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$string)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"},"Data.Hardware.BaseAddress":{"args":[],"type":"{ street : String.String, city : String.String }"},"Data.User.Description":{"args":[],"type":"{ level : String.String, comment : String.String }"},"Time.Era":{"args":[],"type":"{ start : Basics.Int, offset : Basics.Int }"},"Proto.Io.Haveno.Protobuffer.GetVersionReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply"},"Pages.Dashboard.HavenoAPKHttpRequest":{"args":[],"type":"{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"},"Pages.Hardware.Identities":{"args":[],"type":"{ id : String.String, provider_type : String.String, provider_id : String.String, provider_data : Pages.Hardware.ProviderData }"},"Data.User.MemberRanking":{"args":[],"type":"{ id : String.String, name : String.String }"},"Pages.Buy.Model":{"args":[],"type":"{ status : Pages.Buy.Status, title : String.String, root : Pages.Buy.Buy }"},"Pages.Dashboard.Model":{"args":[],"type":"{ status : Pages.Dashboard.Status, title : String.String, root : Pages.Dashboard.Dashboard, balance : String.String, flagUrl : Url.Url, havenoAPKHttpRequest : Maybe.Maybe Pages.Dashboard.HavenoAPKHttpRequest, version : Maybe.Maybe Proto.Io.Haveno.Protobuffer.GetVersionReply, errors : List.List String.String }"},"Pages.Funds.Model":{"args":[],"type":"{ status : Pages.Funds.Status, title : String.String, root : Pages.Funds.Funds }"},"Pages.Market.Model":{"args":[],"type":"{ status : Pages.Market.Status, title : String.String, root : Pages.Market.Market }"},"Pages.PingPong.Model":{"args":[],"type":"{ status : Pages.PingPong.Status, title : String.String, root : Pages.PingPong.PingPong }"},"Pages.Portfolio.Model":{"args":[],"type":"{ status : Pages.Portfolio.Status, title : String.String, root : Pages.Portfolio.Portfolio }"},"Pages.Sell.Model":{"args":[],"type":"{ status : Pages.Sell.Status, title : String.String, root : Pages.Sell.Sell }"},"Pages.Support.Model":{"args":[],"type":"{ status : Pages.Support.Status, title : String.String, root : Pages.Support.Support }"},"Data.User.NickName":{"args":[],"type":"String.String"},"Data.User.Password":{"args":[],"type":"String.String"},"Data.Hardware.Player":{"args":[],"type":"{ id : String.String, nickname : String.String }"},"Pages.PingPong.PongResponse":{"args":[],"type":"{ message : String.String }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply":{"args":[],"type":"{ version : String.String }"},"Pages.Hardware.ProviderData":{"args":[],"type":"{ email : String.String }"},"Data.Hardware.Rank":{"args":[],"type":"{ rank : Basics.Int, player : Data.Hardware.Player, challenger : Data.Hardware.Player }"},"Data.Hardware.Ranking":{"args":[],"type":"{ id : String.String, active : Basics.Bool, name : String.String, owner_id : String.String, baseaddress : Data.Hardware.BaseAddress, ladder : List.List Data.Hardware.Rank, player_count : Basics.Int, owner_name : String.String }"},"Data.Hardware.RankingSearchResult":{"args":[],"type":"{ id : String.String, name : String.String }"},"Pages.Hardware.RegisterUserDetails":{"args":[],"type":"{ resource_id : String.String, user_details : Data.User.User, additional_fields : String.String }"},"Pages.Hardware.SuccessfulLoginResult":{"args":[],"type":"{ access_token : String.String, refresh_token : String.String, user_id : String.String, device_id : String.String }"},"Pages.Dashboard.SuccessfullBalanceResult":{"args":[],"type":"{ deployment_model : String.String, location : String.String, hostname : String.String, ws_hostname : String.String }"},"Pages.Hardware.SuccessfullLNSConnectResult":{"args":[],"type":"{ function : String.String, date : String.String, id : String.String, message : String.String, transport_type : String.String }"},"Pages.Hardware.SuccessfullProfileResult":{"args":[],"type":"{ user_id : String.String, domain_id : String.String, identities : List.List Pages.Hardware.Identities, data : Pages.Hardware.ProviderData, typeOfData : String.String }"},"Data.User.Token":{"args":[],"type":"String.String"},"Data.User.UserInfo":{"args":[],"type":"{ userid : String.String, password : Data.User.Password, passwordValidationError : String.String, token : Maybe.Maybe Data.User.Token, nickname : Data.User.NickName, isNameInputFocused : Basics.Bool, nameValidationError : String.String, age : Basics.Int, gender : Data.User.Gender, email : Maybe.Maybe String.String, isEmailInputFocused : Basics.Bool, emailValidationError : String.String, mobile : Maybe.Maybe String.String, isMobileInputFocused : Basics.Bool, mobileValidationError : String.String, datestamp : Basics.Int, active : Basics.Bool, ownedRankings : List.List Data.Hardware.Ranking, memberRankings : List.List Data.Hardware.Ranking, updatetext : String.String, description : Data.User.Description, credits : Basics.Int, addInfo : String.String }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"ClickedLink":["Browser.UrlRequest"],"GotDashboardMsg":["Pages.Dashboard.Msg"],"GotSellMsg":["Pages.Sell.Msg"],"GotPortfolioMsg":["Pages.Portfolio.Msg"],"GotFundsMsg":["Pages.Funds.Msg"],"GotSupportMsg":["Pages.Support.Msg"],"GotPingPongMsg":["Pages.PingPong.Msg"],"GotBuyMsg":["Pages.Buy.Msg"],"GotMarketMsg":["Pages.Market.Msg"],"GotHardwareMsg":["Pages.Hardware.Msg"],"ChangedUrl":["Url.Url"],"Tick":["Time.Posix"],"AdjustTimeZone":["Time.Zone"],"Recv":["Json.Decode.Value"],"RecvText":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Pages.Buy.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Buy.Model"]}},"Pages.Dashboard.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Dashboard.Model"],"BalanceResponse":["Result.Result Http.Error Pages.Dashboard.SuccessfullBalanceResult"],"GotVersion":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"]}},"Pages.Funds.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Funds.Model"]}},"Pages.Hardware.Msg":{"args":[],"tags":{"BookingForm":["Pages.Hardware.RegisterUserDetails"],"UpdateAge":["Basics.Int"],"UpdateGender":["String.String"],"UpdateEmail":["String.String"],"UpdatePassword":["String.String"],"UpdateNickName":["String.String"],"UpdateLevel":["String.String"],"UpdateComment":["String.String"],"UpdateMobile":["String.String"],"UpdatePhone":["String.String"],"CondoNameInput":["String.String"],"CondoAddressInput":["String.String"],"AddInfoInput":["String.String"],"ConfirmBookingForm":[],"NoOp":[],"DismissErrors":[],"Tick":["Time.Posix"],"InputFocused":["String.String"],"InputBlurred":["String.String"],"SelDateTime":["String.String"],"ToggleReturnUser":[],"UserLoginEmailInputChg":["String.String"],"UserLoginPasswordInputChg":["String.String"],"ClickedHardwareDeviceConnect":[],"ClickedXMRWalletConnect":[],"ResponseDataFromMain":["Json.Decode.Value"],"LogOut":[],"Create":[],"CreateNewRanking":["Data.User.UserInfo"],"Cancel":[],"CancelFetchedOwned":["Data.User.UserInfo"],"CancelFetchedMember":[],"CancelFetchedSpectator":[],"CancelCreateNewRanking":[],"CancelRegistration":[],"Confirm":[],"FetchOwned":["Data.Hardware.Ranking"],"FetchMember":["Data.Hardware.Ranking"],"ListSpectator":["Data.Hardware.RankingSearchResult"],"ViewMember":["Data.User.MemberRanking"],"RegisUser":["Data.User.UserInfo"],"RankingNameChg":["String.String"],"StreetAddressChg":["String.String"],"CityAddressChg":["String.String"],"ConfirmNewRanking":["Data.Hardware.Ranking","Data.User.User"],"DialogDeleteOwnedRanking":[],"DeleteOwnedRanking":[],"ViewRank":["Data.Hardware.Rank"],"ConfirmChallenge":["Data.Hardware.Ranking","Data.Hardware.Rank"],"ConfirmResult":["Data.Hardware.ResultOfMatch"],"CancelDialoguePrepareResultView":[],"SearchInputChg":["String.String"],"FetchSpectatorRanking":["String.String"],"SpectatorRankingResponse":["Result.Result Http.Error Data.Hardware.Ranking"],"SpectatorJoin":[],"RegisteredUserJoin":[],"ConfirmJoin":["Data.Hardware.Ranking","String.String","Basics.Int"],"ConfirmLeaveMemberRanking":["Data.Hardware.Ranking","String.String"],"DialogueConfirmJoinView":[],"DialogueConfirmLeaveView":[],"DialogueConfirmDeleteAccount":[],"DeleteAccount":[],"LoginResponse":["Result.Result Http.Error Pages.Hardware.SuccessfulLoginResult"],"LNSConnectResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullLNSConnectResult"],"ProfileResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullProfileResult"],"CallResponse":["Result.Result Http.Error Data.User.UserInfo"]}},"Pages.Market.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Market.Model"]}},"Pages.PingPong.Msg":{"args":[],"tags":{"Send":[],"Receive":["Result.Result Http.Error Pages.PingPong.PongResponse"],"GotInitialModel":["Pages.PingPong.Model"]}},"Pages.Portfolio.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Portfolio.Model"]}},"Pages.Sell.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Sell.Model"]}},"Pages.Support.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Support.Model"]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Time.Zone":{"args":[],"tags":{"Zone":["Basics.Int","List.List Time.Era"]}},"Http.Body":{"args":[],"tags":{"Body":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Pages.Buy.Buy":{"args":[],"tags":{"Buy":["{ name : String.String }"]}},"Pages.Dashboard.Dashboard":{"args":[],"tags":{"Dashboard":["{ name : String.String }"]}},"Grpc.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["{ metadata : Http.Metadata, response : Bytes.Bytes, errMessage : String.String, status : Grpc.GrpcStatus }"],"BadBody":["Bytes.Bytes"],"UnknownGrpcStatus":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Pages.Funds.Funds":{"args":[],"tags":{"Funds":["{ name : String.String }"]}},"Data.User.Gender":{"args":[],"tags":{"Male":[],"Female":[]}},"Http.Header":{"args":[],"tags":{"Header":["String.String","String.String"]}},"List.List":{"args":["a"],"tags":{}},"Pages.Market.Market":{"args":[],"tags":{"Market":["{ name : String.String }"]}},"Pages.PingPong.PingPong":{"args":[],"tags":{"PingPong":["{ name : String.String }"]}},"Pages.Portfolio.Portfolio":{"args":[],"tags":{"Portfolio":["{ name : String.String }"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Data.Hardware.ResultOfMatch":{"args":[],"tags":{"Won":[],"Lost":[],"Undecided":[]}},"Pages.Sell.Sell":{"args":[],"tags":{"Sell":["{ name : String.String }"]}},"Pages.Buy.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Dashboard.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Funds.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Market.Status":{"args":[],"tags":{"Loading":[]}},"Pages.PingPong.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Portfolio.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Sell.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Support":{"args":[],"tags":{"Support":["{ name : String.String }"]}},"Data.User.User":{"args":[],"tags":{"Spectator":["Data.User.UserInfo"],"Registered":["Data.User.UserInfo"]}},"Bytes.Bytes":{"args":[],"tags":{"Bytes":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Grpc.GrpcStatus":{"args":[],"tags":{"Ok_":[],"Cancelled":[],"Unknown":[],"InvalidArgument":[],"DeadlineExceeded":[],"NotFound":[],"AlreadyExists":[],"PermissionDenied":[],"ResourceExhausted":[],"FailedPrecondition":[],"Aborted":[],"OutOfRange":[],"Unimplemented":[],"Internal":[],"Unavailable":[],"DataLoss":[],"Unauthenticated":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$string)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"},"Data.Hardware.BaseAddress":{"args":[],"type":"{ street : String.String, city : String.String }"},"Data.User.Description":{"args":[],"type":"{ level : String.String, comment : String.String }"},"Time.Era":{"args":[],"type":"{ start : Basics.Int, offset : Basics.Int }"},"Proto.Io.Haveno.Protobuffer.GetVersionReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply"},"Pages.Dashboard.HavenoAPKHttpRequest":{"args":[],"type":"{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"},"Pages.Hardware.Identities":{"args":[],"type":"{ id : String.String, provider_type : String.String, provider_id : String.String, provider_data : Pages.Hardware.ProviderData }"},"Data.User.MemberRanking":{"args":[],"type":"{ id : String.String, name : String.String }"},"Pages.Buy.Model":{"args":[],"type":"{ status : Pages.Buy.Status, title : String.String, root : Pages.Buy.Buy }"},"Pages.Dashboard.Model":{"args":[],"type":"{ status : Pages.Dashboard.Status, title : String.String, root : Pages.Dashboard.Dashboard, balance : String.String, flagUrl : Url.Url, havenoAPKHttpRequest : Maybe.Maybe Pages.Dashboard.HavenoAPKHttpRequest, version : Maybe.Maybe Proto.Io.Haveno.Protobuffer.GetVersionReply, errors : List.List String.String }"},"Pages.Funds.Model":{"args":[],"type":"{ status : Pages.Funds.Status, title : String.String, root : Pages.Funds.Funds }"},"Pages.Market.Model":{"args":[],"type":"{ status : Pages.Market.Status, title : String.String, root : Pages.Market.Market }"},"Pages.PingPong.Model":{"args":[],"type":"{ status : Pages.PingPong.Status, title : String.String, root : Pages.PingPong.PingPong }"},"Pages.Portfolio.Model":{"args":[],"type":"{ status : Pages.Portfolio.Status, title : String.String, root : Pages.Portfolio.Portfolio }"},"Pages.Sell.Model":{"args":[],"type":"{ status : Pages.Sell.Status, title : String.String, root : Pages.Sell.Sell }"},"Pages.Support.Model":{"args":[],"type":"{ status : Pages.Support.Status, title : String.String, root : Pages.Support.Support }"},"Data.User.NickName":{"args":[],"type":"String.String"},"Data.User.Password":{"args":[],"type":"String.String"},"Data.Hardware.Player":{"args":[],"type":"{ id : String.String, nickname : String.String }"},"Pages.PingPong.PongResponse":{"args":[],"type":"{ message : String.String }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply":{"args":[],"type":"{ version : String.String }"},"Pages.Hardware.ProviderData":{"args":[],"type":"{ email : String.String }"},"Data.Hardware.Rank":{"args":[],"type":"{ rank : Basics.Int, player : Data.Hardware.Player, challenger : Data.Hardware.Player }"},"Data.Hardware.Ranking":{"args":[],"type":"{ id : String.String, active : Basics.Bool, name : String.String, owner_id : String.String, baseaddress : Data.Hardware.BaseAddress, ladder : List.List Data.Hardware.Rank, player_count : Basics.Int, owner_name : String.String }"},"Data.Hardware.RankingSearchResult":{"args":[],"type":"{ id : String.String, name : String.String }"},"Pages.Hardware.RegisterUserDetails":{"args":[],"type":"{ resource_id : String.String, user_details : Data.User.User, additional_fields : String.String }"},"Pages.Hardware.SuccessfulLoginResult":{"args":[],"type":"{ access_token : String.String, refresh_token : String.String, user_id : String.String, device_id : String.String }"},"Pages.Dashboard.SuccessfullBalanceResult":{"args":[],"type":"{ deployment_model : String.String, location : String.String, hostname : String.String, ws_hostname : String.String }"},"Pages.Hardware.SuccessfullLNSConnectResult":{"args":[],"type":"{ function : String.String, date : String.String, id : String.String, message : String.String, transport_type : String.String }"},"Pages.Hardware.SuccessfullProfileResult":{"args":[],"type":"{ user_id : String.String, domain_id : String.String, identities : List.List Pages.Hardware.Identities, data : Pages.Hardware.ProviderData, typeOfData : String.String }"},"Data.User.Token":{"args":[],"type":"String.String"},"Data.User.UserInfo":{"args":[],"type":"{ userid : String.String, password : Data.User.Password, passwordValidationError : String.String, token : Maybe.Maybe Data.User.Token, nickname : Data.User.NickName, isNameInputFocused : Basics.Bool, nameValidationError : String.String, age : Basics.Int, gender : Data.User.Gender, email : Maybe.Maybe String.String, isEmailInputFocused : Basics.Bool, emailValidationError : String.String, mobile : Maybe.Maybe String.String, isMobileInputFocused : Basics.Bool, mobileValidationError : String.String, datestamp : Basics.Int, active : Basics.Bool, ownedRankings : List.List Data.Hardware.Ranking, memberRankings : List.List Data.Hardware.Ranking, updatetext : String.String, description : Data.User.Description, credits : Basics.Int, addInfo : String.String }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"ClickedLink":["Browser.UrlRequest"],"GotDashboardMsg":["Pages.Dashboard.Msg"],"GotSellMsg":["Pages.Sell.Msg"],"GotPortfolioMsg":["Pages.Portfolio.Msg"],"GotFundsMsg":["Pages.Funds.Msg"],"GotSupportMsg":["Pages.Support.Msg"],"GotPingPongMsg":["Pages.PingPong.Msg"],"GotBuyMsg":["Pages.Buy.Msg"],"GotMarketMsg":["Pages.Market.Msg"],"GotHardwareMsg":["Pages.Hardware.Msg"],"ChangedUrl":["Url.Url"],"Tick":["Time.Posix"],"AdjustTimeZone":["Time.Zone"],"Recv":["Json.Decode.Value"],"RecvText":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Pages.Buy.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Buy.Model"]}},"Pages.Dashboard.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Dashboard.Model"],"BalanceResponse":["Result.Result Http.Error Pages.Dashboard.SuccessfullBalanceResult"],"GotVersion":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"]}},"Pages.Funds.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Funds.Model"]}},"Pages.Hardware.Msg":{"args":[],"tags":{"BookingForm":["Pages.Hardware.RegisterUserDetails"],"UpdateAge":["Basics.Int"],"UpdateGender":["String.String"],"UpdateEmail":["String.String"],"UpdatePassword":["String.String"],"UpdateNickName":["String.String"],"UpdateLevel":["String.String"],"UpdateComment":["String.String"],"UpdateMobile":["String.String"],"UpdatePhone":["String.String"],"CondoNameInput":["String.String"],"CondoAddressInput":["String.String"],"AddInfoInput":["String.String"],"ConfirmBookingForm":[],"NoOp":[],"DismissErrors":[],"Tick":["Time.Posix"],"InputFocused":["String.String"],"InputBlurred":["String.String"],"SelDateTime":["String.String"],"ToggleReturnUser":[],"UserLoginEmailInputChg":["String.String"],"UserLoginPasswordInputChg":["String.String"],"ClickedHardwareDeviceConnect":[],"ClickedXMRWalletConnect":[],"ClickedXMRInitiateTransaction":["String.String"],"ResponseDataFromMain":["Json.Decode.Value"],"LogOut":[],"Create":[],"CreateNewRanking":["Data.User.UserInfo"],"Cancel":[],"CancelFetchedOwned":["Data.User.UserInfo"],"CancelFetchedMember":[],"CancelFetchedSpectator":[],"CancelCreateNewRanking":[],"CancelRegistration":[],"Confirm":[],"FetchOwned":["Data.Hardware.Ranking"],"FetchMember":["Data.Hardware.Ranking"],"ListSpectator":["Data.Hardware.RankingSearchResult"],"ViewMember":["Data.User.MemberRanking"],"RegisUser":["Data.User.UserInfo"],"RankingNameChg":["String.String"],"StreetAddressChg":["String.String"],"CityAddressChg":["String.String"],"ConfirmNewRanking":["Data.Hardware.Ranking","Data.User.User"],"DialogDeleteOwnedRanking":[],"DeleteOwnedRanking":[],"ViewRank":["Data.Hardware.Rank"],"ConfirmChallenge":["Data.Hardware.Ranking","Data.Hardware.Rank"],"ConfirmResult":["Data.Hardware.ResultOfMatch"],"CancelDialoguePrepareResultView":[],"SearchInputChg":["String.String"],"FetchSpectatorRanking":["String.String"],"SpectatorRankingResponse":["Result.Result Http.Error Data.Hardware.Ranking"],"SpectatorJoin":[],"RegisteredUserJoin":[],"ConfirmJoin":["Data.Hardware.Ranking","String.String","Basics.Int"],"ConfirmLeaveMemberRanking":["Data.Hardware.Ranking","String.String"],"DialogueConfirmJoinView":[],"DialogueConfirmLeaveView":[],"DialogueConfirmDeleteAccount":[],"DeleteAccount":[],"LoginResponse":["Result.Result Http.Error Pages.Hardware.SuccessfulLoginResult"],"LNSConnectResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullLNSConnectResult"],"ProfileResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullProfileResult"],"CallResponse":["Result.Result Http.Error Data.User.UserInfo"]}},"Pages.Market.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Market.Model"]}},"Pages.PingPong.Msg":{"args":[],"tags":{"Send":[],"Receive":["Result.Result Http.Error Pages.PingPong.PongResponse"],"GotInitialModel":["Pages.PingPong.Model"]}},"Pages.Portfolio.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Portfolio.Model"]}},"Pages.Sell.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Sell.Model"]}},"Pages.Support.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Support.Model"]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Time.Zone":{"args":[],"tags":{"Zone":["Basics.Int","List.List Time.Era"]}},"Http.Body":{"args":[],"tags":{"Body":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Pages.Buy.Buy":{"args":[],"tags":{"Buy":["{ name : String.String }"]}},"Pages.Dashboard.Dashboard":{"args":[],"tags":{"Dashboard":["{ name : String.String }"]}},"Grpc.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["{ metadata : Http.Metadata, response : Bytes.Bytes, errMessage : String.String, status : Grpc.GrpcStatus }"],"BadBody":["Bytes.Bytes"],"UnknownGrpcStatus":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Pages.Funds.Funds":{"args":[],"tags":{"Funds":["{ name : String.String }"]}},"Data.User.Gender":{"args":[],"tags":{"Male":[],"Female":[]}},"Http.Header":{"args":[],"tags":{"Header":["String.String","String.String"]}},"List.List":{"args":["a"],"tags":{}},"Pages.Market.Market":{"args":[],"tags":{"Market":["{ name : String.String }"]}},"Pages.PingPong.PingPong":{"args":[],"tags":{"PingPong":["{ name : String.String }"]}},"Pages.Portfolio.Portfolio":{"args":[],"tags":{"Portfolio":["{ name : String.String }"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Data.Hardware.ResultOfMatch":{"args":[],"tags":{"Won":[],"Lost":[],"Undecided":[]}},"Pages.Sell.Sell":{"args":[],"tags":{"Sell":["{ name : String.String }"]}},"Pages.Buy.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Dashboard.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Funds.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Market.Status":{"args":[],"tags":{"Loading":[]}},"Pages.PingPong.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Portfolio.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Sell.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Support":{"args":[],"tags":{"Support":["{ name : String.String }"]}},"Data.User.User":{"args":[],"tags":{"Spectator":["Data.User.UserInfo"],"Registered":["Data.User.UserInfo"]}},"Bytes.Bytes":{"args":[],"tags":{"Bytes":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Grpc.GrpcStatus":{"args":[],"tags":{"Ok_":[],"Cancelled":[],"Unknown":[],"InvalidArgument":[],"DeadlineExceeded":[],"NotFound":[],"AlreadyExists":[],"PermissionDenied":[],"ResourceExhausted":[],"FailedPrecondition":[],"Aborted":[],"OutOfRange":[],"Unimplemented":[],"Internal":[],"Unavailable":[],"DataLoss":[],"Unauthenticated":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));
