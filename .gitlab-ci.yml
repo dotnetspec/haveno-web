@@ -56,6 +56,8 @@ integration_test:
     - npx elm make src/Main.elm --output=js/elm.js --optimize 
     - yarn add elm-spec-runner
     - npx elm-spec --specRoot ./
+    # Run Vitest tests
+    - yarn vitest run
     # Run Parcel build
     - yarn build
     

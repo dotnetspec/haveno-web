@@ -12001,7 +12001,7 @@ type alias Process =
                 A2($elm$html$Html$br, _List_Nil, _List_Nil),
                 $elm$html$Html$text("Open source code & design"),
                 A2($elm$html$Html$p, _List_Nil, _List_fromArray([
-                    $elm$html$Html$text("Version 0.0.8")
+                    $elm$html$Html$text("Version 0.0.9")
                 ]))
             ]))
         ]))

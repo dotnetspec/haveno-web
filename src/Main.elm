@@ -1145,7 +1145,7 @@ footerContent =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.8" ]
+                , p [] [ text "Version 0.0.9" ]
                 ]
             ]
         ]
