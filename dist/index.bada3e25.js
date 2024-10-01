@@ -50686,13 +50686,13 @@ const isSupported = ()=>Promise.resolve(!!navigator && !!navigator.usb && typeof
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getMoneroAddress", ()=>getMoneroAddress);
-parcelHelpers.export(exports, "sum", ()=>sum);
 var _esnextMapGroupByJs = require("core-js/modules/esnext.map.group-by.js");
 var _esnextSymbolDisposeJs = require("core-js/modules/esnext.symbol.dispose.js");
 var _webImmediateJs = require("core-js/modules/web.immediate.js");
 var _logs = require("@ledgerhq/logs");
 var _hwTransportWebhid = require("@ledgerhq/hw-transport-webhid");
 var _hwTransportWebhidDefault = parcelHelpers.interopDefault(_hwTransportWebhid);
+var _serializeDerivationPath = require("./serializeDerivationPath");
 async function getMoneroAddress(app) {
     try {
         console.log("Attempting to get Monero address now...");
@@ -50707,11 +50707,9 @@ async function getMoneroAddress(app) {
         const derivationPath = [
             0x8000002c,
             0x80000080,
-            0x80000000,
-            0x00000000,
-            0x00000000
+            0x80000000
         ];
-        const data = serializeDerivationPath(derivationPath);
+        const data = (0, _serializeDerivationPath.serializeDerivationPath)(derivationPath);
         console.log("Serialized Derivation Path:", data);
         // Send the APDU command to the Ledger device
         const response = await transport.send(cla, ins, p1, p2, data);
@@ -50737,11 +50735,8 @@ function serializeDerivationPath(path) {
     });
     return new Uint8Array(buffer);
 }
-function sum(a, b) {
-    return a + b;
-}
 
-},{"core-js/modules/esnext.map.group-by.js":"3AR1K","core-js/modules/esnext.symbol.dispose.js":"b9ez5","core-js/modules/web.immediate.js":"49tUX","@ledgerhq/logs":"i4OI0","@ledgerhq/hw-transport-webhid":"8O295","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8O295":[function(require,module,exports) {
+},{"core-js/modules/esnext.map.group-by.js":"3AR1K","core-js/modules/esnext.symbol.dispose.js":"b9ez5","core-js/modules/web.immediate.js":"49tUX","@ledgerhq/logs":"i4OI0","@ledgerhq/hw-transport-webhid":"8O295","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./serializeDerivationPath":"h5x5j"}],"8O295":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _hwTransport = require("@ledgerhq/hw-transport");
@@ -50961,7 +50956,22 @@ function getFirstLedgerDevice() {
 };
 exports.default = TransportWebHID;
 
-},{"3666b9e986722ce4":"bwvMq","@ledgerhq/hw-transport":"59Ey9","@ledgerhq/devices/hid-framing":"3BsQA","@ledgerhq/devices":"fnHxP","@ledgerhq/logs":"i4OI0","@ledgerhq/errors":"EVZMy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2sLhv":[function(require,module,exports) {
+},{"3666b9e986722ce4":"bwvMq","@ledgerhq/hw-transport":"59Ey9","@ledgerhq/devices/hid-framing":"3BsQA","@ledgerhq/devices":"fnHxP","@ledgerhq/logs":"i4OI0","@ledgerhq/errors":"EVZMy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"h5x5j":[function(require,module,exports) {
+// src/hardware/serializeDerivationPath.js
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "serializeDerivationPath", ()=>serializeDerivationPath);
+function serializeDerivationPath(path) {
+    const buffer = new ArrayBuffer(1 + path.length * 4); // 1 byte for path length + 4 bytes for each path element
+    const dataView = new DataView(buffer);
+    dataView.setUint8(0, path.length); // First byte: path length
+    path.forEach((element, index)=>{
+        dataView.setUint32(1 + index * 4, element);
+    });
+    return new Uint8Array(buffer);
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2sLhv":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "checkDeviceConnection", ()=>checkDeviceConnection) //checkDeviceConnection();

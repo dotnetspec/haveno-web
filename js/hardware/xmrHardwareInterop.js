@@ -1,8 +1,9 @@
 import "core-js/actual";
 import { listen } from "@ledgerhq/logs";
 import TransportWebHID from "@ledgerhq/hw-transport-webhid";
+import { serializeDerivationPath } from "./serializeDerivationPath";
 
-export async function getMoneroAddress(app) {
+/* export async function getMoneroAddress() {
   try {
     console.log("Attempting to get Monero address now...");
 
@@ -20,8 +21,8 @@ export async function getMoneroAddress(app) {
       0x8000002c, // 44'
       0x80000080, // 128'
       0x80000000, // 0'
-      0x00000000, // 0
-      0x00000000, // 0
+      //0x00000000, // 0
+      //0x00000000, // 0
     ];
     const data = serializeDerivationPath(derivationPath);
 
@@ -34,7 +35,7 @@ export async function getMoneroAddress(app) {
     listen((log) => console.log(log));
     //console.log("Monero Address Response:", response);
     if (response.length > 2) {
-      const statusCode = response.slice(-2); // Last 2 bytes are the status word
+      const statusCode = response.slice(0,-2); // Last 2 bytes are the status word
       if (statusCode[0] === 0x90 && statusCode[1] === 0x00) {
         console.log("Success:", response);
       } else {
@@ -44,22 +45,24 @@ export async function getMoneroAddress(app) {
   } catch (error) {
     console.error("Error getting Monero address:", error);
   }
-}
+} */
 
-// Helper function to serialize the derivation path
-function serializeDerivationPath(path) {
-  const buffer = new ArrayBuffer(1 + path.length * 4); // 1 byte for path length + 4 bytes for each path element
-  const dataView = new DataView(buffer);
-  dataView.setUint8(0, path.length); // First byte: path length
+  export async function getMoneroAddress() {
+    try {
+      const transport = await TransportWebHID.create();
+      const path = [0x8000002c, 0x80000080, 0x80000000, 0x00000000, 0x00000000]; // 44'/128'/0'/0/0
+      const serializedPath = serializeDerivationPath(path);
+      const response = await transport.send(0xE0, 0x46, 0x00, 0x00, serializedPath);
+      
+      // Assuming the address is in the response and converting it to a string
+      const address = new TextDecoder().decode(response.subarray(0, response.length - 2)); // Remove status bytes
+      return address;
+    } catch (error) {
+      console.error("Error getting Monero address:", error);
+      throw error;
+    }
+  }
 
-  path.forEach((element, index) => {
-    dataView.setUint32(1 + index * 4, element);
-  });
 
-  return new Uint8Array(buffer);
-}
 
-export function sum(a, b) {
-  return a + b;
-}
 
