@@ -55,7 +55,6 @@
     "stream-browserify": "^3.0.0",
     "util": "^0.12.5",
     "vite-plugin-elm": "^3.0.1",
-    "vite-plugin-env-compatible": "^2.0.1",
     "vitest": "^2.1.1"
   },
   "alias": {
