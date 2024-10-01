@@ -54,13 +54,13 @@ describe('getMoneroAddress', () => {
     // Spy on console.error
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    // Call the function
-    await getMoneroAddress();
+    // Call the function and expect it to throw an error
+    await expect(getMoneroAddress()).rejects.toThrow('Failed to connect');
 
-    // Verify the error was logged
+    // Verify that console.error was called with the error
     expect(consoleErrorSpy).toHaveBeenCalledWith('Error getting Monero address:', new Error('Failed to connect'));
 
-    // Restore console.error
+    // Restore the original console.error implementation
     consoleErrorSpy.mockRestore();
   });
 });

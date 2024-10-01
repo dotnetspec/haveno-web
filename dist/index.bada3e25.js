@@ -50685,7 +50685,49 @@ const isSupported = ()=>Promise.resolve(!!navigator && !!navigator.usb && typeof
 },{"@ledgerhq/devices":"fnHxP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2JAI7":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "getMoneroAddress", ()=>getMoneroAddress);
+/* export async function getMoneroAddress() {
+  try {
+    console.log("Attempting to get Monero address now...");
+
+    // Request access to the Ledger device
+    const transport = await TransportWebHID.create();
+
+    // Define APDU command parameters
+    const cla = 0xE0; // Class byte for Ledger Monero app
+    const ins = 0x46; // INS_DERIVE_SUBADDRESS_PUBLIC_KEY
+    const p1 = 0x00; // First parameter
+    const p2 = 0x00; // Second parameter
+
+    // Derivation path: 44'/128'/0'/0/0
+    const derivationPath = [
+      0x8000002c, // 44'
+      0x80000080, // 128'
+      0x80000000, // 0'
+      //0x00000000, // 0
+      //0x00000000, // 0
+    ];
+    const data = serializeDerivationPath(derivationPath);
+
+    console.log("Serialized Derivation Path:", data);
+
+    // Send the APDU command to the Ledger device
+    const response = await transport.send(cla, ins, p1, p2, data);
+
+    // Listen to Ledger logs for debugging
+    listen((log) => console.log(log));
+    //console.log("Monero Address Response:", response);
+    if (response.length > 2) {
+      const statusCode = response.slice(0,-2); // Last 2 bytes are the status word
+      if (statusCode[0] === 0x90 && statusCode[1] === 0x00) {
+        console.log("Success:", response);
+      } else {
+        console.error("Error with status code:", statusCode);
+      }
+    }
+  } catch (error) {
+    console.error("Error getting Monero address:", error);
+  }
+} */ parcelHelpers.export(exports, "getMoneroAddress", ()=>getMoneroAddress);
 var _esnextMapGroupByJs = require("core-js/modules/esnext.map.group-by.js");
 var _esnextSymbolDisposeJs = require("core-js/modules/esnext.symbol.dispose.js");
 var _webImmediateJs = require("core-js/modules/web.immediate.js");
@@ -50693,47 +50735,25 @@ var _logs = require("@ledgerhq/logs");
 var _hwTransportWebhid = require("@ledgerhq/hw-transport-webhid");
 var _hwTransportWebhidDefault = parcelHelpers.interopDefault(_hwTransportWebhid);
 var _serializeDerivationPath = require("./serializeDerivationPath");
-async function getMoneroAddress(app) {
+async function getMoneroAddress() {
     try {
-        console.log("Attempting to get Monero address now...");
-        // Request access to the Ledger device
         const transport = await (0, _hwTransportWebhidDefault.default).create();
-        // Define APDU command parameters
-        const cla = 0xE0; // Class byte for Ledger Monero app
-        const ins = 0x46; // INS_DERIVE_SUBADDRESS_PUBLIC_KEY
-        const p1 = 0x00; // First parameter
-        const p2 = 0x00; // Second parameter
-        // Derivation path: 44'/128'/0'/0/0
-        const derivationPath = [
+        const path = [
             0x8000002c,
             0x80000080,
-            0x80000000
-        ];
-        const data = (0, _serializeDerivationPath.serializeDerivationPath)(derivationPath);
-        console.log("Serialized Derivation Path:", data);
-        // Send the APDU command to the Ledger device
-        const response = await transport.send(cla, ins, p1, p2, data);
-        // Listen to Ledger logs for debugging
-        (0, _logs.listen)((log)=>console.log(log));
-        //console.log("Monero Address Response:", response);
-        if (response.length > 2) {
-            const statusCode = response.slice(-2); // Last 2 bytes are the status word
-            if (statusCode[0] === 0x90 && statusCode[1] === 0x00) console.log("Success:", response);
-            else console.error("Error with status code:", statusCode);
-        }
+            0x80000000,
+            0x00000000,
+            0x00000000
+        ]; // 44'/128'/0'/0/0
+        const serializedPath = (0, _serializeDerivationPath.serializeDerivationPath)(path);
+        const response = await transport.send(0xE0, 0x46, 0x00, 0x00, serializedPath);
+        // Assuming the address is in the response and converting it to a string
+        const address = new TextDecoder().decode(response.subarray(0, response.length - 2)); // Remove status bytes
+        return address;
     } catch (error) {
         console.error("Error getting Monero address:", error);
+        throw error;
     }
-}
-// Helper function to serialize the derivation path
-function serializeDerivationPath(path) {
-    const buffer = new ArrayBuffer(1 + path.length * 4); // 1 byte for path length + 4 bytes for each path element
-    const dataView = new DataView(buffer);
-    dataView.setUint8(0, path.length); // First byte: path length
-    path.forEach((element, index)=>{
-        dataView.setUint32(1 + index * 4, element);
-    });
-    return new Uint8Array(buffer);
 }
 
 },{"core-js/modules/esnext.map.group-by.js":"3AR1K","core-js/modules/esnext.symbol.dispose.js":"b9ez5","core-js/modules/web.immediate.js":"49tUX","@ledgerhq/logs":"i4OI0","@ledgerhq/hw-transport-webhid":"8O295","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./serializeDerivationPath":"h5x5j"}],"8O295":[function(require,module,exports) {
