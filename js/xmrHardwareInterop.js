@@ -58,3 +58,8 @@ function serializeDerivationPath(path) {
 
   return new Uint8Array(buffer);
 }
+
+export function sum(a, b) {
+  return a + b;
+}
+

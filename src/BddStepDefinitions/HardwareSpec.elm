@@ -18,7 +18,11 @@ import Spec.Port exposing (..)
 import Spec.Report exposing (note)
 import Spec.Setup as Setup
 import Spec.Step exposing (log)
+import Spec.Http.Stub as Stub
+import Spec.Http
+import Spec.Http.Route as Route exposing (HttpRoute)
 import Time exposing (..)
+import Extras.TestData as TestData
 
 
 jsonObjConnectNanoS : E.Value
@@ -105,9 +109,19 @@ runSpecTests =
                     ]
             )
 
+            {- #### **Scenario 2: Initiating a Transaction**
+
+**Given** the user has connected their hardware wallet to the mobile web app 
+**When** the user initiates a transaction in the web app (e.g., sending Monero) 
+**When** the web app sends the transaction request to the backend service (via HTTPS)
+**Then** the backend service (APK) should receive the transaction request 
+**When** the APK should relay the transaction request to the Haveno daemon for processing 
+**Then** the APK should return the transaction status to the web app  -}
+
         --Runner.pick <|
-        --, Runner.skip <|
-        {- , scenario "3. Display An Active User On Login Succeed"
+        , Runner.skip <|
+        --, 
+        scenario "3. Initiating a Transaction"
            (given
                (Setup.init
                    (Pages.Hardware.init { time = Nothing, flagUrl = TestData.placeholderUrl })
@@ -120,8 +134,8 @@ runSpecTests =
                        , TestData.successfullCallResponse
                        ]
                )
-               |> when "the user submits the login form"
-                   [ Spec.Command.send <| Spec.Command.fake (Pages.Hardware.ClickedLedgerConnect { email = "k2@k.com", password = "Pa55w0rd" }) ]
+               |> when "the user initiates a transaction in the web app"
+                   [ Spec.Command.send <| Spec.Command.fake (Pages.Hardware.ClickedXMRInitiateTransaction "0.01") ]
                {- |> Spec.when "we log the http requests"
                   [ Spec.Http.logRequests
                   ]
@@ -205,7 +219,7 @@ runSpecTests =
                        )
                    ]
            )
-        -}
+       
         ]
 
 

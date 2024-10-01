@@ -369,6 +369,18 @@ update msg model =
                                 "getMoneroAddress"
                             )
 
+                        Pages.Hardware.ClickedXMRInitiateTransaction amt ->
+                            let
+                                newHardwareModel =
+                                    { hardwareModel | queryType = Pages.Hardware.LoggedInUser }
+                            in
+                            ( { model | page = HardwarePage newHardwareModel }
+                            , sendMessageToJs
+                                <| "initiateXMRToBTCTrans " ++ "~^&" ++ amt
+                            )
+
+                        
+
                         _ ->
                             -- otherwise operate within the Hardware sub module:
                             toHardware model (Pages.Hardware.update hardwareMsg hardwareModel)

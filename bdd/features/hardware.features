@@ -12,7 +12,7 @@ And the APK is connected to a Haveno daemon for handling transactions
 
 ---
 
-#### **Scenario 1: Connecting the Hardware Wallet**
+#### **Scenario 1: Connecting the Hardware Device**
 
 **Given** the user has the hardware device connected to their mobile device
 **When** the user accesses the Hardware page
@@ -37,22 +37,22 @@ And the APK is connected to a Haveno daemon for handling transactions
 
 **Given** the user has connected their hardware wallet to the mobile web app 
 **When** the user initiates a transaction in the web app (e.g., sending Monero) 
-**When** the web app sends the transaction request to the backend service via HTTPS 
-**Then** the backend service (APK) should receive the transaction request 
-**When** the APK should relay the transaction request to the Haveno daemon for processing 
-**Then** the APK should return the transaction status to the web app 
+**When** the web app sends the transaction request to the backend service
+**Then** the backend service should receive the transaction request 
+**When** the backend service should relay the transaction request to the Haveno daemon for processing 
+**Then** the backend service should return the transaction status to the web app 
 
 ---
 
 #### **Scenario 3: Handling Transaction Approval**
 
 **Given** the user initiates a transaction 
-**When** the transaction request is received by the APK 
+**When** the transaction request is received by the backend service 
 **When** the user needs to approve the transaction using the hardware wallet 
 **Then** the web app should display a prompt to the user indicating that transaction approval is required 
 **When** the user should approve the transaction on their hardware wallet 
-**When** the hardware wallet should send the approval to the APK 
-**When** the APK should forward the approval to the Haveno daemon 
+**When** the hardware wallet should send the approval to the backend service 
+**When** the backend service should forward the approval to the Haveno daemon 
 **Then** the web app should display a success message upon receiving confirmation of the approved transaction 
 
 ---
@@ -60,9 +60,9 @@ And the APK is connected to a Haveno daemon for handling transactions
 #### **Scenario 4: Handling Transaction Failures**
 
 **Given** the user initiates a transaction 
-**When** the transaction request is received by the APK 
+**When** the transaction request is received by the backend service 
 **When** the user encounters an issue (e.g., insufficient funds, hardware wallet error) during transaction approval 
-**Then** the APK should send a failure message to the web app 
+**Then** the backend service should send a failure message to the web app 
 **When** the web app should display an error message indicating the reason for the failure 
 **Then** the user should be able to retry or correct the issue based on the error message 
 
@@ -71,8 +71,8 @@ And the APK is connected to a Haveno daemon for handling transactions
 #### **Scenario 5: Secure Communication**
 
 **Given** the user is interacting with the web app over Tor 
-**When** the web app communicates with the APK via HTTPS 
-**Then** all data exchanged between the web app and APK should be encrypted 
+**When** the web app communicates with the backend service via HTTPS 
+**Then** all data exchanged between the web app and backend service should be encrypted 
 **And** the communication should be secure against eavesdropping and tampering 
 
 ---
@@ -81,12 +81,12 @@ And the APK is connected to a Haveno daemon for handling transactions
 
 **Given** the user is using the Tor network to access the web app 
 **When** the user connects their hardware wallet and initiates transactions 
-**Then** the web app and APK should handle all data securely, considering both the Tor network and local device security 
+**Then** the web app and backend service should handle all data securely, considering both the Tor network and local device security 
 **And** no sensitive data should be exposed or stored insecurely on the device 
 
 ### **Summary**
 
-These scenarios outline the critical interactions between the mobile Tor-based web app and the user-buildable APK leveraging a Haveno daemon. 
+These scenarios outline the critical interactions between the mobile Tor-based web app and the user-buildable backend service leveraging a Haveno daemon. 
 The scenarios cover essential functions like accessing the web app, connecting hardware wallets, initiating and handling transactions, and 
 ensuring secure communication.
 

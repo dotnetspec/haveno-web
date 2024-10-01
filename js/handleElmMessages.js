@@ -32,11 +32,23 @@ export async function handleMessageFromElm(message, app) {
 
       try {
         // Perform further actions with the device
-        getMoneroAddress(app);
+        getMoneroAddress();
       } catch (error) {
         console.error("Device connection error:", error);
       }
       break;
+
+      
+      case "initiateXMRToBTCTrans":
+        //connectLNS(app)
+  
+        try {
+          // Perform further actions with the device
+          hwinterop.initiateXMRToBTCTrans( messageArr[1]);
+        } catch (error) {
+          console.error("Device connection error:", error);
+        }
+        break;
 
     //NOTE: We're going to talk to mongodb via the node application
     // to do searches, so we can do them anonymously

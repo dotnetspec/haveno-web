@@ -210,6 +210,7 @@ type Msg
     | UserLoginPasswordInputChg String
     | ClickedHardwareDeviceConnect
     | ClickedXMRWalletConnect
+    | ClickedXMRInitiateTransaction String
       -- NOTE: ResponseDataFromMain is a Msg from the port
     | ResponseDataFromMain D.Value
     | LogOut
@@ -606,6 +607,12 @@ update msg model =
             )
 
         ClickedXMRWalletConnect ->
+            ( model
+            , Cmd.none
+            )
+
+        
+        ClickedXMRInitiateTransaction _ ->
             ( model
             , Cmd.none
             )
@@ -1773,7 +1780,9 @@ hardwareWalletView model =
 
                      else
                         "Not connected yet"
-                    )
+                    ) -- 
+            , Element.text "\n"
+            , infoBtn "Connect XMR Wallet" <| ClickedXMRInitiateTransaction "0.01"
             , case model.errors of
                 [] ->
                     Element.text ""
