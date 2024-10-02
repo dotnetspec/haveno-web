@@ -11996,12 +11996,12 @@ type alias Process =
                 A2($elm$html$Html$a, _List_fromArray([
                     $elm$html$Html$Attributes$href("https://github.com/haveno-dex/haveno")
                 ]), _List_fromArray([
-                    $elm$html$Html$text("Haveno-Dex")
+                    $elm$html$Html$text("Haveno-Web")
                 ])),
                 A2($elm$html$Html$br, _List_Nil, _List_Nil),
                 $elm$html$Html$text("Open source code & design"),
                 A2($elm$html$Html$p, _List_Nil, _List_fromArray([
-                    $elm$html$Html$text("Version 0.0.9")
+                    $elm$html$Html$text("Version 0.0.10")
                 ]))
             ]))
         ]))
@@ -17746,7 +17746,7 @@ type alias Process =
             $mdgriffith$elm_ui$Element$text("\n"),
             A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h6, $mdgriffith$elm_ui$Element$text(model.isHardwareLNSConnected ? "Nano S Connected" : model.isHardwareLNXConnected ? "Nano X Connected" : model.isXMRWalletConnected ? "XMR Wallet Connected" : "Not connected yet")),
             $mdgriffith$elm_ui$Element$text("\n"),
-            A2($author$project$Pages$Hardware$infoBtn, "Connect XMR Wallet", $author$project$Pages$Hardware$ClickedXMRInitiateTransaction("0.01")),
+            A2($author$project$Pages$Hardware$infoBtn, "Initiate Transaction", $author$project$Pages$Hardware$ClickedXMRInitiateTransaction("0.01")),
             function() {
                 var _v0 = model.errors;
                 if (!_v0.b) return $mdgriffith$elm_ui$Element$text("");

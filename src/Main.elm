@@ -1141,11 +1141,11 @@ footerContent =
                 []
             , span []
                 [ text ""
-                , a [ href "https://github.com/haveno-dex/haveno" ] [ text "Haveno-Dex" ]
+                , a [ href "https://github.com/haveno-dex/haveno" ] [ text "Haveno-Web" ]
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.9" ]
+                , p [] [ text "Version 0.0.10" ]
                 ]
             ]
         ]

@@ -1782,7 +1782,7 @@ hardwareWalletView model =
                         "Not connected yet"
                     ) -- 
             , Element.text "\n"
-            , infoBtn "Connect XMR Wallet" <| ClickedXMRInitiateTransaction "0.01"
+            , infoBtn "Initiate Transaction" <| ClickedXMRInitiateTransaction "0.01"
             , case model.errors of
                 [] ->
                     Element.text ""
