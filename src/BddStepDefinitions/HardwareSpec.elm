@@ -25,11 +25,13 @@ import Time exposing (..)
 import Extras.TestData as TestData
 
 
-jsonObjConnectNanoS : E.Value
-jsonObjConnectNanoS =
+jsonNanoSDetected : E.Value
+jsonNanoSDetected =
     E.object
         [ ( "operationEventMsg", E.string "nanoS" )
         ]
+
+        
 
 
 validXMRWalletAddress : E.Value
@@ -62,7 +64,7 @@ runSpecTests =
                 |> when "the web app should detect the connected hardware device"
                     [ --sendMessageToJs is the other way
                       -- NOTE: 'send' here means send from js to elm
-                      Spec.Port.send "receiveMessageFromJs" jsonObjConnectNanoS
+                      Spec.Port.send "receiveMessageFromJs" jsonNanoSDetected
                     ]
                 |> Spec.observeThat
                     [ it "displays a message indicating the hardware device is connected and initialized"
@@ -78,7 +80,8 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario "2. Connecting the XMR Hardware Wallet"
+        , --Runner.pick <| 
+        scenario "2. Connecting the XMR Hardware Wallet"
             (given
                 (Setup.init
                     (Pages.Hardware.init { time = Nothing, flagUrl = placeholderUrl })

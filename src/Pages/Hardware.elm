@@ -1,4 +1,4 @@
-port module Pages.Hardware exposing (..)
+module Pages.Hardware exposing (..)
 
 --import Task
 -- REVIEW: Either here or DateType, but not both?
@@ -28,6 +28,7 @@ import Json.Decode as D exposing (..)
 import Json.Decode.Pipeline exposing (optional, required)
 import Json.Encode as E exposing (..)
 import Maybe exposing (withDefault)
+import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
 import Regex exposing (contains)
 import SR.Elements as El
 import String.Extra as StringExtra
@@ -37,7 +38,6 @@ import Tuple
 import Types.DateType as DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 import Utils.Validation.Validate as V
-import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
 
 
 
@@ -71,26 +71,6 @@ import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map,
 init : FromMainToRankings -> ( Model, Cmd Msg )
 init fromMainToRankings =
     let
-        -- REF: look at Haveno-Web Zoho Responsive app for how OAuth works.
-        -- We use the Node.js driver in this proj.
-        {- postData : E.Value
-           postData =
-               E.object
-                   {- -- REVIEW: Keep this in case use tokens in future?
-
-                      [ ( "grant_type", E.string "refresh_token" )
-                      , ( "query_type", E.string "access-token" )
-
-                      -- NOTE: Sending to Accounts (not API) url
-                      , ( "apiUrl", E.string <| Url.toString Consts.zohoAccountsTokenBaseURL )
-                      ]
-                   -}
-                   -- NOTE: Left side tells mongodbMW.js what it is, right side is actual value
-                   [ ( "query_type", E.string "user_login" )
-                   , ( "customer_email", E.string "t3@t.com" )
-                   , ( "customer_password", E.string "Pa55w0rd" )
-                   ]
-        -}
         -- RF
         updatedFlagUrlToIncludeMongoDBMWSvr =
             if String.contains Consts.localorproductionServerAutoCheck fromMainToRankings.flagUrl.host then
@@ -103,12 +83,10 @@ init fromMainToRankings =
     -- Use the refresh token to obtain a new access token
     ( Model Loaded
         "Hardware"
-        (Hardware { name = "Loading..." })
+        (Hardware { name = "Loading ..." })
         fromMainToRankings.flagUrl
         -- NOTE: Datetime updated in Main
         (Maybe.withDefault Nothing (Just fromMainToRankings.time))
-        humandateTimePlaceholder
-        []
         apiSpecsPlaceHolder
         (Login Consts.emptyEmailPassword)
         (Just (ToMongoDBMWConfig Consts.post [] (Url.toString updatedFlagUrlToIncludeMongoDBMWSvr) Http.emptyBody Nothing Nothing))
@@ -120,13 +98,8 @@ init fromMainToRankings =
         [ Nothing ]
         False
         False
-        -- NOTE: Dave is k2
-        --{ email = "k2@k.com", password = "Pa55w0rd" }
         { email = "", password = "" }
-        R.None
-        R.emptyRank
         U.emptySpectator
-        R.Undecided
         ""
         []
         Nothing
@@ -146,8 +119,6 @@ type alias Model =
 
     -- NOTE: Use a Maybe so that can specify Nothing in init
     , datetimeFromMain : Maybe DateTime
-    , humanDateTime : DD.DateRecord
-    , posixTmes : List Time.Posix
     , apiSpecifics : ApiSpecifics
     , queryType : QueryType
     , toMongoDBMWConfig : Maybe ToMongoDBMWConfig
@@ -162,13 +133,50 @@ type alias Model =
     , isWaitingForResponse : Bool
     , isReturnUser : Bool
     , emailpassword : EmailPasswordLogin
-    , selectedranking : R.RankingStatus
-    , selectedSingleRank : R.Rank
+
+    --, selectedranking : R.RankingStatus
+    --, selectedSingleRank : R.Rank
     , user : U.User
-    , result : R.ResultOfMatch
+
+    --, result : R.ResultOfMatch
     , searchterm : String
     , searchResults : List R.RankingSearchResult
     , objectJSONfromJSPort : Maybe JsonMsgFromJs
+    }
+
+
+
+-- Define your initialModel with default values
+
+
+initialModel : Model
+initialModel =
+    { status = Loading
+    , title = "Hardware"
+    , root = Hardware { name = "Loading..." }
+    , flagUrl = Url Https "example.com" Nothing "" Nothing Nothing
+    , datetimeFromMain = Nothing
+    , apiSpecifics = { maxResults = "10", accessToken = Nothing }
+    , queryType = LoggedInUser
+    , toMongoDBMWConfig = Nothing
+    , isValidNewAccessToken = False
+    , isHardwareLNSConnected = False
+    , isHardwareLNXConnected = False
+    , isXMRWalletConnected = False
+    , errors = []
+    , availableSlots = []
+    , isWaitingForResponse = False
+    , isReturnUser = False
+    , emailpassword = { email = "", password = "" }
+
+    --, selectedranking = R.DefaultRankingStatus
+    --, selectedSingleRank = R.DefaultRank
+    , user = U.emptySpectator
+
+    --, result = R.DefaultResultOfMatch
+    , searchterm = ""
+    , searchResults = []
+    , objectJSONfromJSPort = Nothing
     }
 
 
@@ -297,25 +305,28 @@ update msg model =
 
         ConfirmLeaveMemberRanking _ _ ->
             -- NOTE: Remove the ranking from the user's memberRankings in the UI
-            let
-                newUser =
-                    U.gotUserInfo model.user
+            {- let
+                   newUser =
+                       U.gotUserInfo model.user
 
-                newMemberRankings =
-                    case model.selectedranking of
-                        R.Member ranking ->
-                            U.deleteRankingFromMemberRankings model.user ranking.id
+                   newMemberRankings =
+                       case model.selectedranking of
+                           R.Member ranking ->
+                               U.deleteRankingFromMemberRankings model.user ranking.id
 
-                        _ ->
-                            [ R.emptyRanking ]
+                           _ ->
+                               [ R.emptyRanking ]
 
-                newUserInfo =
-                    { newUser | memberRankings = newMemberRankings }
-            in
-            ( { model
-                | queryType = LoggedInUser
-                , user = U.Registered newUserInfo
-              }
+                   newUserInfo =
+                       { newUser | memberRankings = newMemberRankings }
+               in
+            -}
+            ( {- { model
+                   | queryType = LoggedInUser
+                   , user = U.Registered newUserInfo
+                 }
+              -}
+              model
             , Cmd.none
             )
 
@@ -381,37 +392,39 @@ update msg model =
             )
 
         ViewRank rank ->
-            let
-                ranking =
-                    case model.selectedranking of
-                        R.Owned rankng ->
-                            rankng
+            {- let
+               ranking =
+                   case model.selectedranking of
+                       R.Owned rankng ->
+                           rankng
 
-                        R.Member rankng ->
-                            rankng
+                       R.Member rankng ->
+                           rankng
 
-                        R.Spectator rankng ->
-                            rankng
+                       R.Spectator rankng ->
+                           rankng
 
-                        R.None ->
-                            R.emptyRanking
+                       R.None ->
+                           R.emptyRanking
 
-                qType =
-                    if R.isCurrentlyInAChallenge rank then
-                        PrepareResult
+               qType =
+                   if R.isCurrentlyInAChallenge rank then
+                       PrepareResult
 
-                    else
-                        CreateChallengeView rank ranking
-
-                -- NOTE: update the selected rank with this user's player details
-                {- newRank =
-                   R.Rank rank.rank rank.player { id = U.gotId model.user, nickname = U.gotNickName model.user } True
-                -}
-            in
-            ( { model
-                | selectedSingleRank = rank
-                , queryType = qType
-              }
+                   else
+                       CreateChallengeView rank ranking
+            -}
+            -- NOTE: update the selected rank with this user's player details
+            {- newRank =
+               R.Rank rank.rank rank.player { id = U.gotId model.user, nickname = U.gotNickName model.user } True
+            -}
+            --in
+            ( {- { model
+                   | selectedSingleRank = rank
+                   , queryType = qType
+                 }
+              -}
+              model
             , Cmd.none
             )
 
@@ -456,15 +469,18 @@ update msg model =
             )
 
         RankingNameChg value ->
-            -- NOTE: Updates can only occur on Owned rankings
-            ( { model | selectedranking = R.Owned (R.updatedRankingName (R.gotRanking model.selectedranking) value) }, Cmd.none )
+            ( model, Cmd.none )
 
+        -- NOTE: Updates can only occur on Owned rankings
+        --( { model | selectedranking = R.Owned (R.updatedRankingName (R.gotRanking model.selectedranking) value) }, Cmd.none )
         StreetAddressChg value ->
-            ( { model | selectedranking = R.Owned (R.updatedStreet (R.gotRanking model.selectedranking) value) }, Cmd.none )
+            ( model, Cmd.none )
 
+        --( { model | selectedranking = R.Owned (R.updatedStreet (R.gotRanking model.selectedranking) value) }, Cmd.none )
         CityAddressChg value ->
-            ( { model | selectedranking = R.Owned (R.updatedCity (R.gotRanking model.selectedranking) value) }, Cmd.none )
+            ( model, Cmd.none )
 
+        --( { model | selectedranking = R.Owned (R.updatedCity (R.gotRanking model.selectedranking) value) }, Cmd.none )
         CreateNewRanking userInfo ->
             let
                 newRanking =
@@ -476,12 +492,14 @@ update msg model =
                 newRank =
                     R.Rank 1 { id = userInfo.userid, nickname = userInfo.nickname } { id = Consts.noCurrentChallengerId, nickname = "Challenger" }
             in
-            ( { model
-                | queryType = CreatingNewLadder userInfo
+            ( {- { model
+                   | queryType = CreatingNewLadder userInfo
 
-                -- NOTE: the ranking id will be created by mongodb, so not added here
-                , selectedranking = R.Owned { newRanking | owner_id = userInfo.userid, active = True, player_count = 1, owner_name = userInfo.nickname, ladder = [ newRank ] }
-              }
+                   -- NOTE: the ranking id will be created by mongodb, so not added here
+                   , selectedranking = R.Owned { newRanking | owner_id = userInfo.userid, active = True, player_count = 1, owner_name = userInfo.nickname, ladder = [ newRank ] }
+                 }
+              -}
+              model
             , Cmd.none
             )
 
@@ -523,7 +541,7 @@ update msg model =
 
                         Err err ->
                             --JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
-                            "error"
+                            "error in decodedHardwareDeviceMsg"
 
                 updatedIsLNSConnected =
                     if decodedHardwareDeviceMsg == "nanoS" then
@@ -611,7 +629,6 @@ update msg model =
             , Cmd.none
             )
 
-        
         ClickedXMRInitiateTransaction _ ->
             ( model
             , Cmd.none
@@ -920,11 +937,13 @@ update msg model =
             )
 
         SpectatorRankingResponse (Ok specRankingResult) ->
-            ( { model
-                -- REVIEW: Maybe handle specRankingResult differently?
-                | isWaitingForResponse = False
-                , selectedranking = R.Spectator specRankingResult
-              }
+            ( {- { model
+                   -- REVIEW: Maybe handle specRankingResult differently?
+                   | isWaitingForResponse = False
+                   , selectedranking = R.Spectator specRankingResult
+                 }
+              -}
+              model
             , Cmd.none
             )
 
@@ -1004,42 +1023,44 @@ update msg model =
         -- NOTE: If, in future updates/releases, you want to do a lot of validation
         -- at this point can -- REF: Haveno-Web-Responsive-Zoho app. Don't need here.
         FetchSpectatorRanking rankingId ->
-            let
-                -- NOTE: Build the json body
-                postDataForMongoDBMWSvr : E.Value
-                postDataForMongoDBMWSvr =
-                    E.object
-                        [ -- NOTE: Sending to API url
-                          ( "apiUrl"
-                          , E.string <|
-                                Url.toString Consts.placeholderUrl
-                          )
-                        , ( "query_type", E.string "fetch" )
-                        , ( "rankingid", E.string <| rankingId )
-                        ]
+            {- let
+                   -- NOTE: Build the json body
+                   postDataForMongoDBMWSvr : E.Value
+                   postDataForMongoDBMWSvr =
+                       E.object
+                           [ -- NOTE: Sending to API url
+                             ( "apiUrl"
+                             , E.string <|
+                                   Url.toString Consts.placeholderUrl
+                             )
+                           , ( "query_type", E.string "fetch" )
+                           , ( "rankingid", E.string <| rankingId )
+                           ]
 
-                -- NOTE: Update the model with the new postDataForMongoDBMWSvr
-                -- RF
-                updatedFlagUrlToIncludeMongoDBMWSvr =
-                    -- TODO: Replace with sportsrank for production:
-                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
-                        Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
+                   -- NOTE: Update the model with the new postDataForMongoDBMWSvr
+                   -- RF
+                   updatedFlagUrlToIncludeMongoDBMWSvr =
+                       -- TODO: Replace with sportsrank for production:
+                       if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
+                           Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
 
-                    else
-                        Url.toString <| Url model.flagUrl.protocol model.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
+                       else
+                           Url.toString <| Url model.flagUrl.protocol model.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
 
-                updatModelWithNewPostData =
-                    { model
-                        | toMongoDBMWConfig = Just (ToMongoDBMWConfig Consts.post [] updatedFlagUrlToIncludeMongoDBMWSvr (Http.jsonBody postDataForMongoDBMWSvr) Nothing Nothing)
-                        , queryType = SpectatorSelectedView
-                        , isWaitingForResponse = True
-                        , errors = [ "" ]
-                        , selectedranking = R.Spectator R.emptyRanking
-                    }
-            in
+                   updatModelWithNewPostData =
+                       { model
+                           | toMongoDBMWConfig = Just (ToMongoDBMWConfig Consts.post [] updatedFlagUrlToIncludeMongoDBMWSvr (Http.jsonBody postDataForMongoDBMWSvr) Nothing Nothing)
+                           , queryType = SpectatorSelectedView
+                           , isWaitingForResponse = True
+                           , errors = [ "" ]
+                           , selectedranking = R.Spectator R.emptyRanking
+                       }
+               in
+            -}
             -- NOTE: set isWaitingForResponse to disable button in case user presses submit multiple times
             -- NOTE: rankingId - straight from the UI into the model
-            ( updatModelWithNewPostData
+            ( --updatModelWithNewPostData
+              model
             , -- NOTE: Until figure out why browsers are prejudiced against elm (cors), although this Msg enables updating the model
               -- the 'work' is done in sendMessageToJs in Main as usual.
               Cmd.none
@@ -1059,16 +1080,6 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    {- let
-           _ =
-               Debug.log "model " model
-       in
-    -}
-    content model
-
-
-content : Model -> Html Msg
-content model =
     section
         [ Attr.id "page"
         , class "section-background"
@@ -1095,170 +1106,8 @@ content model =
                 Loaded ->
                     div
                         [ class "split-col"
-
-                        -- HACK: Just using  RefreshTknQP as it's the first queryType
-                        -- RF: Should be changing the views here based on Msg, not QueryType
-                        -- NOTE: going to need to switch within a generic queryType (for now Login as simple)
-                        -- on Msg, so we can eventually stop using queryType and just use Msg
                         ]
-                        [ case model.queryType of
-                            -- REVIEW: turn the Html into functions for easier management?
-                            RefreshTknQP _ ->
-                                -- NOTE: There has been an error with the refreshed access token as we
-                                ul
-                                    []
-                                    [ Framework.responsiveLayout [] <|
-                                        Element.column Framework.container <|
-                                            [ Element.el Heading.h5 <| Element.text "RefreshTknQP - Error!"
-                                            ]
-                                    ]
-
-                            -- NAV: View - Login
-                            Login _ ->
-                                hardwareWalletView model
-
-                            -- HACK: We'll be getting rid of Spectator etc. this is just to keep us with the connect button for
-                            Spectator ->
-                                hardwareWalletView model
-
-                            RegisterUser newUser ->
-                                registerView newUser
-
-                            -- HACK: We'll be getting rid of LoggedInUser etc. this is just to keep us with the connect button for
-                            LoggedInUser ->
-                                --globalView model.searchterm model.searchResults model.user
-                                hardwareWalletView model
-
-                            CreatingNewLadder userInfo ->
-                                createLadderView userInfo <| R.gotRanking model.selectedranking
-
-                            OwnedSelectedView ->
-                                -- NOTE: Keeping userInfo in higher level of the model, not
-                                -- tied to the queryType:
-                                let
-                                    userInfo =
-                                        case model.user of
-                                            U.Registered usrInfo ->
-                                                usrInfo
-
-                                            _ ->
-                                                U.emptyUserInfo
-                                in
-                                ownedSelectedView userInfo (R.gotRanking model.selectedranking)
-
-                            MemberSelectedView ->
-                                let
-                                    userInfo =
-                                        case model.user of
-                                            U.Registered usrInfo ->
-                                                usrInfo
-
-                                            _ ->
-                                                U.emptyUserInfo
-                                in
-                                memberSelectedView userInfo (R.gotRanking model.selectedranking)
-
-                            SpectatorSelectedView ->
-                                let
-                                    userInfo =
-                                        case model.user of
-                                            U.Registered usrInfo ->
-                                                usrInfo
-
-                                            _ ->
-                                                U.emptyUserInfo
-
-                                    ranking =
-                                        case model.selectedranking of
-                                            R.Spectator rankng ->
-                                                rankng
-
-                                            _ ->
-                                                R.emptyRanking
-                                in
-                                spectatorSelectedView userInfo ranking
-
-                            ConfirmDeleteOwnedRanking ->
-                                let
-                                    userInfo =
-                                        case model.user of
-                                            U.Registered usrInfo ->
-                                                usrInfo
-
-                                            _ ->
-                                                U.emptyUserInfo
-                                in
-                                dialogueDeleteOwnedView userInfo (R.gotRanking model.selectedranking)
-
-                            CreateChallengeView rank ranking ->
-                                let
-                                    userInfo =
-                                        case model.user of
-                                            U.Registered usrInfo ->
-                                                usrInfo
-
-                                            _ ->
-                                                U.emptyUserInfo
-                                in
-                                createChallengeView userInfo rank ranking
-
-                            ConfirmChallengeView rank ranking ->
-                                let
-                                    userInfo =
-                                        case model.user of
-                                            U.Registered usrInfo ->
-                                                usrInfo
-
-                                            _ ->
-                                                U.emptyUserInfo
-                                in
-                                dialogueConfirmChallengeView userInfo rank ranking
-
-                            ConfirmJoinMemberView ->
-                                let
-                                    userInfo =
-                                        case model.user of
-                                            U.Registered usrInfo ->
-                                                usrInfo
-
-                                            _ ->
-                                                U.emptyUserInfo
-                                in
-                                confirmJoinView userInfo (R.gotRanking model.selectedranking)
-
-                            ConfirmLeaveMemberView ->
-                                let
-                                    userInfo =
-                                        case model.user of
-                                            U.Registered usrInfo ->
-                                                usrInfo
-
-                                            _ ->
-                                                U.emptyUserInfo
-                                in
-                                confirmLeaveView userInfo (R.gotRanking model.selectedranking)
-
-                            ConfirmDeleteUserView ->
-                                let
-                                    userInfo =
-                                        case model.user of
-                                            U.Registered usrInfo ->
-                                                usrInfo
-
-                                            _ ->
-                                                U.emptyUserInfo
-                                in
-                                confirmDeleteUserView userInfo
-
-                            PrepareResult ->
-                                dialoguePrepareResultView (U.gotUserInfo model.user) model.selectedSingleRank <| R.gotRanking model.selectedranking
-
-                            -- NAV: View - ReviewAppointmentDetails
-                            -- This is the data returned by the server (not the data sent) - so it is 'double confirmed'
-                            -- REVIEW: You could conceivably compare new and existing data and handle any discrepancies
-                            {- -}
-                            Error _ ->
-                                ul [] [ text "error" ]
+                        [ hardwareWalletView model
                         ]
             , div
                 [ class "split-col"
@@ -1761,7 +1610,7 @@ hardwareWalletView : Model -> Html Msg
 hardwareWalletView model =
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
-            [ Element.el Heading.h5 <| Element.text "Haveno-Web"
+            [ Element.el Heading.h5 <| Element.text "Haveno Web - Connect Hardware"
             , Element.text "\n"
             , infoBtn "Connect Hardware Device" <| ClickedHardwareDeviceConnect
             , Element.text "\n"
@@ -1772,15 +1621,17 @@ hardwareWalletView model =
                     (if model.isHardwareLNSConnected then
                         "Nano S Connected"
 
-                    else if model.isHardwareLNXConnected then
+                     else if model.isHardwareLNXConnected then
                         "Nano X Connected"
 
-                    else if model.isXMRWalletConnected then
+                     else if model.isXMRWalletConnected then
                         "XMR Wallet Connected"
 
                      else
                         "Not connected yet"
-                    ) -- 
+                    )
+
+            --
             , Element.text "\n"
             , infoBtn "Initiate Transaction" <| ClickedXMRInitiateTransaction "0.01"
             , case model.errors of
@@ -2287,14 +2138,8 @@ profileDecoder =
 hardwareSubscriptions : Model -> Sub Msg
 hardwareSubscriptions _ =
     -- Replace with your actual subscription logic
-    Sub.batch [ receiveMessageFromJs ResponseDataFromMain ]
-
-
-
--- NAV: Ports
-
-
-port receiveMessageFromJs : (D.Value -> msg) -> Sub msg
+    --Sub.batch [ receiveMessageFromJs ResponseDataFromMain ]
+    Sub.none
 
 
 
@@ -2585,9 +2430,6 @@ prepareEmailPwordLogin emailPword =
 -- NOTE: tested function
 
 
-
-
-
 filterAndSortRankingsOnLeaving : String -> List R.Rank -> List ( String, List PlayerFromChangeEvent ) -> List R.Rank
 filterAndSortRankingsOnLeaving userid rankings changes =
     let
@@ -2701,15 +2543,14 @@ removeExtraEscapeCharsEtcFromJsonStringifiedDataFromJs jsonString =
             "err in removeExtraEscapeCharsEtcFromJsonStringifiedDataFromJs"
 
 
-
 isValidXMRAddress : String -> Bool
 isValidXMRAddress str =
-    
-   case run R.validXMRAddressParser str of
-    Ok _ -> 
-        True
-    Err _ ->
-        False
+    case run R.validXMRAddressParser str of
+        Ok _ ->
+            True
+
+        Err _ ->
+            False
 
 
 

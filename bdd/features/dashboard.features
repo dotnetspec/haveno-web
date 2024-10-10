@@ -1,20 +1,19 @@
 Here’s a series of Gherkin/BDD scenarios describing the behavior of a mobile Tor-based web app that communicates with a user-buildable APK (leveraging a Haveno daemon) via HTTPS to handle hardware wallet transactions. The app will use the hardware wallet as the sole form of identity, and no additional authorization is required.
 
-### **Feature: Mobile Tor-Based Web App with User-Buildable APK Integration**
+### **Feature: Haveno-Web Dashboard**
 
 #### **Background:**
-Given the user has a mobile device with the Tor Browser installed 
-And the user has a hardware wallet (e.g., Ledger Nano X) connected to the device 
-And the user-buildable APK is running on the mobile device and has an HTTPS server configured 
-And the APK is connected to a Haveno daemon for handling transactions 
+As per main.features:
+**And** the app is open on the Dashboard (initial) page
 
 ---
 
-#### **Scenario 1: Accessing the Web App via Tor Browser**
+#### **Scenario 1: Accessing the Dashboard page**
 
-**Given** the user opens the Tor Browser on their mobile device 
-**When** the user navigates to the mobile Tor-based web app 
-**Then** the web app should load securely over HTTPS 
+**Given** the page is initialized
+**And** the hww is connected
+**When** the user navigates to the Dashboard page
+**Then** the Dashboard page is visible to the user
 
 
 ---
@@ -25,6 +24,14 @@ And the APK is connected to a Haveno daemon for handling transactions
 **When** the user can view the Dashboard
 **Then** the web app should be able to communicate with the backend service running on the APK 
 **And** the user can see his balance on the mobile device
+
+#### **Scenario 2: Display user's on device balance**
+
+**Given** the app is open on the Dashboard page
+**When** the user can view the Dashboard
+**And** the hw wallet is connected
+**And** the Monero app is open on the hw wallet
+**Then** the user can see his available balance on the mobile device
 
 ---
 

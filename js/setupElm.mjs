@@ -3,10 +3,7 @@ import { handleMessageFromElm } from "./handleElmMessages.js";
 import "./scrollTopLinksMenu.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const eapp = Elm.Main.init({
-    node: document.getElementById("elm"),
-    flags: "flags", // Pass any required flags here
-  });
+  
 
   var detectEnvironment = function () {
     var protocol = window.location.protocol;
@@ -33,9 +30,16 @@ document.addEventListener("DOMContentLoaded", () => {
   var jsonUrl = JSON.stringify(protocol + "//" + hostnm + ":" + prt);
   console.log("jsonUrl:", jsonUrl);
 
+  const eapp = Elm.Main.init({
+    node: document.getElementById("elm"),
+    flags: jsonUrl, // Pass any required flags here
+  });
+
   eapp.ports.sendMessageToJs.subscribe(function (message) {
     console.log("Message sent to js ", message);
     handleMessageFromElm(message, eapp);
+
+    
   });
 
   //burger animation

@@ -62,6 +62,7 @@ export function setupElmPorts(app) {
     additionalDataFromJs: additionalDataObjExtendibleIfRequired,
   }
 
-
+// NOTE: Send data TO Elm
+//app.ports.receiveMessageFromJs.send(jsonMsgToElm)
   
 }

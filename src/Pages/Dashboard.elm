@@ -1,4 +1,4 @@
-module Pages.Dashboard exposing (Model, Msg, content, init, update, view)
+module Pages.Dashboard exposing (Model, Msg, init, initialModel, update, view)
 
 {-| The Dashboardpage. You can get here via either the / or /#/ routes.
 -}
@@ -37,6 +37,23 @@ type alias Model =
     , havenoAPKHttpRequest : Maybe HavenoAPKHttpRequest
     , version : Maybe GetVersionReply
     , errors : List String
+    }
+
+
+
+-- Define your initialModel with default values
+
+
+initialModel : Model
+initialModel =
+    { status = Loading
+    , title = "Dashboard"
+    , root = Dashboard { name = "Loading..." }
+    , balance = "0.00"
+    , flagUrl = Url Https "example.com" Nothing "" Nothing Nothing
+    , havenoAPKHttpRequest = Nothing
+    , version = Nothing
+    , errors = []
     }
 
 
@@ -157,21 +174,17 @@ update msg model =
 
 
 
+-- NAV: View
 -- NOTE: Our view will be Html msg, not Document
 -- as we won't use 'title' etc. cos we have our own formatting
 
 
 view : Model -> Html msg
 view model =
-    content model
-
-
-content : Model -> Html msg
-content model =
     section [ Attr.id "page", class "section-background" ]
         [ div [ class "container container--narrow" ]
             [ h1 [ classList [ ( "text-center", True ), ( "Dashboard", True ) ] ]
-                [ text "Haveno Web" ]
+                [ text "Haveno Web - Dashboard" ]
             , h2 [ class "text-center" ]
                 [ text "Online Dex" ]
             , div []
@@ -182,6 +195,12 @@ content model =
             , div []
                 [ div [ class "text-center" ]
                     [ text "Your version is:"
+                    ]
+                ]
+            -- HACK: This doesn't account for the LNX currently
+            , div []
+                [ div [ class "text-center" ]
+                    [ text "Nano S Connected"
                     ]
                 ]
             , div []

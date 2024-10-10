@@ -9,10 +9,13 @@ import Browser
 import Browser.Navigation as Nav exposing (..)
 import Data.Hardware as R
 import Data.User as U exposing (User(..))
+import Debug exposing (log)
+import Element exposing (Element, el)
 import Erl exposing (..)
 import Extras.Constants as Constants
 import Extras.TestData as TestData exposing (placeholderUrl)
-import Html exposing (Html, a, br, button, div, footer, header, i, img, li, nav, node, p, source, span, text, ul, video)
+import Framework.Heading as Heading
+import Html exposing (Html, a, br, button, div, footer, h2, h3, h6, header, i, img, li, nav, node, p, source, span, text, ul)
 import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick)
 import Json.Decode as JD
@@ -26,6 +29,9 @@ import Pages.PingPong
 import Pages.Portfolio
 import Pages.Sell
 import Pages.Support
+import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
+import Spec.Navigator exposing (show)
+import Spec.Step exposing (log)
 import Task
 import Time
 import Types.DateType exposing (DateTime(..))
@@ -78,52 +84,73 @@ main =
 
            Nothing ->
                testInit flag url
-       updateUrl url { page = NotFound, key = key, flag = decodedJsonFromIndexjs, time = Time.millisToPosix 0, zone = Just Time.utc, errors = [ "" ] }
+       updateUrl url { page = NotFound, key = key, flag = decodedJsonFromSetupElmmjs, time = Time.millisToPosix 0, zone = Just Time.utc, errors = [ "" ] }
 -}
 
 
 init : String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flag url key =
     let
-        decodedJsonFromIndexjs =
+        _ =
+            Debug.log "flag is " flag
+
+        decodedJsonFromSetupElmmjs =
             case JD.decodeString urlDecoder flag of
                 Ok urL ->
+                    let
+                        _ =
+                            Debug.log "url in init" Url.toString url
+                    in
                     urL
 
                 Err _ ->
+                    let
+                        _ =
+                            Debug.log "Error in init" Url.toString url
+                    in
                     -- Handle the case where decoding fails
                     Url.Url Https "haveno-web.squashpassion.com" Nothing "" Nothing Nothing
 
         navigate newUrl =
             Nav.pushUrl key (Url.toString newUrl)
+
+        updatedModel =
+            { mainInitModel | flag = decodedJsonFromSetupElmmjs, key = navigate }
     in
-    updateUrl url { page = NotFound, key = navigate, flag = decodedJsonFromIndexjs, time = Time.millisToPosix 0, zone = Just Time.utc, errors = [ "" ] }
+    updateUrl url updatedModel
 
 
 
 -- HACK: Shouldn't have to change the code to accommodate the tests, but only way to avoid the Nav.Key issues:
+{- testInit : String -> Url.Url -> ( Model, Cmd Msg )
+   testInit flag url =
+       let
+           decodedJsonFromSetupElmmjs =
+               case JD.decodeString urlDecoder flag of
+                   Ok urLDecode ->
+                       urLDecode
 
+                   Err _ ->
+                       -- Handle the case where decoding fails
+                       Url.Url Https "haveno-web.squashpassion.com" Nothing "" Nothing Nothing
 
-testInit : String -> Url.Url -> ( Model, Cmd Msg )
-testInit flag url =
-    let
-        decodedJsonFromIndexjs =
-            case JD.decodeString urlDecoder flag of
-                Ok urLDecode ->
-                    urLDecode
-
-                Err _ ->
-                    -- Handle the case where decoding fails
-                    Url.Url Https "haveno-web.squashpassion.com" Nothing "" Nothing Nothing
-
-        -- NOTE: AI suggested. Don't know how works:
-        navigate newUrl =
-            Cmd.none
-    in
-    updateUrl url { page = NotFound, key = navigate, flag = decodedJsonFromIndexjs, time = Time.millisToPosix 0, zone = Just Time.utc, errors = [ "" ] }
-
-
-
+           -- NOTE: AI suggested. Don't know how works:
+           navigate newUrl =
+               Cmd.none
+       in
+       updateUrl url
+           { page = NotFound
+           , key = navigate
+           , flag = decodedJsonFromSetupElmmjs
+           , time = Time.millisToPosix 0
+           , zone = Just Time.utc
+           , errors = [ "" ]
+           , isHardwareLNSConnected = False
+           , isHardwareLNXConnected = False
+           , isXMRWalletConnected = False
+           , isPopUpVisible = False
+           }
+-}
 -- NAV: Model
 -- NOTE: define a Page type to represent the different states
 -- we care about, and add it to Model .
@@ -132,17 +159,38 @@ testInit flag url =
 
 
 type alias Model =
-    { page : Page, key : Url -> Cmd Msg, flag : Url, time : Time.Posix, zone : Maybe Time.Zone, errors : List String }
+    { page : Page
+    , key : Url -> Cmd Msg
+    , flag : Url
+    , time : Time.Posix
+    , zone : Maybe Time.Zone
+    , errors : List String
+    , isHardwareLNSConnected : Bool
+    , isHardwareLNXConnected : Bool
+    , isXMRWalletConnected : Bool
+    , isPopUpVisible : Bool
+    }
 
 
-placeholderModel : Model
-placeholderModel =
-    { page = SupportPage Pages.Support.initialModel -- Support page arbitrary for now
-    , key = \_ -> Cmd.none -- Replace with an appropriate command
+
+-- NOTE: This is used to initialize the model in init and spec tests
+
+
+mainInitModel : Model
+mainInitModel =
+    { --page = SupportPage Pages.Support.initialModel -- Support page arbitrary for now
+      page = DashboardPage Pages.Dashboard.initialModel
+
+    -- NOTE: The following 2 params are replaced in init:
+    , key = \_ -> Cmd.none
     , flag = Constants.emptyDefaultUrl
     , time = Time.millisToPosix 0
     , zone = Nothing -- Replace with the actual time zone if available
     , errors = []
+    , isHardwareLNSConnected = False
+    , isHardwareLNXConnected = False
+    , isXMRWalletConnected = False
+    , isPopUpVisible = True
     }
 
 
@@ -197,6 +245,10 @@ type Msg
     | AdjustTimeZone Time.Zone
     | Recv JD.Value
     | RecvText String
+    | NoOp
+    | HardwareDeviceConnect
+    | ShowPopUp
+    | HidePopUp
 
 
 
@@ -210,12 +262,40 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ShowPopUp ->
+            ( { model | isPopUpVisible = True }, Cmd.none )
+
+        HidePopUp ->
+            let
+                newPage =
+                    if model.isHardwareLNSConnected || model.isHardwareLNXConnected then
+                        DashboardPage Pages.Dashboard.initialModel
+
+                    else
+                        HardwarePage Pages.Hardware.initialModel
+
+                newUrl = Url.Url Http "localhost:1234" Nothing "/hardware" Nothing Nothing
+            in
+            --( { model | isPopUpVisible = False, page = newPage }, Cmd.map <| GotHardwareMsg Pages.Hardware.NoOp )
+            updateUrl newUrl { model | isPopUpVisible = False, page = newPage }
+
+        HardwareDeviceConnect ->
+            ( model
+            , -- NOTE: Old msg showing formatting - 'sendMessageToJs ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")'
+              sendMessageToJs
+                "connectLNS"
+            )
+
         RecvText textMessageFromJs ->
             ( model, Cmd.none )
 
         -- NAV: Recv rawJsonMessage
         -- NOTE: This is updated when a message from js is received
         Recv rawJsonMessage ->
+            let
+                _ =
+                    Debug.log "rawJsonMessage" (JE.encode 2 rawJsonMessage)
+            in
             -- NOTE: rawJsonMessage is a Json value that is ready to be decoded. It does not need to be
             -- converted to a string.
             if String.contains "Problem" (fromJsonToString rawJsonMessage) then
@@ -225,12 +305,59 @@ update msg model =
                 ( { model | errors = model.errors ++ [ "Login Denied - Please try again ..." ] }, Cmd.none )
 
             else
-                case model.page of
-                    HardwarePage hardware ->
-                        toHardware model (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) hardware)
+                let
+                    -- NOTE: You can only see the rawJsonMessage in the console if you use JE.encode 2
+                    -- but you can't decode it if you use it that way
+                    --_ = Debug.log "receivedJson" (E.encode 0 receivedJson)
+                    decodedHardwareDeviceMsg =
+                        case JD.decodeValue justmsgFieldFromJsonDecoder rawJsonMessage of
+                            Ok message ->
+                                message.operationEventMsg
 
-                    _ ->
-                        ( model, Cmd.none )
+                            Err err ->
+                                --JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
+                                "error"
+
+                    updatedIsLNSConnected =
+                        if decodedHardwareDeviceMsg == "nanoS" then
+                            True
+
+                        else
+                            False
+
+                    updatedIsLNXConnected =
+                        if decodedHardwareDeviceMsg == "nanoX" then
+                            True
+
+                        else
+                            False
+
+                    updatedIsXMRConnected =
+                        if isValidXMRAddress decodedHardwareDeviceMsg then
+                            True
+
+                        else
+                            False
+
+                    newPage =
+                        if updatedIsLNSConnected || updatedIsLNXConnected then
+                            DashboardPage Pages.Dashboard.initialModel
+
+                        else
+                            HardwarePage Pages.Hardware.initialModel
+                in
+                ( { model
+                    | page = newPage
+                    , isHardwareLNSConnected = updatedIsLNSConnected
+                    , isHardwareLNXConnected = updatedIsLNXConnected
+                    , isXMRWalletConnected = updatedIsXMRConnected
+
+                    --, selectedranking = newRanking
+                    --, objectJSONfromJSPort = Just decodedJsObj
+                    --, errors = errors
+                  }
+                , Cmd.none
+                )
 
         Tick newTime ->
             ( { model
@@ -344,6 +471,7 @@ update msg model =
         GotHardwareMsg hardwareMsg ->
             case model.page of
                 HardwarePage hardwareModel ->
+                    
                     -- NOTE: Example of handling data coming from sub module to main
                     -- If the message is one that needs to be handled in Main (e.g. sends message to port)
                     -- then handle it here:
@@ -375,18 +503,25 @@ update msg model =
                                     { hardwareModel | queryType = Pages.Hardware.LoggedInUser }
                             in
                             ( { model | page = HardwarePage newHardwareModel }
-                            , sendMessageToJs
-                                <| "initiateXMRToBTCTrans " ++ "~^&" ++ amt
+                            , sendMessageToJs <|
+                                "initiateXMRToBTCTrans "
+                                    ++ "~^&"
+                                    ++ amt
                             )
 
-                        
-
                         _ ->
+                            {- let
+                                _ =
+                                    Debug.log "hardware page?" "fallthrouth"
+                            in -}
                             -- otherwise operate within the Hardware sub module:
                             toHardware model (Pages.Hardware.update hardwareMsg hardwareModel)
 
                 _ ->
                     ( model, Cmd.none )
+
+        NoOp ->
+            ( model, Cmd.none )
 
 
 
@@ -424,6 +559,8 @@ view model =
                            Pages.Sell.Msg in a Main.Msg , because Main.update knows how to deal with only
                            Main.Msg values. Those wrapped messages will prove useful later when we handle
                            these new messages inside update .
+
+                           We're actually using Pages.Dashboard.view
                         -}
                         |> Html.map GotDashboardMsg
 
@@ -458,9 +595,6 @@ view model =
                 HardwarePage hardware ->
                     Pages.Hardware.view hardware
                         |> Html.map GotHardwareMsg
-
-                NotFound ->
-                    text "Not Found"
     in
     -- NAV : Page Content
     -- TODO: Make this content's naming conventions closely match the
@@ -469,6 +603,7 @@ view model =
     , body =
         [ pageHeader model.page
         , showVideoOrBanner model.page
+        , viewPopUp model
         , contentByPage
         , footerContent
         ]
@@ -517,7 +652,6 @@ type
     | BuyPage Pages.Buy.Model
     | MarketPage Pages.Market.Model
     | HardwarePage Pages.Hardware.Model
-    | NotFound
 
 
 
@@ -531,6 +665,12 @@ type alias QueryStringParser a =
 
 -- NAV: Json decoders
 -- Decode the URL from JSON-encoded string
+
+
+justmsgFieldFromJsonDecoder : JD.Decoder OperationEventMsg
+justmsgFieldFromJsonDecoder =
+    JD.map OperationEventMsg
+        (JD.field "operationEventMsg" JD.string)
 
 
 urlDecoder : JD.Decoder Url
@@ -569,7 +709,7 @@ urlAsPageParser =
     -- NOTE: Without this call to Parser.map , our Parser
     -- would output a plain old String whenever it succeeds. Thanks to Parser.map , that
     -- String will instead be passed along to eg. Sell , so the resulting parser will
-    -- output a Page we can store in our model.
+    -- output a Sell Page we can store in our model.
     -- (Route -> a) is the type of the function that the parser produces.
     -- It is a function that takes a Route value as input and produces a value of type a.
     -- If a Route value representing a Page is sent as input to the parser function,
@@ -694,7 +834,8 @@ updateUrl url model =
                 |> toHardware model
 
         Nothing ->
-            ( { model | page = NotFound }, Cmd.none )
+            Pages.Dashboard.init { time = Nothing, flagUrl = model.flag }
+                |> toDashboard model
 
 
 toDashboard : Model -> ( Pages.Dashboard.Model, Cmd Pages.Dashboard.Msg ) -> ( Model, Cmd Msg )
@@ -803,6 +944,11 @@ toHardware model ( hardware, cmd ) =
 -- NAV: Type aliases
 
 
+type alias OperationEventMsg =
+    { operationEventMsg : String
+    }
+
+
 type alias FromMainToSchedule =
     { time : Maybe DateTime
     , flagUrl : Url.Url
@@ -811,6 +957,42 @@ type alias FromMainToSchedule =
 
 
 -- NAV: Helper functions
+
+
+viewPopUp : Model -> Html Msg
+viewPopUp model =
+    div []
+        [ if model.isPopUpVisible then
+            div [ class "modal" ]
+                [ div [ class "modal-content" ]
+                    [ h2 [] [ text "Haveno Web App" ]
+                    , p [] [ text "Please connect your hardware device to continue" ]
+                    , button [ onClick HidePopUp ] [ text "Close" ]
+                    ]
+                ]
+
+          else if model.isHardwareLNSConnected then
+            div [] [ text "Nano S Connected" ]
+
+          else if model.isHardwareLNXConnected then
+            div [] [ text "Nano X Connected" ]
+
+          else
+            div [] []
+        ]
+
+
+isValidXMRAddress : String -> Bool
+isValidXMRAddress str =
+    case run R.validXMRAddressParser str of
+        Ok _ ->
+            True
+
+        Err _ ->
+            False
+
+
+
 -- HACK: Using string ops instead of parser, due to Url etc. parser difficulties.let
 -- TODO: Create own url parser to eventually replace this:
 
@@ -828,18 +1010,12 @@ gotCodeFromUrl url =
 
 
 -- NAV: Subscriptions:
--- You have to get time from Main, cos only Main has subscription.
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    let
-        ( hardwaremodel, _ ) =
-            Pages.Hardware.init { time = Nothing, flagUrl = TestData.placeholderUrl }
-    in
     Sub.batch
-        [ hardwareSubscriptions hardwaremodel
-            |> Sub.map GotHardwareMsg
+        [ receiveMessageFromJs Recv
         ]
 
 
@@ -848,6 +1024,9 @@ subscriptions _ =
 
 
 port sendMessageToJs : String -> Cmd msg
+
+
+port receiveMessageFromJs : (JD.Value -> msg) -> Sub msg
 
 
 
@@ -883,12 +1062,6 @@ each page model and match against-}
 
 showVideoOrBanner : Page -> Html msg
 showVideoOrBanner page =
-    {- case page of
-       DashboardPage _ ->
-           videoClip
-
-       _ ->
-    -}
     img [ Attr.class "banner", src "resources/Banners/monero - 1918x494.png", alt "Monero", width 1918, height 494, title "Monero Banner" ]
         []
 
@@ -1145,7 +1318,9 @@ footerContent =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.10" ]
+                , p [] [ text "Version 0.0.12" ]
+                , text "Haveno Version"
+                , h6 [] [ text "1.0.7" ]
                 ]
             ]
         ]

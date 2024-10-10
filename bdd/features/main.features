@@ -1,0 +1,49 @@
+### **Feature: MVP Mobile Tor-Based Haveno Web App**
+Gherkin/BDD scenarios describing the behavior of a mobile Tor-based web app that communicates with a Haveno daemon via HTTPS to handle hardware wallet transactions. The app will use the hardware wallet as the sole form of identity, and no additional authorization is required.
+
+#### **Background:**
+**Given** the user has a mobile device with the Tor Browser installed 
+**And**  the user has a hardware wallet (henceforth 'hww') (e.g., Ledger Nano X) connected to the device
+**And**  there is an HTTPS server running a Haveno daemon configured for securely handling transactions
+**And**  the Haveno-Web app is connected to the Internet
+
+#### **Scenario 1: Warning that the hardware wallet is NOT connected**
+
+**Given** the web app is opened
+**And** the LNS hww is NOT connected
+**Then** it should display a message informing the user not connected (splash page)
+**And** the web app should display a constant indicator as red for not connected
+**And** the user should have option to continue without trading
+
+
+#### **Scenario 2: Confirming that the LNS hardware wallet is connected**
+   **Given** the web app is opened
+   **And** the LNS hww is connected
+   **When** the LNS hww is detected
+   **Then** the popup should not be visible
+   **And** it should determine the LNS hww type
+   **And** it should display a constant (no matter which page on) text indicator that the LNS is connected
+   **Then** it should display the dashboard
+
+
+
+
+#### **Scenario 3: Display the Haveno core app version number**
+
+**Given** the app is open
+**Then** the user can view the correct Haveno version
+
+
+
+
+
+
+
+
+
+### **Summary**
+
+These scenarios outline the critical interactions between the mobile Tor-based web app and the user-buildable APK leveraging a Haveno daemon. 
+he scenarios cover essential functions like accessing the web app, connecting hardware wallets, initiating and handling transactions, and 
+ensuring secure communication.
+

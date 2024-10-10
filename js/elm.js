@@ -11207,11 +11207,44 @@ var $elm$core$Basics$never = function (_v0) {
 	}
 };
 var $elm$browser$Browser$application = _Browser_application;
-var $author$project$Main$NotFound = {$: 'NotFound'};
+var $elm$core$Debug$log = _Debug_log;
+var $author$project$Main$DashboardPage = function (a) {
+	return {$: 'DashboardPage', a: a};
+};
+var $author$project$Extras$Constants$emptyDefaultUrl = A6($elm$url$Url$Url, $elm$url$Url$Https, 'default', $elm$core$Maybe$Nothing, '', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+var $author$project$Pages$Dashboard$Dashboard = function (a) {
+	return {$: 'Dashboard', a: a};
+};
+var $author$project$Pages$Dashboard$Loading = {$: 'Loading'};
+var $author$project$Pages$Dashboard$initialModel = {
+	balance: '0.00',
+	errors: _List_Nil,
+	flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Https, 'example.com', $elm$core$Maybe$Nothing, '', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
+	havenoAPKHttpRequest: $elm$core$Maybe$Nothing,
+	root: $author$project$Pages$Dashboard$Dashboard(
+		{name: 'Loading...'}),
+	status: $author$project$Pages$Dashboard$Loading,
+	title: 'Dashboard',
+	version: $elm$core$Maybe$Nothing
+};
 var $elm$time$Time$Posix = function (a) {
 	return {$: 'Posix', a: a};
 };
 var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
+var $author$project$Main$mainInitModel = {
+	errors: _List_Nil,
+	flag: $author$project$Extras$Constants$emptyDefaultUrl,
+	isHardwareLNSConnected: false,
+	isHardwareLNXConnected: false,
+	isPopUpVisible: true,
+	isXMRWalletConnected: false,
+	key: function (_v0) {
+		return $elm$core$Platform$Cmd$none;
+	},
+	page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel),
+	time: $elm$time$Time$millisToPosix(0),
+	zone: $elm$core$Maybe$Nothing
+};
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var $elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
@@ -11616,14 +11649,10 @@ var $author$project$Pages$Buy$init = function (_v0) {
 			{title: 'Haveno-Web Buy'}),
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Pages$Dashboard$Dashboard = function (a) {
-	return {$: 'Dashboard', a: a};
-};
 var $author$project$Pages$Dashboard$HavenoAPKHttpRequest = F6(
 	function (method, headers, url, body, timeout, tracker) {
 		return {body: body, headers: headers, method: method, timeout: timeout, tracker: tracker, url: url};
 	});
-var $author$project$Pages$Dashboard$Loading = {$: 'Loading'};
 var $author$project$Pages$Dashboard$Model = F8(
 	function (status, title, root, balance, flagUrl, havenoAPKHttpRequest, version, errors) {
 		return {balance: balance, errors: errors, flagUrl: flagUrl, havenoAPKHttpRequest: havenoAPKHttpRequest, root: root, status: status, title: title, version: version};
@@ -12947,33 +12976,23 @@ var $author$project$Pages$Hardware$Model = function (status) {
 		return function (root) {
 			return function (flagUrl) {
 				return function (datetimeFromMain) {
-					return function (humanDateTime) {
-						return function (posixTmes) {
-							return function (apiSpecifics) {
-								return function (queryType) {
-									return function (toMongoDBMWConfig) {
-										return function (isValidNewAccessToken) {
-											return function (isHardwareLNSConnected) {
-												return function (isHardwareLNXConnected) {
-													return function (isXMRWalletConnected) {
-														return function (errors) {
-															return function (availableSlots) {
-																return function (isWaitingForResponse) {
-																	return function (isReturnUser) {
-																		return function (emailpassword) {
-																			return function (selectedranking) {
-																				return function (selectedSingleRank) {
-																					return function (user) {
-																						return function (result) {
-																							return function (searchterm) {
-																								return function (searchResults) {
-																									return function (objectJSONfromJSPort) {
-																										return {apiSpecifics: apiSpecifics, availableSlots: availableSlots, datetimeFromMain: datetimeFromMain, emailpassword: emailpassword, errors: errors, flagUrl: flagUrl, humanDateTime: humanDateTime, isHardwareLNSConnected: isHardwareLNSConnected, isHardwareLNXConnected: isHardwareLNXConnected, isReturnUser: isReturnUser, isValidNewAccessToken: isValidNewAccessToken, isWaitingForResponse: isWaitingForResponse, isXMRWalletConnected: isXMRWalletConnected, objectJSONfromJSPort: objectJSONfromJSPort, posixTmes: posixTmes, queryType: queryType, result: result, root: root, searchResults: searchResults, searchterm: searchterm, selectedSingleRank: selectedSingleRank, selectedranking: selectedranking, status: status, title: title, toMongoDBMWConfig: toMongoDBMWConfig, user: user};
-																									};
-																								};
-																							};
-																						};
-																					};
+					return function (apiSpecifics) {
+						return function (queryType) {
+							return function (toMongoDBMWConfig) {
+								return function (isValidNewAccessToken) {
+									return function (isHardwareLNSConnected) {
+										return function (isHardwareLNXConnected) {
+											return function (isXMRWalletConnected) {
+												return function (errors) {
+													return function (availableSlots) {
+														return function (isWaitingForResponse) {
+															return function (isReturnUser) {
+																return function (emailpassword) {
+																	return function (user) {
+																		return function (searchterm) {
+																			return function (searchResults) {
+																				return function (objectJSONfromJSPort) {
+																					return {apiSpecifics: apiSpecifics, availableSlots: availableSlots, datetimeFromMain: datetimeFromMain, emailpassword: emailpassword, errors: errors, flagUrl: flagUrl, isHardwareLNSConnected: isHardwareLNSConnected, isHardwareLNXConnected: isHardwareLNXConnected, isReturnUser: isReturnUser, isValidNewAccessToken: isValidNewAccessToken, isWaitingForResponse: isWaitingForResponse, isXMRWalletConnected: isXMRWalletConnected, objectJSONfromJSPort: objectJSONfromJSPort, queryType: queryType, root: root, searchResults: searchResults, searchterm: searchterm, status: status, title: title, toMongoDBMWConfig: toMongoDBMWConfig, user: user};
 																				};
 																			};
 																		};
@@ -12995,23 +13014,16 @@ var $author$project$Pages$Hardware$Model = function (status) {
 		};
 	};
 };
-var $author$project$Data$Hardware$None = {$: 'None'};
 var $author$project$Pages$Hardware$ToMongoDBMWConfig = F6(
 	function (method, headers, url, body, timeout, tracker) {
 		return {body: body, headers: headers, method: method, timeout: timeout, tracker: tracker, url: url};
 	});
-var $author$project$Data$Hardware$Undecided = {$: 'Undecided'};
 var $author$project$Pages$Hardware$ApiSpecifics = F2(
 	function (maxResults, accessToken) {
 		return {accessToken: accessToken, maxResults: maxResults};
 	});
 var $author$project$Pages$Hardware$apiSpecsPlaceHolder = A2($author$project$Pages$Hardware$ApiSpecifics, '', $elm$core$Maybe$Nothing);
 var $author$project$Extras$Constants$emptyEmailPassword = {email: '', password: ''};
-var $author$project$Data$Hardware$emptyRank = {
-	challenger: {id: 'String', nickname: 'String'},
-	player: {id: 'String', nickname: 'String'},
-	rank: 0
-};
 var $author$project$Data$User$Spectator = function (a) {
 	return {$: 'Spectator', a: a};
 };
@@ -13066,16 +13078,6 @@ var $author$project$Data$User$UserInfo = function (userid) {
 var $author$project$Data$User$emptyDescription = {comment: '', level: ''};
 var $author$project$Data$User$emptyUserInfo = $author$project$Data$User$UserInfo('')('')('')($elm$core$Maybe$Nothing)('')(false)('')(40)($author$project$Data$User$Male)($elm$core$Maybe$Nothing)(false)('')($elm$core$Maybe$Nothing)(false)('')(0)(false)(_List_Nil)(_List_Nil)('')($author$project$Data$User$emptyDescription)(0)('');
 var $author$project$Data$User$emptySpectator = $author$project$Data$User$Spectator($author$project$Data$User$emptyUserInfo);
-var $AdrianRibao$elm_derberos_date$Derberos$Date$Core$DateRecord = F8(
-	function (year, month, day, hour, minute, second, millis, zone) {
-		return {day: day, hour: hour, millis: millis, minute: minute, month: month, second: second, year: year, zone: zone};
-	});
-var $elm$time$Time$Zone = F2(
-	function (a, b) {
-		return {$: 'Zone', a: a, b: b};
-	});
-var $elm$time$Time$utc = A2($elm$time$Time$Zone, 0, _List_Nil);
-var $author$project$Pages$Hardware$humandateTimePlaceholder = A8($AdrianRibao$elm_derberos_date$Derberos$Date$Core$DateRecord, 0, 0, 0, 0, 0, 0, 0, $elm$time$Time$utc);
 var $author$project$Pages$Hardware$init = function (fromMainToRankings) {
 	var updatedFlagUrlToIncludeMongoDBMWSvr = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, fromMainToRankings.flagUrl.host) ? A6($elm$url$Url$Url, fromMainToRankings.flagUrl.protocol, fromMainToRankings.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$productionProxyConfig, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6(
 		$elm$url$Url$Url,
@@ -13088,11 +13090,11 @@ var $author$project$Pages$Hardware$init = function (fromMainToRankings) {
 	return _Utils_Tuple2(
 		$author$project$Pages$Hardware$Model($author$project$Pages$Hardware$Loaded)('Hardware')(
 			$author$project$Pages$Hardware$Hardware(
-				{name: 'Loading...'}))(fromMainToRankings.flagUrl)(
+				{name: 'Loading ...'}))(fromMainToRankings.flagUrl)(
 			A2(
 				$elm$core$Maybe$withDefault,
 				$elm$core$Maybe$Nothing,
-				$elm$core$Maybe$Just(fromMainToRankings.time)))($author$project$Pages$Hardware$humandateTimePlaceholder)(_List_Nil)($author$project$Pages$Hardware$apiSpecsPlaceHolder)(
+				$elm$core$Maybe$Just(fromMainToRankings.time)))($author$project$Pages$Hardware$apiSpecsPlaceHolder)(
 			$author$project$Pages$Hardware$Login($author$project$Extras$Constants$emptyEmailPassword))(
 			$elm$core$Maybe$Just(
 				A6(
@@ -13107,7 +13109,7 @@ var $author$project$Pages$Hardware$init = function (fromMainToRankings) {
 				['']))(
 			_List_fromArray(
 				[$elm$core$Maybe$Nothing]))(false)(false)(
-			{email: '', password: ''})($author$project$Data$Hardware$None)($author$project$Data$Hardware$emptyRank)($author$project$Data$User$emptySpectator)($author$project$Data$Hardware$Undecided)('')(_List_Nil)($elm$core$Maybe$Nothing),
+			{email: '', password: ''})($author$project$Data$User$emptySpectator)('')(_List_Nil)($elm$core$Maybe$Nothing),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Pages$Market$Loading = {$: 'Loading'};
@@ -13316,9 +13318,6 @@ var $elm$url$Url$Parser$parse = F2(
 var $author$project$Main$AdjustTimeZone = function (a) {
 	return {$: 'AdjustTimeZone', a: a};
 };
-var $author$project$Main$DashboardPage = function (a) {
-	return {$: 'DashboardPage', a: a};
-};
 var $author$project$Main$GotDashboardMsg = function (a) {
 	return {$: 'GotDashboardMsg', a: a};
 };
@@ -13328,6 +13327,10 @@ var $elm$time$Time$Name = function (a) {
 var $elm$time$Time$Offset = function (a) {
 	return {$: 'Offset', a: a};
 };
+var $elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 'Zone', a: a, b: b};
+	});
 var $elm$time$Time$customZone = $elm$time$Time$Zone;
 var $elm$time$Time$here = _Time_here(_Utils_Tuple0);
 var $author$project$Main$toDashboard = F2(
@@ -13704,11 +13707,11 @@ var $author$project$Main$updateUrl = F2(
 							{flagUrl: model.flag, time: $elm$core$Maybe$Nothing}));
 			}
 		} else {
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{page: $author$project$Main$NotFound}),
-				$elm$core$Platform$Cmd$none);
+			return A2(
+				$author$project$Main$toDashboard,
+				model,
+				$author$project$Pages$Dashboard$init(
+					{flagUrl: model.flag, time: $elm$core$Maybe$Nothing}));
 		}
 	});
 var $elm$json$Json$Decode$andThen = _Json_andThen;
@@ -13733,65 +13736,349 @@ var $author$project$Main$init = F3(
 				key,
 				$elm$url$Url$toString(newUrl));
 		};
-		var decodedJsonFromIndexjs = function () {
-			var _v0 = A2($elm$json$Json$Decode$decodeString, $author$project$Main$urlDecoder, flag);
-			if (_v0.$ === 'Ok') {
-				var urL = _v0.a;
+		var decodedJsonFromSetupElmmjs = function () {
+			var _v1 = A2($elm$json$Json$Decode$decodeString, $author$project$Main$urlDecoder, flag);
+			if (_v1.$ === 'Ok') {
+				var urL = _v1.a;
+				var _v2 = A3($elm$core$Debug$log, 'url in init', $elm$url$Url$toString, url);
 				return urL;
 			} else {
+				var _v3 = A3($elm$core$Debug$log, 'Error in init', $elm$url$Url$toString, url);
 				return A6($elm$url$Url$Url, $elm$url$Url$Https, 'haveno-web.squashpassion.com', $elm$core$Maybe$Nothing, '', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
 			}
 		}();
-		return A2(
-			$author$project$Main$updateUrl,
-			url,
-			{
-				errors: _List_fromArray(
-					['']),
-				flag: decodedJsonFromIndexjs,
-				key: navigate,
-				page: $author$project$Main$NotFound,
-				time: $elm$time$Time$millisToPosix(0),
-				zone: $elm$core$Maybe$Just($elm$time$Time$utc)
-			});
+		var updatedModel = _Utils_update(
+			$author$project$Main$mainInitModel,
+			{flag: decodedJsonFromSetupElmmjs, key: navigate});
+		var _v0 = A2($elm$core$Debug$log, 'flag is ', flag);
+		return A2($author$project$Main$updateUrl, url, updatedModel);
 	});
+var $author$project$Main$Recv = function (a) {
+	return {$: 'Recv', a: a};
+};
 var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $author$project$Pages$Hardware$ResponseDataFromMain = function (a) {
-	return {$: 'ResponseDataFromMain', a: a};
-};
-var $author$project$Pages$Hardware$receiveMessageFromJs = _Platform_incomingPort('receiveMessageFromJs', $elm$json$Json$Decode$value);
-var $author$project$Pages$Hardware$hardwareSubscriptions = function (_v0) {
-	return $elm$core$Platform$Sub$batch(
-		_List_fromArray(
-			[
-				$author$project$Pages$Hardware$receiveMessageFromJs($author$project$Pages$Hardware$ResponseDataFromMain)
-			]));
-};
-var $author$project$Extras$TestData$placeholderUrl = A6(
-	$elm$url$Url$Url,
-	$elm$url$Url$Http,
-	'localhost',
-	$elm$core$Maybe$Just(3000),
-	'',
-	$elm$core$Maybe$Nothing,
-	$elm$core$Maybe$Nothing);
+var $author$project$Main$receiveMessageFromJs = _Platform_incomingPort('receiveMessageFromJs', $elm$json$Json$Decode$value);
 var $author$project$Main$subscriptions = function (_v0) {
-	var _v1 = $author$project$Pages$Hardware$init(
-		{flagUrl: $author$project$Extras$TestData$placeholderUrl, time: $elm$core$Maybe$Nothing});
-	var hardwaremodel = _v1.a;
 	return $elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
-				A2(
-				$elm$core$Platform$Sub$map,
-				$author$project$Main$GotHardwareMsg,
-				$author$project$Pages$Hardware$hardwareSubscriptions(hardwaremodel))
+				$author$project$Main$receiveMessageFromJs($author$project$Main$Recv)
 			]));
 };
 var $author$project$Pages$Hardware$LoggedInUser = {$: 'LoggedInUser'};
 var $author$project$Main$fromJsonToString = function (value) {
 	return A2($elm$json$Json$Encode$encode, 0, value);
 };
+var $author$project$Pages$Hardware$Loading = {$: 'Loading'};
+var $author$project$Pages$Hardware$initialModel = {
+	apiSpecifics: {accessToken: $elm$core$Maybe$Nothing, maxResults: '10'},
+	availableSlots: _List_Nil,
+	datetimeFromMain: $elm$core$Maybe$Nothing,
+	emailpassword: {email: '', password: ''},
+	errors: _List_Nil,
+	flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Https, 'example.com', $elm$core$Maybe$Nothing, '', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
+	isHardwareLNSConnected: false,
+	isHardwareLNXConnected: false,
+	isReturnUser: false,
+	isValidNewAccessToken: false,
+	isWaitingForResponse: false,
+	isXMRWalletConnected: false,
+	objectJSONfromJSPort: $elm$core$Maybe$Nothing,
+	queryType: $author$project$Pages$Hardware$LoggedInUser,
+	root: $author$project$Pages$Hardware$Hardware(
+		{name: 'Loading...'}),
+	searchResults: _List_Nil,
+	searchterm: '',
+	status: $author$project$Pages$Hardware$Loading,
+	title: 'Hardware',
+	toMongoDBMWConfig: $elm$core$Maybe$Nothing,
+	user: $author$project$Data$User$emptySpectator
+};
+var $elm$parser$Parser$DeadEnd = F3(
+	function (row, col, problem) {
+		return {col: col, problem: problem, row: row};
+	});
+var $elm$parser$Parser$problemToDeadEnd = function (p) {
+	return A3($elm$parser$Parser$DeadEnd, p.row, p.col, p.problem);
+};
+var $elm$parser$Parser$Advanced$bagToList = F2(
+	function (bag, list) {
+		bagToList:
+		while (true) {
+			switch (bag.$) {
+				case 'Empty':
+					return list;
+				case 'AddRight':
+					var bag1 = bag.a;
+					var x = bag.b;
+					var $temp$bag = bag1,
+						$temp$list = A2($elm$core$List$cons, x, list);
+					bag = $temp$bag;
+					list = $temp$list;
+					continue bagToList;
+				default:
+					var bag1 = bag.a;
+					var bag2 = bag.b;
+					var $temp$bag = bag1,
+						$temp$list = A2($elm$parser$Parser$Advanced$bagToList, bag2, list);
+					bag = $temp$bag;
+					list = $temp$list;
+					continue bagToList;
+			}
+		}
+	});
+var $elm$parser$Parser$Advanced$run = F2(
+	function (_v0, src) {
+		var parse = _v0.a;
+		var _v1 = parse(
+			{col: 1, context: _List_Nil, indent: 1, offset: 0, row: 1, src: src});
+		if (_v1.$ === 'Good') {
+			var value = _v1.b;
+			return $elm$core$Result$Ok(value);
+		} else {
+			var bag = _v1.b;
+			return $elm$core$Result$Err(
+				A2($elm$parser$Parser$Advanced$bagToList, bag, _List_Nil));
+		}
+	});
+var $elm$parser$Parser$run = F2(
+	function (parser, source) {
+		var _v0 = A2($elm$parser$Parser$Advanced$run, parser, source);
+		if (_v0.$ === 'Ok') {
+			var a = _v0.a;
+			return $elm$core$Result$Ok(a);
+		} else {
+			var problems = _v0.a;
+			return $elm$core$Result$Err(
+				A2($elm$core$List$map, $elm$parser$Parser$problemToDeadEnd, problems));
+		}
+	});
+var $elm$parser$Parser$Advanced$Bad = F2(
+	function (a, b) {
+		return {$: 'Bad', a: a, b: b};
+	});
+var $elm$parser$Parser$Advanced$Good = F3(
+	function (a, b, c) {
+		return {$: 'Good', a: a, b: b, c: c};
+	});
+var $elm$parser$Parser$Advanced$Parser = function (a) {
+	return {$: 'Parser', a: a};
+};
+var $elm$parser$Parser$Advanced$andThen = F2(
+	function (callback, _v0) {
+		var parseA = _v0.a;
+		return $elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _v1 = parseA(s0);
+				if (_v1.$ === 'Bad') {
+					var p = _v1.a;
+					var x = _v1.b;
+					return A2($elm$parser$Parser$Advanced$Bad, p, x);
+				} else {
+					var p1 = _v1.a;
+					var a = _v1.b;
+					var s1 = _v1.c;
+					var _v2 = callback(a);
+					var parseB = _v2.a;
+					var _v3 = parseB(s1);
+					if (_v3.$ === 'Bad') {
+						var p2 = _v3.a;
+						var x = _v3.b;
+						return A2($elm$parser$Parser$Advanced$Bad, p1 || p2, x);
+					} else {
+						var p2 = _v3.a;
+						var b = _v3.b;
+						var s2 = _v3.c;
+						return A3($elm$parser$Parser$Advanced$Good, p1 || p2, b, s2);
+					}
+				}
+			});
+	});
+var $elm$parser$Parser$andThen = $elm$parser$Parser$Advanced$andThen;
+var $elm$parser$Parser$Advanced$isSubChar = _Parser_isSubChar;
+var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
+	function (isGood, offset, row, col, s0) {
+		chompWhileHelp:
+		while (true) {
+			var newOffset = A3($elm$parser$Parser$Advanced$isSubChar, isGood, offset, s0.src);
+			if (_Utils_eq(newOffset, -1)) {
+				return A3(
+					$elm$parser$Parser$Advanced$Good,
+					_Utils_cmp(s0.offset, offset) < 0,
+					_Utils_Tuple0,
+					{col: col, context: s0.context, indent: s0.indent, offset: offset, row: row, src: s0.src});
+			} else {
+				if (_Utils_eq(newOffset, -2)) {
+					var $temp$isGood = isGood,
+						$temp$offset = offset + 1,
+						$temp$row = row + 1,
+						$temp$col = 1,
+						$temp$s0 = s0;
+					isGood = $temp$isGood;
+					offset = $temp$offset;
+					row = $temp$row;
+					col = $temp$col;
+					s0 = $temp$s0;
+					continue chompWhileHelp;
+				} else {
+					var $temp$isGood = isGood,
+						$temp$offset = newOffset,
+						$temp$row = row,
+						$temp$col = col + 1,
+						$temp$s0 = s0;
+					isGood = $temp$isGood;
+					offset = $temp$offset;
+					row = $temp$row;
+					col = $temp$col;
+					s0 = $temp$s0;
+					continue chompWhileHelp;
+				}
+			}
+		}
+	});
+var $elm$parser$Parser$Advanced$chompWhile = function (isGood) {
+	return $elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.offset, s.row, s.col, s);
+		});
+};
+var $elm$parser$Parser$chompWhile = $elm$parser$Parser$Advanced$chompWhile;
+var $elm$parser$Parser$ExpectingEnd = {$: 'ExpectingEnd'};
+var $elm$parser$Parser$Advanced$AddRight = F2(
+	function (a, b) {
+		return {$: 'AddRight', a: a, b: b};
+	});
+var $elm$parser$Parser$Advanced$DeadEnd = F4(
+	function (row, col, problem, contextStack) {
+		return {col: col, contextStack: contextStack, problem: problem, row: row};
+	});
+var $elm$parser$Parser$Advanced$Empty = {$: 'Empty'};
+var $elm$parser$Parser$Advanced$fromState = F2(
+	function (s, x) {
+		return A2(
+			$elm$parser$Parser$Advanced$AddRight,
+			$elm$parser$Parser$Advanced$Empty,
+			A4($elm$parser$Parser$Advanced$DeadEnd, s.row, s.col, x, s.context));
+	});
+var $elm$parser$Parser$Advanced$end = function (x) {
+	return $elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return _Utils_eq(
+				$elm$core$String$length(s.src),
+				s.offset) ? A3($elm$parser$Parser$Advanced$Good, false, _Utils_Tuple0, s) : A2(
+				$elm$parser$Parser$Advanced$Bad,
+				false,
+				A2($elm$parser$Parser$Advanced$fromState, s, x));
+		});
+};
+var $elm$parser$Parser$end = $elm$parser$Parser$Advanced$end($elm$parser$Parser$ExpectingEnd);
+var $elm$parser$Parser$Advanced$mapChompedString = F2(
+	function (func, _v0) {
+		var parse = _v0.a;
+		return $elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _v1 = parse(s0);
+				if (_v1.$ === 'Bad') {
+					var p = _v1.a;
+					var x = _v1.b;
+					return A2($elm$parser$Parser$Advanced$Bad, p, x);
+				} else {
+					var p = _v1.a;
+					var a = _v1.b;
+					var s1 = _v1.c;
+					return A3(
+						$elm$parser$Parser$Advanced$Good,
+						p,
+						A2(
+							func,
+							A3($elm$core$String$slice, s0.offset, s1.offset, s0.src),
+							a),
+						s1);
+				}
+			});
+	});
+var $elm$parser$Parser$Advanced$getChompedString = function (parser) {
+	return A2($elm$parser$Parser$Advanced$mapChompedString, $elm$core$Basics$always, parser);
+};
+var $elm$parser$Parser$getChompedString = $elm$parser$Parser$Advanced$getChompedString;
+var $elm$parser$Parser$Advanced$map = F2(
+	function (func, _v0) {
+		var parse = _v0.a;
+		return $elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _v1 = parse(s0);
+				if (_v1.$ === 'Good') {
+					var p = _v1.a;
+					var a = _v1.b;
+					var s1 = _v1.c;
+					return A3(
+						$elm$parser$Parser$Advanced$Good,
+						p,
+						func(a),
+						s1);
+				} else {
+					var p = _v1.a;
+					var x = _v1.b;
+					return A2($elm$parser$Parser$Advanced$Bad, p, x);
+				}
+			});
+	});
+var $elm$parser$Parser$map = $elm$parser$Parser$Advanced$map;
+var $elm$parser$Parser$Problem = function (a) {
+	return {$: 'Problem', a: a};
+};
+var $elm$parser$Parser$Advanced$problem = function (x) {
+	return $elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return A2(
+				$elm$parser$Parser$Advanced$Bad,
+				false,
+				A2($elm$parser$Parser$Advanced$fromState, s, x));
+		});
+};
+var $elm$parser$Parser$problem = function (msg) {
+	return $elm$parser$Parser$Advanced$problem(
+		$elm$parser$Parser$Problem(msg));
+};
+var $elm$parser$Parser$Advanced$succeed = function (a) {
+	return $elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return A3($elm$parser$Parser$Advanced$Good, false, a, s);
+		});
+};
+var $elm$parser$Parser$succeed = $elm$parser$Parser$Advanced$succeed;
+var $author$project$Data$Hardware$validXMRAddressParser = A2(
+	$elm$parser$Parser$andThen,
+	function (str) {
+		return A2(
+			$elm$parser$Parser$map,
+			function (_v0) {
+				return str;
+			},
+			$elm$parser$Parser$end);
+	},
+	A2(
+		$elm$parser$Parser$andThen,
+		function (str) {
+			return ($elm$core$String$length(str) === 95) ? $elm$parser$Parser$succeed(str) : $elm$parser$Parser$problem('Invalid length');
+		},
+		$elm$parser$Parser$getChompedString(
+			$elm$parser$Parser$chompWhile($elm$core$Char$isAlphaNum))));
+var $author$project$Main$isValidXMRAddress = function (str) {
+	var _v0 = A2($elm$parser$Parser$run, $author$project$Data$Hardware$validXMRAddressParser, str);
+	if (_v0.$ === 'Ok') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var $author$project$Main$OperationEventMsg = function (operationEventMsg) {
+	return {operationEventMsg: operationEventMsg};
+};
+var $author$project$Main$justmsgFieldFromJsonDecoder = A2(
+	$elm$json$Json$Decode$map,
+	$author$project$Main$OperationEventMsg,
+	A2($elm$json$Json$Decode$field, 'operationEventMsg', $elm$json$Json$Decode$string));
 var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $author$project$Main$sendMessageToJs = _Platform_outgoingPort('sendMessageToJs', $elm$json$Json$Encode$string);
 var $author$project$Pages$Buy$update = F2(
@@ -13907,23 +14194,12 @@ var $author$project$Pages$Hardware$ConfirmDeleteOwnedRanking = {$: 'ConfirmDelet
 var $author$project$Pages$Hardware$ConfirmDeleteUserView = {$: 'ConfirmDeleteUserView'};
 var $author$project$Pages$Hardware$ConfirmJoinMemberView = {$: 'ConfirmJoinMemberView'};
 var $author$project$Pages$Hardware$ConfirmLeaveMemberView = {$: 'ConfirmLeaveMemberView'};
-var $author$project$Pages$Hardware$CreateChallengeView = F2(
-	function (a, b) {
-		return {$: 'CreateChallengeView', a: a, b: b};
-	});
-var $author$project$Pages$Hardware$CreatingNewLadder = function (a) {
-	return {$: 'CreatingNewLadder', a: a};
-};
 var $author$project$Types$DateType$CurrentDateTime = F2(
 	function (a, b) {
 		return {$: 'CurrentDateTime', a: a, b: b};
 	});
 var $author$project$Pages$Hardware$MemberSelectedView = {$: 'MemberSelectedView'};
-var $author$project$Data$Hardware$Owned = function (a) {
-	return {$: 'Owned', a: a};
-};
 var $author$project$Pages$Hardware$OwnedSelectedView = {$: 'OwnedSelectedView'};
-var $author$project$Pages$Hardware$PrepareResult = {$: 'PrepareResult'};
 var $author$project$Data$Hardware$Rank = F3(
 	function (rank, player, challenger) {
 		return {challenger: challenger, player: player, rank: rank};
@@ -13938,9 +14214,6 @@ var $author$project$Types$DateType$SelectedDateTime = F2(
 	function (a, b) {
 		return {$: 'SelectedDateTime', a: a, b: b};
 	});
-var $author$project$Data$Hardware$Spectator = function (a) {
-	return {$: 'Spectator', a: a};
-};
 var $author$project$Pages$Hardware$SpectatorSelectedView = {$: 'SpectatorSelectedView'};
 var $author$project$Pages$Hardware$UpdateComment = function (a) {
 	return {$: 'UpdateComment', a: a};
@@ -14425,6 +14698,11 @@ var $author$project$Data$Hardware$baseAddressDecoder = A3(
 		'street',
 		$elm$json$Json$Decode$string,
 		$elm$json$Json$Decode$succeed($author$project$Data$Hardware$BaseAddress)));
+var $author$project$Data$Hardware$emptyRank = {
+	challenger: {id: 'String', nickname: 'String'},
+	player: {id: 'String', nickname: 'String'},
+	rank: 0
+};
 var $author$project$Data$Hardware$idDecoder = A2($elm$json$Json$Decode$field, '$oid', $elm$json$Json$Decode$string);
 var $author$project$Data$Hardware$ownerIdDecoder = A2($elm$json$Json$Decode$field, '$oid', $elm$json$Json$Decode$string);
 var $author$project$Data$Hardware$Player = F2(
@@ -14630,20 +14908,6 @@ var $author$project$Pages$Hardware$callRequest = function (model) {
 		});
 	return therequest;
 };
-var $author$project$Data$User$deleteRankingFromMemberRankings = F2(
-	function (user, rankingid) {
-		if (user.$ === 'Registered') {
-			var usrInfo = user.a;
-			return A2(
-				$elm$core$List$filter,
-				function (ranking) {
-					return !_Utils_eq(ranking.id, rankingid);
-				},
-				usrInfo.memberRankings);
-		} else {
-			return _List_Nil;
-		}
-	});
 var $author$project$Data$Hardware$emptyRanking = {
 	active: false,
 	baseaddress: {city: '', street: ''},
@@ -14655,303 +14919,6 @@ var $author$project$Data$Hardware$emptyRanking = {
 	owner_name: '',
 	player_count: 0
 };
-var $author$project$Data$Hardware$gotRanking = function (ls) {
-	switch (ls.$) {
-		case 'Owned':
-			var ranking = ls.a;
-			return ranking;
-		case 'Member':
-			var ranking = ls.a;
-			return ranking;
-		case 'Spectator':
-			var ranking = ls.a;
-			return ranking;
-		default:
-			return $author$project$Data$Hardware$emptyRanking;
-	}
-};
-var $author$project$Data$User$gotUserInfo = function (user) {
-	if (user.$ === 'Registered') {
-		var usrInfo = user.a;
-		return usrInfo;
-	} else {
-		return $author$project$Data$User$emptyUserInfo;
-	}
-};
-var $author$project$Extras$Constants$noCurrentChallengerId = '6353e8b6aedf80653eb34191';
-var $author$project$Data$Hardware$isCurrentlyInAChallenge = function (rank) {
-	return (_Utils_eq(rank.player.id, $author$project$Extras$Constants$noCurrentChallengerId) || _Utils_eq(rank.challenger.id, $author$project$Extras$Constants$noCurrentChallengerId)) ? false : true;
-};
-var $elm$parser$Parser$DeadEnd = F3(
-	function (row, col, problem) {
-		return {col: col, problem: problem, row: row};
-	});
-var $elm$parser$Parser$problemToDeadEnd = function (p) {
-	return A3($elm$parser$Parser$DeadEnd, p.row, p.col, p.problem);
-};
-var $elm$parser$Parser$Advanced$bagToList = F2(
-	function (bag, list) {
-		bagToList:
-		while (true) {
-			switch (bag.$) {
-				case 'Empty':
-					return list;
-				case 'AddRight':
-					var bag1 = bag.a;
-					var x = bag.b;
-					var $temp$bag = bag1,
-						$temp$list = A2($elm$core$List$cons, x, list);
-					bag = $temp$bag;
-					list = $temp$list;
-					continue bagToList;
-				default:
-					var bag1 = bag.a;
-					var bag2 = bag.b;
-					var $temp$bag = bag1,
-						$temp$list = A2($elm$parser$Parser$Advanced$bagToList, bag2, list);
-					bag = $temp$bag;
-					list = $temp$list;
-					continue bagToList;
-			}
-		}
-	});
-var $elm$parser$Parser$Advanced$run = F2(
-	function (_v0, src) {
-		var parse = _v0.a;
-		var _v1 = parse(
-			{col: 1, context: _List_Nil, indent: 1, offset: 0, row: 1, src: src});
-		if (_v1.$ === 'Good') {
-			var value = _v1.b;
-			return $elm$core$Result$Ok(value);
-		} else {
-			var bag = _v1.b;
-			return $elm$core$Result$Err(
-				A2($elm$parser$Parser$Advanced$bagToList, bag, _List_Nil));
-		}
-	});
-var $elm$parser$Parser$run = F2(
-	function (parser, source) {
-		var _v0 = A2($elm$parser$Parser$Advanced$run, parser, source);
-		if (_v0.$ === 'Ok') {
-			var a = _v0.a;
-			return $elm$core$Result$Ok(a);
-		} else {
-			var problems = _v0.a;
-			return $elm$core$Result$Err(
-				A2($elm$core$List$map, $elm$parser$Parser$problemToDeadEnd, problems));
-		}
-	});
-var $elm$parser$Parser$Advanced$Bad = F2(
-	function (a, b) {
-		return {$: 'Bad', a: a, b: b};
-	});
-var $elm$parser$Parser$Advanced$Good = F3(
-	function (a, b, c) {
-		return {$: 'Good', a: a, b: b, c: c};
-	});
-var $elm$parser$Parser$Advanced$Parser = function (a) {
-	return {$: 'Parser', a: a};
-};
-var $elm$parser$Parser$Advanced$andThen = F2(
-	function (callback, _v0) {
-		var parseA = _v0.a;
-		return $elm$parser$Parser$Advanced$Parser(
-			function (s0) {
-				var _v1 = parseA(s0);
-				if (_v1.$ === 'Bad') {
-					var p = _v1.a;
-					var x = _v1.b;
-					return A2($elm$parser$Parser$Advanced$Bad, p, x);
-				} else {
-					var p1 = _v1.a;
-					var a = _v1.b;
-					var s1 = _v1.c;
-					var _v2 = callback(a);
-					var parseB = _v2.a;
-					var _v3 = parseB(s1);
-					if (_v3.$ === 'Bad') {
-						var p2 = _v3.a;
-						var x = _v3.b;
-						return A2($elm$parser$Parser$Advanced$Bad, p1 || p2, x);
-					} else {
-						var p2 = _v3.a;
-						var b = _v3.b;
-						var s2 = _v3.c;
-						return A3($elm$parser$Parser$Advanced$Good, p1 || p2, b, s2);
-					}
-				}
-			});
-	});
-var $elm$parser$Parser$andThen = $elm$parser$Parser$Advanced$andThen;
-var $elm$parser$Parser$Advanced$isSubChar = _Parser_isSubChar;
-var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
-	function (isGood, offset, row, col, s0) {
-		chompWhileHelp:
-		while (true) {
-			var newOffset = A3($elm$parser$Parser$Advanced$isSubChar, isGood, offset, s0.src);
-			if (_Utils_eq(newOffset, -1)) {
-				return A3(
-					$elm$parser$Parser$Advanced$Good,
-					_Utils_cmp(s0.offset, offset) < 0,
-					_Utils_Tuple0,
-					{col: col, context: s0.context, indent: s0.indent, offset: offset, row: row, src: s0.src});
-			} else {
-				if (_Utils_eq(newOffset, -2)) {
-					var $temp$isGood = isGood,
-						$temp$offset = offset + 1,
-						$temp$row = row + 1,
-						$temp$col = 1,
-						$temp$s0 = s0;
-					isGood = $temp$isGood;
-					offset = $temp$offset;
-					row = $temp$row;
-					col = $temp$col;
-					s0 = $temp$s0;
-					continue chompWhileHelp;
-				} else {
-					var $temp$isGood = isGood,
-						$temp$offset = newOffset,
-						$temp$row = row,
-						$temp$col = col + 1,
-						$temp$s0 = s0;
-					isGood = $temp$isGood;
-					offset = $temp$offset;
-					row = $temp$row;
-					col = $temp$col;
-					s0 = $temp$s0;
-					continue chompWhileHelp;
-				}
-			}
-		}
-	});
-var $elm$parser$Parser$Advanced$chompWhile = function (isGood) {
-	return $elm$parser$Parser$Advanced$Parser(
-		function (s) {
-			return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.offset, s.row, s.col, s);
-		});
-};
-var $elm$parser$Parser$chompWhile = $elm$parser$Parser$Advanced$chompWhile;
-var $elm$parser$Parser$ExpectingEnd = {$: 'ExpectingEnd'};
-var $elm$parser$Parser$Advanced$AddRight = F2(
-	function (a, b) {
-		return {$: 'AddRight', a: a, b: b};
-	});
-var $elm$parser$Parser$Advanced$DeadEnd = F4(
-	function (row, col, problem, contextStack) {
-		return {col: col, contextStack: contextStack, problem: problem, row: row};
-	});
-var $elm$parser$Parser$Advanced$Empty = {$: 'Empty'};
-var $elm$parser$Parser$Advanced$fromState = F2(
-	function (s, x) {
-		return A2(
-			$elm$parser$Parser$Advanced$AddRight,
-			$elm$parser$Parser$Advanced$Empty,
-			A4($elm$parser$Parser$Advanced$DeadEnd, s.row, s.col, x, s.context));
-	});
-var $elm$parser$Parser$Advanced$end = function (x) {
-	return $elm$parser$Parser$Advanced$Parser(
-		function (s) {
-			return _Utils_eq(
-				$elm$core$String$length(s.src),
-				s.offset) ? A3($elm$parser$Parser$Advanced$Good, false, _Utils_Tuple0, s) : A2(
-				$elm$parser$Parser$Advanced$Bad,
-				false,
-				A2($elm$parser$Parser$Advanced$fromState, s, x));
-		});
-};
-var $elm$parser$Parser$end = $elm$parser$Parser$Advanced$end($elm$parser$Parser$ExpectingEnd);
-var $elm$parser$Parser$Advanced$mapChompedString = F2(
-	function (func, _v0) {
-		var parse = _v0.a;
-		return $elm$parser$Parser$Advanced$Parser(
-			function (s0) {
-				var _v1 = parse(s0);
-				if (_v1.$ === 'Bad') {
-					var p = _v1.a;
-					var x = _v1.b;
-					return A2($elm$parser$Parser$Advanced$Bad, p, x);
-				} else {
-					var p = _v1.a;
-					var a = _v1.b;
-					var s1 = _v1.c;
-					return A3(
-						$elm$parser$Parser$Advanced$Good,
-						p,
-						A2(
-							func,
-							A3($elm$core$String$slice, s0.offset, s1.offset, s0.src),
-							a),
-						s1);
-				}
-			});
-	});
-var $elm$parser$Parser$Advanced$getChompedString = function (parser) {
-	return A2($elm$parser$Parser$Advanced$mapChompedString, $elm$core$Basics$always, parser);
-};
-var $elm$parser$Parser$getChompedString = $elm$parser$Parser$Advanced$getChompedString;
-var $elm$parser$Parser$Advanced$map = F2(
-	function (func, _v0) {
-		var parse = _v0.a;
-		return $elm$parser$Parser$Advanced$Parser(
-			function (s0) {
-				var _v1 = parse(s0);
-				if (_v1.$ === 'Good') {
-					var p = _v1.a;
-					var a = _v1.b;
-					var s1 = _v1.c;
-					return A3(
-						$elm$parser$Parser$Advanced$Good,
-						p,
-						func(a),
-						s1);
-				} else {
-					var p = _v1.a;
-					var x = _v1.b;
-					return A2($elm$parser$Parser$Advanced$Bad, p, x);
-				}
-			});
-	});
-var $elm$parser$Parser$map = $elm$parser$Parser$Advanced$map;
-var $elm$parser$Parser$Problem = function (a) {
-	return {$: 'Problem', a: a};
-};
-var $elm$parser$Parser$Advanced$problem = function (x) {
-	return $elm$parser$Parser$Advanced$Parser(
-		function (s) {
-			return A2(
-				$elm$parser$Parser$Advanced$Bad,
-				false,
-				A2($elm$parser$Parser$Advanced$fromState, s, x));
-		});
-};
-var $elm$parser$Parser$problem = function (msg) {
-	return $elm$parser$Parser$Advanced$problem(
-		$elm$parser$Parser$Problem(msg));
-};
-var $elm$parser$Parser$Advanced$succeed = function (a) {
-	return $elm$parser$Parser$Advanced$Parser(
-		function (s) {
-			return A3($elm$parser$Parser$Advanced$Good, false, a, s);
-		});
-};
-var $elm$parser$Parser$succeed = $elm$parser$Parser$Advanced$succeed;
-var $author$project$Data$Hardware$validXMRAddressParser = A2(
-	$elm$parser$Parser$andThen,
-	function (str) {
-		return A2(
-			$elm$parser$Parser$map,
-			function (_v0) {
-				return str;
-			},
-			$elm$parser$Parser$end);
-	},
-	A2(
-		$elm$parser$Parser$andThen,
-		function (str) {
-			return ($elm$core$String$length(str) === 95) ? $elm$parser$Parser$succeed(str) : $elm$parser$Parser$problem('Invalid length');
-		},
-		$elm$parser$Parser$getChompedString(
-			$elm$parser$Parser$chompWhile($elm$core$Char$isAlphaNum))));
 var $author$project$Pages$Hardware$isValidXMRAddress = function (str) {
 	var _v0 = A2($elm$parser$Parser$run, $author$project$Data$Hardware$validXMRAddressParser, str);
 	if (_v0.$ === 'Ok') {
@@ -14967,14 +14934,7 @@ var $author$project$Pages$Hardware$justmsgFieldFromJsonDecoder = A2(
 	$elm$json$Json$Decode$map,
 	$author$project$Pages$Hardware$OperationEventMsg,
 	A2($elm$json$Json$Decode$field, 'operationEventMsg', $elm$json$Json$Decode$string));
-var $author$project$Extras$Constants$placeholderUrl = A6(
-	$elm$url$Url$Url,
-	$elm$url$Url$Http,
-	'localhost',
-	$elm$core$Maybe$Just(3000),
-	'',
-	$elm$core$Maybe$Nothing,
-	$elm$core$Maybe$Nothing);
+var $author$project$Extras$Constants$noCurrentChallengerId = '6353e8b6aedf80653eb34191';
 var $author$project$Pages$Hardware$ProfileResponse = function (a) {
 	return {$: 'ProfileResponse', a: a};
 };
@@ -15200,32 +15160,7 @@ var $author$project$Pages$Hardware$updateNewUserRegistrationFormField = F3(
 			model,
 			{queryType: newLoginOrRegistration});
 	});
-var $author$project$Data$Hardware$updatedCity = F2(
-	function (ranking, str) {
-		var baseaddress = ranking.baseaddress;
-		var newBaseAddress = _Utils_update(
-			baseaddress,
-			{city: str});
-		return _Utils_update(
-			ranking,
-			{baseaddress: newBaseAddress});
-	});
-var $author$project$Data$Hardware$updatedRankingName = F2(
-	function (ranking, str) {
-		return _Utils_update(
-			ranking,
-			{name: str});
-	});
-var $author$project$Data$Hardware$updatedStreet = F2(
-	function (ranking, str) {
-		var baseaddress = ranking.baseaddress;
-		var newBaseAddress = _Utils_update(
-			baseaddress,
-			{street: str});
-		return _Utils_update(
-			ranking,
-			{baseaddress: newBaseAddress});
-	});
+var $elm$time$Time$utc = A2($elm$time$Time$Zone, 0, _List_Nil);
 var $author$project$Pages$Hardware$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -15252,28 +15187,7 @@ var $author$project$Pages$Hardware$update = F2(
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 'ConfirmLeaveMemberRanking':
-				var newUser = $author$project$Data$User$gotUserInfo(model.user);
-				var newMemberRankings = function () {
-					var _v1 = model.selectedranking;
-					if (_v1.$ === 'Member') {
-						var ranking = _v1.a;
-						return A2($author$project$Data$User$deleteRankingFromMemberRankings, model.user, ranking.id);
-					} else {
-						return _List_fromArray(
-							[$author$project$Data$Hardware$emptyRanking]);
-					}
-				}();
-				var newUserInfo = _Utils_update(
-					newUser,
-					{memberRankings: newMemberRankings});
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							queryType: $author$project$Pages$Hardware$LoggedInUser,
-							user: $author$project$Data$User$Registered(newUserInfo)
-						}),
-					$elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'RegisteredUserJoin':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -15295,9 +15209,9 @@ var $author$project$Pages$Hardware$update = F2(
 						{queryType: $author$project$Pages$Hardware$SpectatorSelectedView}),
 					$elm$core$Platform$Cmd$none);
 			case 'SpectatorJoin':
-				var _v2 = model.user;
-				if (_v2.$ === 'Registered') {
-					var userInfo = _v2.a;
+				var _v1 = model.user;
+				if (_v1.$ === 'Registered') {
+					var userInfo = _v1.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -15326,28 +15240,7 @@ var $author$project$Pages$Hardware$update = F2(
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'ViewRank':
 				var rank = msg.a;
-				var ranking = function () {
-					var _v3 = model.selectedranking;
-					switch (_v3.$) {
-						case 'Owned':
-							var rankng = _v3.a;
-							return rankng;
-						case 'Member':
-							var rankng = _v3.a;
-							return rankng;
-						case 'Spectator':
-							var rankng = _v3.a;
-							return rankng;
-						default:
-							return $author$project$Data$Hardware$emptyRanking;
-					}
-				}();
-				var qType = $author$project$Data$Hardware$isCurrentlyInAChallenge(rank) ? $author$project$Pages$Hardware$PrepareResult : A2($author$project$Pages$Hardware$CreateChallengeView, rank, ranking);
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{queryType: qType, selectedSingleRank: rank}),
-					$elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'CancelCreateNewRanking':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -15382,43 +15275,13 @@ var $author$project$Pages$Hardware$update = F2(
 					$elm$core$Platform$Cmd$none);
 			case 'RankingNameChg':
 				var value = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							selectedranking: $author$project$Data$Hardware$Owned(
-								A2(
-									$author$project$Data$Hardware$updatedRankingName,
-									$author$project$Data$Hardware$gotRanking(model.selectedranking),
-									value))
-						}),
-					$elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'StreetAddressChg':
 				var value = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							selectedranking: $author$project$Data$Hardware$Owned(
-								A2(
-									$author$project$Data$Hardware$updatedStreet,
-									$author$project$Data$Hardware$gotRanking(model.selectedranking),
-									value))
-						}),
-					$elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'CityAddressChg':
 				var value = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							selectedranking: $author$project$Data$Hardware$Owned(
-								A2(
-									$author$project$Data$Hardware$updatedCity,
-									$author$project$Data$Hardware$gotRanking(model.selectedranking),
-									value))
-						}),
-					$elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'CreateNewRanking':
 				var userInfo = msg.a;
 				var newRanking = $author$project$Data$Hardware$emptyRanking;
@@ -15427,24 +15290,7 @@ var $author$project$Pages$Hardware$update = F2(
 					1,
 					{id: userInfo.userid, nickname: userInfo.nickname},
 					{id: $author$project$Extras$Constants$noCurrentChallengerId, nickname: 'Challenger'});
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							queryType: $author$project$Pages$Hardware$CreatingNewLadder(userInfo),
-							selectedranking: $author$project$Data$Hardware$Owned(
-								_Utils_update(
-									newRanking,
-									{
-										active: true,
-										ladder: _List_fromArray(
-											[newRank]),
-										owner_id: userInfo.userid,
-										owner_name: userInfo.nickname,
-										player_count: 1
-									}))
-						}),
-					$elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'ViewMember':
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'FetchMember':
@@ -15456,13 +15302,13 @@ var $author$project$Pages$Hardware$update = F2(
 			case 'ResponseDataFromMain':
 				var receivedJson = msg.a;
 				var decodedHardwareDeviceMsg = function () {
-					var _v4 = A2($elm$json$Json$Decode$decodeValue, $author$project$Pages$Hardware$justmsgFieldFromJsonDecoder, receivedJson);
-					if (_v4.$ === 'Ok') {
-						var message = _v4.a;
+					var _v2 = A2($elm$json$Json$Decode$decodeValue, $author$project$Pages$Hardware$justmsgFieldFromJsonDecoder, receivedJson);
+					if (_v2.$ === 'Ok') {
+						var message = _v2.a;
 						return message.operationEventMsg;
 					} else {
-						var err = _v4.a;
-						return 'error';
+						var err = _v2.a;
+						return 'error in decodedHardwareDeviceMsg';
 					}
 				}();
 				var updatedIsLNSConnected = (decodedHardwareDeviceMsg === 'nanoS') ? true : false;
@@ -15480,8 +15326,8 @@ var $author$project$Pages$Hardware$update = F2(
 			case 'Cancel':
 				return _Utils_Tuple2(
 					function () {
-						var _v5 = model.queryType;
-						switch (_v5.$) {
+						var _v3 = model.queryType;
+						switch (_v3.$) {
 							case 'ConfirmDeleteOwnedRanking':
 								return _Utils_update(
 									model,
@@ -15557,9 +15403,9 @@ var $author$project$Pages$Hardware$update = F2(
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'InputFocused':
 				var inputElement = msg.a;
-				var _v6 = model.queryType;
-				if (_v6.$ === 'RegisterUser') {
-					var bkaapt = _v6.a;
+				var _v4 = model.queryType;
+				if (_v4.$ === 'RegisterUser') {
+					var bkaapt = _v4.a;
 					var newApiSpecs = model.apiSpecifics;
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				} else {
@@ -15567,9 +15413,9 @@ var $author$project$Pages$Hardware$update = F2(
 				}
 			case 'InputBlurred':
 				var inputElement = msg.a;
-				var _v7 = model.queryType;
-				if (_v7.$ === 'RegisterUser') {
-					var bkaapt = _v7.a;
+				var _v5 = model.queryType;
+				if (_v5.$ === 'RegisterUser') {
+					var bkaapt = _v5.a;
 					var newApiSpecs = model.apiSpecifics;
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				} else {
@@ -15578,16 +15424,16 @@ var $author$project$Pages$Hardware$update = F2(
 			case 'Tick':
 				var newTime = msg.a;
 				var dateTimeOnlyUpdatedIfNotSelected = function () {
-					var _v8 = model.datetimeFromMain;
-					if (_v8.$ === 'Just') {
-						if (_v8.a.$ === 'CurrentDateTime') {
-							var _v9 = _v8.a;
+					var _v6 = model.datetimeFromMain;
+					if (_v6.$ === 'Just') {
+						if (_v6.a.$ === 'CurrentDateTime') {
+							var _v7 = _v6.a;
 							return $elm$core$Maybe$Just(
 								A2($author$project$Types$DateType$CurrentDateTime, newTime, $elm$time$Time$utc));
 						} else {
-							var _v10 = _v8.a;
-							var dt = _v10.a;
-							var zone = _v10.b;
+							var _v8 = _v6.a;
+							var dt = _v8.a;
+							var zone = _v8.b;
 							return $elm$core$Maybe$Just(
 								A2($author$project$Types$DateType$SelectedDateTime, dt, zone));
 						}
@@ -15821,14 +15667,7 @@ var $author$project$Pages$Hardware$update = F2(
 			case 'SpectatorRankingResponse':
 				if (msg.a.$ === 'Ok') {
 					var specRankingResult = msg.a.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								isWaitingForResponse: false,
-								selectedranking: $author$project$Data$Hardware$Spectator(specRankingResult)
-							}),
-						$elm$core$Platform$Cmd$none);
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				} else {
 					var responseErr = msg.a.a;
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -15919,49 +15758,7 @@ var $author$project$Pages$Hardware$update = F2(
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'FetchSpectatorRanking':
 				var rankingId = msg.a;
-				var updatedFlagUrlToIncludeMongoDBMWSvr = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.flagUrl.host) ? $elm$url$Url$toString(
-					A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$productionProxyConfig, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
-					A6(
-						$elm$url$Url$Url,
-						model.flagUrl.protocol,
-						model.flagUrl.host,
-						$elm$core$Maybe$Just(3000),
-						$author$project$Extras$Constants$middleWarePath,
-						$elm$core$Maybe$Nothing,
-						$elm$core$Maybe$Nothing));
-				var postDataForMongoDBMWSvr = $elm$json$Json$Encode$object(
-					_List_fromArray(
-						[
-							_Utils_Tuple2(
-							'apiUrl',
-							$elm$json$Json$Encode$string(
-								$elm$url$Url$toString($author$project$Extras$Constants$placeholderUrl))),
-							_Utils_Tuple2(
-							'query_type',
-							$elm$json$Json$Encode$string('fetch')),
-							_Utils_Tuple2(
-							'rankingid',
-							$elm$json$Json$Encode$string(rankingId))
-						]));
-				var updatModelWithNewPostData = _Utils_update(
-					model,
-					{
-						errors: _List_fromArray(
-							['']),
-						isWaitingForResponse: true,
-						queryType: $author$project$Pages$Hardware$SpectatorSelectedView,
-						selectedranking: $author$project$Data$Hardware$Spectator($author$project$Data$Hardware$emptyRanking),
-						toMongoDBMWConfig: $elm$core$Maybe$Just(
-							A6(
-								$author$project$Pages$Hardware$ToMongoDBMWConfig,
-								$author$project$Extras$Constants$post,
-								_List_Nil,
-								updatedFlagUrlToIncludeMongoDBMWSvr,
-								$elm$http$Http$jsonBody(postDataForMongoDBMWSvr),
-								$elm$core$Maybe$Nothing,
-								$elm$core$Maybe$Nothing))
-					});
-				return _Utils_Tuple2(updatModelWithNewPostData, $elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			default:
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
@@ -16078,11 +15875,34 @@ var $author$project$Pages$Support$update = F2(
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
+			case 'ShowPopUp':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{isPopUpVisible: true}),
+					$elm$core$Platform$Cmd$none);
+			case 'HidePopUp':
+				var newUrl = A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost:1234', $elm$core$Maybe$Nothing, '/hardware', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+				var newPage = (model.isHardwareLNSConnected || model.isHardwareLNXConnected) ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel);
+				return A2(
+					$author$project$Main$updateUrl,
+					newUrl,
+					_Utils_update(
+						model,
+						{isPopUpVisible: false, page: newPage}));
+			case 'HardwareDeviceConnect':
+				return _Utils_Tuple2(
+					model,
+					$author$project$Main$sendMessageToJs('connectLNS'));
 			case 'RecvText':
 				var textMessageFromJs = msg.a;
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'Recv':
 				var rawJsonMessage = msg.a;
+				var _v1 = A2(
+					$elm$core$Debug$log,
+					'rawJsonMessage',
+					A2($elm$json$Json$Encode$encode, 2, rawJsonMessage));
 				if (A2(
 					$elm$core$String$contains,
 					'Problem',
@@ -16113,19 +15933,25 @@ var $author$project$Main$update = F2(
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
-						var _v1 = model.page;
-						if (_v1.$ === 'HardwarePage') {
-							var hardware = _v1.a;
-							return A2(
-								$author$project$Main$toHardware,
+						var decodedHardwareDeviceMsg = function () {
+							var _v2 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
+							if (_v2.$ === 'Ok') {
+								var message = _v2.a;
+								return message.operationEventMsg;
+							} else {
+								var err = _v2.a;
+								return 'error';
+							}
+						}();
+						var updatedIsLNSConnected = (decodedHardwareDeviceMsg === 'nanoS') ? true : false;
+						var updatedIsLNXConnected = (decodedHardwareDeviceMsg === 'nanoX') ? true : false;
+						var newPage = (updatedIsLNSConnected || updatedIsLNXConnected) ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel);
+						var updatedIsXMRConnected = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? true : false;
+						return _Utils_Tuple2(
+							_Utils_update(
 								model,
-								A2(
-									$author$project$Pages$Hardware$update,
-									$author$project$Pages$Hardware$ResponseDataFromMain(rawJsonMessage),
-									hardware));
-						} else {
-							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-						}
+								{isHardwareLNSConnected: updatedIsLNSConnected, isHardwareLNXConnected: updatedIsLNXConnected, isXMRWalletConnected: updatedIsXMRConnected, page: newPage}),
+							$elm$core$Platform$Cmd$none);
 					}
 				}
 			case 'Tick':
@@ -16153,8 +15979,8 @@ var $author$project$Main$update = F2(
 						$elm$browser$Browser$Navigation$load(href));
 				} else {
 					var url = urlRequest.a;
-					var _v3 = $elm$url$Url$toString(url);
-					if (_v3 === 'https://haveno-web.squashpassion.com/') {
+					var _v4 = $elm$url$Url$toString(url);
+					if (_v4 === 'https://haveno-web.squashpassion.com/') {
 						return _Utils_Tuple2(
 							model,
 							$elm$browser$Browser$Navigation$load(
@@ -16170,9 +15996,9 @@ var $author$project$Main$update = F2(
 				return A2($author$project$Main$updateUrl, url, model);
 			case 'GotDashboardMsg':
 				var dashboardMsg = msg.a;
-				var _v4 = model.page;
-				if (_v4.$ === 'DashboardPage') {
-					var dashboard = _v4.a;
+				var _v5 = model.page;
+				if (_v5.$ === 'DashboardPage') {
+					var dashboard = _v5.a;
 					return A2(
 						$author$project$Main$toDashboard,
 						model,
@@ -16182,9 +16008,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotSellMsg':
 				var sellMsg = msg.a;
-				var _v5 = model.page;
-				if (_v5.$ === 'SellPage') {
-					var sell = _v5.a;
+				var _v6 = model.page;
+				if (_v6.$ === 'SellPage') {
+					var sell = _v6.a;
 					return A2(
 						$author$project$Main$toSell,
 						model,
@@ -16194,9 +16020,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotPortfolioMsg':
 				var termsMsg = msg.a;
-				var _v6 = model.page;
-				if (_v6.$ === 'PortfolioPage') {
-					var terms = _v6.a;
+				var _v7 = model.page;
+				if (_v7.$ === 'PortfolioPage') {
+					var terms = _v7.a;
 					return A2(
 						$author$project$Main$toPortfolio,
 						model,
@@ -16206,9 +16032,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotFundsMsg':
 				var privacyMsg = msg.a;
-				var _v7 = model.page;
-				if (_v7.$ === 'FundsPage') {
-					var privacy = _v7.a;
+				var _v8 = model.page;
+				if (_v8.$ === 'FundsPage') {
+					var privacy = _v8.a;
 					return A2(
 						$author$project$Main$toFunds,
 						model,
@@ -16218,9 +16044,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotSupportMsg':
 				var supportMsg = msg.a;
-				var _v8 = model.page;
-				if (_v8.$ === 'SupportPage') {
-					var support = _v8.a;
+				var _v9 = model.page;
+				if (_v9.$ === 'SupportPage') {
+					var support = _v9.a;
 					return A2(
 						$author$project$Main$toSupport,
 						model,
@@ -16230,9 +16056,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotPingPongMsg':
 				var pingpongMsg = msg.a;
-				var _v9 = model.page;
-				if (_v9.$ === 'PingPongPage') {
-					var pingpong = _v9.a;
+				var _v10 = model.page;
+				if (_v10.$ === 'PingPongPage') {
+					var pingpong = _v10.a;
 					return A2(
 						$author$project$Main$toPingPong,
 						model,
@@ -16242,9 +16068,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotBuyMsg':
 				var pricingMsg = msg.a;
-				var _v10 = model.page;
-				if (_v10.$ === 'BuyPage') {
-					var pricing = _v10.a;
+				var _v11 = model.page;
+				if (_v11.$ === 'BuyPage') {
+					var pricing = _v11.a;
 					return A2(
 						$author$project$Main$toPricing,
 						model,
@@ -16254,9 +16080,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotMarketMsg':
 				var aboutMsg = msg.a;
-				var _v11 = model.page;
-				if (_v11.$ === 'MarketPage') {
-					var about = _v11.a;
+				var _v12 = model.page;
+				if (_v12.$ === 'MarketPage') {
+					var about = _v12.a;
 					return A2(
 						$author$project$Main$toMarket,
 						model,
@@ -16264,11 +16090,11 @@ var $author$project$Main$update = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			default:
+			case 'GotHardwareMsg':
 				var hardwareMsg = msg.a;
-				var _v12 = model.page;
-				if (_v12.$ === 'HardwarePage') {
-					var hardwareModel = _v12.a;
+				var _v13 = model.page;
+				if (_v13.$ === 'HardwarePage') {
+					var hardwareModel = _v13.a;
 					switch (hardwareMsg.$) {
 						case 'ClickedHardwareDeviceConnect':
 							var newHardwareModel = _Utils_update(
@@ -16313,10 +16139,13 @@ var $author$project$Main$update = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
+			default:
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
 	});
 var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$footer = _VirtualDom_node('footer');
+var $elm$html$Html$h6 = _VirtualDom_node('h6');
 var $author$project$Main$footerContent = A2(
 	$elm$html$Html$footer,
 	_List_Nil,
@@ -16346,7 +16175,7 @@ var $author$project$Main$footerContent = A2(
 								]),
 							_List_fromArray(
 								[
-									$elm$html$Html$text('Haveno-Dex')
+									$elm$html$Html$text('Haveno-Web')
 								])),
 							A2($elm$html$Html$br, _List_Nil, _List_Nil),
 							$elm$html$Html$text('Open source code & design'),
@@ -16355,7 +16184,15 @@ var $author$project$Main$footerContent = A2(
 							_List_Nil,
 							_List_fromArray(
 								[
-									$elm$html$Html$text('Version 0.0.8')
+									$elm$html$Html$text('Version 0.0.11')
+								])),
+							$elm$html$Html$text('Haveno Version'),
+							A2(
+							$elm$html$Html$h6,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('1.0.7')
 								]))
 						]))
 				]))
@@ -16897,7 +16734,7 @@ var $author$project$Pages$Buy$view = function (_v0) {
 	return $author$project$Pages$Buy$content;
 };
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
-var $author$project$Pages$Dashboard$content = function (model) {
+var $author$project$Pages$Dashboard$view = function (model) {
 	return A2(
 		$elm$html$Html$section,
 		_List_fromArray(
@@ -16928,7 +16765,7 @@ var $author$project$Pages$Dashboard$content = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Haveno Web')
+								$elm$html$Html$text('Haveno Web - Dashboard')
 							])),
 						A2(
 						$elm$html$Html$h2,
@@ -16985,6 +16822,22 @@ var $author$project$Pages$Dashboard$content = function (model) {
 									]),
 								_List_fromArray(
 									[
+										$elm$html$Html$text('Nano S Connected')
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('text-center')
+									]),
+								_List_fromArray(
+									[
 										$elm$html$Html$text(
 										A2(
 											$elm$core$Maybe$withDefault,
@@ -16999,9 +16852,6 @@ var $author$project$Pages$Dashboard$content = function (model) {
 							]))
 					]))
 			]));
-};
-var $author$project$Pages$Dashboard$view = function (model) {
-	return $author$project$Pages$Dashboard$content(model);
 };
 var $author$project$Pages$Funds$htmlContent = A2(
 	$elm$html$Html$section,
@@ -17085,6 +16935,11 @@ var $author$project$Pages$Funds$content = A2(
 var $author$project$Pages$Funds$view = function (_v0) {
 	return $author$project$Pages$Funds$content;
 };
+var $author$project$Pages$Hardware$ClickedHardwareDeviceConnect = {$: 'ClickedHardwareDeviceConnect'};
+var $author$project$Pages$Hardware$ClickedXMRInitiateTransaction = function (a) {
+	return {$: 'ClickedXMRInitiateTransaction', a: a};
+};
+var $author$project$Pages$Hardware$ClickedXMRWalletConnect = {$: 'ClickedXMRWalletConnect'};
 var $mdgriffith$elm_ui$Internal$Model$Unkeyed = function (a) {
 	return {$: 'Unkeyed', a: a};
 };
@@ -22429,8 +22284,6 @@ var $mdgriffith$elm_ui$Element$column = F2(
 						attrs))),
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
-var $author$project$Pages$Hardware$CancelFetchedMember = {$: 'CancelFetchedMember'};
-var $author$project$Pages$Hardware$DeleteAccount = {$: 'DeleteAccount'};
 var $mdgriffith$elm_ui$Internal$Model$AlignX = function (a) {
 	return {$: 'AlignX', a: a};
 };
@@ -22612,6 +22465,7 @@ var $Orasund$elm_ui_framework$Framework$Heading$h = function (inputLevel) {
 		]);
 };
 var $Orasund$elm_ui_framework$Framework$Heading$h5 = $Orasund$elm_ui_framework$Framework$Heading$h(5);
+var $Orasund$elm_ui_framework$Framework$Heading$h6 = $Orasund$elm_ui_framework$Framework$Heading$h(6);
 var $mdgriffith$elm_ui$Internal$Model$Button = {$: 'Button'};
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
@@ -23394,432 +23248,6 @@ var $Orasund$elm_ui_framework$Framework$Grid$simple = _List_fromArray(
 		$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
 		$mdgriffith$elm_ui$Element$alignTop
 	]);
-var $author$project$Pages$Hardware$confirmDeleteUserView = function (userInfo) {
-	return A2(
-		$Orasund$elm_ui_framework$Framework$responsiveLayout,
-		_List_Nil,
-		A2(
-			$mdgriffith$elm_ui$Element$column,
-			$Orasund$elm_ui_framework$Framework$container,
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$el,
-					$Orasund$elm_ui_framework$Framework$Heading$h5,
-					$mdgriffith$elm_ui$Element$text(userInfo.nickname + ' - Are you sure you want to delete your account?\n            Please note that this will delete all your AND THE RANKING MEMBER\'S rankings and is IRREVERSIBLE!\n            (You may wish to inform them before deleting)')),
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					A2(
-						$elm$core$List$cons,
-						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-						_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple)),
-					_List_fromArray(
-						[
-							A2($author$project$Pages$Hardware$infoBtn, 'Delete User Account', $author$project$Pages$Hardware$DeleteAccount),
-							A2($author$project$Pages$Hardware$infoBtn, 'Cancel', $author$project$Pages$Hardware$CancelFetchedMember)
-						]))
-				])));
-};
-var $author$project$Pages$Hardware$CancelFetchedSpectator = {$: 'CancelFetchedSpectator'};
-var $author$project$Pages$Hardware$ConfirmJoin = F3(
-	function (a, b, c) {
-		return {$: 'ConfirmJoin', a: a, b: b, c: c};
-	});
-var $author$project$Data$Hardware$gotLowestRank = function (ranks) {
-	if (!ranks.b) {
-		return $elm$core$Maybe$Nothing;
-	} else {
-		if (!ranks.b.b) {
-			var rank = ranks.a;
-			return $elm$core$Maybe$Just(rank);
-		} else {
-			var head = ranks.a;
-			var tail = ranks.b;
-			var findMaxHelper = F2(
-				function (currentMax, remainingList) {
-					findMaxHelper:
-					while (true) {
-						if (!remainingList.b) {
-							return currentMax;
-						} else {
-							var next = remainingList.a;
-							var rest = remainingList.b;
-							if (_Utils_cmp(next.rank, currentMax.rank) > 0) {
-								var $temp$currentMax = next,
-									$temp$remainingList = rest;
-								currentMax = $temp$currentMax;
-								remainingList = $temp$remainingList;
-								continue findMaxHelper;
-							} else {
-								var $temp$currentMax = currentMax,
-									$temp$remainingList = rest;
-								currentMax = $temp$currentMax;
-								remainingList = $temp$remainingList;
-								continue findMaxHelper;
-							}
-						}
-					}
-				});
-			return $elm$core$Maybe$Just(
-				A2(findMaxHelper, head, tail));
-		}
-	}
-};
-var $author$project$SR$Elements$spectatorSelectedRankingHeaderEl = F2(
-	function (userInfo, r) {
-		return A2(
-			$mdgriffith$elm_ui$Element$el,
-			$Orasund$elm_ui_framework$Framework$Heading$h5,
-			$mdgriffith$elm_ui$Element$text(userInfo.nickname + (' you\'re interested in joining' + (' - ' + (r.name + (' Id no: ' + (r.id + (' . \n Which is owned by ' + (r.owner_name + (' id no: ' + r.owner_id))))))))));
-	});
-var $mdgriffith$elm_ui$Internal$Model$AsRow = {$: 'AsRow'};
-var $mdgriffith$elm_ui$Internal$Model$asRow = $mdgriffith$elm_ui$Internal$Model$AsRow;
-var $mdgriffith$elm_ui$Internal$Model$Padding = F5(
-	function (a, b, c, d, e) {
-		return {$: 'Padding', a: a, b: b, c: c, d: d, e: e};
-	});
-var $mdgriffith$elm_ui$Internal$Model$Spaced = F3(
-	function (a, b, c) {
-		return {$: 'Spaced', a: a, b: b, c: c};
-	});
-var $mdgriffith$elm_ui$Internal$Model$extractSpacingAndPadding = function (attrs) {
-	return A3(
-		$elm$core$List$foldr,
-		F2(
-			function (attr, _v0) {
-				var pad = _v0.a;
-				var spacing = _v0.b;
-				return _Utils_Tuple2(
-					function () {
-						if (pad.$ === 'Just') {
-							var x = pad.a;
-							return pad;
-						} else {
-							if ((attr.$ === 'StyleClass') && (attr.b.$ === 'PaddingStyle')) {
-								var _v3 = attr.b;
-								var name = _v3.a;
-								var t = _v3.b;
-								var r = _v3.c;
-								var b = _v3.d;
-								var l = _v3.e;
-								return $elm$core$Maybe$Just(
-									A5($mdgriffith$elm_ui$Internal$Model$Padding, name, t, r, b, l));
-							} else {
-								return $elm$core$Maybe$Nothing;
-							}
-						}
-					}(),
-					function () {
-						if (spacing.$ === 'Just') {
-							var x = spacing.a;
-							return spacing;
-						} else {
-							if ((attr.$ === 'StyleClass') && (attr.b.$ === 'SpacingStyle')) {
-								var _v6 = attr.b;
-								var name = _v6.a;
-								var x = _v6.b;
-								var y = _v6.c;
-								return $elm$core$Maybe$Just(
-									A3($mdgriffith$elm_ui$Internal$Model$Spaced, name, x, y));
-							} else {
-								return $elm$core$Maybe$Nothing;
-							}
-						}
-					}());
-			}),
-		_Utils_Tuple2($elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
-		attrs);
-};
-var $mdgriffith$elm_ui$Internal$Model$paddingNameFloat = F4(
-	function (top, right, bottom, left) {
-		return 'pad-' + ($mdgriffith$elm_ui$Internal$Model$floatClass(top) + ('-' + ($mdgriffith$elm_ui$Internal$Model$floatClass(right) + ('-' + ($mdgriffith$elm_ui$Internal$Model$floatClass(bottom) + ('-' + $mdgriffith$elm_ui$Internal$Model$floatClass(left)))))));
-	});
-var $mdgriffith$elm_ui$Element$wrappedRow = F2(
-	function (attrs, children) {
-		var _v0 = $mdgriffith$elm_ui$Internal$Model$extractSpacingAndPadding(attrs);
-		var padded = _v0.a;
-		var spaced = _v0.b;
-		if (spaced.$ === 'Nothing') {
-			return A4(
-				$mdgriffith$elm_ui$Internal$Model$element,
-				$mdgriffith$elm_ui$Internal$Model$asRow,
-				$mdgriffith$elm_ui$Internal$Model$div,
-				A2(
-					$elm$core$List$cons,
-					$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.contentLeft + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.wrapped)))),
-					A2(
-						$elm$core$List$cons,
-						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
-							attrs))),
-				$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
-		} else {
-			var _v2 = spaced.a;
-			var spaceName = _v2.a;
-			var x = _v2.b;
-			var y = _v2.c;
-			var newPadding = function () {
-				if (padded.$ === 'Just') {
-					var _v5 = padded.a;
-					var name = _v5.a;
-					var t = _v5.b;
-					var r = _v5.c;
-					var b = _v5.d;
-					var l = _v5.e;
-					if ((_Utils_cmp(r, x / 2) > -1) && (_Utils_cmp(b, y / 2) > -1)) {
-						var newTop = t - (y / 2);
-						var newRight = r - (x / 2);
-						var newLeft = l - (x / 2);
-						var newBottom = b - (y / 2);
-						return $elm$core$Maybe$Just(
-							A2(
-								$mdgriffith$elm_ui$Internal$Model$StyleClass,
-								$mdgriffith$elm_ui$Internal$Flag$padding,
-								A5(
-									$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
-									A4($mdgriffith$elm_ui$Internal$Model$paddingNameFloat, newTop, newRight, newBottom, newLeft),
-									newTop,
-									newRight,
-									newBottom,
-									newLeft)));
-					} else {
-						return $elm$core$Maybe$Nothing;
-					}
-				} else {
-					return $elm$core$Maybe$Nothing;
-				}
-			}();
-			if (newPadding.$ === 'Just') {
-				var pad = newPadding.a;
-				return A4(
-					$mdgriffith$elm_ui$Internal$Model$element,
-					$mdgriffith$elm_ui$Internal$Model$asRow,
-					$mdgriffith$elm_ui$Internal$Model$div,
-					A2(
-						$elm$core$List$cons,
-						$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.contentLeft + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.wrapped)))),
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
-							A2(
-								$elm$core$List$cons,
-								$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
-								_Utils_ap(
-									attrs,
-									_List_fromArray(
-										[pad]))))),
-					$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
-			} else {
-				var halfY = -(y / 2);
-				var halfX = -(x / 2);
-				return A4(
-					$mdgriffith$elm_ui$Internal$Model$element,
-					$mdgriffith$elm_ui$Internal$Model$asEl,
-					$mdgriffith$elm_ui$Internal$Model$div,
-					attrs,
-					$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-						_List_fromArray(
-							[
-								A4(
-								$mdgriffith$elm_ui$Internal$Model$element,
-								$mdgriffith$elm_ui$Internal$Model$asRow,
-								$mdgriffith$elm_ui$Internal$Model$div,
-								A2(
-									$elm$core$List$cons,
-									$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.contentLeft + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.wrapped)))),
-									A2(
-										$elm$core$List$cons,
-										$mdgriffith$elm_ui$Internal$Model$Attr(
-											A2(
-												$elm$html$Html$Attributes$style,
-												'margin',
-												$elm$core$String$fromFloat(halfY) + ('px' + (' ' + ($elm$core$String$fromFloat(halfX) + 'px'))))),
-										A2(
-											$elm$core$List$cons,
-											$mdgriffith$elm_ui$Internal$Model$Attr(
-												A2(
-													$elm$html$Html$Attributes$style,
-													'width',
-													'calc(100% + ' + ($elm$core$String$fromInt(x) + 'px)'))),
-											A2(
-												$elm$core$List$cons,
-												$mdgriffith$elm_ui$Internal$Model$Attr(
-													A2(
-														$elm$html$Html$Attributes$style,
-														'height',
-														'calc(100% + ' + ($elm$core$String$fromInt(y) + 'px)'))),
-												A2(
-													$elm$core$List$cons,
-													A2(
-														$mdgriffith$elm_ui$Internal$Model$StyleClass,
-														$mdgriffith$elm_ui$Internal$Flag$spacing,
-														A3($mdgriffith$elm_ui$Internal$Model$SpacingStyle, spaceName, x, y)),
-													_List_Nil))))),
-								$mdgriffith$elm_ui$Internal$Model$Unkeyed(children))
-							])));
-			}
-		}
-	});
-var $author$project$Pages$Hardware$confirmJoinView = F2(
-	function (userInfo, ranking) {
-		return A2(
-			$Orasund$elm_ui_framework$Framework$responsiveLayout,
-			_List_Nil,
-			A2(
-				$mdgriffith$elm_ui$Element$column,
-				$Orasund$elm_ui_framework$Framework$container,
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$wrappedRow,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$SR$Elements$spectatorSelectedRankingHeaderEl, userInfo, ranking)
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$el,
-						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(userInfo.nickname + (' - Are you sure you want to join' + (ranking.owner_name + '\'s  ranking?')))),
-						A2(
-						$mdgriffith$elm_ui$Element$column,
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-							_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple)),
-						_List_fromArray(
-							[
-								A2(
-								$author$project$Pages$Hardware$infoBtn,
-								'Join',
-								A3(
-									$author$project$Pages$Hardware$ConfirmJoin,
-									ranking,
-									userInfo.userid,
-									A2(
-										$elm$core$Maybe$withDefault,
-										$author$project$Data$Hardware$emptyRank,
-										$author$project$Data$Hardware$gotLowestRank(ranking.ladder)).rank)),
-								A2($author$project$Pages$Hardware$infoBtn, 'Cancel', $author$project$Pages$Hardware$CancelFetchedSpectator)
-							]))
-					])));
-	});
-var $author$project$Pages$Hardware$ConfirmLeaveMemberRanking = F2(
-	function (a, b) {
-		return {$: 'ConfirmLeaveMemberRanking', a: a, b: b};
-	});
-var $author$project$SR$Elements$memberSelectedRankingHeaderEl = F2(
-	function (userInfo, r) {
-		return A2(
-			$mdgriffith$elm_ui$Element$el,
-			$Orasund$elm_ui_framework$Framework$Heading$h5,
-			$mdgriffith$elm_ui$Element$text(userInfo.nickname + (' you\'re a member of' + (' - ' + (r.name + (' Id no: ' + (r.id + (' . \n Which is owned by ' + (r.owner_name + (' id no: ' + r.owner_id))))))))));
-	});
-var $author$project$Pages$Hardware$confirmLeaveView = F2(
-	function (userInfo, ranking) {
-		return A2(
-			$Orasund$elm_ui_framework$Framework$responsiveLayout,
-			_List_Nil,
-			A2(
-				$mdgriffith$elm_ui$Element$column,
-				$Orasund$elm_ui_framework$Framework$container,
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$wrappedRow,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$SR$Elements$memberSelectedRankingHeaderEl, userInfo, ranking)
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$el,
-						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(userInfo.nickname + (' - Are you sure you want to leave ' + (ranking.owner_name + '\'s  ranking?')))),
-						A2(
-						$mdgriffith$elm_ui$Element$column,
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-							_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple)),
-						_List_fromArray(
-							[
-								A2(
-								$author$project$Pages$Hardware$infoBtn,
-								'Leave',
-								A2($author$project$Pages$Hardware$ConfirmLeaveMemberRanking, ranking, userInfo.userid)),
-								A2($author$project$Pages$Hardware$infoBtn, 'Cancel', $author$project$Pages$Hardware$CancelFetchedMember)
-							]))
-					])));
-	});
-var $author$project$Pages$Hardware$Cancel = {$: 'Cancel'};
-var $author$project$Pages$Hardware$ConfirmChallenge = F2(
-	function (a, b) {
-		return {$: 'ConfirmChallenge', a: a, b: b};
-	});
-var $Orasund$elm_ui_framework$Framework$Card$fill = _Utils_ap(
-	$Orasund$elm_ui_framework$Framework$Card$simple,
-	_List_fromArray(
-		[
-			$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-		]));
-var $Orasund$elm_ui_framework$Framework$Heading$h6 = $Orasund$elm_ui_framework$Framework$Heading$h(6);
-var $author$project$Pages$Hardware$isUserRankedHigher = F2(
-	function (userInfo, ranking) {
-		var userRank = A2(
-			$elm$core$Maybe$map,
-			function ($) {
-				return $.rank;
-			},
-			$elm$core$List$head(
-				A2(
-					$elm$core$List$filter,
-					function (r) {
-						return _Utils_eq(r.player.id, userInfo.userid);
-					},
-					ranking.ladder)));
-		var otherRank = A2(
-			$elm$core$Maybe$map,
-			function ($) {
-				return $.rank;
-			},
-			$elm$core$List$head(
-				A2(
-					$elm$core$List$filter,
-					function (r) {
-						return !_Utils_eq(r.player.id, userInfo.userid);
-					},
-					ranking.ladder)));
-		var _v0 = _Utils_Tuple2(userRank, otherRank);
-		if ((_v0.a.$ === 'Just') && (_v0.b.$ === 'Just')) {
-			var ur = _v0.a.a;
-			var or = _v0.b.a;
-			return _Utils_cmp(ur, or) < 0;
-		} else {
-			return false;
-		}
-	});
-var $mdgriffith$elm_ui$Internal$Model$Paragraph = {$: 'Paragraph'};
-var $mdgriffith$elm_ui$Element$paragraph = F2(
-	function (attrs, children) {
-		return A4(
-			$mdgriffith$elm_ui$Internal$Model$element,
-			$mdgriffith$elm_ui$Internal$Model$asParagraph,
-			$mdgriffith$elm_ui$Internal$Model$div,
-			A2(
-				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Internal$Model$Describe($mdgriffith$elm_ui$Internal$Model$Paragraph),
-				A2(
-					$elm$core$List$cons,
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-					A2(
-						$elm$core$List$cons,
-						$mdgriffith$elm_ui$Element$spacing(5),
-						attrs))),
-			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
-	});
 var $mdgriffith$elm_ui$Element$Border$widthXY = F2(
 	function (x, y) {
 		return A2(
@@ -23859,1537 +23287,6 @@ var $Orasund$elm_ui_framework$Framework$Grid$section = _Utils_ap(
 			$mdgriffith$elm_ui$Element$paddingEach(
 			{bottom: 30, left: 0, right: 0, top: 10})
 		]));
-var $author$project$Pages$Hardware$createChallengeView = F3(
-	function (uinfo, rank, ranking) {
-		return (!_Utils_eq(rank.player.id, uinfo.userid)) ? ((!A2($author$project$Pages$Hardware$isUserRankedHigher, uinfo, ranking)) ? A2(
-			$Orasund$elm_ui_framework$Framework$responsiveLayout,
-			_List_Nil,
-			A2(
-				$mdgriffith$elm_ui$Element$column,
-				$Orasund$elm_ui_framework$Framework$Grid$section,
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$el,
-						$Orasund$elm_ui_framework$Framework$Heading$h6,
-						$mdgriffith$elm_ui$Element$text(' Your opponent\'s details: ')),
-						A2(
-						$mdgriffith$elm_ui$Element$paragraph,
-						_Utils_ap($Orasund$elm_ui_framework$Framework$Card$fill, $Orasund$elm_ui_framework$Framework$Color$info),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$el,
-								_List_Nil,
-								$mdgriffith$elm_ui$Element$text(uinfo.nickname + (' you are challenging ' + rank.player.nickname)))
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$el,
-						_List_Nil,
-						$mdgriffith$elm_ui$Element$text('Email: ')),
-						A2(
-						$mdgriffith$elm_ui$Element$paragraph,
-						_Utils_ap($Orasund$elm_ui_framework$Framework$Card$fill, $Orasund$elm_ui_framework$Framework$Color$info),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$el,
-								_List_Nil,
-								$mdgriffith$elm_ui$Element$text('challenger@c.com'))
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$el,
-						_List_Nil,
-						$mdgriffith$elm_ui$Element$text('Mobile: ')),
-						A2(
-						$mdgriffith$elm_ui$Element$paragraph,
-						_Utils_ap($Orasund$elm_ui_framework$Framework$Card$fill, $Orasund$elm_ui_framework$Framework$Color$info),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$el,
-								_List_Nil,
-								$mdgriffith$elm_ui$Element$text('challenger mobile'))
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$column,
-						_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$wrappedRow,
-								$Orasund$elm_ui_framework$Framework$Grid$simple,
-								_List_fromArray(
-									[
-										A2(
-										$mdgriffith$elm_ui$Element$Input$button,
-										_Utils_ap($Orasund$elm_ui_framework$Framework$Button$simple, $Orasund$elm_ui_framework$Framework$Color$simple),
-										{
-											label: $mdgriffith$elm_ui$Element$text('Cancel'),
-											onPress: $elm$core$Maybe$Just($author$project$Pages$Hardware$Cancel)
-										}),
-										A2(
-										$mdgriffith$elm_ui$Element$Input$button,
-										_Utils_ap($Orasund$elm_ui_framework$Framework$Button$simple, $Orasund$elm_ui_framework$Framework$Color$info),
-										{
-											label: $mdgriffith$elm_ui$Element$text('Confirm'),
-											onPress: $elm$core$Maybe$Just(
-												A2($author$project$Pages$Hardware$ConfirmChallenge, ranking, rank))
-										})
-									]))
-							]))
-					]))) : A2(
-			$Orasund$elm_ui_framework$Framework$responsiveLayout,
-			_List_Nil,
-			A2(
-				$mdgriffith$elm_ui$Element$column,
-				$Orasund$elm_ui_framework$Framework$Grid$section,
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$paragraph,
-						_Utils_ap($Orasund$elm_ui_framework$Framework$Card$fill, $Orasund$elm_ui_framework$Framework$Color$info),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$el,
-								_List_Nil,
-								$mdgriffith$elm_ui$Element$text(uinfo.nickname + ' aim high! Challenge up '))
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$column,
-						_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$wrappedRow,
-								$Orasund$elm_ui_framework$Framework$Grid$simple,
-								_List_fromArray(
-									[
-										A2(
-										$mdgriffith$elm_ui$Element$Input$button,
-										_Utils_ap($Orasund$elm_ui_framework$Framework$Button$simple, $Orasund$elm_ui_framework$Framework$Color$simple),
-										{
-											label: $mdgriffith$elm_ui$Element$text('Cancel'),
-											onPress: $elm$core$Maybe$Just($author$project$Pages$Hardware$Cancel)
-										})
-									]))
-							]))
-					])))) : A2(
-			$Orasund$elm_ui_framework$Framework$responsiveLayout,
-			_List_Nil,
-			A2(
-				$mdgriffith$elm_ui$Element$column,
-				$Orasund$elm_ui_framework$Framework$Grid$section,
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$paragraph,
-						_Utils_ap($Orasund$elm_ui_framework$Framework$Card$fill, $Orasund$elm_ui_framework$Framework$Color$info),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$el,
-								_List_Nil,
-								$mdgriffith$elm_ui$Element$text(rank.player.nickname + ' you can\'t challenge yourself! '))
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$column,
-						_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$wrappedRow,
-								$Orasund$elm_ui_framework$Framework$Grid$simple,
-								_List_fromArray(
-									[
-										A2(
-										$mdgriffith$elm_ui$Element$Input$button,
-										_Utils_ap($Orasund$elm_ui_framework$Framework$Button$simple, $Orasund$elm_ui_framework$Framework$Color$simple),
-										{
-											label: $mdgriffith$elm_ui$Element$text('Cancel'),
-											onPress: $elm$core$Maybe$Just($author$project$Pages$Hardware$Cancel)
-										})
-									]))
-							]))
-					])));
-	});
-var $author$project$Pages$Hardware$CityAddressChg = function (a) {
-	return {$: 'CityAddressChg', a: a};
-};
-var $author$project$Pages$Hardware$RankingNameChg = function (a) {
-	return {$: 'RankingNameChg', a: a};
-};
-var $author$project$Pages$Hardware$StreetAddressChg = function (a) {
-	return {$: 'StreetAddressChg', a: a};
-};
-var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
-var $Orasund$elm_ui_framework$Framework$Input$label = _List_fromArray(
-	[
-		$mdgriffith$elm_ui$Element$centerX,
-		$mdgriffith$elm_ui$Element$padding(10),
-		$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
-		$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-	]);
-var $mdgriffith$elm_ui$Element$Input$Label = F3(
-	function (a, b, c) {
-		return {$: 'Label', a: a, b: b, c: c};
-	});
-var $mdgriffith$elm_ui$Element$Input$OnLeft = {$: 'OnLeft'};
-var $mdgriffith$elm_ui$Element$Input$labelLeft = $mdgriffith$elm_ui$Element$Input$Label($mdgriffith$elm_ui$Element$Input$OnLeft);
-var $mdgriffith$elm_ui$Element$Font$alignLeft = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontAlignment, $mdgriffith$elm_ui$Internal$Style$classes.textLeft);
-var $mdgriffith$elm_ui$Element$rgb = F3(
-	function (r, g, b) {
-		return A4($mdgriffith$elm_ui$Internal$Model$Rgba, r, g, b, 1);
-	});
-var $author$project$SR$Elements$colors = {
-	black: A3($mdgriffith$elm_ui$Element$rgb255, 0, 0, 0),
-	blue: A3($mdgriffith$elm_ui$Element$rgb255, 2, 7, 239),
-	coral: A3($mdgriffith$elm_ui$Element$rgb255, 204, 75, 75),
-	darkBlue: A3($mdgriffith$elm_ui$Element$rgb, 0, 0, 0.9),
-	green: A3($mdgriffith$elm_ui$Element$rgb255, 0, 153, 0),
-	grey: A3($mdgriffith$elm_ui$Element$rgb, 0.9, 0.9, 0.9),
-	lightblue: A3($mdgriffith$elm_ui$Element$rgb255, 0, 128, 255),
-	purple: A3($mdgriffith$elm_ui$Element$rgb255, 102, 0, 102),
-	red: A3($mdgriffith$elm_ui$Element$rgb, 0.8, 0, 0),
-	white: A3($mdgriffith$elm_ui$Element$rgb255, 255, 255, 255)
-};
-var $elm$regex$Regex$never = _Regex_never;
-var $author$project$Utils$Validation$Validate$isValid4to20Chars = function (str) {
-	return A2(
-		$elm$regex$Regex$contains,
-		A2(
-			$elm$core$Maybe$withDefault,
-			$elm$regex$Regex$never,
-			$elm$regex$Regex$fromString('(?!.*[\\.\\-\\_]{2,})^[a-zA-Z0-9\\.\\-\\_]{4,20}$')),
-		str);
-};
-var $mdgriffith$elm_ui$Internal$Model$MoveX = function (a) {
-	return {$: 'MoveX', a: a};
-};
-var $mdgriffith$elm_ui$Internal$Flag$moveX = $mdgriffith$elm_ui$Internal$Flag$flag(25);
-var $mdgriffith$elm_ui$Element$moveLeft = function (x) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$TransformComponent,
-		$mdgriffith$elm_ui$Internal$Flag$moveX,
-		$mdgriffith$elm_ui$Internal$Model$MoveX(-x));
-};
-var $author$project$SR$Elements$ladderCityValidation = function (ranking) {
-	return $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.baseaddress.city) ? A2(
-		$mdgriffith$elm_ui$Element$el,
-		_Utils_ap(
-			A2(
-				$elm$core$List$append,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$htmlAttribute(
-						$elm$html$Html$Attributes$id('laddercityValidMsg'))
-					]),
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.green),
-						$mdgriffith$elm_ui$Element$Font$alignLeft
-					])),
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$moveLeft(1.0)
-				])),
-		$mdgriffith$elm_ui$Element$text('City name OK!')) : A2(
-		$mdgriffith$elm_ui$Element$el,
-		_Utils_ap(
-			A2(
-				$elm$core$List$append,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$htmlAttribute(
-						$elm$html$Html$Attributes$id('laddercityValidMsg'))
-					]),
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.blue),
-						$mdgriffith$elm_ui$Element$Font$alignLeft
-					])),
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$moveLeft(0.0)
-				])),
-		$mdgriffith$elm_ui$Element$text('If entered, must be unique (4-20 continuous chars)'));
-};
-var $author$project$SR$Elements$ladderNameValidation = function (ranking) {
-	return $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.name) ? A2(
-		$mdgriffith$elm_ui$Element$el,
-		_Utils_ap(
-			A2(
-				$elm$core$List$append,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$htmlAttribute(
-						$elm$html$Html$Attributes$id('laddernameValidMsg'))
-					]),
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.green),
-						$mdgriffith$elm_ui$Element$Font$alignLeft
-					])),
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$moveLeft(1.0)
-				])),
-		$mdgriffith$elm_ui$Element$text('Ranking name OK!')) : A2(
-		$mdgriffith$elm_ui$Element$el,
-		_Utils_ap(
-			A2(
-				$elm$core$List$append,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$htmlAttribute(
-						$elm$html$Html$Attributes$id('laddernameValidMsg'))
-					]),
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.red),
-						$mdgriffith$elm_ui$Element$Font$alignLeft
-					])),
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$moveLeft(0.0)
-				])),
-		$mdgriffith$elm_ui$Element$text('Must be unique (4-20 continuous chars)'));
-};
-var $author$project$SR$Elements$ladderStreetValidation = function (ranking) {
-	return $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.baseaddress.street) ? A2(
-		$mdgriffith$elm_ui$Element$el,
-		_Utils_ap(
-			A2(
-				$elm$core$List$append,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$htmlAttribute(
-						$elm$html$Html$Attributes$id('ladderstreetValidMsg'))
-					]),
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.green),
-						$mdgriffith$elm_ui$Element$Font$alignLeft
-					])),
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$moveLeft(1.0)
-				])),
-		$mdgriffith$elm_ui$Element$text('Street name OK!')) : A2(
-		$mdgriffith$elm_ui$Element$el,
-		_Utils_ap(
-			A2(
-				$elm$core$List$append,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$htmlAttribute(
-						$elm$html$Html$Attributes$id('ladderstreetValidMsg'))
-					]),
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.blue),
-						$mdgriffith$elm_ui$Element$Font$alignLeft
-					])),
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$moveLeft(0.0)
-				])),
-		$mdgriffith$elm_ui$Element$text('If entered, must be unique (4-20 continuous chars)'));
-};
-var $mdgriffith$elm_ui$Element$Input$Placeholder = F2(
-	function (a, b) {
-		return {$: 'Placeholder', a: a, b: b};
-	});
-var $mdgriffith$elm_ui$Element$Input$placeholder = $mdgriffith$elm_ui$Element$Input$Placeholder;
-var $author$project$Pages$Hardware$CancelCreateNewRanking = {$: 'CancelCreateNewRanking'};
-var $author$project$Pages$Hardware$ConfirmNewRanking = F2(
-	function (a, b) {
-		return {$: 'ConfirmNewRanking', a: a, b: b};
-	});
-var $mdgriffith$elm_ui$Internal$Model$Focus = {$: 'Focus'};
-var $mdgriffith$elm_ui$Internal$Flag$focus = $mdgriffith$elm_ui$Internal$Flag$flag(31);
-var $mdgriffith$elm_ui$Element$focused = function (decs) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$focus,
-		A2(
-			$mdgriffith$elm_ui$Internal$Model$PseudoSelector,
-			$mdgriffith$elm_ui$Internal$Model$Focus,
-			$mdgriffith$elm_ui$Internal$Model$unwrapDecorations(decs)));
-};
-var $Orasund$elm_ui_framework$Framework$Color$disabled = _Utils_ap(
-	$Orasund$elm_ui_framework$Framework$Color$simple,
-	_List_fromArray(
-		[
-			$mdgriffith$elm_ui$Element$Font$color($Orasund$elm_ui_framework$Framework$Color$grey),
-			$mdgriffith$elm_ui$Element$mouseOver(_List_Nil),
-			$mdgriffith$elm_ui$Element$focused(_List_Nil),
-			$mdgriffith$elm_ui$Element$htmlAttribute(
-			A2($elm$html$Html$Attributes$style, 'cursor', 'not-allowed'))
-		]));
-var $author$project$Pages$Hardware$enableButton = function (enable) {
-	return enable ? $Orasund$elm_ui_framework$Framework$Color$info : $Orasund$elm_ui_framework$Framework$Color$disabled;
-};
-var $author$project$Pages$Hardware$isValidatedForAllLadderDetailsInput = function (ranking) {
-	return $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.name) && (((ranking.baseaddress.street === '') || $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.baseaddress.street)) && ((ranking.baseaddress.city === '') || $author$project$Utils$Validation$Validate$isValid4to20Chars(ranking.baseaddress.city)));
-};
-var $Orasund$elm_ui_framework$Framework$Color$yellow = A3($mdgriffith$elm_ui$Element$rgb255, 255, 221, 87);
-var $Orasund$elm_ui_framework$Framework$Color$warning = _List_fromArray(
-	[
-		$mdgriffith$elm_ui$Element$Background$color($Orasund$elm_ui_framework$Framework$Color$yellow),
-		$mdgriffith$elm_ui$Element$Border$color($Orasund$elm_ui_framework$Framework$Color$yellow)
-	]);
-var $author$project$SR$Elements$missingDataPara = A2(
-	$mdgriffith$elm_ui$Element$paragraph,
-	_Utils_ap($Orasund$elm_ui_framework$Framework$Card$fill, $Orasund$elm_ui_framework$Framework$Color$warning),
-	_List_fromArray(
-		[
-			A2(
-			$mdgriffith$elm_ui$Element$el,
-			_List_fromArray(
-				[$mdgriffith$elm_ui$Element$Font$bold]),
-			$mdgriffith$elm_ui$Element$text('Please note: ')),
-			A2(
-			$mdgriffith$elm_ui$Element$paragraph,
-			_List_Nil,
-			$elm$core$List$singleton(
-				$mdgriffith$elm_ui$Element$text('Essential data is missing!')))
-		]));
-var $author$project$SR$Elements$warningParagraph = A2(
-	$mdgriffith$elm_ui$Element$paragraph,
-	_Utils_ap($Orasund$elm_ui_framework$Framework$Card$fill, $Orasund$elm_ui_framework$Framework$Color$warning),
-	_List_fromArray(
-		[
-			A2(
-			$mdgriffith$elm_ui$Element$el,
-			_List_fromArray(
-				[$mdgriffith$elm_ui$Element$Font$bold]),
-			$mdgriffith$elm_ui$Element$text('Please note: ')),
-			A2(
-			$mdgriffith$elm_ui$Element$paragraph,
-			_List_Nil,
-			$elm$core$List$singleton(
-				$mdgriffith$elm_ui$Element$text('Can all your members find the venue (if there is one)?')))
-		]));
-var $author$project$Pages$Hardware$rankingDetailsConfirmPanel = F2(
-	function (ranking, userInfo) {
-		return $author$project$Pages$Hardware$isValidatedForAllLadderDetailsInput(ranking) ? A2(
-			$mdgriffith$elm_ui$Element$column,
-			$Orasund$elm_ui_framework$Framework$Grid$section,
-			_List_fromArray(
-				[
-					((ranking.baseaddress.street === '') && (ranking.baseaddress.city === '')) ? $author$project$SR$Elements$warningParagraph : $mdgriffith$elm_ui$Element$text('Click to continue ...'),
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple),
-					_List_fromArray(
-						[
-							A2(
-							$mdgriffith$elm_ui$Element$wrappedRow,
-							$Orasund$elm_ui_framework$Framework$Grid$simple,
-							_List_fromArray(
-								[
-									A2(
-									$mdgriffith$elm_ui$Element$Input$button,
-									_Utils_ap($Orasund$elm_ui_framework$Framework$Button$simple, $Orasund$elm_ui_framework$Framework$Color$info),
-									{
-										label: $mdgriffith$elm_ui$Element$text('Cancel'),
-										onPress: $elm$core$Maybe$Just($author$project$Pages$Hardware$CancelCreateNewRanking)
-									}),
-									A2(
-									$mdgriffith$elm_ui$Element$Input$button,
-									_Utils_ap(
-										$Orasund$elm_ui_framework$Framework$Button$simple,
-										$author$project$Pages$Hardware$enableButton(
-											$author$project$Pages$Hardware$isValidatedForAllLadderDetailsInput(ranking))),
-									{
-										label: $mdgriffith$elm_ui$Element$text('Confirm'),
-										onPress: $elm$core$Maybe$Just(
-											A2(
-												$author$project$Pages$Hardware$ConfirmNewRanking,
-												ranking,
-												$author$project$Data$User$Registered(userInfo)))
-									})
-								]))
-						]))
-				])) : A2(
-			$mdgriffith$elm_ui$Element$column,
-			$Orasund$elm_ui_framework$Framework$Grid$section,
-			_List_fromArray(
-				[
-					$author$project$SR$Elements$missingDataPara,
-					A2(
-					$mdgriffith$elm_ui$Element$el,
-					$Orasund$elm_ui_framework$Framework$Heading$h6,
-					$mdgriffith$elm_ui$Element$text('Click to continue ...')),
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple),
-					_List_fromArray(
-						[
-							A2(
-							$mdgriffith$elm_ui$Element$wrappedRow,
-							$Orasund$elm_ui_framework$Framework$Grid$simple,
-							_List_fromArray(
-								[
-									A2(
-									$mdgriffith$elm_ui$Element$Input$button,
-									_Utils_ap($Orasund$elm_ui_framework$Framework$Button$simple, $Orasund$elm_ui_framework$Framework$Color$info),
-									{
-										label: $mdgriffith$elm_ui$Element$text('Cancel'),
-										onPress: $elm$core$Maybe$Just($author$project$Pages$Hardware$CancelCreateNewRanking)
-									})
-								]))
-						]))
-				]));
-	});
-var $Orasund$elm_ui_framework$Framework$Input$simple = _List_fromArray(
-	[
-		$mdgriffith$elm_ui$Element$Background$color($Orasund$elm_ui_framework$Framework$Color$lighterGrey),
-		$mdgriffith$elm_ui$Element$Font$color($Orasund$elm_ui_framework$Framework$Color$darkerGrey)
-	]);
-var $mdgriffith$elm_ui$Element$Input$TextInputNode = function (a) {
-	return {$: 'TextInputNode', a: a};
-};
-var $mdgriffith$elm_ui$Element$Input$TextArea = {$: 'TextArea'};
-var $mdgriffith$elm_ui$Internal$Model$LivePolite = {$: 'LivePolite'};
-var $mdgriffith$elm_ui$Element$Region$announce = $mdgriffith$elm_ui$Internal$Model$Describe($mdgriffith$elm_ui$Internal$Model$LivePolite);
-var $mdgriffith$elm_ui$Element$Input$applyLabel = F3(
-	function (attrs, label, input) {
-		if (label.$ === 'HiddenLabel') {
-			var labelText = label.a;
-			return A4(
-				$mdgriffith$elm_ui$Internal$Model$element,
-				$mdgriffith$elm_ui$Internal$Model$asColumn,
-				$mdgriffith$elm_ui$Internal$Model$NodeName('label'),
-				attrs,
-				$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-					_List_fromArray(
-						[input])));
-		} else {
-			var position = label.a;
-			var labelAttrs = label.b;
-			var labelChild = label.c;
-			var labelElement = A4(
-				$mdgriffith$elm_ui$Internal$Model$element,
-				$mdgriffith$elm_ui$Internal$Model$asEl,
-				$mdgriffith$elm_ui$Internal$Model$div,
-				labelAttrs,
-				$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-					_List_fromArray(
-						[labelChild])));
-			switch (position.$) {
-				case 'Above':
-					return A4(
-						$mdgriffith$elm_ui$Internal$Model$element,
-						$mdgriffith$elm_ui$Internal$Model$asColumn,
-						$mdgriffith$elm_ui$Internal$Model$NodeName('label'),
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.inputLabel),
-							attrs),
-						$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-							_List_fromArray(
-								[labelElement, input])));
-				case 'Below':
-					return A4(
-						$mdgriffith$elm_ui$Internal$Model$element,
-						$mdgriffith$elm_ui$Internal$Model$asColumn,
-						$mdgriffith$elm_ui$Internal$Model$NodeName('label'),
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.inputLabel),
-							attrs),
-						$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-							_List_fromArray(
-								[input, labelElement])));
-				case 'OnRight':
-					return A4(
-						$mdgriffith$elm_ui$Internal$Model$element,
-						$mdgriffith$elm_ui$Internal$Model$asRow,
-						$mdgriffith$elm_ui$Internal$Model$NodeName('label'),
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.inputLabel),
-							attrs),
-						$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-							_List_fromArray(
-								[input, labelElement])));
-				default:
-					return A4(
-						$mdgriffith$elm_ui$Internal$Model$element,
-						$mdgriffith$elm_ui$Internal$Model$asRow,
-						$mdgriffith$elm_ui$Internal$Model$NodeName('label'),
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.inputLabel),
-							attrs),
-						$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-							_List_fromArray(
-								[labelElement, input])));
-			}
-		}
-	});
-var $mdgriffith$elm_ui$Element$Input$autofill = A2(
-	$elm$core$Basics$composeL,
-	$mdgriffith$elm_ui$Internal$Model$Attr,
-	$elm$html$Html$Attributes$attribute('autocomplete'));
-var $mdgriffith$elm_ui$Internal$Model$Behind = {$: 'Behind'};
-var $mdgriffith$elm_ui$Element$createNearby = F2(
-	function (loc, element) {
-		if (element.$ === 'Empty') {
-			return $mdgriffith$elm_ui$Internal$Model$NoAttribute;
-		} else {
-			return A2($mdgriffith$elm_ui$Internal$Model$Nearby, loc, element);
-		}
-	});
-var $mdgriffith$elm_ui$Element$behindContent = function (element) {
-	return A2($mdgriffith$elm_ui$Element$createNearby, $mdgriffith$elm_ui$Internal$Model$Behind, element);
-};
-var $mdgriffith$elm_ui$Internal$Model$MoveY = function (a) {
-	return {$: 'MoveY', a: a};
-};
-var $mdgriffith$elm_ui$Internal$Flag$moveY = $mdgriffith$elm_ui$Internal$Flag$flag(26);
-var $mdgriffith$elm_ui$Element$moveUp = function (y) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$TransformComponent,
-		$mdgriffith$elm_ui$Internal$Flag$moveY,
-		$mdgriffith$elm_ui$Internal$Model$MoveY(-y));
-};
-var $mdgriffith$elm_ui$Element$Input$calcMoveToCompensateForPadding = function (attrs) {
-	var gatherSpacing = F2(
-		function (attr, found) {
-			if ((attr.$ === 'StyleClass') && (attr.b.$ === 'SpacingStyle')) {
-				var _v2 = attr.b;
-				var x = _v2.b;
-				var y = _v2.c;
-				if (found.$ === 'Nothing') {
-					return $elm$core$Maybe$Just(y);
-				} else {
-					return found;
-				}
-			} else {
-				return found;
-			}
-		});
-	var _v0 = A3($elm$core$List$foldr, gatherSpacing, $elm$core$Maybe$Nothing, attrs);
-	if (_v0.$ === 'Nothing') {
-		return $mdgriffith$elm_ui$Internal$Model$NoAttribute;
-	} else {
-		var vSpace = _v0.a;
-		return $mdgriffith$elm_ui$Element$moveUp(
-			$elm$core$Basics$floor(vSpace / 2));
-	}
-};
-var $mdgriffith$elm_ui$Internal$Flag$overflow = $mdgriffith$elm_ui$Internal$Flag$flag(20);
-var $mdgriffith$elm_ui$Element$clip = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$overflow, $mdgriffith$elm_ui$Internal$Style$classes.clip);
-var $mdgriffith$elm_ui$Element$Input$darkGrey = A3($mdgriffith$elm_ui$Element$rgb, 186 / 255, 189 / 255, 182 / 255);
-var $mdgriffith$elm_ui$Element$Input$defaultTextPadding = A2($mdgriffith$elm_ui$Element$paddingXY, 12, 12);
-var $mdgriffith$elm_ui$Element$Input$white = A3($mdgriffith$elm_ui$Element$rgb, 1, 1, 1);
-var $mdgriffith$elm_ui$Element$Input$defaultTextBoxStyle = _List_fromArray(
-	[
-		$mdgriffith$elm_ui$Element$Input$defaultTextPadding,
-		$mdgriffith$elm_ui$Element$Border$rounded(3),
-		$mdgriffith$elm_ui$Element$Border$color($mdgriffith$elm_ui$Element$Input$darkGrey),
-		$mdgriffith$elm_ui$Element$Background$color($mdgriffith$elm_ui$Element$Input$white),
-		$mdgriffith$elm_ui$Element$Border$width(1),
-		$mdgriffith$elm_ui$Element$spacing(5),
-		$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-		$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink)
-	]);
-var $mdgriffith$elm_ui$Element$Input$getHeight = function (attr) {
-	if (attr.$ === 'Height') {
-		var h = attr.a;
-		return $elm$core$Maybe$Just(h);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
-var $mdgriffith$elm_ui$Internal$Model$Label = function (a) {
-	return {$: 'Label', a: a};
-};
-var $mdgriffith$elm_ui$Element$Input$hiddenLabelAttribute = function (label) {
-	if (label.$ === 'HiddenLabel') {
-		var textLabel = label.a;
-		return $mdgriffith$elm_ui$Internal$Model$Describe(
-			$mdgriffith$elm_ui$Internal$Model$Label(textLabel));
-	} else {
-		return $mdgriffith$elm_ui$Internal$Model$NoAttribute;
-	}
-};
-var $mdgriffith$elm_ui$Internal$Model$InFront = {$: 'InFront'};
-var $mdgriffith$elm_ui$Element$inFront = function (element) {
-	return A2($mdgriffith$elm_ui$Element$createNearby, $mdgriffith$elm_ui$Internal$Model$InFront, element);
-};
-var $mdgriffith$elm_ui$Element$Input$isConstrained = function (len) {
-	isConstrained:
-	while (true) {
-		switch (len.$) {
-			case 'Content':
-				return false;
-			case 'Px':
-				return true;
-			case 'Fill':
-				return true;
-			case 'Min':
-				var l = len.b;
-				var $temp$len = l;
-				len = $temp$len;
-				continue isConstrained;
-			default:
-				var l = len.b;
-				return true;
-		}
-	}
-};
-var $mdgriffith$elm_ui$Element$Input$isHiddenLabel = function (label) {
-	if (label.$ === 'HiddenLabel') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var $mdgriffith$elm_ui$Element$Input$isStacked = function (label) {
-	if (label.$ === 'Label') {
-		var loc = label.a;
-		switch (loc.$) {
-			case 'OnRight':
-				return false;
-			case 'OnLeft':
-				return false;
-			case 'Above':
-				return true;
-			default:
-				return true;
-		}
-	} else {
-		return true;
-	}
-};
-var $mdgriffith$elm_ui$Element$Input$negateBox = function (box) {
-	return {bottom: -box.bottom, left: -box.left, right: -box.right, top: -box.top};
-};
-var $mdgriffith$elm_ui$Element$Input$isFill = function (len) {
-	isFill:
-	while (true) {
-		switch (len.$) {
-			case 'Fill':
-				return true;
-			case 'Content':
-				return false;
-			case 'Px':
-				return false;
-			case 'Min':
-				var l = len.b;
-				var $temp$len = l;
-				len = $temp$len;
-				continue isFill;
-			default:
-				var l = len.b;
-				var $temp$len = l;
-				len = $temp$len;
-				continue isFill;
-		}
-	}
-};
-var $mdgriffith$elm_ui$Element$Input$isPixel = function (len) {
-	isPixel:
-	while (true) {
-		switch (len.$) {
-			case 'Content':
-				return false;
-			case 'Px':
-				return true;
-			case 'Fill':
-				return false;
-			case 'Min':
-				var l = len.b;
-				var $temp$len = l;
-				len = $temp$len;
-				continue isPixel;
-			default:
-				var l = len.b;
-				var $temp$len = l;
-				len = $temp$len;
-				continue isPixel;
-		}
-	}
-};
-var $mdgriffith$elm_ui$Element$Input$redistributeOver = F4(
-	function (isMultiline, stacked, attr, els) {
-		switch (attr.$) {
-			case 'Nearby':
-				return _Utils_update(
-					els,
-					{
-						parent: A2($elm$core$List$cons, attr, els.parent)
-					});
-			case 'Width':
-				var width = attr.a;
-				return $mdgriffith$elm_ui$Element$Input$isFill(width) ? _Utils_update(
-					els,
-					{
-						fullParent: A2($elm$core$List$cons, attr, els.fullParent),
-						input: A2($elm$core$List$cons, attr, els.input),
-						parent: A2($elm$core$List$cons, attr, els.parent)
-					}) : (stacked ? _Utils_update(
-					els,
-					{
-						fullParent: A2($elm$core$List$cons, attr, els.fullParent)
-					}) : _Utils_update(
-					els,
-					{
-						parent: A2($elm$core$List$cons, attr, els.parent)
-					}));
-			case 'Height':
-				var height = attr.a;
-				return (!stacked) ? _Utils_update(
-					els,
-					{
-						fullParent: A2($elm$core$List$cons, attr, els.fullParent),
-						parent: A2($elm$core$List$cons, attr, els.parent)
-					}) : ($mdgriffith$elm_ui$Element$Input$isFill(height) ? _Utils_update(
-					els,
-					{
-						fullParent: A2($elm$core$List$cons, attr, els.fullParent),
-						parent: A2($elm$core$List$cons, attr, els.parent)
-					}) : ($mdgriffith$elm_ui$Element$Input$isPixel(height) ? _Utils_update(
-					els,
-					{
-						parent: A2($elm$core$List$cons, attr, els.parent)
-					}) : _Utils_update(
-					els,
-					{
-						parent: A2($elm$core$List$cons, attr, els.parent)
-					})));
-			case 'AlignX':
-				return _Utils_update(
-					els,
-					{
-						fullParent: A2($elm$core$List$cons, attr, els.fullParent)
-					});
-			case 'AlignY':
-				return _Utils_update(
-					els,
-					{
-						fullParent: A2($elm$core$List$cons, attr, els.fullParent)
-					});
-			case 'StyleClass':
-				switch (attr.b.$) {
-					case 'SpacingStyle':
-						var _v1 = attr.b;
-						return _Utils_update(
-							els,
-							{
-								fullParent: A2($elm$core$List$cons, attr, els.fullParent),
-								input: A2($elm$core$List$cons, attr, els.input),
-								parent: A2($elm$core$List$cons, attr, els.parent),
-								wrapper: A2($elm$core$List$cons, attr, els.wrapper)
-							});
-					case 'PaddingStyle':
-						var cls = attr.a;
-						var _v2 = attr.b;
-						var pad = _v2.a;
-						var t = _v2.b;
-						var r = _v2.c;
-						var b = _v2.d;
-						var l = _v2.e;
-						if (isMultiline) {
-							return _Utils_update(
-								els,
-								{
-									cover: A2($elm$core$List$cons, attr, els.cover),
-									parent: A2($elm$core$List$cons, attr, els.parent)
-								});
-						} else {
-							var newTop = t - A2($elm$core$Basics$min, t, b);
-							var newLineHeight = $mdgriffith$elm_ui$Element$htmlAttribute(
-								A2(
-									$elm$html$Html$Attributes$style,
-									'line-height',
-									'calc(1.0em + ' + ($elm$core$String$fromFloat(
-										2 * A2($elm$core$Basics$min, t, b)) + 'px)')));
-							var newHeight = $mdgriffith$elm_ui$Element$htmlAttribute(
-								A2(
-									$elm$html$Html$Attributes$style,
-									'height',
-									'calc(1.0em + ' + ($elm$core$String$fromFloat(
-										2 * A2($elm$core$Basics$min, t, b)) + 'px)')));
-							var newBottom = b - A2($elm$core$Basics$min, t, b);
-							var reducedVerticalPadding = A2(
-								$mdgriffith$elm_ui$Internal$Model$StyleClass,
-								$mdgriffith$elm_ui$Internal$Flag$padding,
-								A5(
-									$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
-									A4($mdgriffith$elm_ui$Internal$Model$paddingNameFloat, newTop, r, newBottom, l),
-									newTop,
-									r,
-									newBottom,
-									l));
-							return _Utils_update(
-								els,
-								{
-									cover: A2($elm$core$List$cons, attr, els.cover),
-									input: A2(
-										$elm$core$List$cons,
-										newHeight,
-										A2($elm$core$List$cons, newLineHeight, els.input)),
-									parent: A2($elm$core$List$cons, reducedVerticalPadding, els.parent)
-								});
-						}
-					case 'BorderWidth':
-						var _v3 = attr.b;
-						return _Utils_update(
-							els,
-							{
-								cover: A2($elm$core$List$cons, attr, els.cover),
-								parent: A2($elm$core$List$cons, attr, els.parent)
-							});
-					case 'Transform':
-						return _Utils_update(
-							els,
-							{
-								cover: A2($elm$core$List$cons, attr, els.cover),
-								parent: A2($elm$core$List$cons, attr, els.parent)
-							});
-					case 'FontSize':
-						return _Utils_update(
-							els,
-							{
-								fullParent: A2($elm$core$List$cons, attr, els.fullParent)
-							});
-					case 'FontFamily':
-						var _v4 = attr.b;
-						return _Utils_update(
-							els,
-							{
-								fullParent: A2($elm$core$List$cons, attr, els.fullParent)
-							});
-					default:
-						var flag = attr.a;
-						var cls = attr.b;
-						return _Utils_update(
-							els,
-							{
-								parent: A2($elm$core$List$cons, attr, els.parent)
-							});
-				}
-			case 'NoAttribute':
-				return els;
-			case 'Attr':
-				var a = attr.a;
-				return _Utils_update(
-					els,
-					{
-						input: A2($elm$core$List$cons, attr, els.input)
-					});
-			case 'Describe':
-				return _Utils_update(
-					els,
-					{
-						input: A2($elm$core$List$cons, attr, els.input)
-					});
-			case 'Class':
-				return _Utils_update(
-					els,
-					{
-						parent: A2($elm$core$List$cons, attr, els.parent)
-					});
-			default:
-				return _Utils_update(
-					els,
-					{
-						input: A2($elm$core$List$cons, attr, els.input)
-					});
-		}
-	});
-var $mdgriffith$elm_ui$Element$Input$redistribute = F3(
-	function (isMultiline, stacked, attrs) {
-		return function (redist) {
-			return {
-				cover: $elm$core$List$reverse(redist.cover),
-				fullParent: $elm$core$List$reverse(redist.fullParent),
-				input: $elm$core$List$reverse(redist.input),
-				parent: $elm$core$List$reverse(redist.parent),
-				wrapper: $elm$core$List$reverse(redist.wrapper)
-			};
-		}(
-			A3(
-				$elm$core$List$foldl,
-				A2($mdgriffith$elm_ui$Element$Input$redistributeOver, isMultiline, stacked),
-				{cover: _List_Nil, fullParent: _List_Nil, input: _List_Nil, parent: _List_Nil, wrapper: _List_Nil},
-				attrs));
-	});
-var $mdgriffith$elm_ui$Element$Input$renderBox = function (_v0) {
-	var top = _v0.top;
-	var right = _v0.right;
-	var bottom = _v0.bottom;
-	var left = _v0.left;
-	return $elm$core$String$fromInt(top) + ('px ' + ($elm$core$String$fromInt(right) + ('px ' + ($elm$core$String$fromInt(bottom) + ('px ' + ($elm$core$String$fromInt(left) + 'px'))))));
-};
-var $mdgriffith$elm_ui$Internal$Model$Transparency = F2(
-	function (a, b) {
-		return {$: 'Transparency', a: a, b: b};
-	});
-var $mdgriffith$elm_ui$Internal$Flag$transparency = $mdgriffith$elm_ui$Internal$Flag$flag(0);
-var $mdgriffith$elm_ui$Element$alpha = function (o) {
-	var transparency = function (x) {
-		return 1 - x;
-	}(
-		A2(
-			$elm$core$Basics$min,
-			1.0,
-			A2($elm$core$Basics$max, 0.0, o)));
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$transparency,
-		A2(
-			$mdgriffith$elm_ui$Internal$Model$Transparency,
-			'transparency-' + $mdgriffith$elm_ui$Internal$Model$floatClass(transparency),
-			transparency));
-};
-var $mdgriffith$elm_ui$Element$Input$charcoal = A3($mdgriffith$elm_ui$Element$rgb, 136 / 255, 138 / 255, 133 / 255);
-var $mdgriffith$elm_ui$Element$Input$renderPlaceholder = F3(
-	function (_v0, forPlaceholder, on) {
-		var placeholderAttrs = _v0.a;
-		var placeholderEl = _v0.b;
-		return A2(
-			$mdgriffith$elm_ui$Element$el,
-			_Utils_ap(
-				forPlaceholder,
-				_Utils_ap(
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$Font$color($mdgriffith$elm_ui$Element$Input$charcoal),
-							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.noTextSelection + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.passPointerEvents)),
-							$mdgriffith$elm_ui$Element$clip,
-							$mdgriffith$elm_ui$Element$Border$color(
-							A4($mdgriffith$elm_ui$Element$rgba, 0, 0, 0, 0)),
-							$mdgriffith$elm_ui$Element$Background$color(
-							A4($mdgriffith$elm_ui$Element$rgba, 0, 0, 0, 0)),
-							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-							$mdgriffith$elm_ui$Element$alpha(
-							on ? 1 : 0)
-						]),
-					placeholderAttrs)),
-			placeholderEl);
-	});
-var $mdgriffith$elm_ui$Element$scrollbarY = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$overflow, $mdgriffith$elm_ui$Internal$Style$classes.scrollbarsY);
-var $elm$html$Html$Attributes$spellcheck = $elm$html$Html$Attributes$boolProperty('spellcheck');
-var $mdgriffith$elm_ui$Element$Input$spellcheck = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Attr, $elm$html$Html$Attributes$spellcheck);
-var $mdgriffith$elm_ui$Internal$Model$unstyled = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Unstyled, $elm$core$Basics$always);
-var $mdgriffith$elm_ui$Element$Input$value = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Attr, $elm$html$Html$Attributes$value);
-var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
-	function (textInput, attrs, textOptions) {
-		var withDefaults = _Utils_ap($mdgriffith$elm_ui$Element$Input$defaultTextBoxStyle, attrs);
-		var redistributed = A3(
-			$mdgriffith$elm_ui$Element$Input$redistribute,
-			_Utils_eq(textInput.type_, $mdgriffith$elm_ui$Element$Input$TextArea),
-			$mdgriffith$elm_ui$Element$Input$isStacked(textOptions.label),
-			withDefaults);
-		var onlySpacing = function (attr) {
-			if ((attr.$ === 'StyleClass') && (attr.b.$ === 'SpacingStyle')) {
-				var _v9 = attr.b;
-				return true;
-			} else {
-				return false;
-			}
-		};
-		var heightConstrained = function () {
-			var _v7 = textInput.type_;
-			if (_v7.$ === 'TextInputNode') {
-				var inputType = _v7.a;
-				return false;
-			} else {
-				return A2(
-					$elm$core$Maybe$withDefault,
-					false,
-					A2(
-						$elm$core$Maybe$map,
-						$mdgriffith$elm_ui$Element$Input$isConstrained,
-						$elm$core$List$head(
-							$elm$core$List$reverse(
-								A2($elm$core$List$filterMap, $mdgriffith$elm_ui$Element$Input$getHeight, withDefaults)))));
-			}
-		}();
-		var getPadding = function (attr) {
-			if ((attr.$ === 'StyleClass') && (attr.b.$ === 'PaddingStyle')) {
-				var cls = attr.a;
-				var _v6 = attr.b;
-				var pad = _v6.a;
-				var t = _v6.b;
-				var r = _v6.c;
-				var b = _v6.d;
-				var l = _v6.e;
-				return $elm$core$Maybe$Just(
-					{
-						bottom: A2(
-							$elm$core$Basics$max,
-							0,
-							$elm$core$Basics$floor(b - 3)),
-						left: A2(
-							$elm$core$Basics$max,
-							0,
-							$elm$core$Basics$floor(l - 3)),
-						right: A2(
-							$elm$core$Basics$max,
-							0,
-							$elm$core$Basics$floor(r - 3)),
-						top: A2(
-							$elm$core$Basics$max,
-							0,
-							$elm$core$Basics$floor(t - 3))
-					});
-			} else {
-				return $elm$core$Maybe$Nothing;
-			}
-		};
-		var parentPadding = A2(
-			$elm$core$Maybe$withDefault,
-			{bottom: 0, left: 0, right: 0, top: 0},
-			$elm$core$List$head(
-				$elm$core$List$reverse(
-					A2($elm$core$List$filterMap, getPadding, withDefaults))));
-		var inputElement = A4(
-			$mdgriffith$elm_ui$Internal$Model$element,
-			$mdgriffith$elm_ui$Internal$Model$asEl,
-			function () {
-				var _v3 = textInput.type_;
-				if (_v3.$ === 'TextInputNode') {
-					var inputType = _v3.a;
-					return $mdgriffith$elm_ui$Internal$Model$NodeName('input');
-				} else {
-					return $mdgriffith$elm_ui$Internal$Model$NodeName('textarea');
-				}
-			}(),
-			_Utils_ap(
-				function () {
-					var _v4 = textInput.type_;
-					if (_v4.$ === 'TextInputNode') {
-						var inputType = _v4.a;
-						return _List_fromArray(
-							[
-								$mdgriffith$elm_ui$Internal$Model$Attr(
-								$elm$html$Html$Attributes$type_(inputType)),
-								$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.inputText)
-							]);
-					} else {
-						return _List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$clip,
-								$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
-								$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.inputMultiline),
-								$mdgriffith$elm_ui$Element$Input$calcMoveToCompensateForPadding(withDefaults),
-								$mdgriffith$elm_ui$Element$paddingEach(parentPadding),
-								$mdgriffith$elm_ui$Internal$Model$Attr(
-								A2(
-									$elm$html$Html$Attributes$style,
-									'margin',
-									$mdgriffith$elm_ui$Element$Input$renderBox(
-										$mdgriffith$elm_ui$Element$Input$negateBox(parentPadding)))),
-								$mdgriffith$elm_ui$Internal$Model$Attr(
-								A2($elm$html$Html$Attributes$style, 'box-sizing', 'content-box'))
-							]);
-					}
-				}(),
-				_Utils_ap(
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$Input$value(textOptions.text),
-							$mdgriffith$elm_ui$Internal$Model$Attr(
-							$elm$html$Html$Events$onInput(textOptions.onChange)),
-							$mdgriffith$elm_ui$Element$Input$hiddenLabelAttribute(textOptions.label),
-							$mdgriffith$elm_ui$Element$Input$spellcheck(textInput.spellchecked),
-							A2(
-							$elm$core$Maybe$withDefault,
-							$mdgriffith$elm_ui$Internal$Model$NoAttribute,
-							A2($elm$core$Maybe$map, $mdgriffith$elm_ui$Element$Input$autofill, textInput.autofill))
-						]),
-					redistributed.input)),
-			$mdgriffith$elm_ui$Internal$Model$Unkeyed(_List_Nil));
-		var wrappedInput = function () {
-			var _v0 = textInput.type_;
-			if (_v0.$ === 'TextArea') {
-				return A4(
-					$mdgriffith$elm_ui$Internal$Model$element,
-					$mdgriffith$elm_ui$Internal$Model$asEl,
-					$mdgriffith$elm_ui$Internal$Model$div,
-					_Utils_ap(
-						(heightConstrained ? $elm$core$List$cons($mdgriffith$elm_ui$Element$scrollbarY) : $elm$core$Basics$identity)(
-							_List_fromArray(
-								[
-									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-									A2($elm$core$List$any, $mdgriffith$elm_ui$Element$Input$hasFocusStyle, withDefaults) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.focusedWithin),
-									$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.inputMultilineWrapper)
-								])),
-						redistributed.parent),
-					$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-						_List_fromArray(
-							[
-								A4(
-								$mdgriffith$elm_ui$Internal$Model$element,
-								$mdgriffith$elm_ui$Internal$Model$asParagraph,
-								$mdgriffith$elm_ui$Internal$Model$div,
-								A2(
-									$elm$core$List$cons,
-									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-									A2(
-										$elm$core$List$cons,
-										$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
-										A2(
-											$elm$core$List$cons,
-											$mdgriffith$elm_ui$Element$inFront(inputElement),
-											A2(
-												$elm$core$List$cons,
-												$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.inputMultilineParent),
-												redistributed.wrapper)))),
-								$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-									function () {
-										if (textOptions.text === '') {
-											var _v1 = textOptions.placeholder;
-											if (_v1.$ === 'Nothing') {
-												return _List_fromArray(
-													[
-														$mdgriffith$elm_ui$Element$text('\u00A0')
-													]);
-											} else {
-												var place = _v1.a;
-												return _List_fromArray(
-													[
-														A3($mdgriffith$elm_ui$Element$Input$renderPlaceholder, place, _List_Nil, textOptions.text === '')
-													]);
-											}
-										} else {
-											return _List_fromArray(
-												[
-													$mdgriffith$elm_ui$Internal$Model$unstyled(
-													A2(
-														$elm$html$Html$span,
-														_List_fromArray(
-															[
-																$elm$html$Html$Attributes$class($mdgriffith$elm_ui$Internal$Style$classes.inputMultilineFiller)
-															]),
-														_List_fromArray(
-															[
-																$elm$html$Html$text(textOptions.text + '\u00A0')
-															])))
-												]);
-										}
-									}()))
-							])));
-			} else {
-				var inputType = _v0.a;
-				return A4(
-					$mdgriffith$elm_ui$Internal$Model$element,
-					$mdgriffith$elm_ui$Internal$Model$asEl,
-					$mdgriffith$elm_ui$Internal$Model$div,
-					A2(
-						$elm$core$List$cons,
-						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-						A2(
-							$elm$core$List$cons,
-							A2($elm$core$List$any, $mdgriffith$elm_ui$Element$Input$hasFocusStyle, withDefaults) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.focusedWithin),
-							$elm$core$List$concat(
-								_List_fromArray(
-									[
-										redistributed.parent,
-										function () {
-										var _v2 = textOptions.placeholder;
-										if (_v2.$ === 'Nothing') {
-											return _List_Nil;
-										} else {
-											var place = _v2.a;
-											return _List_fromArray(
-												[
-													$mdgriffith$elm_ui$Element$behindContent(
-													A3($mdgriffith$elm_ui$Element$Input$renderPlaceholder, place, redistributed.cover, textOptions.text === ''))
-												]);
-										}
-									}()
-									])))),
-					$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-						_List_fromArray(
-							[inputElement])));
-			}
-		}();
-		return A3(
-			$mdgriffith$elm_ui$Element$Input$applyLabel,
-			A2(
-				$elm$core$List$cons,
-				A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$cursor, $mdgriffith$elm_ui$Internal$Style$classes.cursorText),
-				A2(
-					$elm$core$List$cons,
-					$mdgriffith$elm_ui$Element$Input$isHiddenLabel(textOptions.label) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Element$spacing(5),
-					A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$Region$announce, redistributed.fullParent))),
-			textOptions.label,
-			wrappedInput);
-	});
-var $mdgriffith$elm_ui$Element$Input$text = $mdgriffith$elm_ui$Element$Input$textHelper(
-	{
-		autofill: $elm$core$Maybe$Nothing,
-		spellchecked: false,
-		type_: $mdgriffith$elm_ui$Element$Input$TextInputNode('text')
-	});
-var $author$project$Pages$Hardware$createLadderView = F2(
-	function (userInfo, ranking) {
-		return A2(
-			$Orasund$elm_ui_framework$Framework$responsiveLayout,
-			_List_Nil,
-			A2(
-				$mdgriffith$elm_ui$Element$column,
-				$Orasund$elm_ui_framework$Framework$Grid$section,
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$el,
-						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(userInfo.nickname + ' - Please Enter Your Ladder \nDetails And Click \'Create\' below:')),
-						A2(
-						$mdgriffith$elm_ui$Element$wrappedRow,
-						_Utils_ap($Orasund$elm_ui_framework$Framework$Card$fill, $Orasund$elm_ui_framework$Framework$Grid$simple),
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$column,
-								$Orasund$elm_ui_framework$Framework$Grid$simple,
-								_List_fromArray(
-									[
-										A2(
-										$mdgriffith$elm_ui$Element$Input$text,
-										_Utils_ap(
-											$Orasund$elm_ui_framework$Framework$Input$simple,
-											_List_fromArray(
-												[
-													$mdgriffith$elm_ui$Element$htmlAttribute(
-													$elm$html$Html$Attributes$id('RankingName'))
-												])),
-										{
-											label: A2(
-												$mdgriffith$elm_ui$Element$Input$labelLeft,
-												_Utils_ap(
-													$Orasund$elm_ui_framework$Framework$Input$label,
-													_List_fromArray(
-														[
-															$mdgriffith$elm_ui$Element$moveLeft(11.0)
-														])),
-												$mdgriffith$elm_ui$Element$text('Ranking name*')),
-											onChange: $author$project$Pages$Hardware$RankingNameChg,
-											placeholder: $elm$core$Maybe$Just(
-												A2(
-													$mdgriffith$elm_ui$Element$Input$placeholder,
-													_List_Nil,
-													$mdgriffith$elm_ui$Element$text('Ranking name*'))),
-											text: ranking.name
-										}),
-										$author$project$SR$Elements$ladderNameValidation(ranking),
-										A2(
-										$mdgriffith$elm_ui$Element$Input$text,
-										_Utils_ap(
-											$Orasund$elm_ui_framework$Framework$Input$simple,
-											_List_fromArray(
-												[
-													$mdgriffith$elm_ui$Element$htmlAttribute(
-													$elm$html$Html$Attributes$id('Street'))
-												])),
-										{
-											label: A2(
-												$mdgriffith$elm_ui$Element$Input$labelLeft,
-												_Utils_ap(
-													$Orasund$elm_ui_framework$Framework$Input$label,
-													_List_fromArray(
-														[
-															$mdgriffith$elm_ui$Element$moveLeft(11.0)
-														])),
-												$mdgriffith$elm_ui$Element$text('Street')),
-											onChange: $author$project$Pages$Hardware$StreetAddressChg,
-											placeholder: $elm$core$Maybe$Just(
-												A2(
-													$mdgriffith$elm_ui$Element$Input$placeholder,
-													_List_Nil,
-													$mdgriffith$elm_ui$Element$text('Street'))),
-											text: ranking.baseaddress.street
-										}),
-										$author$project$SR$Elements$ladderStreetValidation(ranking),
-										A2(
-										$mdgriffith$elm_ui$Element$Input$text,
-										_Utils_ap(
-											$Orasund$elm_ui_framework$Framework$Input$simple,
-											_List_fromArray(
-												[
-													$mdgriffith$elm_ui$Element$htmlAttribute(
-													$elm$html$Html$Attributes$id('City'))
-												])),
-										{
-											label: A2(
-												$mdgriffith$elm_ui$Element$Input$labelLeft,
-												_Utils_ap(
-													$Orasund$elm_ui_framework$Framework$Input$label,
-													_List_fromArray(
-														[
-															$mdgriffith$elm_ui$Element$moveLeft(11.0)
-														])),
-												$mdgriffith$elm_ui$Element$text('City')),
-											onChange: $author$project$Pages$Hardware$CityAddressChg,
-											placeholder: $elm$core$Maybe$Just(
-												A2(
-													$mdgriffith$elm_ui$Element$Input$placeholder,
-													_List_Nil,
-													$mdgriffith$elm_ui$Element$text('City'))),
-											text: ranking.baseaddress.city
-										}),
-										$author$project$SR$Elements$ladderCityValidation(ranking)
-									]))
-							])),
-						$mdgriffith$elm_ui$Element$text('* required'),
-						A2($author$project$Pages$Hardware$rankingDetailsConfirmPanel, ranking, userInfo)
-					])));
-	});
-var $author$project$SR$Elements$ownedSelectedRankingHeaderEl = function (r) {
-	return A2(
-		$mdgriffith$elm_ui$Element$el,
-		$Orasund$elm_ui_framework$Framework$Heading$h5,
-		$mdgriffith$elm_ui$Element$text(r.owner_name + (' this your owned ranking' + (' - ' + (r.name + (' . \n Id is: ' + r.id))))));
-};
-var $author$project$Pages$Hardware$dialogueConfirmChallengeView = F3(
-	function (uinfo, rank, ranking) {
-		return A2(
-			$Orasund$elm_ui_framework$Framework$responsiveLayout,
-			_List_Nil,
-			A2(
-				$mdgriffith$elm_ui$Element$column,
-				$Orasund$elm_ui_framework$Framework$container,
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$el,
-						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(ranking.owner_name + (' - Are you sure you want to challenge ' + (rank.player.nickname + '?')))),
-						A2(
-						$mdgriffith$elm_ui$Element$wrappedRow,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$author$project$SR$Elements$ownedSelectedRankingHeaderEl(ranking)
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$column,
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-							_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple)),
-						_List_fromArray(
-							[
-								A2(
-								$author$project$Pages$Hardware$infoBtn,
-								'Confirm',
-								A2($author$project$Pages$Hardware$ConfirmChallenge, ranking, rank)),
-								A2($author$project$Pages$Hardware$infoBtn, 'Cancel', $author$project$Pages$Hardware$Cancel)
-							]))
-					])));
-	});
-var $author$project$Pages$Hardware$DeleteOwnedRanking = {$: 'DeleteOwnedRanking'};
-var $author$project$Pages$Hardware$dialogueDeleteOwnedView = F2(
-	function (uinfo, ranking) {
-		return A2(
-			$Orasund$elm_ui_framework$Framework$responsiveLayout,
-			_List_Nil,
-			A2(
-				$mdgriffith$elm_ui$Element$column,
-				$Orasund$elm_ui_framework$Framework$container,
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$el,
-						$Orasund$elm_ui_framework$Framework$Heading$h6,
-						$mdgriffith$elm_ui$Element$text(ranking.owner_name + ' - Are you sure you want to delete this ranking?\n            Please note that this will delete all your AND THE \n            RANKING MEMBER\'S rankings and is IRREVERSIBLE!\n            (You may wish to inform them before deleting)')),
-						A2(
-						$mdgriffith$elm_ui$Element$wrappedRow,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$author$project$SR$Elements$ownedSelectedRankingHeaderEl(ranking)
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$column,
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-							_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple)),
-						_List_fromArray(
-							[
-								A2($author$project$Pages$Hardware$infoBtn, 'Delete', $author$project$Pages$Hardware$DeleteOwnedRanking),
-								A2($author$project$Pages$Hardware$infoBtn, 'Cancel', $author$project$Pages$Hardware$Cancel)
-							]))
-					])));
-	});
-var $author$project$Pages$Hardware$CancelDialoguePrepareResultView = {$: 'CancelDialoguePrepareResultView'};
-var $author$project$Pages$Hardware$ConfirmResult = function (a) {
-	return {$: 'ConfirmResult', a: a};
-};
-var $author$project$Data$Hardware$Lost = {$: 'Lost'};
-var $author$project$Data$Hardware$Won = {$: 'Won'};
-var $author$project$Data$Hardware$isUserOwnerOfRankning = F2(
-	function (userid, ranking) {
-		return _Utils_eq(ranking.owner_id, userid) ? true : false;
-	});
-var $author$project$Pages$Hardware$dialoguePrepareResultView = F3(
-	function (uinfo, rank, ranking) {
-		return A2(
-			$Orasund$elm_ui_framework$Framework$responsiveLayout,
-			_List_Nil,
-			A2(
-				$mdgriffith$elm_ui$Element$column,
-				$Orasund$elm_ui_framework$Framework$container,
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$el,
-						$Orasund$elm_ui_framework$Framework$Heading$h5,
-						$mdgriffith$elm_ui$Element$text(uinfo.nickname + (' - Are you ready to enter your result vs ' + (rank.challenger.nickname + '?')))),
-						A2($author$project$Data$Hardware$isUserOwnerOfRankning, uinfo.userid, ranking) ? A2(
-						$mdgriffith$elm_ui$Element$wrappedRow,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$SR$Elements$memberSelectedRankingHeaderEl, uinfo, ranking)
-							])) : A2(
-						$mdgriffith$elm_ui$Element$wrappedRow,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$SR$Elements$memberSelectedRankingHeaderEl, uinfo, ranking)
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$column,
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-							_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple)),
-						_List_fromArray(
-							[
-								A2(
-								$author$project$Pages$Hardware$infoBtn,
-								'Win',
-								$author$project$Pages$Hardware$ConfirmResult($author$project$Data$Hardware$Won)),
-								A2(
-								$author$project$Pages$Hardware$infoBtn,
-								'Lose',
-								$author$project$Pages$Hardware$ConfirmResult($author$project$Data$Hardware$Lost)),
-								A2(
-								$author$project$Pages$Hardware$infoBtn,
-								'Abandon Challenge',
-								$author$project$Pages$Hardware$ConfirmResult($author$project$Data$Hardware$Undecided)),
-								A2($author$project$Pages$Hardware$infoBtn, 'Cancel', $author$project$Pages$Hardware$CancelDialoguePrepareResultView)
-							]))
-					])));
-	});
-var $author$project$Pages$Hardware$ClickedHardwareDeviceConnect = {$: 'ClickedHardwareDeviceConnect'};
-var $author$project$Pages$Hardware$ClickedXMRInitiateTransaction = function (a) {
-	return {$: 'ClickedXMRInitiateTransaction', a: a};
-};
-var $author$project$Pages$Hardware$ClickedXMRWalletConnect = {$: 'ClickedXMRWalletConnect'};
 var $author$project$Pages$Hardware$hardwareWalletView = function (model) {
 	return A2(
 		$Orasund$elm_ui_framework$Framework$responsiveLayout,
@@ -25402,7 +23299,7 @@ var $author$project$Pages$Hardware$hardwareWalletView = function (model) {
 					A2(
 					$mdgriffith$elm_ui$Element$el,
 					$Orasund$elm_ui_framework$Framework$Heading$h5,
-					$mdgriffith$elm_ui$Element$text('Haveno-Web')),
+					$mdgriffith$elm_ui$Element$text('Haveno Web - Connect Hardware')),
 					$mdgriffith$elm_ui$Element$text('\n'),
 					A2($author$project$Pages$Hardware$infoBtn, 'Connect Hardware Device', $author$project$Pages$Hardware$ClickedHardwareDeviceConnect),
 					$mdgriffith$elm_ui$Element$text('\n'),
@@ -25416,7 +23313,7 @@ var $author$project$Pages$Hardware$hardwareWalletView = function (model) {
 					$mdgriffith$elm_ui$Element$text('\n'),
 					A2(
 					$author$project$Pages$Hardware$infoBtn,
-					'Connect XMR Wallet',
+					'Initiate Transaction',
 					$author$project$Pages$Hardware$ClickedXMRInitiateTransaction('0.01')),
 					function () {
 					var _v0 = model.errors;
@@ -25439,731 +23336,7 @@ var $author$project$Pages$Hardware$hardwareWalletView = function (model) {
 				}()
 				])));
 };
-var $author$project$Pages$Hardware$DialogueConfirmLeaveView = {$: 'DialogueConfirmLeaveView'};
-var $author$project$Pages$Hardware$ViewRank = function (a) {
-	return {$: 'ViewRank', a: a};
-};
-var $author$project$Pages$Hardware$challengeInProgressBtnDisabled = function (r) {
-	return A2(
-		$mdgriffith$elm_ui$Element$column,
-		$Orasund$elm_ui_framework$Framework$Grid$simple,
-		_List_fromArray(
-			[
-				A2(
-				$mdgriffith$elm_ui$Element$Input$button,
-				_Utils_ap(
-					$Orasund$elm_ui_framework$Framework$Button$fill,
-					$author$project$Pages$Hardware$enableButton(false)),
-				{
-					label: $mdgriffith$elm_ui$Element$text(
-						$elm$core$String$fromInt(r.rank) + ('. ' + (r.player.nickname + (' vs ' + r.challenger.nickname)))),
-					onPress: $elm$core$Maybe$Just(
-						$author$project$Pages$Hardware$ViewRank(r))
-				})
-			]));
-};
-var $Orasund$elm_ui_framework$Framework$Color$primary = _List_fromArray(
-	[
-		$mdgriffith$elm_ui$Element$Background$color($Orasund$elm_ui_framework$Framework$Color$turquoise),
-		$mdgriffith$elm_ui$Element$Border$color($Orasund$elm_ui_framework$Framework$Color$turquoise)
-	]);
-var $author$project$Pages$Hardware$challengeInProgressBtnEnabled = function (r) {
-	return A2(
-		$mdgriffith$elm_ui$Element$column,
-		$Orasund$elm_ui_framework$Framework$Grid$simple,
-		_List_fromArray(
-			[
-				A2(
-				$mdgriffith$elm_ui$Element$Input$button,
-				_Utils_ap($Orasund$elm_ui_framework$Framework$Button$fill, $Orasund$elm_ui_framework$Framework$Color$primary),
-				{
-					label: $mdgriffith$elm_ui$Element$text(
-						$elm$core$String$fromInt(r.rank) + ('. ' + (r.player.nickname + (' vs ' + r.challenger.nickname)))),
-					onPress: $elm$core$Maybe$Just(
-						$author$project$Pages$Hardware$ViewRank(r))
-				})
-			]));
-};
-var $author$project$Pages$Hardware$determineButtonType = F2(
-	function (loggedInUsersRank, rankBeingIterated) {
-		var rankBeingIteratedIsInAChallenge = !_Utils_eq(rankBeingIterated.challenger.id, $author$project$Extras$Constants$noCurrentChallengerId);
-		var loggedInUserIsInAChallenge = !_Utils_eq(loggedInUsersRank.challenger.id, $author$project$Extras$Constants$noCurrentChallengerId);
-		return loggedInUserIsInAChallenge ? (_Utils_eq(loggedInUsersRank.player.id, rankBeingIterated.player.id) ? 1 : (_Utils_eq(loggedInUsersRank.player.id, rankBeingIterated.challenger.id) ? 2 : 4)) : (rankBeingIteratedIsInAChallenge ? (_Utils_eq(loggedInUsersRank.player.id, rankBeingIterated.player.id) ? 1 : 2) : (_Utils_eq(loggedInUsersRank.rank - 1, rankBeingIterated.rank) ? 3 : 4));
-	});
-var $author$project$Pages$Hardware$singlePlayerBtnDisabled = function (r) {
-	return A2(
-		$mdgriffith$elm_ui$Element$column,
-		$Orasund$elm_ui_framework$Framework$Grid$simple,
-		_List_fromArray(
-			[
-				A2(
-				$mdgriffith$elm_ui$Element$Input$button,
-				_Utils_ap(
-					$Orasund$elm_ui_framework$Framework$Button$fill,
-					$author$project$Pages$Hardware$enableButton(false)),
-				{
-					label: $mdgriffith$elm_ui$Element$text(
-						$elm$core$String$fromInt(r.rank) + ('. ' + r.player.nickname)),
-					onPress: $elm$core$Maybe$Just(
-						$author$project$Pages$Hardware$ViewRank(r))
-				})
-			]));
-};
-var $author$project$Pages$Hardware$singlePlayerBtnEnabled = function (r) {
-	return A2(
-		$mdgriffith$elm_ui$Element$column,
-		$Orasund$elm_ui_framework$Framework$Grid$simple,
-		_List_fromArray(
-			[
-				A2(
-				$mdgriffith$elm_ui$Element$Input$button,
-				_Utils_ap($Orasund$elm_ui_framework$Framework$Button$fill, $Orasund$elm_ui_framework$Framework$Color$primary),
-				{
-					label: $mdgriffith$elm_ui$Element$text(
-						$elm$core$String$fromInt(r.rank) + ('. ' + r.player.nickname)),
-					onPress: $elm$core$Maybe$Just(
-						$author$project$Pages$Hardware$ViewRank(r))
-				})
-			]));
-};
-var $author$project$Pages$Hardware$configureThenAddPlayerRankingBtns = F2(
-	function (currentUserRank, rank) {
-		var elementMsg = (A2($author$project$Pages$Hardware$determineButtonType, currentUserRank, rank) === 1) ? $author$project$Pages$Hardware$challengeInProgressBtnEnabled(rank) : ((A2($author$project$Pages$Hardware$determineButtonType, currentUserRank, rank) === 2) ? $author$project$Pages$Hardware$challengeInProgressBtnDisabled(rank) : ((A2($author$project$Pages$Hardware$determineButtonType, currentUserRank, rank) === 3) ? $author$project$Pages$Hardware$singlePlayerBtnEnabled(rank) : $author$project$Pages$Hardware$singlePlayerBtnDisabled(rank)));
-		return elementMsg;
-	});
-var $author$project$Pages$Hardware$findUserRank = F2(
-	function (userid, ladder) {
-		return $elm$core$List$head(
-			A2(
-				$elm$core$List$filter,
-				function (r) {
-					return _Utils_eq(r.player.id, userid);
-				},
-				ladder));
-	});
-var $author$project$Pages$Hardware$playerbuttons = F2(
-	function (r, u) {
-		var currentUserRank = A2(
-			$elm$core$Maybe$withDefault,
-			$author$project$Data$Hardware$emptyRank,
-			A2($author$project$Pages$Hardware$findUserRank, u.userid, r.ladder));
-		return A2(
-			$mdgriffith$elm_ui$Element$column,
-			$Orasund$elm_ui_framework$Framework$Grid$section,
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$column,
-					_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple),
-					A2(
-						$elm$core$List$map,
-						$author$project$Pages$Hardware$configureThenAddPlayerRankingBtns(currentUserRank),
-						r.ladder))
-				]));
-	});
-var $author$project$Pages$Hardware$memberSelectedView = F2(
-	function (u, r) {
-		return A2(
-			$Orasund$elm_ui_framework$Framework$responsiveLayout,
-			_List_Nil,
-			A2(
-				$mdgriffith$elm_ui$Element$column,
-				$Orasund$elm_ui_framework$Framework$container,
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$wrappedRow,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$SR$Elements$memberSelectedRankingHeaderEl, u, r)
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$column,
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-							_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple)),
-						_List_fromArray(
-							[
-								A2($author$project$Pages$Hardware$infoBtn, 'Leave', $author$project$Pages$Hardware$DialogueConfirmLeaveView),
-								A2($author$project$Pages$Hardware$infoBtn, 'Cancel', $author$project$Pages$Hardware$CancelFetchedMember),
-								A2($author$project$Pages$Hardware$playerbuttons, r, u)
-							]))
-					])));
-	});
-var $author$project$Pages$Hardware$CancelFetchedOwned = function (a) {
-	return {$: 'CancelFetchedOwned', a: a};
-};
-var $author$project$Pages$Hardware$DialogDeleteOwnedRanking = {$: 'DialogDeleteOwnedRanking'};
-var $author$project$Pages$Hardware$ownedSelectedView = F2(
-	function (u, r) {
-		return A2(
-			$Orasund$elm_ui_framework$Framework$responsiveLayout,
-			_List_Nil,
-			A2(
-				$mdgriffith$elm_ui$Element$column,
-				$Orasund$elm_ui_framework$Framework$container,
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$wrappedRow,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$author$project$SR$Elements$ownedSelectedRankingHeaderEl(r)
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$column,
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-							_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple)),
-						_List_fromArray(
-							[
-								A2($author$project$Pages$Hardware$infoBtn, 'Delete', $author$project$Pages$Hardware$DialogDeleteOwnedRanking),
-								A2(
-								$author$project$Pages$Hardware$infoBtn,
-								'Cancel',
-								$author$project$Pages$Hardware$CancelFetchedOwned(u)),
-								A2($author$project$Pages$Hardware$playerbuttons, r, u)
-							]))
-					])));
-	});
-var $mdgriffith$elm_ui$Element$Input$email = $mdgriffith$elm_ui$Element$Input$textHelper(
-	{
-		autofill: $elm$core$Maybe$Just('email'),
-		spellchecked: false,
-		type_: $mdgriffith$elm_ui$Element$Input$TextInputNode('email')
-	});
-var $author$project$Utils$Validation$Validate$isEmailValid = function (newEmail) {
-	return A2(
-		$elm$regex$Regex$contains,
-		A2(
-			$elm$core$Maybe$withDefault,
-			$elm$regex$Regex$never,
-			$elm$regex$Regex$fromString('[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?')),
-		newEmail);
-};
-var $author$project$Pages$Hardware$emailValidationErr = function (str) {
-	return ($author$project$Utils$Validation$Validate$isEmailValid(str) && (!(!$elm$core$String$length(str)))) ? A2(
-		$mdgriffith$elm_ui$Element$el,
-		A2(
-			$elm$core$List$append,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.green),
-					$mdgriffith$elm_ui$Element$Font$alignLeft
-				]),
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$moveLeft(1.0)
-				])),
-		$mdgriffith$elm_ui$Element$text('Email OK!')) : A2(
-		$mdgriffith$elm_ui$Element$el,
-		A2(
-			$elm$core$List$append,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.red),
-					$mdgriffith$elm_ui$Element$Font$alignLeft
-				]),
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$moveLeft(7.0)
-				])),
-		$mdgriffith$elm_ui$Element$text(' Please enter \n a valid email'));
-};
-var $elm$html$Html$Attributes$autofocus = $elm$html$Html$Attributes$boolProperty('autofocus');
-var $mdgriffith$elm_ui$Element$Input$focusedOnLoad = $mdgriffith$elm_ui$Internal$Model$Attr(
-	$elm$html$Html$Attributes$autofocus(true));
-var $author$project$SR$Elements$justParasimpleUserInfoText = A2(
-	$mdgriffith$elm_ui$Element$paragraph,
-	_List_Nil,
-	$elm$core$List$singleton(
-		$mdgriffith$elm_ui$Element$text('Can your challengers reach you if you don\'t submit contact details?')));
-var $author$project$Utils$Validation$Validate$isMobileValid = function (newMobile) {
-	return (newMobile === '') ? true : A2(
-		$elm$regex$Regex$contains,
-		A2(
-			$elm$core$Maybe$withDefault,
-			$elm$regex$Regex$never,
-			$elm$regex$Regex$fromString('^\\+((?:9[679]|8[035789]|6[789]|5[90]|42|3[578]|2[1-689])|9[0-58]|8[1246]|6[0-6]|5[1-8]|4[013-9]|3[0-469]|2[70]|7|1)(?:\\W*\\d){0,13}\\d$')),
-		newMobile);
-};
-var $author$project$Pages$Hardware$mobileValidationErr = function (str) {
-	return $author$project$Utils$Validation$Validate$isMobileValid(str) ? A2(
-		$mdgriffith$elm_ui$Element$el,
-		A2(
-			$elm$core$List$append,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.green),
-					$mdgriffith$elm_ui$Element$Font$alignLeft
-				]),
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$htmlAttribute(
-					$elm$html$Html$Attributes$id('userMobileValid'))
-				])),
-		$mdgriffith$elm_ui$Element$text('Mobile OK!')) : (($elm$core$String$length(str) > 0) ? A2(
-		$mdgriffith$elm_ui$Element$el,
-		_Utils_ap(
-			A2(
-				$elm$core$List$append,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.red),
-						$mdgriffith$elm_ui$Element$Font$alignLeft
-					]),
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$htmlAttribute(
-						$elm$html$Html$Attributes$id('userMobileInvalid'))
-					])),
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$moveLeft(5.0)
-				])),
-		$mdgriffith$elm_ui$Element$text(' Mobile number, if\n entered, must be valid (+ not 00)')) : A2(
-		$mdgriffith$elm_ui$Element$el,
-		_List_Nil,
-		$mdgriffith$elm_ui$Element$text('')));
-};
-var $author$project$Utils$Validation$Validate$isValid4to8Chars = function (str) {
-	return A2(
-		$elm$regex$Regex$contains,
-		A2(
-			$elm$core$Maybe$withDefault,
-			$elm$regex$Regex$never,
-			$elm$regex$Regex$fromString('(?!.*[\\.\\-\\_]{2,})^[a-zA-Z0-9\\.\\-\\_]{4,8}$')),
-		str);
-};
-var $author$project$SR$Elements$nameValidView = function (userInfo) {
-	return (!$elm$core$String$length(userInfo.nickname)) ? A2(
-		$mdgriffith$elm_ui$Element$el,
-		_Utils_ap(
-			A2(
-				$elm$core$List$append,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$htmlAttribute(
-						$elm$html$Html$Attributes$id('usernameValidMsg'))
-					]),
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.green),
-						$mdgriffith$elm_ui$Element$Font$alignLeft
-					])),
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$moveLeft(1.0)
-				])),
-		$mdgriffith$elm_ui$Element$text('Anon OK!')) : ($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.nickname) ? A2(
-		$mdgriffith$elm_ui$Element$el,
-		_Utils_ap(
-			A2(
-				$elm$core$List$append,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$htmlAttribute(
-						$elm$html$Html$Attributes$id('usernameValidMsg'))
-					]),
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.green),
-						$mdgriffith$elm_ui$Element$Font$alignLeft
-					])),
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$moveLeft(1.0)
-				])),
-		$mdgriffith$elm_ui$Element$text('Nickname OK!')) : A2(
-		$mdgriffith$elm_ui$Element$el,
-		_Utils_ap(
-			A2(
-				$elm$core$List$append,
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$htmlAttribute(
-						$elm$html$Html$Attributes$id('usernameValidMsg'))
-					]),
-				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.red),
-						$mdgriffith$elm_ui$Element$Font$alignLeft
-					])),
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$moveLeft(0.0)
-				])),
-		$mdgriffith$elm_ui$Element$text('If entered please make \nunique and 5-8 continuous chars')));
-};
-var $mdgriffith$elm_ui$Element$Input$newPassword = F2(
-	function (attrs, pass) {
-		return A3(
-			$mdgriffith$elm_ui$Element$Input$textHelper,
-			{
-				autofill: $elm$core$Maybe$Just('new-password'),
-				spellchecked: false,
-				type_: $mdgriffith$elm_ui$Element$Input$TextInputNode(
-					pass.show ? 'text' : 'password')
-			},
-			attrs,
-			{label: pass.label, onChange: pass.onChange, placeholder: pass.placeholder, text: pass.text});
-	});
-var $author$project$SR$Elements$passwordValidView = function (userInfo) {
-	return $author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.password) ? A2(
-		$mdgriffith$elm_ui$Element$el,
-		_List_fromArray(
-			[
-				$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.green),
-				$mdgriffith$elm_ui$Element$Font$alignLeft,
-				$mdgriffith$elm_ui$Element$moveLeft(1.0)
-			]),
-		$mdgriffith$elm_ui$Element$text('Password OK!')) : A2(
-		$mdgriffith$elm_ui$Element$el,
-		_List_fromArray(
-			[
-				$mdgriffith$elm_ui$Element$Font$color($author$project$SR$Elements$colors.red),
-				$mdgriffith$elm_ui$Element$Font$alignLeft,
-				$mdgriffith$elm_ui$Element$moveLeft(0.0)
-			]),
-		$mdgriffith$elm_ui$Element$text('5-8 continuous chars'));
-};
-var $author$project$Pages$Hardware$CancelRegistration = {$: 'CancelRegistration'};
-var $author$project$Pages$Hardware$RegisUser = function (a) {
-	return {$: 'RegisUser', a: a};
-};
-var $author$project$Utils$Validation$Validate$is20CharMax = function (str) {
-	return ($elm$core$String$length(str) <= 20) ? true : false;
-};
-var $author$project$Pages$Hardware$isValidatedForAllUserDetailsInput = function (userInfo) {
-	return ($author$project$Utils$Validation$Validate$isEmailValid(
-		A2($elm$core$Maybe$withDefault, '', userInfo.email)) && ($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.nickname) && ($author$project$Utils$Validation$Validate$is20CharMax('') && ($author$project$Utils$Validation$Validate$isEmailValid(
-		A2($elm$core$Maybe$withDefault, '', userInfo.email)) && $author$project$Utils$Validation$Validate$isMobileValid(
-		A2($elm$core$Maybe$withDefault, '', userInfo.mobile)))))) ? true : false;
-};
-var $author$project$Pages$Hardware$userDetailsConfirmPanel = function (userInfo) {
-	return (($author$project$Utils$Validation$Validate$isEmailValid(
-		A2($elm$core$Maybe$withDefault, '', userInfo.email)) && ($elm$core$String$length(
-		A2($elm$core$Maybe$withDefault, '', userInfo.email)) > 0)) && (($author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.password) && ($elm$core$String$length(userInfo.password) > 0)) && ((userInfo.nickname === '') || $author$project$Utils$Validation$Validate$isValid4to8Chars(userInfo.nickname)))) ? A2(
-		$mdgriffith$elm_ui$Element$column,
-		$Orasund$elm_ui_framework$Framework$Grid$section,
-		_List_fromArray(
-			[
-				A2(
-				$mdgriffith$elm_ui$Element$el,
-				$Orasund$elm_ui_framework$Framework$Heading$h6,
-				$mdgriffith$elm_ui$Element$text('Click to continue ...')),
-				A2(
-				$mdgriffith$elm_ui$Element$column,
-				_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple),
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$wrappedRow,
-						$Orasund$elm_ui_framework$Framework$Grid$simple,
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$Input$button,
-								_Utils_ap($Orasund$elm_ui_framework$Framework$Button$simple, $Orasund$elm_ui_framework$Framework$Color$info),
-								{
-									label: $mdgriffith$elm_ui$Element$text('Cancel'),
-									onPress: $elm$core$Maybe$Just($author$project$Pages$Hardware$CancelRegistration)
-								}),
-								A2(
-								$mdgriffith$elm_ui$Element$Input$button,
-								_Utils_ap(
-									$Orasund$elm_ui_framework$Framework$Button$simple,
-									$author$project$Pages$Hardware$enableButton(
-										$author$project$Pages$Hardware$isValidatedForAllUserDetailsInput(userInfo))),
-								{
-									label: $mdgriffith$elm_ui$Element$text('Register'),
-									onPress: $elm$core$Maybe$Just(
-										$author$project$Pages$Hardware$RegisUser(userInfo))
-								})
-							]))
-					]))
-			])) : A2(
-		$mdgriffith$elm_ui$Element$column,
-		$Orasund$elm_ui_framework$Framework$Grid$section,
-		_List_fromArray(
-			[
-				$author$project$SR$Elements$missingDataPara,
-				A2(
-				$mdgriffith$elm_ui$Element$el,
-				$Orasund$elm_ui_framework$Framework$Heading$h6,
-				$mdgriffith$elm_ui$Element$text('Click to continue ...')),
-				A2(
-				$mdgriffith$elm_ui$Element$column,
-				_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple),
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$wrappedRow,
-						$Orasund$elm_ui_framework$Framework$Grid$simple,
-						_List_fromArray(
-							[
-								A2(
-								$mdgriffith$elm_ui$Element$Input$button,
-								_Utils_ap($Orasund$elm_ui_framework$Framework$Button$simple, $Orasund$elm_ui_framework$Framework$Color$info),
-								{
-									label: $mdgriffith$elm_ui$Element$text('Cancel'),
-									onPress: $elm$core$Maybe$Just($author$project$Pages$Hardware$CancelRegistration)
-								})
-							]))
-					]))
-			]));
-};
-var $elm$core$String$dropRight = F2(
-	function (n, string) {
-		return (n < 1) ? string : A3($elm$core$String$slice, 0, -n, string);
-	});
-var $author$project$Utils$Validation$Validate$validatedMaxTextLength = F2(
-	function (str, maxLength) {
-		return (_Utils_cmp(
-			$elm$core$String$length(str),
-			maxLength) > 0) ? A2($elm$core$String$dropRight, 1, str) : str;
-	});
-var $author$project$Pages$Hardware$registerView = function (userInfo) {
-	return A2(
-		$Orasund$elm_ui_framework$Framework$responsiveLayout,
-		_List_Nil,
-		A2(
-			$mdgriffith$elm_ui$Element$column,
-			$Orasund$elm_ui_framework$Framework$Grid$section,
-			_List_fromArray(
-				[
-					A2(
-					$mdgriffith$elm_ui$Element$el,
-					$Orasund$elm_ui_framework$Framework$Heading$h5,
-					$mdgriffith$elm_ui$Element$text('Please Enter Your User \nDetails And Click \'Register\' below:')),
-					A2(
-					$mdgriffith$elm_ui$Element$wrappedRow,
-					_Utils_ap($Orasund$elm_ui_framework$Framework$Card$fill, $Orasund$elm_ui_framework$Framework$Grid$simple),
-					_List_fromArray(
-						[
-							A2(
-							$mdgriffith$elm_ui$Element$column,
-							$Orasund$elm_ui_framework$Framework$Grid$simple,
-							_List_fromArray(
-								[
-									A2(
-									$mdgriffith$elm_ui$Element$Input$email,
-									_Utils_ap(
-										$Orasund$elm_ui_framework$Framework$Input$simple,
-										_List_fromArray(
-											[
-												$mdgriffith$elm_ui$Element$htmlAttribute(
-												$elm$html$Html$Attributes$id('userEmail')),
-												$mdgriffith$elm_ui$Element$Input$focusedOnLoad
-											])),
-									{
-										label: A2(
-											$mdgriffith$elm_ui$Element$Input$labelLeft,
-											_Utils_ap(
-												$Orasund$elm_ui_framework$Framework$Input$label,
-												_List_fromArray(
-													[
-														$mdgriffith$elm_ui$Element$moveLeft(11.0)
-													])),
-											$mdgriffith$elm_ui$Element$text('Email*')),
-										onChange: $author$project$Pages$Hardware$UpdateEmail,
-										placeholder: $elm$core$Maybe$Just(
-											A2(
-												$mdgriffith$elm_ui$Element$Input$placeholder,
-												_List_Nil,
-												$mdgriffith$elm_ui$Element$text('Email'))),
-										text: A2($elm$core$Maybe$withDefault, '', userInfo.email)
-									}),
-									$author$project$Pages$Hardware$emailValidationErr(
-									A2($elm$core$Maybe$withDefault, '', userInfo.email)),
-									A2(
-									$mdgriffith$elm_ui$Element$Input$newPassword,
-									_Utils_ap(
-										$Orasund$elm_ui_framework$Framework$Input$simple,
-										_List_fromArray(
-											[
-												$mdgriffith$elm_ui$Element$htmlAttribute(
-												$elm$html$Html$Attributes$id('Password'))
-											])),
-									{
-										label: A2(
-											$mdgriffith$elm_ui$Element$Input$labelLeft,
-											_Utils_ap(
-												$Orasund$elm_ui_framework$Framework$Input$label,
-												_List_fromArray(
-													[
-														$mdgriffith$elm_ui$Element$moveLeft(11.0)
-													])),
-											$mdgriffith$elm_ui$Element$text('Password*')),
-										onChange: $author$project$Pages$Hardware$UpdatePassword,
-										placeholder: $elm$core$Maybe$Just(
-											A2(
-												$mdgriffith$elm_ui$Element$Input$placeholder,
-												_List_Nil,
-												$mdgriffith$elm_ui$Element$text('Password'))),
-										show: false,
-										text: userInfo.password
-									}),
-									$author$project$SR$Elements$passwordValidView(userInfo),
-									A2(
-									$mdgriffith$elm_ui$Element$Input$text,
-									_Utils_ap(
-										$Orasund$elm_ui_framework$Framework$Input$simple,
-										_List_fromArray(
-											[
-												$mdgriffith$elm_ui$Element$htmlAttribute(
-												$elm$html$Html$Attributes$id('nickName'))
-											])),
-									{
-										label: A2(
-											$mdgriffith$elm_ui$Element$Input$labelLeft,
-											_Utils_ap(
-												$Orasund$elm_ui_framework$Framework$Input$label,
-												_List_fromArray(
-													[
-														$mdgriffith$elm_ui$Element$moveLeft(11.0)
-													])),
-											$mdgriffith$elm_ui$Element$text('Nickname')),
-										onChange: $author$project$Pages$Hardware$UpdateNickName,
-										placeholder: $elm$core$Maybe$Just(
-											A2(
-												$mdgriffith$elm_ui$Element$Input$placeholder,
-												_List_Nil,
-												$mdgriffith$elm_ui$Element$text('Nickname'))),
-										text: userInfo.nickname
-									}),
-									$author$project$SR$Elements$nameValidView(userInfo),
-									A2(
-									$mdgriffith$elm_ui$Element$Input$text,
-									_Utils_ap(
-										$Orasund$elm_ui_framework$Framework$Input$simple,
-										_List_fromArray(
-											[
-												$mdgriffith$elm_ui$Element$htmlAttribute(
-												$elm$html$Html$Attributes$id('Level'))
-											])),
-									{
-										label: A2(
-											$mdgriffith$elm_ui$Element$Input$labelLeft,
-											_Utils_ap(
-												$Orasund$elm_ui_framework$Framework$Input$label,
-												_List_fromArray(
-													[
-														$mdgriffith$elm_ui$Element$moveLeft(11.0)
-													])),
-											$mdgriffith$elm_ui$Element$text('Level')),
-										onChange: $author$project$Pages$Hardware$UpdateLevel,
-										placeholder: $elm$core$Maybe$Just(
-											A2(
-												$mdgriffith$elm_ui$Element$Input$placeholder,
-												_List_Nil,
-												$mdgriffith$elm_ui$Element$text('Level'))),
-										text: userInfo.description.level
-									}),
-									A2(
-									$mdgriffith$elm_ui$Element$Input$text,
-									_Utils_ap(
-										$Orasund$elm_ui_framework$Framework$Input$simple,
-										_List_fromArray(
-											[
-												$mdgriffith$elm_ui$Element$htmlAttribute(
-												$elm$html$Html$Attributes$id('Comment'))
-											])),
-									{
-										label: A2(
-											$mdgriffith$elm_ui$Element$Input$labelLeft,
-											_Utils_ap(
-												$Orasund$elm_ui_framework$Framework$Input$label,
-												_List_fromArray(
-													[
-														$mdgriffith$elm_ui$Element$moveLeft(11.0)
-													])),
-											$mdgriffith$elm_ui$Element$text('Comment')),
-										onChange: $author$project$Pages$Hardware$UpdateComment,
-										placeholder: $elm$core$Maybe$Just(
-											A2(
-												$mdgriffith$elm_ui$Element$Input$placeholder,
-												_List_Nil,
-												$mdgriffith$elm_ui$Element$text('Comment'))),
-										text: userInfo.description.comment
-									}),
-									A2(
-									$mdgriffith$elm_ui$Element$Input$text,
-									_Utils_ap(
-										$Orasund$elm_ui_framework$Framework$Input$simple,
-										_List_fromArray(
-											[
-												$mdgriffith$elm_ui$Element$htmlAttribute(
-												$elm$html$Html$Attributes$id('userMobile'))
-											])),
-									{
-										label: A2(
-											$mdgriffith$elm_ui$Element$Input$labelLeft,
-											_Utils_ap(
-												$Orasund$elm_ui_framework$Framework$Input$label,
-												_List_fromArray(
-													[
-														$mdgriffith$elm_ui$Element$moveLeft(11.0)
-													])),
-											$mdgriffith$elm_ui$Element$text('Mobile \n(inc. Int code\neg.+65)')),
-										onChange: $author$project$Pages$Hardware$UpdateMobile,
-										placeholder: $elm$core$Maybe$Just(
-											A2(
-												$mdgriffith$elm_ui$Element$Input$placeholder,
-												_List_Nil,
-												$mdgriffith$elm_ui$Element$text('Mobile'))),
-										text: A2(
-											$author$project$Utils$Validation$Validate$validatedMaxTextLength,
-											A2($elm$core$Maybe$withDefault, '', userInfo.mobile),
-											25)
-									}),
-									$author$project$Pages$Hardware$mobileValidationErr(
-									A2($elm$core$Maybe$withDefault, '', userInfo.mobile))
-								]))
-						])),
-					$mdgriffith$elm_ui$Element$text('* required'),
-					$author$project$SR$Elements$justParasimpleUserInfoText,
-					$author$project$Pages$Hardware$userDetailsConfirmPanel(userInfo),
-					$mdgriffith$elm_ui$Element$text('\n')
-				])));
-};
-var $author$project$Pages$Hardware$SpectatorJoin = {$: 'SpectatorJoin'};
-var $author$project$Pages$Hardware$spectatorSelectedView = F2(
-	function (u, r) {
-		return A2(
-			$Orasund$elm_ui_framework$Framework$responsiveLayout,
-			_List_Nil,
-			A2(
-				$mdgriffith$elm_ui$Element$column,
-				$Orasund$elm_ui_framework$Framework$container,
-				_List_fromArray(
-					[
-						A2(
-						$mdgriffith$elm_ui$Element$wrappedRow,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$SR$Elements$spectatorSelectedRankingHeaderEl, u, r)
-							])),
-						A2(
-						$mdgriffith$elm_ui$Element$column,
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-							_Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, $Orasund$elm_ui_framework$Framework$Grid$simple)),
-						_List_fromArray(
-							[
-								A2($author$project$Pages$Hardware$infoBtn, 'Join This Ladder?', $author$project$Pages$Hardware$SpectatorJoin),
-								A2($author$project$Pages$Hardware$infoBtn, 'Cancel', $author$project$Pages$Hardware$CancelFetchedSpectator),
-								A2($author$project$Pages$Hardware$playerbuttons, r, u)
-							]))
-					])));
-	});
-var $author$project$Pages$Hardware$content = function (model) {
+var $author$project$Pages$Hardware$view = function (model) {
 	return A2(
 		$elm$html$Html$section,
 		_List_fromArray(
@@ -26223,187 +23396,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 										]),
 									_List_fromArray(
 										[
-											function () {
-											var _v1 = model.queryType;
-											switch (_v1.$) {
-												case 'RefreshTknQP':
-													return A2(
-														$elm$html$Html$ul,
-														_List_Nil,
-														_List_fromArray(
-															[
-																A2(
-																$Orasund$elm_ui_framework$Framework$responsiveLayout,
-																_List_Nil,
-																A2(
-																	$mdgriffith$elm_ui$Element$column,
-																	$Orasund$elm_ui_framework$Framework$container,
-																	_List_fromArray(
-																		[
-																			A2(
-																			$mdgriffith$elm_ui$Element$el,
-																			$Orasund$elm_ui_framework$Framework$Heading$h5,
-																			$mdgriffith$elm_ui$Element$text('RefreshTknQP - Error!'))
-																		])))
-															]));
-												case 'Login':
-													return $author$project$Pages$Hardware$hardwareWalletView(model);
-												case 'Spectator':
-													return $author$project$Pages$Hardware$hardwareWalletView(model);
-												case 'RegisterUser':
-													var newUser = _v1.a;
-													return $author$project$Pages$Hardware$registerView(newUser);
-												case 'LoggedInUser':
-													return $author$project$Pages$Hardware$hardwareWalletView(model);
-												case 'CreatingNewLadder':
-													var userInfo = _v1.a;
-													return A2(
-														$author$project$Pages$Hardware$createLadderView,
-														userInfo,
-														$author$project$Data$Hardware$gotRanking(model.selectedranking));
-												case 'OwnedSelectedView':
-													var userInfo = function () {
-														var _v2 = model.user;
-														if (_v2.$ === 'Registered') {
-															var usrInfo = _v2.a;
-															return usrInfo;
-														} else {
-															return $author$project$Data$User$emptyUserInfo;
-														}
-													}();
-													return A2(
-														$author$project$Pages$Hardware$ownedSelectedView,
-														userInfo,
-														$author$project$Data$Hardware$gotRanking(model.selectedranking));
-												case 'MemberSelectedView':
-													var userInfo = function () {
-														var _v3 = model.user;
-														if (_v3.$ === 'Registered') {
-															var usrInfo = _v3.a;
-															return usrInfo;
-														} else {
-															return $author$project$Data$User$emptyUserInfo;
-														}
-													}();
-													return A2(
-														$author$project$Pages$Hardware$memberSelectedView,
-														userInfo,
-														$author$project$Data$Hardware$gotRanking(model.selectedranking));
-												case 'SpectatorSelectedView':
-													var userInfo = function () {
-														var _v5 = model.user;
-														if (_v5.$ === 'Registered') {
-															var usrInfo = _v5.a;
-															return usrInfo;
-														} else {
-															return $author$project$Data$User$emptyUserInfo;
-														}
-													}();
-													var ranking = function () {
-														var _v4 = model.selectedranking;
-														if (_v4.$ === 'Spectator') {
-															var rankng = _v4.a;
-															return rankng;
-														} else {
-															return $author$project$Data$Hardware$emptyRanking;
-														}
-													}();
-													return A2($author$project$Pages$Hardware$spectatorSelectedView, userInfo, ranking);
-												case 'ConfirmDeleteOwnedRanking':
-													var userInfo = function () {
-														var _v6 = model.user;
-														if (_v6.$ === 'Registered') {
-															var usrInfo = _v6.a;
-															return usrInfo;
-														} else {
-															return $author$project$Data$User$emptyUserInfo;
-														}
-													}();
-													return A2(
-														$author$project$Pages$Hardware$dialogueDeleteOwnedView,
-														userInfo,
-														$author$project$Data$Hardware$gotRanking(model.selectedranking));
-												case 'CreateChallengeView':
-													var rank = _v1.a;
-													var ranking = _v1.b;
-													var userInfo = function () {
-														var _v7 = model.user;
-														if (_v7.$ === 'Registered') {
-															var usrInfo = _v7.a;
-															return usrInfo;
-														} else {
-															return $author$project$Data$User$emptyUserInfo;
-														}
-													}();
-													return A3($author$project$Pages$Hardware$createChallengeView, userInfo, rank, ranking);
-												case 'ConfirmChallengeView':
-													var rank = _v1.a;
-													var ranking = _v1.b;
-													var userInfo = function () {
-														var _v8 = model.user;
-														if (_v8.$ === 'Registered') {
-															var usrInfo = _v8.a;
-															return usrInfo;
-														} else {
-															return $author$project$Data$User$emptyUserInfo;
-														}
-													}();
-													return A3($author$project$Pages$Hardware$dialogueConfirmChallengeView, userInfo, rank, ranking);
-												case 'ConfirmJoinMemberView':
-													var userInfo = function () {
-														var _v9 = model.user;
-														if (_v9.$ === 'Registered') {
-															var usrInfo = _v9.a;
-															return usrInfo;
-														} else {
-															return $author$project$Data$User$emptyUserInfo;
-														}
-													}();
-													return A2(
-														$author$project$Pages$Hardware$confirmJoinView,
-														userInfo,
-														$author$project$Data$Hardware$gotRanking(model.selectedranking));
-												case 'ConfirmLeaveMemberView':
-													var userInfo = function () {
-														var _v10 = model.user;
-														if (_v10.$ === 'Registered') {
-															var usrInfo = _v10.a;
-															return usrInfo;
-														} else {
-															return $author$project$Data$User$emptyUserInfo;
-														}
-													}();
-													return A2(
-														$author$project$Pages$Hardware$confirmLeaveView,
-														userInfo,
-														$author$project$Data$Hardware$gotRanking(model.selectedranking));
-												case 'ConfirmDeleteUserView':
-													var userInfo = function () {
-														var _v11 = model.user;
-														if (_v11.$ === 'Registered') {
-															var usrInfo = _v11.a;
-															return usrInfo;
-														} else {
-															return $author$project$Data$User$emptyUserInfo;
-														}
-													}();
-													return $author$project$Pages$Hardware$confirmDeleteUserView(userInfo);
-												case 'PrepareResult':
-													return A3(
-														$author$project$Pages$Hardware$dialoguePrepareResultView,
-														$author$project$Data$User$gotUserInfo(model.user),
-														model.selectedSingleRank,
-														$author$project$Data$Hardware$gotRanking(model.selectedranking));
-												default:
-													return A2(
-														$elm$html$Html$ul,
-														_List_Nil,
-														_List_fromArray(
-															[
-																$elm$html$Html$text('error')
-															]));
-											}
-										}()
+											$author$project$Pages$Hardware$hardwareWalletView(model)
 										]));
 						}
 					}(),
@@ -26417,11 +23410,7 @@ var $author$project$Pages$Hardware$content = function (model) {
 					]))
 			]));
 };
-var $author$project$Pages$Hardware$view = function (model) {
-	return $author$project$Pages$Hardware$content(model);
-};
 var $elm$html$Html$h3 = _VirtualDom_node('h3');
-var $elm$html$Html$h6 = _VirtualDom_node('h6');
 var $author$project$Pages$Market$content = A2(
 	$elm$html$Html$section,
 	_List_fromArray(
@@ -26740,6 +23729,69 @@ var $author$project$Pages$Support$content = A2(
 var $author$project$Pages$Support$view = function (_v0) {
 	return $author$project$Pages$Support$content;
 };
+var $author$project$Main$HidePopUp = {$: 'HidePopUp'};
+var $author$project$Main$viewPopUp = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				model.isPopUpVisible ? A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('modal')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('modal-content')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$h2,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Haveno Web App')
+									])),
+								A2(
+								$elm$html$Html$p,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Please connect your hardware device to continue')
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick($author$project$Main$HidePopUp)
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Close')
+									]))
+							]))
+					])) : (model.isHardwareLNSConnected ? A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Nano S Connected')
+					])) : (model.isHardwareLNXConnected ? A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Nano X Connected')
+					])) : A2($elm$html$Html$div, _List_Nil, _List_Nil)))
+			]));
+};
 var $author$project$Main$view = function (model) {
 	var contentByPage = function () {
 		var _v0 = model.page;
@@ -26792,14 +23844,12 @@ var $author$project$Main$view = function (model) {
 					$elm$html$Html$map,
 					$author$project$Main$GotMarketMsg,
 					$author$project$Pages$Market$view(market));
-			case 'HardwarePage':
+			default:
 				var hardware = _v0.a;
 				return A2(
 					$elm$html$Html$map,
 					$author$project$Main$GotHardwareMsg,
 					$author$project$Pages$Hardware$view(hardware));
-			default:
-				return $elm$html$Html$text('Not Found');
 		}
 	}();
 	return {
@@ -26807,6 +23857,7 @@ var $author$project$Main$view = function (model) {
 			[
 				$author$project$Main$pageHeader(model.page),
 				$author$project$Main$showVideoOrBanner(model.page),
+				$author$project$Main$viewPopUp(model),
 				contentByPage,
 				$author$project$Main$footerContent
 			]),
@@ -26815,4 +23866,4 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$ChangedUrl, onUrlRequest: $author$project$Main$ClickedLink, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$string)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"},"Data.Hardware.BaseAddress":{"args":[],"type":"{ street : String.String, city : String.String }"},"Data.User.Description":{"args":[],"type":"{ level : String.String, comment : String.String }"},"Time.Era":{"args":[],"type":"{ start : Basics.Int, offset : Basics.Int }"},"Proto.Io.Haveno.Protobuffer.GetVersionReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply"},"Pages.Dashboard.HavenoAPKHttpRequest":{"args":[],"type":"{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"},"Pages.Hardware.Identities":{"args":[],"type":"{ id : String.String, provider_type : String.String, provider_id : String.String, provider_data : Pages.Hardware.ProviderData }"},"Data.User.MemberRanking":{"args":[],"type":"{ id : String.String, name : String.String }"},"Pages.Buy.Model":{"args":[],"type":"{ status : Pages.Buy.Status, title : String.String, root : Pages.Buy.Buy }"},"Pages.Dashboard.Model":{"args":[],"type":"{ status : Pages.Dashboard.Status, title : String.String, root : Pages.Dashboard.Dashboard, balance : String.String, flagUrl : Url.Url, havenoAPKHttpRequest : Maybe.Maybe Pages.Dashboard.HavenoAPKHttpRequest, version : Maybe.Maybe Proto.Io.Haveno.Protobuffer.GetVersionReply, errors : List.List String.String }"},"Pages.Funds.Model":{"args":[],"type":"{ status : Pages.Funds.Status, title : String.String, root : Pages.Funds.Funds }"},"Pages.Market.Model":{"args":[],"type":"{ status : Pages.Market.Status, title : String.String, root : Pages.Market.Market }"},"Pages.PingPong.Model":{"args":[],"type":"{ status : Pages.PingPong.Status, title : String.String, root : Pages.PingPong.PingPong }"},"Pages.Portfolio.Model":{"args":[],"type":"{ status : Pages.Portfolio.Status, title : String.String, root : Pages.Portfolio.Portfolio }"},"Pages.Sell.Model":{"args":[],"type":"{ status : Pages.Sell.Status, title : String.String, root : Pages.Sell.Sell }"},"Pages.Support.Model":{"args":[],"type":"{ status : Pages.Support.Status, title : String.String, root : Pages.Support.Support }"},"Data.User.NickName":{"args":[],"type":"String.String"},"Data.User.Password":{"args":[],"type":"String.String"},"Data.Hardware.Player":{"args":[],"type":"{ id : String.String, nickname : String.String }"},"Pages.PingPong.PongResponse":{"args":[],"type":"{ message : String.String }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply":{"args":[],"type":"{ version : String.String }"},"Pages.Hardware.ProviderData":{"args":[],"type":"{ email : String.String }"},"Data.Hardware.Rank":{"args":[],"type":"{ rank : Basics.Int, player : Data.Hardware.Player, challenger : Data.Hardware.Player }"},"Data.Hardware.Ranking":{"args":[],"type":"{ id : String.String, active : Basics.Bool, name : String.String, owner_id : String.String, baseaddress : Data.Hardware.BaseAddress, ladder : List.List Data.Hardware.Rank, player_count : Basics.Int, owner_name : String.String }"},"Data.Hardware.RankingSearchResult":{"args":[],"type":"{ id : String.String, name : String.String }"},"Pages.Hardware.RegisterUserDetails":{"args":[],"type":"{ resource_id : String.String, user_details : Data.User.User, additional_fields : String.String }"},"Pages.Hardware.SuccessfulLoginResult":{"args":[],"type":"{ access_token : String.String, refresh_token : String.String, user_id : String.String, device_id : String.String }"},"Pages.Dashboard.SuccessfullBalanceResult":{"args":[],"type":"{ deployment_model : String.String, location : String.String, hostname : String.String, ws_hostname : String.String }"},"Pages.Hardware.SuccessfullLNSConnectResult":{"args":[],"type":"{ function : String.String, date : String.String, id : String.String, message : String.String, transport_type : String.String }"},"Pages.Hardware.SuccessfullProfileResult":{"args":[],"type":"{ user_id : String.String, domain_id : String.String, identities : List.List Pages.Hardware.Identities, data : Pages.Hardware.ProviderData, typeOfData : String.String }"},"Data.User.Token":{"args":[],"type":"String.String"},"Data.User.UserInfo":{"args":[],"type":"{ userid : String.String, password : Data.User.Password, passwordValidationError : String.String, token : Maybe.Maybe Data.User.Token, nickname : Data.User.NickName, isNameInputFocused : Basics.Bool, nameValidationError : String.String, age : Basics.Int, gender : Data.User.Gender, email : Maybe.Maybe String.String, isEmailInputFocused : Basics.Bool, emailValidationError : String.String, mobile : Maybe.Maybe String.String, isMobileInputFocused : Basics.Bool, mobileValidationError : String.String, datestamp : Basics.Int, active : Basics.Bool, ownedRankings : List.List Data.Hardware.Ranking, memberRankings : List.List Data.Hardware.Ranking, updatetext : String.String, description : Data.User.Description, credits : Basics.Int, addInfo : String.String }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"ClickedLink":["Browser.UrlRequest"],"GotDashboardMsg":["Pages.Dashboard.Msg"],"GotSellMsg":["Pages.Sell.Msg"],"GotPortfolioMsg":["Pages.Portfolio.Msg"],"GotFundsMsg":["Pages.Funds.Msg"],"GotSupportMsg":["Pages.Support.Msg"],"GotPingPongMsg":["Pages.PingPong.Msg"],"GotBuyMsg":["Pages.Buy.Msg"],"GotMarketMsg":["Pages.Market.Msg"],"GotHardwareMsg":["Pages.Hardware.Msg"],"ChangedUrl":["Url.Url"],"Tick":["Time.Posix"],"AdjustTimeZone":["Time.Zone"],"Recv":["Json.Decode.Value"],"RecvText":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Pages.Buy.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Buy.Model"]}},"Pages.Dashboard.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Dashboard.Model"],"BalanceResponse":["Result.Result Http.Error Pages.Dashboard.SuccessfullBalanceResult"],"GotVersion":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"]}},"Pages.Funds.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Funds.Model"]}},"Pages.Hardware.Msg":{"args":[],"tags":{"BookingForm":["Pages.Hardware.RegisterUserDetails"],"UpdateAge":["Basics.Int"],"UpdateGender":["String.String"],"UpdateEmail":["String.String"],"UpdatePassword":["String.String"],"UpdateNickName":["String.String"],"UpdateLevel":["String.String"],"UpdateComment":["String.String"],"UpdateMobile":["String.String"],"UpdatePhone":["String.String"],"CondoNameInput":["String.String"],"CondoAddressInput":["String.String"],"AddInfoInput":["String.String"],"ConfirmBookingForm":[],"NoOp":[],"DismissErrors":[],"Tick":["Time.Posix"],"InputFocused":["String.String"],"InputBlurred":["String.String"],"SelDateTime":["String.String"],"ToggleReturnUser":[],"UserLoginEmailInputChg":["String.String"],"UserLoginPasswordInputChg":["String.String"],"ClickedHardwareDeviceConnect":[],"ClickedXMRWalletConnect":[],"ClickedXMRInitiateTransaction":["String.String"],"ResponseDataFromMain":["Json.Decode.Value"],"LogOut":[],"Create":[],"CreateNewRanking":["Data.User.UserInfo"],"Cancel":[],"CancelFetchedOwned":["Data.User.UserInfo"],"CancelFetchedMember":[],"CancelFetchedSpectator":[],"CancelCreateNewRanking":[],"CancelRegistration":[],"Confirm":[],"FetchOwned":["Data.Hardware.Ranking"],"FetchMember":["Data.Hardware.Ranking"],"ListSpectator":["Data.Hardware.RankingSearchResult"],"ViewMember":["Data.User.MemberRanking"],"RegisUser":["Data.User.UserInfo"],"RankingNameChg":["String.String"],"StreetAddressChg":["String.String"],"CityAddressChg":["String.String"],"ConfirmNewRanking":["Data.Hardware.Ranking","Data.User.User"],"DialogDeleteOwnedRanking":[],"DeleteOwnedRanking":[],"ViewRank":["Data.Hardware.Rank"],"ConfirmChallenge":["Data.Hardware.Ranking","Data.Hardware.Rank"],"ConfirmResult":["Data.Hardware.ResultOfMatch"],"CancelDialoguePrepareResultView":[],"SearchInputChg":["String.String"],"FetchSpectatorRanking":["String.String"],"SpectatorRankingResponse":["Result.Result Http.Error Data.Hardware.Ranking"],"SpectatorJoin":[],"RegisteredUserJoin":[],"ConfirmJoin":["Data.Hardware.Ranking","String.String","Basics.Int"],"ConfirmLeaveMemberRanking":["Data.Hardware.Ranking","String.String"],"DialogueConfirmJoinView":[],"DialogueConfirmLeaveView":[],"DialogueConfirmDeleteAccount":[],"DeleteAccount":[],"LoginResponse":["Result.Result Http.Error Pages.Hardware.SuccessfulLoginResult"],"LNSConnectResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullLNSConnectResult"],"ProfileResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullProfileResult"],"CallResponse":["Result.Result Http.Error Data.User.UserInfo"]}},"Pages.Market.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Market.Model"]}},"Pages.PingPong.Msg":{"args":[],"tags":{"Send":[],"Receive":["Result.Result Http.Error Pages.PingPong.PongResponse"],"GotInitialModel":["Pages.PingPong.Model"]}},"Pages.Portfolio.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Portfolio.Model"]}},"Pages.Sell.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Sell.Model"]}},"Pages.Support.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Support.Model"]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Time.Zone":{"args":[],"tags":{"Zone":["Basics.Int","List.List Time.Era"]}},"Http.Body":{"args":[],"tags":{"Body":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Pages.Buy.Buy":{"args":[],"tags":{"Buy":["{ name : String.String }"]}},"Pages.Dashboard.Dashboard":{"args":[],"tags":{"Dashboard":["{ name : String.String }"]}},"Grpc.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["{ metadata : Http.Metadata, response : Bytes.Bytes, errMessage : String.String, status : Grpc.GrpcStatus }"],"BadBody":["Bytes.Bytes"],"UnknownGrpcStatus":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Pages.Funds.Funds":{"args":[],"tags":{"Funds":["{ name : String.String }"]}},"Data.User.Gender":{"args":[],"tags":{"Male":[],"Female":[]}},"Http.Header":{"args":[],"tags":{"Header":["String.String","String.String"]}},"List.List":{"args":["a"],"tags":{}},"Pages.Market.Market":{"args":[],"tags":{"Market":["{ name : String.String }"]}},"Pages.PingPong.PingPong":{"args":[],"tags":{"PingPong":["{ name : String.String }"]}},"Pages.Portfolio.Portfolio":{"args":[],"tags":{"Portfolio":["{ name : String.String }"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Data.Hardware.ResultOfMatch":{"args":[],"tags":{"Won":[],"Lost":[],"Undecided":[]}},"Pages.Sell.Sell":{"args":[],"tags":{"Sell":["{ name : String.String }"]}},"Pages.Buy.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Dashboard.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Funds.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Market.Status":{"args":[],"tags":{"Loading":[]}},"Pages.PingPong.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Portfolio.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Sell.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Support":{"args":[],"tags":{"Support":["{ name : String.String }"]}},"Data.User.User":{"args":[],"tags":{"Spectator":["Data.User.UserInfo"],"Registered":["Data.User.UserInfo"]}},"Bytes.Bytes":{"args":[],"tags":{"Bytes":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Grpc.GrpcStatus":{"args":[],"tags":{"Ok_":[],"Cancelled":[],"Unknown":[],"InvalidArgument":[],"DeadlineExceeded":[],"NotFound":[],"AlreadyExists":[],"PermissionDenied":[],"ResourceExhausted":[],"FailedPrecondition":[],"Aborted":[],"OutOfRange":[],"Unimplemented":[],"Internal":[],"Unavailable":[],"DataLoss":[],"Unauthenticated":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$string)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"},"Data.Hardware.BaseAddress":{"args":[],"type":"{ street : String.String, city : String.String }"},"Data.User.Description":{"args":[],"type":"{ level : String.String, comment : String.String }"},"Time.Era":{"args":[],"type":"{ start : Basics.Int, offset : Basics.Int }"},"Proto.Io.Haveno.Protobuffer.GetVersionReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply"},"Pages.Dashboard.HavenoAPKHttpRequest":{"args":[],"type":"{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"},"Pages.Hardware.Identities":{"args":[],"type":"{ id : String.String, provider_type : String.String, provider_id : String.String, provider_data : Pages.Hardware.ProviderData }"},"Data.User.MemberRanking":{"args":[],"type":"{ id : String.String, name : String.String }"},"Pages.Buy.Model":{"args":[],"type":"{ status : Pages.Buy.Status, title : String.String, root : Pages.Buy.Buy }"},"Pages.Dashboard.Model":{"args":[],"type":"{ status : Pages.Dashboard.Status, title : String.String, root : Pages.Dashboard.Dashboard, balance : String.String, flagUrl : Url.Url, havenoAPKHttpRequest : Maybe.Maybe Pages.Dashboard.HavenoAPKHttpRequest, version : Maybe.Maybe Proto.Io.Haveno.Protobuffer.GetVersionReply, errors : List.List String.String }"},"Pages.Funds.Model":{"args":[],"type":"{ status : Pages.Funds.Status, title : String.String, root : Pages.Funds.Funds }"},"Pages.Market.Model":{"args":[],"type":"{ status : Pages.Market.Status, title : String.String, root : Pages.Market.Market }"},"Pages.PingPong.Model":{"args":[],"type":"{ status : Pages.PingPong.Status, title : String.String, root : Pages.PingPong.PingPong }"},"Pages.Portfolio.Model":{"args":[],"type":"{ status : Pages.Portfolio.Status, title : String.String, root : Pages.Portfolio.Portfolio }"},"Pages.Sell.Model":{"args":[],"type":"{ status : Pages.Sell.Status, title : String.String, root : Pages.Sell.Sell }"},"Pages.Support.Model":{"args":[],"type":"{ status : Pages.Support.Status, title : String.String, root : Pages.Support.Support }"},"Data.User.NickName":{"args":[],"type":"String.String"},"Data.User.Password":{"args":[],"type":"String.String"},"Data.Hardware.Player":{"args":[],"type":"{ id : String.String, nickname : String.String }"},"Pages.PingPong.PongResponse":{"args":[],"type":"{ message : String.String }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply":{"args":[],"type":"{ version : String.String }"},"Pages.Hardware.ProviderData":{"args":[],"type":"{ email : String.String }"},"Data.Hardware.Rank":{"args":[],"type":"{ rank : Basics.Int, player : Data.Hardware.Player, challenger : Data.Hardware.Player }"},"Data.Hardware.Ranking":{"args":[],"type":"{ id : String.String, active : Basics.Bool, name : String.String, owner_id : String.String, baseaddress : Data.Hardware.BaseAddress, ladder : List.List Data.Hardware.Rank, player_count : Basics.Int, owner_name : String.String }"},"Data.Hardware.RankingSearchResult":{"args":[],"type":"{ id : String.String, name : String.String }"},"Pages.Hardware.RegisterUserDetails":{"args":[],"type":"{ resource_id : String.String, user_details : Data.User.User, additional_fields : String.String }"},"Pages.Hardware.SuccessfulLoginResult":{"args":[],"type":"{ access_token : String.String, refresh_token : String.String, user_id : String.String, device_id : String.String }"},"Pages.Dashboard.SuccessfullBalanceResult":{"args":[],"type":"{ deployment_model : String.String, location : String.String, hostname : String.String, ws_hostname : String.String }"},"Pages.Hardware.SuccessfullLNSConnectResult":{"args":[],"type":"{ function : String.String, date : String.String, id : String.String, message : String.String, transport_type : String.String }"},"Pages.Hardware.SuccessfullProfileResult":{"args":[],"type":"{ user_id : String.String, domain_id : String.String, identities : List.List Pages.Hardware.Identities, data : Pages.Hardware.ProviderData, typeOfData : String.String }"},"Data.User.Token":{"args":[],"type":"String.String"},"Data.User.UserInfo":{"args":[],"type":"{ userid : String.String, password : Data.User.Password, passwordValidationError : String.String, token : Maybe.Maybe Data.User.Token, nickname : Data.User.NickName, isNameInputFocused : Basics.Bool, nameValidationError : String.String, age : Basics.Int, gender : Data.User.Gender, email : Maybe.Maybe String.String, isEmailInputFocused : Basics.Bool, emailValidationError : String.String, mobile : Maybe.Maybe String.String, isMobileInputFocused : Basics.Bool, mobileValidationError : String.String, datestamp : Basics.Int, active : Basics.Bool, ownedRankings : List.List Data.Hardware.Ranking, memberRankings : List.List Data.Hardware.Ranking, updatetext : String.String, description : Data.User.Description, credits : Basics.Int, addInfo : String.String }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"ClickedLink":["Browser.UrlRequest"],"GotDashboardMsg":["Pages.Dashboard.Msg"],"GotSellMsg":["Pages.Sell.Msg"],"GotPortfolioMsg":["Pages.Portfolio.Msg"],"GotFundsMsg":["Pages.Funds.Msg"],"GotSupportMsg":["Pages.Support.Msg"],"GotPingPongMsg":["Pages.PingPong.Msg"],"GotBuyMsg":["Pages.Buy.Msg"],"GotMarketMsg":["Pages.Market.Msg"],"GotHardwareMsg":["Pages.Hardware.Msg"],"ChangedUrl":["Url.Url"],"Tick":["Time.Posix"],"AdjustTimeZone":["Time.Zone"],"Recv":["Json.Decode.Value"],"RecvText":["String.String"],"NoOp":[],"HardwareDeviceConnect":[],"ShowPopUp":[],"HidePopUp":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Pages.Buy.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Buy.Model"]}},"Pages.Dashboard.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Dashboard.Model"],"BalanceResponse":["Result.Result Http.Error Pages.Dashboard.SuccessfullBalanceResult"],"GotVersion":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"]}},"Pages.Funds.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Funds.Model"]}},"Pages.Hardware.Msg":{"args":[],"tags":{"BookingForm":["Pages.Hardware.RegisterUserDetails"],"UpdateAge":["Basics.Int"],"UpdateGender":["String.String"],"UpdateEmail":["String.String"],"UpdatePassword":["String.String"],"UpdateNickName":["String.String"],"UpdateLevel":["String.String"],"UpdateComment":["String.String"],"UpdateMobile":["String.String"],"UpdatePhone":["String.String"],"CondoNameInput":["String.String"],"CondoAddressInput":["String.String"],"AddInfoInput":["String.String"],"ConfirmBookingForm":[],"NoOp":[],"DismissErrors":[],"Tick":["Time.Posix"],"InputFocused":["String.String"],"InputBlurred":["String.String"],"SelDateTime":["String.String"],"ToggleReturnUser":[],"UserLoginEmailInputChg":["String.String"],"UserLoginPasswordInputChg":["String.String"],"ClickedHardwareDeviceConnect":[],"ClickedXMRWalletConnect":[],"ClickedXMRInitiateTransaction":["String.String"],"ResponseDataFromMain":["Json.Decode.Value"],"LogOut":[],"Create":[],"CreateNewRanking":["Data.User.UserInfo"],"Cancel":[],"CancelFetchedOwned":["Data.User.UserInfo"],"CancelFetchedMember":[],"CancelFetchedSpectator":[],"CancelCreateNewRanking":[],"CancelRegistration":[],"Confirm":[],"FetchOwned":["Data.Hardware.Ranking"],"FetchMember":["Data.Hardware.Ranking"],"ListSpectator":["Data.Hardware.RankingSearchResult"],"ViewMember":["Data.User.MemberRanking"],"RegisUser":["Data.User.UserInfo"],"RankingNameChg":["String.String"],"StreetAddressChg":["String.String"],"CityAddressChg":["String.String"],"ConfirmNewRanking":["Data.Hardware.Ranking","Data.User.User"],"DialogDeleteOwnedRanking":[],"DeleteOwnedRanking":[],"ViewRank":["Data.Hardware.Rank"],"ConfirmChallenge":["Data.Hardware.Ranking","Data.Hardware.Rank"],"ConfirmResult":["Data.Hardware.ResultOfMatch"],"CancelDialoguePrepareResultView":[],"SearchInputChg":["String.String"],"FetchSpectatorRanking":["String.String"],"SpectatorRankingResponse":["Result.Result Http.Error Data.Hardware.Ranking"],"SpectatorJoin":[],"RegisteredUserJoin":[],"ConfirmJoin":["Data.Hardware.Ranking","String.String","Basics.Int"],"ConfirmLeaveMemberRanking":["Data.Hardware.Ranking","String.String"],"DialogueConfirmJoinView":[],"DialogueConfirmLeaveView":[],"DialogueConfirmDeleteAccount":[],"DeleteAccount":[],"LoginResponse":["Result.Result Http.Error Pages.Hardware.SuccessfulLoginResult"],"LNSConnectResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullLNSConnectResult"],"ProfileResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullProfileResult"],"CallResponse":["Result.Result Http.Error Data.User.UserInfo"]}},"Pages.Market.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Market.Model"]}},"Pages.PingPong.Msg":{"args":[],"tags":{"Send":[],"Receive":["Result.Result Http.Error Pages.PingPong.PongResponse"],"GotInitialModel":["Pages.PingPong.Model"]}},"Pages.Portfolio.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Portfolio.Model"]}},"Pages.Sell.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Sell.Model"]}},"Pages.Support.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Support.Model"]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Time.Zone":{"args":[],"tags":{"Zone":["Basics.Int","List.List Time.Era"]}},"Http.Body":{"args":[],"tags":{"Body":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Pages.Buy.Buy":{"args":[],"tags":{"Buy":["{ name : String.String }"]}},"Pages.Dashboard.Dashboard":{"args":[],"tags":{"Dashboard":["{ name : String.String }"]}},"Grpc.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["{ metadata : Http.Metadata, response : Bytes.Bytes, errMessage : String.String, status : Grpc.GrpcStatus }"],"BadBody":["Bytes.Bytes"],"UnknownGrpcStatus":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Pages.Funds.Funds":{"args":[],"tags":{"Funds":["{ name : String.String }"]}},"Data.User.Gender":{"args":[],"tags":{"Male":[],"Female":[]}},"Http.Header":{"args":[],"tags":{"Header":["String.String","String.String"]}},"List.List":{"args":["a"],"tags":{}},"Pages.Market.Market":{"args":[],"tags":{"Market":["{ name : String.String }"]}},"Pages.PingPong.PingPong":{"args":[],"tags":{"PingPong":["{ name : String.String }"]}},"Pages.Portfolio.Portfolio":{"args":[],"tags":{"Portfolio":["{ name : String.String }"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Data.Hardware.ResultOfMatch":{"args":[],"tags":{"Won":[],"Lost":[],"Undecided":[]}},"Pages.Sell.Sell":{"args":[],"tags":{"Sell":["{ name : String.String }"]}},"Pages.Buy.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Dashboard.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Funds.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Market.Status":{"args":[],"tags":{"Loading":[]}},"Pages.PingPong.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Portfolio.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Sell.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Support":{"args":[],"tags":{"Support":["{ name : String.String }"]}},"Data.User.User":{"args":[],"tags":{"Spectator":["Data.User.UserInfo"],"Registered":["Data.User.UserInfo"]}},"Bytes.Bytes":{"args":[],"tags":{"Bytes":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Grpc.GrpcStatus":{"args":[],"tags":{"Ok_":[],"Cancelled":[],"Unknown":[],"InvalidArgument":[],"DeadlineExceeded":[],"NotFound":[],"AlreadyExists":[],"PermissionDenied":[],"ResourceExhausted":[],"FailedPrecondition":[],"Aborted":[],"OutOfRange":[],"Unimplemented":[],"Internal":[],"Unavailable":[],"DataLoss":[],"Unauthenticated":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));
