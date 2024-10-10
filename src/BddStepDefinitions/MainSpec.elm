@@ -86,7 +86,7 @@ runSpecTests =
                           Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
                         ]
                     |> Spec.observeThat
-                        [ it "the popup should be visible"
+                        [ it "should display a message informing the user not connected"
                             (Observer.observeModel .isPopUpVisible
                                 |> Spec.expect
                                     Claim.isTrue
@@ -130,7 +130,17 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Haveno Web - Connect Hardware"
+                                        Claim.isStringContaining 1 "Welcome - Unconnected User"
+                                )
+                        )
+                        , it "should display the 'Connected' indicator as red"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ tag "h3" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Disconnected"
                                 )
                         )
                     ]

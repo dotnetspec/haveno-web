@@ -11,6 +11,14 @@ Gherkin/BDD scenarios describing the behavior of a mobile Tor-based web app that
 
 **Given** the web app is opened
 **And** the LNS hww is NOT connected
+**Then** it should display a message informing the user not connected
+**And** it displays a message indicating the LNS hardware device is NOT connected
+
+
+#### **Scenario 2: hww NOT connected, user clicks the 'Connect Hardware' button, navs to Hardware page**
+
+**Given** the web app is opened
+**And** the LNS hww is NOT connected
 **Then** it should display a message informing the user not connected (splash page)
 **And** the web app should display a constant indicator as red for not connected
 **And** the user should have option to continue without trading

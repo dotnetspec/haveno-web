@@ -383,3 +383,21 @@ i a:hover {
   text-align: center;
 }
 
+/* Indicator styles */
+.indicator {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+}
+
+.indicator.green {
+  background-color: green;
+}
+
+.indicator.red {
+  background-color: red;
+}
+

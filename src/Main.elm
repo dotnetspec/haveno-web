@@ -605,6 +605,7 @@ view model =
         , showVideoOrBanner model.page
         , viewPopUp model
         , contentByPage
+        , isConnectedIndicator model.isHardwareLNSConnected
         , footerContent
         ]
     }
@@ -967,7 +968,7 @@ viewPopUp model =
                 [ div [ class "modal-content" ]
                     [ h2 [] [ text "Haveno Web App" ]
                     , p [] [ text "Please connect your hardware device to continue" ]
-                    , button [ onClick HidePopUp ] [ text "Close" ]
+                    , button [ onClick HidePopUp ] [ text "Connect Hardware" ]
                     ]
                 ]
 
@@ -1303,7 +1304,18 @@ logOutUser =
 
 
 
--- NAV: Video
+-- NAV: Main Persistent
+isConnectedIndicator : Bool -> Html msg
+isConnectedIndicator isConnected =
+    h3 []
+        [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
+            [ br [] []
+            , span []
+                [ 
+                span [ Attr.class (if isConnected then "indicator green" else "indicator red") ] [ text (if isConnected then "Connected" else "Disconnected") ]
+                ]
+            ]
+        ]
 
 
 footerContent : Html msg

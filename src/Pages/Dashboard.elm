@@ -197,6 +197,7 @@ view model =
                     [ text "Your version is:"
                     ]
                 ]
+
             -- HACK: This doesn't account for the LNX currently
             , div []
                 [ div [ class "text-center" ]

@@ -11913,6 +11913,24 @@ type alias Process =
             ]))
         ]))
     ]));
+    var $elm$html$Html$h3 = _VirtualDom_node("h3");
+    var $author$project$Main$isConnectedIndicator = function(isConnected) {
+        return A2($elm$html$Html$h3, _List_Nil, _List_fromArray([
+            A2($elm$html$Html$div, _List_fromArray([
+                $elm$html$Html$Attributes$class("indicator"),
+                A2($elm$html$Html$Attributes$style, "text-align", "center")
+            ]), _List_fromArray([
+                A2($elm$html$Html$br, _List_Nil, _List_Nil),
+                A2($elm$html$Html$span, _List_Nil, _List_fromArray([
+                    A2($elm$html$Html$span, _List_fromArray([
+                        $elm$html$Html$Attributes$class(isConnected ? "indicator green" : "indicator red")
+                    ]), _List_fromArray([
+                        $elm$html$Html$text(isConnected ? "Connected" : "Disconnected")
+                    ]))
+                ]))
+            ]))
+        ]));
+    };
     var $elm$html$Html$nav = _VirtualDom_node("nav");
     var $elm$html$Html$Attributes$classList = function(classes) {
         return $elm$html$Html$Attributes$class(A2($elm$core$String$join, " ", A2($elm$core$List$map, $elm$core$Tuple$first, A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
@@ -16540,7 +16558,7 @@ type alias Process =
     ]));
     var $author$project$Pages$Hardware$hardwareWalletView = function(model) {
         return A2($Orasund$elm_ui_framework$Framework$responsiveLayout, _List_Nil, A2($mdgriffith$elm_ui$Element$column, $Orasund$elm_ui_framework$Framework$container, _List_fromArray([
-            A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h5, $mdgriffith$elm_ui$Element$text("Haveno Web - Connect Hardware")),
+            A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h5, $mdgriffith$elm_ui$Element$text("Welcome - Unconnected User")),
             $mdgriffith$elm_ui$Element$text("\n"),
             A2($author$project$Pages$Hardware$infoBtn, "Connect Hardware Device", $author$project$Pages$Hardware$ClickedHardwareDeviceConnect),
             $mdgriffith$elm_ui$Element$text("\n"),
@@ -16597,7 +16615,6 @@ type alias Process =
             ]))
         ]));
     };
-    var $elm$html$Html$h3 = _VirtualDom_node("h3");
     var $author$project$Pages$Market$content = A2($elm$html$Html$section, _List_fromArray([
         $elm$html$Html$Attributes$id("page"),
         $elm$html$Html$Attributes$class("section-background")
@@ -16783,7 +16800,7 @@ type alias Process =
                     A2($elm$html$Html$button, _List_fromArray([
                         $elm$html$Html$Events$onClick($author$project$Main$HidePopUp)
                     ]), _List_fromArray([
-                        $elm$html$Html$text("Close")
+                        $elm$html$Html$text("Connect Hardware")
                     ]))
                 ]))
             ])) : model.isHardwareLNSConnected ? A2($elm$html$Html$div, _List_Nil, _List_fromArray([
@@ -16832,6 +16849,7 @@ type alias Process =
                 $author$project$Main$showVideoOrBanner(model.page),
                 $author$project$Main$viewPopUp(model),
                 contentByPage,
+                $author$project$Main$isConnectedIndicator(model.isHardwareLNSConnected),
                 $author$project$Main$footerContent
             ]),
             title: "Haveno-Web"

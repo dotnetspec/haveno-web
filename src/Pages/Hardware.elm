@@ -1610,7 +1610,7 @@ hardwareWalletView : Model -> Html Msg
 hardwareWalletView model =
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
-            [ Element.el Heading.h5 <| Element.text "Haveno Web - Connect Hardware"
+            [ Element.el Heading.h5 <| Element.text "Welcome - Unconnected User"
             , Element.text "\n"
             , infoBtn "Connect Hardware Device" <| ClickedHardwareDeviceConnect
             , Element.text "\n"

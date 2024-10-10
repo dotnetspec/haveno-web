@@ -757,4 +757,21 @@ i a:hover {
   border-radius: 5px;
   padding: 20px;
 }
+
+.indicator {
+  color: #fff;
+  border-radius: 5px;
+  margin-left: 10px;
+  padding: 5px 10px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.indicator.green {
+  background-color: green;
+}
+
+.indicator.red {
+  background-color: red;
+}
 /*# sourceMappingURL=index.47ca9330.css.map */
