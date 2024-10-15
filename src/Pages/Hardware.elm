@@ -41,6 +41,7 @@ import Utils.Validation.Validate as V
 
 
 
+
 -- NOTE: To determine. What is the relationship between this model and the one in Main?
 {- Generally, the Model should include data that:
 
@@ -68,25 +69,25 @@ import Utils.Validation.Validate as V
 -- NOTE: CORS err may be due to wrong dev/prod setting
 
 
-init : FromMainToRankings -> ( Model, Cmd Msg )
-init fromMainToRankings =
+init : FromMainToHardware -> ( Model, Cmd Msg )
+init fromMainToHardware =
     let
         -- RF
         updatedFlagUrlToIncludeMongoDBMWSvr =
-            if String.contains Consts.localorproductionServerAutoCheck fromMainToRankings.flagUrl.host then
-                Url fromMainToRankings.flagUrl.protocol fromMainToRankings.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
+            if String.contains Consts.localorproductionServerAutoCheck fromMainToHardware.flagUrl.host then
+                Url fromMainToHardware.flagUrl.protocol fromMainToHardware.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
 
             else
-                Url fromMainToRankings.flagUrl.protocol fromMainToRankings.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
+                Url fromMainToHardware.flagUrl.protocol fromMainToHardware.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
     in
     -- NOTE: these api's are in mongodbMW.js currently - mabye they will be sent through from elm at a later point
     -- Use the refresh token to obtain a new access token
     ( Model Loaded
         "Hardware"
         (Hardware { name = "Loading ..." })
-        fromMainToRankings.flagUrl
+        fromMainToHardware.flagUrl
         -- NOTE: Datetime updated in Main
-        (Maybe.withDefault Nothing (Just fromMainToRankings.time))
+        (Maybe.withDefault Nothing (Just fromMainToHardware.time))
         apiSpecsPlaceHolder
         (Login Consts.emptyEmailPassword)
         (Just (ToMongoDBMWConfig Consts.post [] (Url.toString updatedFlagUrlToIncludeMongoDBMWSvr) Http.emptyBody Nothing Nothing))
@@ -1631,7 +1632,7 @@ hardwareWalletView model =
                         "Not connected yet"
                     )
 
-            --
+            
             , Element.text "\n"
             , infoBtn "Initiate Transaction" <| ClickedXMRInitiateTransaction "0.01"
             , case model.errors of
@@ -1732,7 +1733,7 @@ type alias EmailPasswordLogin =
     }
 
 
-type alias FromMainToRankings =
+type alias FromMainToHardware =
     { time : Maybe DateTime
     , flagUrl : Url.Url
     }

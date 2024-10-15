@@ -1,9 +1,11 @@
 ### **Feature: MVP Mobile Tor-Based Haveno Web App**
 Gherkin/BDD scenarios describing the behavior of a mobile Tor-based web app that communicates with a Haveno daemon via HTTPS to handle hardware wallet transactions. The app will use the hardware wallet as the sole form of identity, and no additional authorization is required.
 
+-- NOTE: For simplicity, 'And' and 'Then' are just 'When' in the code
+
 #### **Background:**
 **Given** the user has a mobile device with the Tor Browser installed 
-**And**  the user has a hardware wallet (henceforth 'hww') (e.g., Ledger Nano X) connected to the device
+**And**  the user has a hardware wallet (henceforth 'hww') (e.g., Ledger Nano X) either connected or not to the device
 **And**  there is an HTTPS server running a Haveno daemon configured for securely handling transactions
 **And**  the Haveno-Web app is connected to the Internet
 
@@ -11,20 +13,21 @@ Gherkin/BDD scenarios describing the behavior of a mobile Tor-based web app that
 
 **Given** the web app is opened
 **And** the LNS hww is NOT connected
+**And** it should ensure the navigation menu is disabled
 **Then** it should display a message informing the user not connected
-**And** it displays a message indicating the LNS hardware device is NOT connected
 
 
 #### **Scenario 2: hww NOT connected, user clicks the 'Connect Hardware' button, navs to Hardware page**
 
 **Given** the web app is opened
 **And** the LNS hww is NOT connected
-**Then** it should display a message informing the user not connected (splash page)
-**And** the web app should display a constant indicator as red for not connected
-**And** the user should have option to continue without trading
+**When** the user clicks the 'Connect Hardware' button
+**Then** it hides the popup
+**And** it should display the Hardware page
+**And** it should display the 'Connected' indicator as Disconnected (red)
 
 
-#### **Scenario 2: Confirming that the LNS hardware wallet is connected**
+#### **Scenario 3: Confirming that the LNS hardware wallet is connected**
    **Given** the web app is opened
    **And** the LNS hww is connected
    **When** the LNS hww is detected

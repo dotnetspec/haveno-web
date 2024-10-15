@@ -1,23 +1,24 @@
-Here’s a series of Gherkin/BDD scenarios describing the behavior of a mobile Tor-based web app that communicates with a user-buildable APK (leveraging a Haveno daemon) via HTTPS to handle hardware wallet transactions. The app will use the hardware wallet as the sole form of identity, and no additional authorization is required.
-
--- NOTE: For simplicity, 'And' and 'Then' are just 'When' in the code
-
-### **Feature: Mobile Tor-Based Web App with User-Buildable APK Integration**
-
 #### **Background:**
-Given the user has a mobile device with the Tor Browser installed 
-And the user has a hardware wallet (e.g., Ledger Nano X) connected to the device 
-And the user-buildable APK is running on the mobile device and has an HTTPS server configured 
-And the APK is connected to a Haveno daemon for handling transactions 
+**Given** as per main.features
+**And**  the user wants to interact with the Hardware page
 
 ---
 
-#### **Scenario 1: Connecting the Hardware Device**
+#### **Scenario 1: Warning that the hardware wallet is NOT connected**
+
+**Given** the web app is opened on the Hardware page
+**And** the LNS hww is NOT connected
+**When** the user clicks the 'Connect Hardware Device' feature
+**Then** the web app should detect the hardware device is NOT connected
+**Then** it should display a message informing the user not connected 
+
+#### **Scenario 2: The Hardware Device IS Connected**
 
 **Given** the user has the hardware device connected to their mobile device
 **When** the user accesses the Hardware page
-**When** the user clicks the "Connect Hardware Device" feature
+**When** the user clicks the "Connect Hardware Device" button
 **Then** the web app should detect the connected hardware device
+**And** displays a message indicating the app is on the Dashboard page
 **And** the web app should display a confirmation message indicating successful hardware device connection 
 
 ---

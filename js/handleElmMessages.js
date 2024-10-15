@@ -1,4 +1,5 @@
-import { setupElmPorts, connectLNS } from "./hardware/ledgerInterop.js";
+//import { setupElmPorts, connectLNS } from "./hardware/ledgerInterop.js";
+//import { connectLNS } from "./hardware/ledgerInterop.js";
 import { checkDeviceConnection } from "./hardware/checkDeviceConnect.js";
 import { getMoneroAddress } from "./hardware/xmrHardwareInterop.js";
 // NOTE: This is the main file for communicating with Elm. It receives messages from Elm and
@@ -17,11 +18,13 @@ export async function handleMessageFromElm(message, app) {
 
   switch (messageArr[0]) {
     case "connectLNS":
-      connectLNS(app);
+      
 
       try {
+        //connectLNS(app);
         // Perform further actions with the device
-        //checkDeviceConnection(app);
+        //console.log("about to checkDeviceConnection : ", app);
+        await checkDeviceConnection(app);
       } catch (error) {
         console.error("Device connection error:", error);
       }

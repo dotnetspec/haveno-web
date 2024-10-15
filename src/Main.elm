@@ -91,23 +91,12 @@ main =
 init : String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flag url key =
     let
-        _ =
-            Debug.log "flag is " flag
-
         decodedJsonFromSetupElmmjs =
             case JD.decodeString urlDecoder flag of
                 Ok urL ->
-                    let
-                        _ =
-                            Debug.log "url in init" Url.toString url
-                    in
                     urL
 
                 Err _ ->
-                    let
-                        _ =
-                            Debug.log "Error in init" Url.toString url
-                    in
                     -- Handle the case where decoding fails
                     Url.Url Https "haveno-web.squashpassion.com" Nothing "" Nothing Nothing
 
@@ -121,36 +110,6 @@ init flag url key =
 
 
 
--- HACK: Shouldn't have to change the code to accommodate the tests, but only way to avoid the Nav.Key issues:
-{- testInit : String -> Url.Url -> ( Model, Cmd Msg )
-   testInit flag url =
-       let
-           decodedJsonFromSetupElmmjs =
-               case JD.decodeString urlDecoder flag of
-                   Ok urLDecode ->
-                       urLDecode
-
-                   Err _ ->
-                       -- Handle the case where decoding fails
-                       Url.Url Https "haveno-web.squashpassion.com" Nothing "" Nothing Nothing
-
-           -- NOTE: AI suggested. Don't know how works:
-           navigate newUrl =
-               Cmd.none
-       in
-       updateUrl url
-           { page = NotFound
-           , key = navigate
-           , flag = decodedJsonFromSetupElmmjs
-           , time = Time.millisToPosix 0
-           , zone = Just Time.utc
-           , errors = [ "" ]
-           , isHardwareLNSConnected = False
-           , isHardwareLNXConnected = False
-           , isXMRWalletConnected = False
-           , isPopUpVisible = False
-           }
--}
 -- NAV: Model
 -- NOTE: define a Page type to represent the different states
 -- we care about, and add it to Model .
@@ -169,11 +128,13 @@ type alias Model =
     , isHardwareLNXConnected : Bool
     , isXMRWalletConnected : Bool
     , isPopUpVisible : Bool
+    , isNavMenuActive : Bool
     }
 
 
 
 -- NOTE: This is used to initialize the model in init and spec tests
+-- NAV: Main's Initial Model
 
 
 mainInitModel : Model
@@ -191,6 +152,7 @@ mainInitModel =
     , isHardwareLNXConnected = False
     , isXMRWalletConnected = False
     , isPopUpVisible = True
+    , isNavMenuActive = False
     }
 
 
@@ -274,12 +236,17 @@ update msg model =
                     else
                         HardwarePage Pages.Hardware.initialModel
 
-                newUrl = Url.Url Http "localhost:1234" Nothing "/hardware" Nothing Nothing
+                newUrl =
+                    Url.Url Http "localhost:1234" Nothing "/hardware" Nothing Nothing
             in
             --( { model | isPopUpVisible = False, page = newPage }, Cmd.map <| GotHardwareMsg Pages.Hardware.NoOp )
-            updateUrl newUrl { model | isPopUpVisible = False, page = newPage }
+            updateUrl newUrl { model | isPopUpVisible = False, isNavMenuActive = True, page = newPage }
 
         HardwareDeviceConnect ->
+            let
+                _ =
+                    Debug.log "HardwareDeviceConnect" "yes"
+            in
             ( model
             , -- NOTE: Old msg showing formatting - 'sendMessageToJs ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")'
               sendMessageToJs
@@ -293,9 +260,10 @@ update msg model =
         -- NOTE: This is updated when a message from js is received
         Recv rawJsonMessage ->
             let
-                _ =
-                    Debug.log "rawJsonMessage" (JE.encode 2 rawJsonMessage)
-            in
+                   _ =
+                       Debug.log "rawJsonMessage" (JE.encode 2 rawJsonMessage)
+               in
+           
             -- NOTE: rawJsonMessage is a Json value that is ready to be decoded. It does not need to be
             -- converted to a string.
             if String.contains "Problem" (fromJsonToString rawJsonMessage) then
@@ -345,12 +313,20 @@ update msg model =
 
                         else
                             HardwarePage Pages.Hardware.initialModel
+
+                    popupVisibility =
+                        if updatedIsLNSConnected || updatedIsLNXConnected then
+                            False
+
+                        else
+                            True
                 in
                 ( { model
                     | page = newPage
                     , isHardwareLNSConnected = updatedIsLNSConnected
                     , isHardwareLNXConnected = updatedIsLNXConnected
                     , isXMRWalletConnected = updatedIsXMRConnected
+                    , isPopUpVisible = popupVisibility
 
                     --, selectedranking = newRanking
                     --, objectJSONfromJSPort = Just decodedJsObj
@@ -471,13 +447,15 @@ update msg model =
         GotHardwareMsg hardwareMsg ->
             case model.page of
                 HardwarePage hardwareModel ->
-                    
                     -- NOTE: Example of handling data coming from sub module to main
                     -- If the message is one that needs to be handled in Main (e.g. sends message to port)
                     -- then handle it here:
                     case hardwareMsg of
                         Pages.Hardware.ClickedHardwareDeviceConnect ->
                             let
+                                logMsg =
+                                   Debug.log "HardwareDeviceConnect" "in hardwareMsg"
+                               
                                 newHardwareModel =
                                     { hardwareModel | queryType = Pages.Hardware.LoggedInUser }
                             in
@@ -511,9 +489,10 @@ update msg model =
 
                         _ ->
                             {- let
-                                _ =
-                                    Debug.log "hardware page?" "fallthrouth"
-                            in -}
+                                   _ =
+                                       Debug.log "hardware page?" "fallthrouth"
+                               in
+                            -}
                             -- otherwise operate within the Hardware sub module:
                             toHardware model (Pages.Hardware.update hardwareMsg hardwareModel)
 
@@ -551,52 +530,56 @@ view model =
             {- -- NOTE:  We are 'delegating' views to Dashboard.view and Sell.view etc.
                Something similar can be done with subscriptions if required
             -}
-            case model.page of
-                DashboardPage dashboard ->
-                    Pages.Dashboard.view dashboard
-                        -- NOTE: Go from Html Pages.Dashboard.Msg value to Html Msg value using Html.map.
-                        {- Conceptually, what Html.map is doing for us here is wrapping a Pages.Dashboard.Msg or
-                           Pages.Sell.Msg in a Main.Msg , because Main.update knows how to deal with only
-                           Main.Msg values. Those wrapped messages will prove useful later when we handle
-                           these new messages inside update .
+            if model.isNavMenuActive then
+                case model.page of
+                    DashboardPage dashboard ->
+                        Pages.Dashboard.view dashboard
+                            -- NOTE: Go from Html Pages.Dashboard.Msg value to Html Msg value using Html.map.
+                            {- Conceptually, what Html.map is doing for us here is wrapping a Pages.Dashboard.Msg or
+                               Pages.Sell.Msg in a Main.Msg , because Main.update knows how to deal with only
+                               Main.Msg values. Those wrapped messages will prove useful later when we handle
+                               these new messages inside update .
 
-                           We're actually using Pages.Dashboard.view
-                        -}
-                        |> Html.map GotDashboardMsg
+                               We're actually using Pages.Dashboard.view
+                            -}
+                            |> Html.map GotDashboardMsg
 
-                SellPage dashboard ->
-                    Pages.Sell.view dashboard
-                        |> Html.map GotSellMsg
+                    SellPage dashboard ->
+                        Pages.Sell.view dashboard
+                            |> Html.map GotSellMsg
 
-                PortfolioPage terms ->
-                    Pages.Portfolio.view terms
-                        |> Html.map GotPortfolioMsg
+                    PortfolioPage terms ->
+                        Pages.Portfolio.view terms
+                            |> Html.map GotPortfolioMsg
 
-                FundsPage privacy ->
-                    Pages.Funds.view privacy
-                        |> Html.map GotFundsMsg
+                    FundsPage privacy ->
+                        Pages.Funds.view privacy
+                            |> Html.map GotFundsMsg
 
-                SupportPage support ->
-                    Pages.Support.view support
-                        |> Html.map GotSupportMsg
+                    SupportPage support ->
+                        Pages.Support.view support
+                            |> Html.map GotSupportMsg
 
-                PingPongPage pingpong ->
-                    Pages.PingPong.view pingpong
-                        |> Html.map GotPingPongMsg
+                    PingPongPage pingpong ->
+                        Pages.PingPong.view pingpong
+                            |> Html.map GotPingPongMsg
 
-                BuyPage buy ->
-                    Pages.Buy.view buy
-                        |> Html.map GotBuyMsg
+                    BuyPage buy ->
+                        Pages.Buy.view buy
+                            |> Html.map GotBuyMsg
 
-                MarketPage market ->
-                    Pages.Market.view market
-                        |> Html.map GotMarketMsg
+                    MarketPage market ->
+                        Pages.Market.view market
+                            |> Html.map GotMarketMsg
 
-                HardwarePage hardware ->
-                    Pages.Hardware.view hardware
-                        |> Html.map GotHardwareMsg
+                    HardwarePage hardware ->
+                        Pages.Hardware.view hardware
+                            |> Html.map GotHardwareMsg
+
+            else
+                div [] []
     in
-    -- NAV : Page Content
+    -- NAV : View Page Content
     -- TODO: Make this content's naming conventions closely match the
     -- related css.
     { title = "Haveno-Web"
@@ -605,7 +588,7 @@ view model =
         , showVideoOrBanner model.page
         , viewPopUp model
         , contentByPage
-        , isConnectedIndicator model.isHardwareLNSConnected
+        , isConnectedIndicator <| model.isHardwareLNSConnected || model.isHardwareLNXConnected
         , footerContent
         ]
     }
@@ -759,6 +742,7 @@ codeParser =
 -}
 -- NOTE: Data you want to pass fom Main to another module's model can be done in the to<functions>
 -- updateUrl is a helper function to init
+-- NAV: UpdateUrl - update sub-modules from Main AND update Main from the sub-modules
 
 
 updateUrl : Url.Url -> Model -> ( Model, Cmd Msg )
@@ -826,6 +810,10 @@ updateUrl url model =
                 |> toMarket model
 
         Just Hardware ->
+            let
+                _ =
+                    Debug.log "HardwareDeviceConnect" "yes"
+            in
             -- NOTE: This is the only place we can pass args from Main.elm into
             -- the sub module for initialization
             -- REVIEW: Time is sent through here as it may speed up the slots fetch in Hardware - tbc
@@ -903,7 +891,6 @@ toMarket model ( market, cmd ) =
 {- Let's break down the `toHardware` function step by step in simple terms:
 
    1. **Function Name and Purpose**:
-      - The function is called `toHardware`.
       - Its job is to translate information from the `Hardware` module into a format that the main application (`Main`) can understand.
 
    2. **Input Parameters**:
@@ -927,7 +914,7 @@ toMarket model ( market, cmd ) =
 
 toHardware : Model -> ( Pages.Hardware.Model, Cmd Pages.Hardware.Msg ) -> ( Model, Cmd Msg )
 toHardware model ( hardware, cmd ) =
-    ( { model | page = HardwarePage hardware }
+    ( { model | page = HardwarePage hardware, isHardwareLNSConnected = hardware.isHardwareLNSConnected }
       {- -- NOTE: Cmd.map is applying the GotHardwareMsg constructor to the message in the command.
          In Elm, GotHardwareMsg is a type constructor for the Msg type. It's used to create a new Msg value. When you use
          GotHardwareMsg with Cmd.map, you're telling Elm to take the message that results from the command and wrap it in GotHardwareMsg.
@@ -967,6 +954,7 @@ viewPopUp model =
             div [ class "modal" ]
                 [ div [ class "modal-content" ]
                     [ h2 [] [ text "Haveno Web App" ]
+                    , p [] [ text "No Hardware Device Detected!" ]
                     , p [] [ text "Please connect your hardware device to continue" ]
                     , button [ onClick HidePopUp ] [ text "Connect Hardware" ]
                     ]
@@ -1305,14 +1293,31 @@ logOutUser =
 
 
 -- NAV: Main Persistent
+
+
 isConnectedIndicator : Bool -> Html msg
 isConnectedIndicator isConnected =
     h3 []
         [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
             [ br [] []
             , span []
-                [ 
-                span [ Attr.class (if isConnected then "indicator green" else "indicator red") ] [ text (if isConnected then "Connected" else "Disconnected") ]
+                [ span
+                    [ Attr.class
+                        (if isConnected then
+                            "indicator green"
+
+                         else
+                            "indicator red"
+                        )
+                    ]
+                    [ text
+                        (if isConnected then
+                            "Connected"
+
+                         else
+                            "Disconnected"
+                        )
+                    ]
                 ]
             ]
         ]
@@ -1330,7 +1335,7 @@ footerContent =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.12" ]
+                , p [] [ text "Version 0.0.14" ]
                 , text "Haveno Version"
                 , h6 [] [ text "1.0.7" ]
                 ]

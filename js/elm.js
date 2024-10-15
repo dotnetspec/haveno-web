@@ -11207,7 +11207,6 @@ var $elm$core$Basics$never = function (_v0) {
 	}
 };
 var $elm$browser$Browser$application = _Browser_application;
-var $elm$core$Debug$log = _Debug_log;
 var $author$project$Main$DashboardPage = function (a) {
 	return {$: 'DashboardPage', a: a};
 };
@@ -11236,6 +11235,7 @@ var $author$project$Main$mainInitModel = {
 	flag: $author$project$Extras$Constants$emptyDefaultUrl,
 	isHardwareLNSConnected: false,
 	isHardwareLNXConnected: false,
+	isNavMenuActive: false,
 	isPopUpVisible: true,
 	isXMRWalletConnected: false,
 	key: function (_v0) {
@@ -13078,11 +13078,11 @@ var $author$project$Data$User$UserInfo = function (userid) {
 var $author$project$Data$User$emptyDescription = {comment: '', level: ''};
 var $author$project$Data$User$emptyUserInfo = $author$project$Data$User$UserInfo('')('')('')($elm$core$Maybe$Nothing)('')(false)('')(40)($author$project$Data$User$Male)($elm$core$Maybe$Nothing)(false)('')($elm$core$Maybe$Nothing)(false)('')(0)(false)(_List_Nil)(_List_Nil)('')($author$project$Data$User$emptyDescription)(0)('');
 var $author$project$Data$User$emptySpectator = $author$project$Data$User$Spectator($author$project$Data$User$emptyUserInfo);
-var $author$project$Pages$Hardware$init = function (fromMainToRankings) {
-	var updatedFlagUrlToIncludeMongoDBMWSvr = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, fromMainToRankings.flagUrl.host) ? A6($elm$url$Url$Url, fromMainToRankings.flagUrl.protocol, fromMainToRankings.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$productionProxyConfig, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6(
+var $author$project$Pages$Hardware$init = function (fromMainToHardware) {
+	var updatedFlagUrlToIncludeMongoDBMWSvr = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, fromMainToHardware.flagUrl.host) ? A6($elm$url$Url$Url, fromMainToHardware.flagUrl.protocol, fromMainToHardware.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$productionProxyConfig, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6(
 		$elm$url$Url$Url,
-		fromMainToRankings.flagUrl.protocol,
-		fromMainToRankings.flagUrl.host,
+		fromMainToHardware.flagUrl.protocol,
+		fromMainToHardware.flagUrl.host,
 		$elm$core$Maybe$Just(3000),
 		$author$project$Extras$Constants$middleWarePath,
 		$elm$core$Maybe$Nothing,
@@ -13090,11 +13090,11 @@ var $author$project$Pages$Hardware$init = function (fromMainToRankings) {
 	return _Utils_Tuple2(
 		$author$project$Pages$Hardware$Model($author$project$Pages$Hardware$Loaded)('Hardware')(
 			$author$project$Pages$Hardware$Hardware(
-				{name: 'Loading ...'}))(fromMainToRankings.flagUrl)(
+				{name: 'Loading ...'}))(fromMainToHardware.flagUrl)(
 			A2(
 				$elm$core$Maybe$withDefault,
 				$elm$core$Maybe$Nothing,
-				$elm$core$Maybe$Just(fromMainToRankings.time)))($author$project$Pages$Hardware$apiSpecsPlaceHolder)(
+				$elm$core$Maybe$Just(fromMainToHardware.time)))($author$project$Pages$Hardware$apiSpecsPlaceHolder)(
 			$author$project$Pages$Hardware$Login($author$project$Extras$Constants$emptyEmailPassword))(
 			$elm$core$Maybe$Just(
 				A6(
@@ -13197,6 +13197,7 @@ var $author$project$Pages$Support$init = function (_v0) {
 			{title: 'Haveno-Web Support'}),
 		$elm$core$Platform$Cmd$none);
 };
+var $elm$core$Debug$log = _Debug_log;
 var $elm$url$Url$Parser$State = F5(
 	function (visited, unvisited, params, frag, value) {
 		return {frag: frag, params: params, unvisited: unvisited, value: value, visited: visited};
@@ -13382,6 +13383,7 @@ var $author$project$Main$toHardware = F2(
 			_Utils_update(
 				model,
 				{
+					isHardwareLNSConnected: hardware.isHardwareLNSConnected,
 					page: $author$project$Main$HardwarePage(hardware)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotHardwareMsg, cmd));
@@ -13700,6 +13702,7 @@ var $author$project$Main$updateUrl = F2(
 						$author$project$Pages$Market$init(_Utils_Tuple0));
 				default:
 					var _v10 = _v0.a;
+					var _v11 = A2($elm$core$Debug$log, 'HardwareDeviceConnect', 'yes');
 					return A2(
 						$author$project$Main$toHardware,
 						model,
@@ -13737,20 +13740,17 @@ var $author$project$Main$init = F3(
 				$elm$url$Url$toString(newUrl));
 		};
 		var decodedJsonFromSetupElmmjs = function () {
-			var _v1 = A2($elm$json$Json$Decode$decodeString, $author$project$Main$urlDecoder, flag);
-			if (_v1.$ === 'Ok') {
-				var urL = _v1.a;
-				var _v2 = A3($elm$core$Debug$log, 'url in init', $elm$url$Url$toString, url);
+			var _v0 = A2($elm$json$Json$Decode$decodeString, $author$project$Main$urlDecoder, flag);
+			if (_v0.$ === 'Ok') {
+				var urL = _v0.a;
 				return urL;
 			} else {
-				var _v3 = A3($elm$core$Debug$log, 'Error in init', $elm$url$Url$toString, url);
 				return A6($elm$url$Url$Url, $elm$url$Url$Https, 'haveno-web.squashpassion.com', $elm$core$Maybe$Nothing, '', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
 			}
 		}();
 		var updatedModel = _Utils_update(
 			$author$project$Main$mainInitModel,
 			{flag: decodedJsonFromSetupElmmjs, key: navigate});
-		var _v0 = A2($elm$core$Debug$log, 'flag is ', flag);
 		return A2($author$project$Main$updateUrl, url, updatedModel);
 	});
 var $author$project$Main$Recv = function (a) {
@@ -15889,8 +15889,9 @@ var $author$project$Main$update = F2(
 					newUrl,
 					_Utils_update(
 						model,
-						{isPopUpVisible: false, page: newPage}));
+						{isNavMenuActive: true, isPopUpVisible: false, page: newPage}));
 			case 'HardwareDeviceConnect':
+				var _v1 = A2($elm$core$Debug$log, 'HardwareDeviceConnect', 'yes');
 				return _Utils_Tuple2(
 					model,
 					$author$project$Main$sendMessageToJs('connectLNS'));
@@ -15899,7 +15900,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'Recv':
 				var rawJsonMessage = msg.a;
-				var _v1 = A2(
+				var _v2 = A2(
 					$elm$core$Debug$log,
 					'rawJsonMessage',
 					A2($elm$json$Json$Encode$encode, 2, rawJsonMessage));
@@ -15934,23 +15935,24 @@ var $author$project$Main$update = F2(
 							$elm$core$Platform$Cmd$none);
 					} else {
 						var decodedHardwareDeviceMsg = function () {
-							var _v2 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
-							if (_v2.$ === 'Ok') {
-								var message = _v2.a;
+							var _v3 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
+							if (_v3.$ === 'Ok') {
+								var message = _v3.a;
 								return message.operationEventMsg;
 							} else {
-								var err = _v2.a;
+								var err = _v3.a;
 								return 'error';
 							}
 						}();
 						var updatedIsLNSConnected = (decodedHardwareDeviceMsg === 'nanoS') ? true : false;
 						var updatedIsLNXConnected = (decodedHardwareDeviceMsg === 'nanoX') ? true : false;
 						var newPage = (updatedIsLNSConnected || updatedIsLNXConnected) ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel);
+						var popupVisibility = (updatedIsLNSConnected || updatedIsLNXConnected) ? false : true;
 						var updatedIsXMRConnected = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? true : false;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
-								{isHardwareLNSConnected: updatedIsLNSConnected, isHardwareLNXConnected: updatedIsLNXConnected, isXMRWalletConnected: updatedIsXMRConnected, page: newPage}),
+								{isHardwareLNSConnected: updatedIsLNSConnected, isHardwareLNXConnected: updatedIsLNXConnected, isPopUpVisible: popupVisibility, isXMRWalletConnected: updatedIsXMRConnected, page: newPage}),
 							$elm$core$Platform$Cmd$none);
 					}
 				}
@@ -15979,8 +15981,8 @@ var $author$project$Main$update = F2(
 						$elm$browser$Browser$Navigation$load(href));
 				} else {
 					var url = urlRequest.a;
-					var _v4 = $elm$url$Url$toString(url);
-					if (_v4 === 'https://haveno-web.squashpassion.com/') {
+					var _v5 = $elm$url$Url$toString(url);
+					if (_v5 === 'https://haveno-web.squashpassion.com/') {
 						return _Utils_Tuple2(
 							model,
 							$elm$browser$Browser$Navigation$load(
@@ -15996,9 +15998,9 @@ var $author$project$Main$update = F2(
 				return A2($author$project$Main$updateUrl, url, model);
 			case 'GotDashboardMsg':
 				var dashboardMsg = msg.a;
-				var _v5 = model.page;
-				if (_v5.$ === 'DashboardPage') {
-					var dashboard = _v5.a;
+				var _v6 = model.page;
+				if (_v6.$ === 'DashboardPage') {
+					var dashboard = _v6.a;
 					return A2(
 						$author$project$Main$toDashboard,
 						model,
@@ -16008,9 +16010,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotSellMsg':
 				var sellMsg = msg.a;
-				var _v6 = model.page;
-				if (_v6.$ === 'SellPage') {
-					var sell = _v6.a;
+				var _v7 = model.page;
+				if (_v7.$ === 'SellPage') {
+					var sell = _v7.a;
 					return A2(
 						$author$project$Main$toSell,
 						model,
@@ -16020,9 +16022,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotPortfolioMsg':
 				var termsMsg = msg.a;
-				var _v7 = model.page;
-				if (_v7.$ === 'PortfolioPage') {
-					var terms = _v7.a;
+				var _v8 = model.page;
+				if (_v8.$ === 'PortfolioPage') {
+					var terms = _v8.a;
 					return A2(
 						$author$project$Main$toPortfolio,
 						model,
@@ -16032,9 +16034,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotFundsMsg':
 				var privacyMsg = msg.a;
-				var _v8 = model.page;
-				if (_v8.$ === 'FundsPage') {
-					var privacy = _v8.a;
+				var _v9 = model.page;
+				if (_v9.$ === 'FundsPage') {
+					var privacy = _v9.a;
 					return A2(
 						$author$project$Main$toFunds,
 						model,
@@ -16044,9 +16046,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotSupportMsg':
 				var supportMsg = msg.a;
-				var _v9 = model.page;
-				if (_v9.$ === 'SupportPage') {
-					var support = _v9.a;
+				var _v10 = model.page;
+				if (_v10.$ === 'SupportPage') {
+					var support = _v10.a;
 					return A2(
 						$author$project$Main$toSupport,
 						model,
@@ -16056,9 +16058,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotPingPongMsg':
 				var pingpongMsg = msg.a;
-				var _v10 = model.page;
-				if (_v10.$ === 'PingPongPage') {
-					var pingpong = _v10.a;
+				var _v11 = model.page;
+				if (_v11.$ === 'PingPongPage') {
+					var pingpong = _v11.a;
 					return A2(
 						$author$project$Main$toPingPong,
 						model,
@@ -16068,9 +16070,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotBuyMsg':
 				var pricingMsg = msg.a;
-				var _v11 = model.page;
-				if (_v11.$ === 'BuyPage') {
-					var pricing = _v11.a;
+				var _v12 = model.page;
+				if (_v12.$ === 'BuyPage') {
+					var pricing = _v12.a;
 					return A2(
 						$author$project$Main$toPricing,
 						model,
@@ -16080,9 +16082,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotMarketMsg':
 				var aboutMsg = msg.a;
-				var _v12 = model.page;
-				if (_v12.$ === 'MarketPage') {
-					var about = _v12.a;
+				var _v13 = model.page;
+				if (_v13.$ === 'MarketPage') {
+					var about = _v13.a;
 					return A2(
 						$author$project$Main$toMarket,
 						model,
@@ -16092,14 +16094,15 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotHardwareMsg':
 				var hardwareMsg = msg.a;
-				var _v13 = model.page;
-				if (_v13.$ === 'HardwarePage') {
-					var hardwareModel = _v13.a;
+				var _v14 = model.page;
+				if (_v14.$ === 'HardwarePage') {
+					var hardwareModel = _v14.a;
 					switch (hardwareMsg.$) {
 						case 'ClickedHardwareDeviceConnect':
 							var newHardwareModel = _Utils_update(
 								hardwareModel,
 								{queryType: $author$project$Pages$Hardware$LoggedInUser});
+							var logMsg = A2($elm$core$Debug$log, 'HardwareDeviceConnect', 'in hardwareMsg');
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
@@ -16184,7 +16187,7 @@ var $author$project$Main$footerContent = A2(
 							_List_Nil,
 							_List_fromArray(
 								[
-									$elm$html$Html$text('Version 0.0.11')
+									$elm$html$Html$text('Version 0.0.13')
 								])),
 							$elm$html$Html$text('Haveno Version'),
 							A2(
@@ -16197,6 +16200,44 @@ var $author$project$Main$footerContent = A2(
 						]))
 				]))
 		]));
+var $elm$html$Html$h3 = _VirtualDom_node('h3');
+var $author$project$Main$isConnectedIndicator = function (isConnected) {
+	return A2(
+		$elm$html$Html$h3,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('indicator'),
+						A2($elm$html$Html$Attributes$style, 'text-align', 'center')
+					]),
+				_List_fromArray(
+					[
+						A2($elm$html$Html$br, _List_Nil, _List_Nil),
+						A2(
+						$elm$html$Html$span,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$span,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class(
+										isConnected ? 'indicator green' : 'indicator red')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										isConnected ? 'Connected' : 'Disconnected')
+									]))
+							]))
+					]))
+			]));
+};
 var $elm$html$Html$nav = _VirtualDom_node('nav');
 var $elm$html$Html$Attributes$classList = function (classes) {
 	return $elm$html$Html$Attributes$class(
@@ -16807,22 +16848,6 @@ var $author$project$Pages$Dashboard$view = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$text('Your version is:')
-									]))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('text-center')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Nano S Connected')
 									]))
 							])),
 						A2(
@@ -23299,7 +23324,7 @@ var $author$project$Pages$Hardware$hardwareWalletView = function (model) {
 					A2(
 					$mdgriffith$elm_ui$Element$el,
 					$Orasund$elm_ui_framework$Framework$Heading$h5,
-					$mdgriffith$elm_ui$Element$text('Haveno Web - Connect Hardware')),
+					$mdgriffith$elm_ui$Element$text('Welcome - Unconnected User')),
 					$mdgriffith$elm_ui$Element$text('\n'),
 					A2($author$project$Pages$Hardware$infoBtn, 'Connect Hardware Device', $author$project$Pages$Hardware$ClickedHardwareDeviceConnect),
 					$mdgriffith$elm_ui$Element$text('\n'),
@@ -23410,7 +23435,6 @@ var $author$project$Pages$Hardware$view = function (model) {
 					]))
 			]));
 };
-var $elm$html$Html$h3 = _VirtualDom_node('h3');
 var $author$project$Pages$Market$content = A2(
 	$elm$html$Html$section,
 	_List_fromArray(
@@ -23764,6 +23788,13 @@ var $author$project$Main$viewPopUp = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
+										$elm$html$Html$text('No Hardware Device Detected!')
+									])),
+								A2(
+								$elm$html$Html$p,
+								_List_Nil,
+								_List_fromArray(
+									[
 										$elm$html$Html$text('Please connect your hardware device to continue')
 									])),
 								A2(
@@ -23774,7 +23805,7 @@ var $author$project$Main$viewPopUp = function (model) {
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Close')
+										$elm$html$Html$text('Connect Hardware')
 									]))
 							]))
 					])) : (model.isHardwareLNSConnected ? A2(
@@ -23794,62 +23825,66 @@ var $author$project$Main$viewPopUp = function (model) {
 };
 var $author$project$Main$view = function (model) {
 	var contentByPage = function () {
-		var _v0 = model.page;
-		switch (_v0.$) {
-			case 'DashboardPage':
-				var dashboard = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotDashboardMsg,
-					$author$project$Pages$Dashboard$view(dashboard));
-			case 'SellPage':
-				var dashboard = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotSellMsg,
-					$author$project$Pages$Sell$view(dashboard));
-			case 'PortfolioPage':
-				var terms = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotPortfolioMsg,
-					$author$project$Pages$Portfolio$view(terms));
-			case 'FundsPage':
-				var privacy = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotFundsMsg,
-					$author$project$Pages$Funds$view(privacy));
-			case 'SupportPage':
-				var support = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotSupportMsg,
-					$author$project$Pages$Support$view(support));
-			case 'PingPongPage':
-				var pingpong = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotPingPongMsg,
-					$author$project$Pages$PingPong$view(pingpong));
-			case 'BuyPage':
-				var buy = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotBuyMsg,
-					$author$project$Pages$Buy$view(buy));
-			case 'MarketPage':
-				var market = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotMarketMsg,
-					$author$project$Pages$Market$view(market));
-			default:
-				var hardware = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotHardwareMsg,
-					$author$project$Pages$Hardware$view(hardware));
+		if (model.isNavMenuActive) {
+			var _v0 = model.page;
+			switch (_v0.$) {
+				case 'DashboardPage':
+					var dashboard = _v0.a;
+					return A2(
+						$elm$html$Html$map,
+						$author$project$Main$GotDashboardMsg,
+						$author$project$Pages$Dashboard$view(dashboard));
+				case 'SellPage':
+					var dashboard = _v0.a;
+					return A2(
+						$elm$html$Html$map,
+						$author$project$Main$GotSellMsg,
+						$author$project$Pages$Sell$view(dashboard));
+				case 'PortfolioPage':
+					var terms = _v0.a;
+					return A2(
+						$elm$html$Html$map,
+						$author$project$Main$GotPortfolioMsg,
+						$author$project$Pages$Portfolio$view(terms));
+				case 'FundsPage':
+					var privacy = _v0.a;
+					return A2(
+						$elm$html$Html$map,
+						$author$project$Main$GotFundsMsg,
+						$author$project$Pages$Funds$view(privacy));
+				case 'SupportPage':
+					var support = _v0.a;
+					return A2(
+						$elm$html$Html$map,
+						$author$project$Main$GotSupportMsg,
+						$author$project$Pages$Support$view(support));
+				case 'PingPongPage':
+					var pingpong = _v0.a;
+					return A2(
+						$elm$html$Html$map,
+						$author$project$Main$GotPingPongMsg,
+						$author$project$Pages$PingPong$view(pingpong));
+				case 'BuyPage':
+					var buy = _v0.a;
+					return A2(
+						$elm$html$Html$map,
+						$author$project$Main$GotBuyMsg,
+						$author$project$Pages$Buy$view(buy));
+				case 'MarketPage':
+					var market = _v0.a;
+					return A2(
+						$elm$html$Html$map,
+						$author$project$Main$GotMarketMsg,
+						$author$project$Pages$Market$view(market));
+				default:
+					var hardware = _v0.a;
+					return A2(
+						$elm$html$Html$map,
+						$author$project$Main$GotHardwareMsg,
+						$author$project$Pages$Hardware$view(hardware));
+			}
+		} else {
+			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
 		}
 	}();
 	return {
@@ -23859,6 +23894,7 @@ var $author$project$Main$view = function (model) {
 				$author$project$Main$showVideoOrBanner(model.page),
 				$author$project$Main$viewPopUp(model),
 				contentByPage,
+				$author$project$Main$isConnectedIndicator(model.isHardwareLNSConnected || model.isHardwareLNXConnected),
 				$author$project$Main$footerContent
 			]),
 		title: 'Haveno-Web'

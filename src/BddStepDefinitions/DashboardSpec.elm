@@ -36,13 +36,13 @@ import Url exposing (Protocol(..), Url)
 -- NOTE: App.Model and App.Msg are type paramters for the Spec type
 -- They make Spec type more flexible as it can be used with any model and msg types
 -- NOTE: placeholderURL is used to load the rankings page
--- FromMainToRankings is particular to the Hardware page
+-- FromMainToHardware is particular to the Hardware page
 --(gives us the current time/date and the URL to the API which responds with the timeslot data for the page)
-{- testFlags : Hardware.FromMainToRankings
+{- testFlags : Hardware.FromMainToHardware
    testFlags =
        -- WARN: We cannot set CurrentDateTime here, cos Tick newTime will override it.
        -- but can use Spec.Time.withTime to set the time in scenario setup
-       Hardware.FromMainToRankings Nothing Consts.localhostForElmSpecProxyURL
+       Hardware.FromMainToHardware Nothing Consts.localhostForElmSpecProxyURL
 -}
 -- NOTE: The following is a test for the Hardware page
 -- The test checks that the page displays the available timeslots when the access token request is successful

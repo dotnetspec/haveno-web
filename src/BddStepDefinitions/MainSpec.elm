@@ -37,12 +37,14 @@ import Extras.TestData as TestData exposing (placeholderUrl)
 import Html exposing (Html, div)
 import Json.Encode as E
 import Main exposing (Model, Msg, init, mainInitModel, subscriptions, update, view, viewPopUp)
+import Pages.Hardware as Hardware exposing (..)
 import Spec exposing (..)
 import Spec.Claim as Claim exposing (Claim, Verdict)
 import Spec.Command exposing (send)
 import Spec.Http.Stub as Stub
 import Spec.Markup as Markup
 import Spec.Markup.Selector exposing (..)
+import Spec.Navigator as Navigator exposing (Navigator)
 import Spec.Observer as Observer exposing (Observer)
 import Spec.Port exposing (..)
 import Spec.Report exposing (note)
@@ -52,19 +54,8 @@ import Url exposing (Protocol(..), Url)
 
 
 
--- NOTE: Local test setup
 -- NOTE: App.Model and App.Msg are type paramters for the Spec type
 -- They make Spec type more flexible as it can be used with any model and msg types
--- NOTE: placeholderURL is used to load the rankings page
--- FromMainToRankings is particular to the Hardware page
-{- #### **Scenario 1: Warning that the hardware wallet is NOT connected**
-
-   **Given** the web app is opened
-   **And** the LNS hww is NOT connected
-   **Then** it should display a message informing the user not connected (splash page)
-   **And** the web app should display a constant indicator as red for not connected
-   **And** the user should have option to continue without trading
--}
 
 
 runSpecTests : Spec Main.Model Main.Msg
@@ -73,38 +64,44 @@ runSpecTests =
         "Scenarios based on a Haveno Web App MVP"
         [ --Runner.skip <|
           --Runner.pick <|
-            --,
-            scenario "1: Warning that the hardware wallet is NOT connected"
-                (given
-                    (Spec.Setup.initWithModel Main.mainInitModel
-                        |> Spec.Setup.withView (\model -> documentToHtml (Main.view model))
-                        |> Spec.Setup.withUpdate Main.update
-                        |> Spec.Setup.withSubscriptions Main.subscriptions
-                    )
-                    |> when "the LNS hww is NOT detected"
-                        [ -- NOTE: 'send' here means send from js to elm
-                          Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
-                        ]
-                    |> Spec.observeThat
-                        [ it "should display a message informing the user not connected"
-                            (Observer.observeModel .isPopUpVisible
-                                |> Spec.expect
-                                    Claim.isTrue
-                            )
-                        , it "displays a message indicating the LNS hardware device is NOT connected"
-                            (Markup.observeElement
-                                |> Markup.query
-                                << by [ tag "div" ]
-                                |> Spec.expect
-                                    (Claim.isSomethingWhere <|
-                                        Markup.text <|
-                                            Claim.isStringContaining 1 "Please connect your hardware device to continue"
-                                    )
-                            )
-                        ]
+          --,
+          scenario "1: Warning that the hardware wallet is NOT connected"
+            (given
+                (Spec.Setup.initWithModel Main.mainInitModel
+                    |> Spec.Setup.withView (\model -> documentToHtml (Main.view model))
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
                 )
+                |> when "the LNS hww is NOT detected"
+                    [ -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
+                    ]
+                -- NOTE: Each 'it' block resolves to an Elm-spec Plan type and receives a Script from 'given' and 'when' blocks
+                |> Spec.observeThat
+                    [ it "it should ensure the navigation menu is disabled"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isFalse
+                        )
+                    , it "should display a message informing the user not connected"
+                        (Observer.observeModel .isPopUpVisible
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    , it "displays a message indicating the LNS hardware device is NOT connected"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ tag "div" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Please connect your hardware device to continue"
+                                )
+                        )
+                    ]
+            )
         , --Runner.skip <|
-          Runner.pick <|
+          --Runner.pick <|
           scenario "2: hww NOT connected, user clicks the 'Connect Hardware' button, navs to Hardware page"
             (given
                 (Spec.Setup.initWithModel Main.mainInitModel
@@ -115,7 +112,7 @@ runSpecTests =
                 |> when "the LNS hww is NOT detected"
                     [ Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
                     ]
-                |> when "the user clicks the Close button"
+                |> when "the user clicks the Connect Hardware button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
                 |> Spec.observeThat
                     [ it "hides the popup"
@@ -133,7 +130,7 @@ runSpecTests =
                                         Claim.isStringContaining 1 "Welcome - Unconnected User"
                                 )
                         )
-                        , it "should display the 'Connected' indicator as red"
+                    , it "should display the 'Connected' indicator as Disconnected (red)"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ tag "h3" ]
@@ -146,57 +143,56 @@ runSpecTests =
                     ]
             )
         , --Runner.skip <|
-          --Runner.pick <|
-          --,
-          scenario "3: Confirming that the LNS hardware wallet is connected"
-            (given
-                (Spec.Setup.initWithModel Main.mainInitModel
-                    |> Spec.Setup.withView (\model -> documentToHtml (Main.view model))
-                    |> Spec.Setup.withUpdate Main.update
-                    |> Spec.Setup.withSubscriptions Main.subscriptions
+          Runner.pick <|
+            --,
+            scenario "3: Confirming that the LNS hardware wallet is connected"
+                (given
+                    (Spec.Setup.initWithModel Main.mainInitModel
+                        |> Spec.Setup.withView (\model -> documentToHtml (Main.view model))
+                        |> Spec.Setup.withUpdate Main.update
+                        |> Spec.Setup.withSubscriptions Main.subscriptions
+                    )
+                    |> when "the LNS hww is detected"
+                        [ -- NOTE: 'send' here means send from js to elm
+                          Spec.Port.send "receiveMessageFromJs" jsonNanoSDetected
+                        ]
+                    |> Spec.observeThat
+                        [ it "hides the popup"
+                            (Observer.observeModel .isPopUpVisible
+                                |> Spec.expect
+                                    Claim.isFalse
+                            )
+                        , it "sets isHardwareLNSConnected to true"
+                            (Observer.observeModel .isHardwareLNSConnected
+                                |> Spec.expect
+                                    Claim.isTrue
+                            )
+                        , it "should display a constant (no matter which page on) text indicator that the LNS is connected"
+                            (Markup.observeElement
+                                |> Markup.query
+                                << by [ tag "span" ]
+                                |> Spec.expect
+                                    (Claim.isSomethingWhere <|
+                                        Markup.text <|
+                                            Claim.isStringContaining 1 "Connected"
+                                    )
+                            )
+                        
+
+                        , it "it should display the dashboard"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ tag "h1" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Haveno Web - Dashboard"
+                                    --Claim.isStringContaining 1 "Haveno Web App"
+                                   )
+                           )
+                       
+                        ]
                 )
-                |> when "the LNS hww is detected"
-                    [ -- NOTE: 'send' here means send from js to elm
-                      Spec.Port.send "receiveMessageFromJs" jsonNanoSDetected
-                    ]
-                |> Spec.observeThat
-                    [ it "the popup should not be visible"
-                        (Observer.observeModel .isPopUpVisible
-                            |> Spec.expect
-                                Claim.isFalse
-                        )
-                    , it "displays a message indicating the LNS hardware device is connected"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ tag "div" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Nano S Connected"
-                                )
-                        )
-                    , it "it should display the dashboard"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ tag "h1" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Haveno Web - Dashboard"
-                                )
-                        )
-                    ]
-             {- |> when "the user clicks the Close button"
-                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
-                |> Spec.observeThat
-                    [ it "the popup should be hidden"
-                        (Observer.observeModel .isPopUpVisible
-                            |> Spec.expect
-                                Claim.isFalse
-                        )
-                    ]
-             -}
-            )
 
         {- , --Runner.pick <|
            scenario "2. Connecting the XMR Hardware Wallet"

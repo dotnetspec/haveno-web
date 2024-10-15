@@ -197,13 +197,6 @@ view model =
                     [ text "Your version is:"
                     ]
                 ]
-
-            -- HACK: This doesn't account for the LNX currently
-            , div []
-                [ div [ class "text-center" ]
-                    [ text "Nano S Connected"
-                    ]
-                ]
             , div []
                 [ div [ class "text-center" ]
                     [ text (Maybe.withDefault "" (model.version |> Maybe.map .version))
@@ -215,10 +208,6 @@ view model =
 
 
 -- NAV: Type Aliases
-
-
-type alias SuccessfullVersion =
-    { version : String }
 
 
 type alias SuccessfullBalanceResult =

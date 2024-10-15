@@ -2,6 +2,7 @@ import TransportWebHID from "@ledgerhq/hw-transport-webhid";
 
 export async function checkDeviceConnection(app) {
     try {
+        console.log("before TransportWebHID");
         // Request access to the Ledger device
         const transport = await TransportWebHID.create();
         console.log("Device connected:", transport);
@@ -21,21 +22,20 @@ export async function checkDeviceConnection(app) {
         console.log("Device Response:", response.deviceModel.id);
         console.log("Device Model:", response.deviceModel);
         console.log("Device Model ID:", response.deviceModel ? response.deviceModel.id : 'Not Available'); */
-        const response = "";
+        //const response = "";
 
-        try {
+        //try {
             const message = { operationEventMsg: transport.deviceModel.id };
             console.log("Sending message:", message);
             app.ports.receiveMessageFromJs.send(message);
         }
         catch(error) {
-            const errorMessage = { Err: error.message };
-            console.log("Sending error message:", errorMessage);
-            app.ports.receiveMessageFromJs.send(errorMessage);
+            
+                console.error('Error connecting to device:', error);
+                app.ports.receiveMessageFromJs.send({ Err: error.message });
+            }
         }
-    } catch (error) {
-        console.error("Error:", error);
-    }
-}
+    
+//}
 
 //checkDeviceConnection();
