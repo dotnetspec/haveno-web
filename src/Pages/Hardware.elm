@@ -239,7 +239,7 @@ type Msg
     | LoginResponse (Result Http.Error SuccessfulLoginResult)
     | LNSConnectResponse (Result Http.Error SuccessfullLNSConnectResult)
     | ProfileResponse (Result Http.Error SuccessfullProfileResult)
-    | CallResponse (Result Http.Error U.UserInfo)
+   
 
 
 
@@ -678,56 +678,7 @@ update msg model =
         DismissErrors ->
             ( { model | errors = [] }, Cmd.none )
 
-        CallResponse (Ok auth) ->
-            let
-                headers =
-                    -- HACK: I don't know if need 'typeOfData here
-                    [ Http.header "Authorization" ("Bearer " ++ withDefault "No access token" auth.token) ]
-
-                -- incorporate new header with access token and update middleware port
-                flagUrlWithMongoDBMWAndPortUpdate =
-                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
-                        Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.middleWarePath Nothing Nothing
-
-                    else
-                        Url.toString <| Url.Url model.flagUrl.protocol model.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
-
-                newHttpParams =
-                    ToMongoDBMWConfig Consts.get headers flagUrlWithMongoDBMWAndPortUpdate Http.emptyBody Nothing Nothing
-
-                apiSpecs =
-                    model.apiSpecifics
-
-                -- HACK:
-                newModel =
-                    { model
-                        | isValidNewAccessToken = True
-                        , user = U.Registered auth
-
-                        --, apiSpecifics = { apiSpecs | accessToken = Just auth.access_token }
-                        , queryType = LoggedInUser
-                    }
-
-                --}
-            in
-            ( newModel
-            , Cmd.none
-            )
-
-        CallResponse (Err responseErr) ->
-            let
-                respErr =
-                    Consts.httpErrorToString responseErr
-
-                apiSpecs =
-                    model.apiSpecifics
-
-                newapiSpecs =
-                    { apiSpecs | accessToken = Nothing }
-            in
-            ( { model | isValidNewAccessToken = False, apiSpecifics = newapiSpecs, errors = model.errors ++ [ respErr ] }
-            , Cmd.none
-            )
+        
 
         ProfileResponse (Ok auth) ->
             let
@@ -761,7 +712,7 @@ update msg model =
                 --}
             in
             ( newModel
-            , callRequest newModel
+            , Cmd.none
             )
 
         ProfileResponse (Err responseErr) ->
@@ -2301,27 +2252,7 @@ profileRequest model =
     therequest
 
 
-callRequest : Model -> Cmd Msg
-callRequest model =
-    let
-        headers =
-            -- NOTE: the 'Bearer' token sent at this point is received after login using credentials
-            [ Http.header "Authorization" ("Bearer " ++ withDefault "No access token " model.apiSpecifics.accessToken) ]
 
-        therequest =
-            Http.request
-                { body = Http.jsonBody Consts.callRequestJson
-                , method = "POST"
-                , headers = headers
-                , url = "https://ap-southeast-1.aws.realm.mongodb.com/api/client/v2.0/app/sr-espa1-snonq/functions/call"
-
-                -- NOTE: Index lets us handle the 'array' here:
-                , expect = Http.expectJson CallResponse (D.index 0 U.userInfoDecoder)
-                , timeout = Nothing
-                , tracker = Nothing
-                }
-    in
-    therequest
 
 
 
