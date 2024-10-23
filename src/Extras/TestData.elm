@@ -56,7 +56,7 @@ loginRequestCallURL =
 
 placeholderUrl : Url
 placeholderUrl =
-    Url Http "localhost" (Just 3000) "" Nothing Nothing
+    Url Http "localhost" (Just 1234) "/" Nothing Nothing
 
 
 rankingsUrl : Url

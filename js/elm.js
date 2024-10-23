@@ -11218,12 +11218,12 @@ var $author$project$Pages$Dashboard$Loading = {$: 'Loading'};
 var $author$project$Pages$Dashboard$initialModel = {
 	balance: '0.00',
 	errors: _List_Nil,
-	flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Https, 'example.com', $elm$core$Maybe$Nothing, '', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
+	flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Nothing, '', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
 	havenoAPKHttpRequest: $elm$core$Maybe$Nothing,
+	pagetitle: 'Dashboard',
 	root: $author$project$Pages$Dashboard$Dashboard(
 		{name: 'Loading...'}),
 	status: $author$project$Pages$Dashboard$Loading,
-	title: 'Dashboard',
 	version: $elm$core$Maybe$Nothing
 };
 var $elm$time$Time$Posix = function (a) {
@@ -11654,8 +11654,8 @@ var $author$project$Pages$Dashboard$HavenoAPKHttpRequest = F6(
 		return {body: body, headers: headers, method: method, timeout: timeout, tracker: tracker, url: url};
 	});
 var $author$project$Pages$Dashboard$Model = F8(
-	function (status, title, root, balance, flagUrl, havenoAPKHttpRequest, version, errors) {
-		return {balance: balance, errors: errors, flagUrl: flagUrl, havenoAPKHttpRequest: havenoAPKHttpRequest, root: root, status: status, title: title, version: version};
+	function (status, pagetitle, root, balance, flagUrl, havenoAPKHttpRequest, version, errors) {
+		return {balance: balance, errors: errors, flagUrl: flagUrl, havenoAPKHttpRequest: havenoAPKHttpRequest, pagetitle: pagetitle, root: root, status: status, version: version};
 	});
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -13733,7 +13733,7 @@ var $author$project$Main$urlDecoder = A2(
 	$elm$json$Json$Decode$string);
 var $author$project$Main$init = F3(
 	function (flag, url, key) {
-		var navigate = function (newUrl) {
+		var localnavigate = function (newUrl) {
 			return A2(
 				$elm$browser$Browser$Navigation$pushUrl,
 				key,
@@ -13750,7 +13750,7 @@ var $author$project$Main$init = F3(
 		}();
 		var updatedModel = _Utils_update(
 			$author$project$Main$mainInitModel,
-			{flag: decodedJsonFromSetupElmmjs, key: navigate});
+			{flag: decodedJsonFromSetupElmmjs, key: localnavigate});
 		return A2($author$project$Main$updateUrl, url, updatedModel);
 	});
 var $author$project$Main$Recv = function (a) {
@@ -14133,7 +14133,7 @@ var $author$project$Pages$Dashboard$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						newModel,
-						{title: model.title}),
+						{pagetitle: model.pagetitle}),
 					$elm$core$Platform$Cmd$none);
 			default:
 				if (msg.a.$ === 'Ok') {
@@ -15902,7 +15902,7 @@ var $author$project$Main$update = F2(
 				var rawJsonMessage = msg.a;
 				var _v2 = A2(
 					$elm$core$Debug$log,
-					'rawJsonMessage',
+					'rawJsonMessage in main',
 					A2($elm$json$Json$Encode$encode, 2, rawJsonMessage));
 				if (A2(
 					$elm$core$String$contains,
@@ -15935,18 +15935,25 @@ var $author$project$Main$update = F2(
 							$elm$core$Platform$Cmd$none);
 					} else {
 						var decodedHardwareDeviceMsg = function () {
-							var _v3 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
-							if (_v3.$ === 'Ok') {
-								var message = _v3.a;
+							var _v4 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
+							if (_v4.$ === 'Ok') {
+								var message = _v4.a;
 								return message.operationEventMsg;
 							} else {
-								var err = _v3.a;
+								var err = _v4.a;
 								return 'error';
 							}
 						}();
 						var updatedIsLNSConnected = (decodedHardwareDeviceMsg === 'nanoS') ? true : false;
 						var updatedIsLNXConnected = (decodedHardwareDeviceMsg === 'nanoX') ? true : false;
-						var newPage = (updatedIsLNSConnected || updatedIsLNXConnected) ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel);
+						var newPage = function () {
+							if (updatedIsLNSConnected || updatedIsLNXConnected) {
+								var _v3 = A2($elm$core$Debug$log, 'about to load Dashboard page', 'lns should be connected');
+								return $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel);
+							} else {
+								return $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel);
+							}
+						}();
 						var popupVisibility = (updatedIsLNSConnected || updatedIsLNXConnected) ? false : true;
 						var updatedIsXMRConnected = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? true : false;
 						return _Utils_Tuple2(
@@ -15981,8 +15988,8 @@ var $author$project$Main$update = F2(
 						$elm$browser$Browser$Navigation$load(href));
 				} else {
 					var url = urlRequest.a;
-					var _v5 = $elm$url$Url$toString(url);
-					if (_v5 === 'https://haveno-web.squashpassion.com/') {
+					var _v6 = $elm$url$Url$toString(url);
+					if (_v6 === 'https://haveno-web.squashpassion.com/') {
 						return _Utils_Tuple2(
 							model,
 							$elm$browser$Browser$Navigation$load(
@@ -15998,9 +16005,9 @@ var $author$project$Main$update = F2(
 				return A2($author$project$Main$updateUrl, url, model);
 			case 'GotDashboardMsg':
 				var dashboardMsg = msg.a;
-				var _v6 = model.page;
-				if (_v6.$ === 'DashboardPage') {
-					var dashboard = _v6.a;
+				var _v7 = model.page;
+				if (_v7.$ === 'DashboardPage') {
+					var dashboard = _v7.a;
 					return A2(
 						$author$project$Main$toDashboard,
 						model,
@@ -16010,9 +16017,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotSellMsg':
 				var sellMsg = msg.a;
-				var _v7 = model.page;
-				if (_v7.$ === 'SellPage') {
-					var sell = _v7.a;
+				var _v8 = model.page;
+				if (_v8.$ === 'SellPage') {
+					var sell = _v8.a;
 					return A2(
 						$author$project$Main$toSell,
 						model,
@@ -16022,9 +16029,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotPortfolioMsg':
 				var termsMsg = msg.a;
-				var _v8 = model.page;
-				if (_v8.$ === 'PortfolioPage') {
-					var terms = _v8.a;
+				var _v9 = model.page;
+				if (_v9.$ === 'PortfolioPage') {
+					var terms = _v9.a;
 					return A2(
 						$author$project$Main$toPortfolio,
 						model,
@@ -16034,9 +16041,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotFundsMsg':
 				var privacyMsg = msg.a;
-				var _v9 = model.page;
-				if (_v9.$ === 'FundsPage') {
-					var privacy = _v9.a;
+				var _v10 = model.page;
+				if (_v10.$ === 'FundsPage') {
+					var privacy = _v10.a;
 					return A2(
 						$author$project$Main$toFunds,
 						model,
@@ -16046,9 +16053,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotSupportMsg':
 				var supportMsg = msg.a;
-				var _v10 = model.page;
-				if (_v10.$ === 'SupportPage') {
-					var support = _v10.a;
+				var _v11 = model.page;
+				if (_v11.$ === 'SupportPage') {
+					var support = _v11.a;
 					return A2(
 						$author$project$Main$toSupport,
 						model,
@@ -16058,9 +16065,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotPingPongMsg':
 				var pingpongMsg = msg.a;
-				var _v11 = model.page;
-				if (_v11.$ === 'PingPongPage') {
-					var pingpong = _v11.a;
+				var _v12 = model.page;
+				if (_v12.$ === 'PingPongPage') {
+					var pingpong = _v12.a;
 					return A2(
 						$author$project$Main$toPingPong,
 						model,
@@ -16070,9 +16077,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotBuyMsg':
 				var pricingMsg = msg.a;
-				var _v12 = model.page;
-				if (_v12.$ === 'BuyPage') {
-					var pricing = _v12.a;
+				var _v13 = model.page;
+				if (_v13.$ === 'BuyPage') {
+					var pricing = _v13.a;
 					return A2(
 						$author$project$Main$toPricing,
 						model,
@@ -16082,9 +16089,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotMarketMsg':
 				var aboutMsg = msg.a;
-				var _v13 = model.page;
-				if (_v13.$ === 'MarketPage') {
-					var about = _v13.a;
+				var _v14 = model.page;
+				if (_v14.$ === 'MarketPage') {
+					var about = _v14.a;
 					return A2(
 						$author$project$Main$toMarket,
 						model,
@@ -16094,9 +16101,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotHardwareMsg':
 				var hardwareMsg = msg.a;
-				var _v14 = model.page;
-				if (_v14.$ === 'HardwarePage') {
-					var hardwareModel = _v14.a;
+				var _v15 = model.page;
+				if (_v15.$ === 'HardwarePage') {
+					var hardwareModel = _v15.a;
 					switch (hardwareMsg.$) {
 						case 'ClickedHardwareDeviceConnect':
 							var newHardwareModel = _Utils_update(
@@ -16187,7 +16194,7 @@ var $author$project$Main$footerContent = A2(
 							_List_Nil,
 							_List_fromArray(
 								[
-									$elm$html$Html$text('Version 0.0.13')
+									$elm$html$Html$text('Version 0.0.14')
 								])),
 							$elm$html$Html$text('Haveno Version'),
 							A2(
@@ -16789,42 +16796,46 @@ var $author$project$Pages$Dashboard$view = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('container container--narrow')
+						$elm$html$Html$Attributes$class('split')
 					]),
 				_List_fromArray(
 					[
 						A2(
-						$elm$html$Html$h1,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$classList(
-								_List_fromArray(
-									[
-										_Utils_Tuple2('text-center', true),
-										_Utils_Tuple2('Dashboard', true)
-									]))
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Haveno Web - Dashboard')
-							])),
-						A2(
-						$elm$html$Html$h2,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('text-center')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Online Dex')
-							])),
-						A2(
 						$elm$html$Html$div,
-						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('split-col')
+							]),
 						_List_fromArray(
 							[
 								A2(
-								$elm$html$Html$div,
+								$elm$html$Html$h1,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Haveno Web - Dashboard')
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('split-col')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$h2,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('text-center')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Online Dex')
+									])),
+								A2(
+								$elm$html$Html$h3,
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$class('text-center')
@@ -16832,7 +16843,8 @@ var $author$project$Pages$Dashboard$view = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$text('Welcome to Haveno Web, the online decentralized exchange for Haveno, the private, untraceable cryptocurrency.')
-									]))
+									])),
+								$author$project$Buttons$Default$defaultButton('hardware')
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -16873,6 +16885,22 @@ var $author$project$Pages$Dashboard$view = function (model) {
 													return $.version;
 												},
 												model.version)))
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('split-col')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$h6,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('')
 									]))
 							]))
 					]))
@@ -23902,4 +23930,4 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$ChangedUrl, onUrlRequest: $author$project$Main$ClickedLink, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$string)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"},"Data.Hardware.BaseAddress":{"args":[],"type":"{ street : String.String, city : String.String }"},"Data.User.Description":{"args":[],"type":"{ level : String.String, comment : String.String }"},"Time.Era":{"args":[],"type":"{ start : Basics.Int, offset : Basics.Int }"},"Proto.Io.Haveno.Protobuffer.GetVersionReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply"},"Pages.Dashboard.HavenoAPKHttpRequest":{"args":[],"type":"{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"},"Pages.Hardware.Identities":{"args":[],"type":"{ id : String.String, provider_type : String.String, provider_id : String.String, provider_data : Pages.Hardware.ProviderData }"},"Data.User.MemberRanking":{"args":[],"type":"{ id : String.String, name : String.String }"},"Pages.Buy.Model":{"args":[],"type":"{ status : Pages.Buy.Status, title : String.String, root : Pages.Buy.Buy }"},"Pages.Dashboard.Model":{"args":[],"type":"{ status : Pages.Dashboard.Status, title : String.String, root : Pages.Dashboard.Dashboard, balance : String.String, flagUrl : Url.Url, havenoAPKHttpRequest : Maybe.Maybe Pages.Dashboard.HavenoAPKHttpRequest, version : Maybe.Maybe Proto.Io.Haveno.Protobuffer.GetVersionReply, errors : List.List String.String }"},"Pages.Funds.Model":{"args":[],"type":"{ status : Pages.Funds.Status, title : String.String, root : Pages.Funds.Funds }"},"Pages.Market.Model":{"args":[],"type":"{ status : Pages.Market.Status, title : String.String, root : Pages.Market.Market }"},"Pages.PingPong.Model":{"args":[],"type":"{ status : Pages.PingPong.Status, title : String.String, root : Pages.PingPong.PingPong }"},"Pages.Portfolio.Model":{"args":[],"type":"{ status : Pages.Portfolio.Status, title : String.String, root : Pages.Portfolio.Portfolio }"},"Pages.Sell.Model":{"args":[],"type":"{ status : Pages.Sell.Status, title : String.String, root : Pages.Sell.Sell }"},"Pages.Support.Model":{"args":[],"type":"{ status : Pages.Support.Status, title : String.String, root : Pages.Support.Support }"},"Data.User.NickName":{"args":[],"type":"String.String"},"Data.User.Password":{"args":[],"type":"String.String"},"Data.Hardware.Player":{"args":[],"type":"{ id : String.String, nickname : String.String }"},"Pages.PingPong.PongResponse":{"args":[],"type":"{ message : String.String }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply":{"args":[],"type":"{ version : String.String }"},"Pages.Hardware.ProviderData":{"args":[],"type":"{ email : String.String }"},"Data.Hardware.Rank":{"args":[],"type":"{ rank : Basics.Int, player : Data.Hardware.Player, challenger : Data.Hardware.Player }"},"Data.Hardware.Ranking":{"args":[],"type":"{ id : String.String, active : Basics.Bool, name : String.String, owner_id : String.String, baseaddress : Data.Hardware.BaseAddress, ladder : List.List Data.Hardware.Rank, player_count : Basics.Int, owner_name : String.String }"},"Data.Hardware.RankingSearchResult":{"args":[],"type":"{ id : String.String, name : String.String }"},"Pages.Hardware.RegisterUserDetails":{"args":[],"type":"{ resource_id : String.String, user_details : Data.User.User, additional_fields : String.String }"},"Pages.Hardware.SuccessfulLoginResult":{"args":[],"type":"{ access_token : String.String, refresh_token : String.String, user_id : String.String, device_id : String.String }"},"Pages.Dashboard.SuccessfullBalanceResult":{"args":[],"type":"{ deployment_model : String.String, location : String.String, hostname : String.String, ws_hostname : String.String }"},"Pages.Hardware.SuccessfullLNSConnectResult":{"args":[],"type":"{ function : String.String, date : String.String, id : String.String, message : String.String, transport_type : String.String }"},"Pages.Hardware.SuccessfullProfileResult":{"args":[],"type":"{ user_id : String.String, domain_id : String.String, identities : List.List Pages.Hardware.Identities, data : Pages.Hardware.ProviderData, typeOfData : String.String }"},"Data.User.Token":{"args":[],"type":"String.String"},"Data.User.UserInfo":{"args":[],"type":"{ userid : String.String, password : Data.User.Password, passwordValidationError : String.String, token : Maybe.Maybe Data.User.Token, nickname : Data.User.NickName, isNameInputFocused : Basics.Bool, nameValidationError : String.String, age : Basics.Int, gender : Data.User.Gender, email : Maybe.Maybe String.String, isEmailInputFocused : Basics.Bool, emailValidationError : String.String, mobile : Maybe.Maybe String.String, isMobileInputFocused : Basics.Bool, mobileValidationError : String.String, datestamp : Basics.Int, active : Basics.Bool, ownedRankings : List.List Data.Hardware.Ranking, memberRankings : List.List Data.Hardware.Ranking, updatetext : String.String, description : Data.User.Description, credits : Basics.Int, addInfo : String.String }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"ClickedLink":["Browser.UrlRequest"],"GotDashboardMsg":["Pages.Dashboard.Msg"],"GotSellMsg":["Pages.Sell.Msg"],"GotPortfolioMsg":["Pages.Portfolio.Msg"],"GotFundsMsg":["Pages.Funds.Msg"],"GotSupportMsg":["Pages.Support.Msg"],"GotPingPongMsg":["Pages.PingPong.Msg"],"GotBuyMsg":["Pages.Buy.Msg"],"GotMarketMsg":["Pages.Market.Msg"],"GotHardwareMsg":["Pages.Hardware.Msg"],"ChangedUrl":["Url.Url"],"Tick":["Time.Posix"],"AdjustTimeZone":["Time.Zone"],"Recv":["Json.Decode.Value"],"RecvText":["String.String"],"NoOp":[],"HardwareDeviceConnect":[],"ShowPopUp":[],"HidePopUp":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Pages.Buy.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Buy.Model"]}},"Pages.Dashboard.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Dashboard.Model"],"BalanceResponse":["Result.Result Http.Error Pages.Dashboard.SuccessfullBalanceResult"],"GotVersion":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"]}},"Pages.Funds.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Funds.Model"]}},"Pages.Hardware.Msg":{"args":[],"tags":{"BookingForm":["Pages.Hardware.RegisterUserDetails"],"UpdateAge":["Basics.Int"],"UpdateGender":["String.String"],"UpdateEmail":["String.String"],"UpdatePassword":["String.String"],"UpdateNickName":["String.String"],"UpdateLevel":["String.String"],"UpdateComment":["String.String"],"UpdateMobile":["String.String"],"UpdatePhone":["String.String"],"CondoNameInput":["String.String"],"CondoAddressInput":["String.String"],"AddInfoInput":["String.String"],"ConfirmBookingForm":[],"NoOp":[],"DismissErrors":[],"Tick":["Time.Posix"],"InputFocused":["String.String"],"InputBlurred":["String.String"],"SelDateTime":["String.String"],"ToggleReturnUser":[],"UserLoginEmailInputChg":["String.String"],"UserLoginPasswordInputChg":["String.String"],"ClickedHardwareDeviceConnect":[],"ClickedXMRWalletConnect":[],"ClickedXMRInitiateTransaction":["String.String"],"ResponseDataFromMain":["Json.Decode.Value"],"LogOut":[],"Create":[],"CreateNewRanking":["Data.User.UserInfo"],"Cancel":[],"CancelFetchedOwned":["Data.User.UserInfo"],"CancelFetchedMember":[],"CancelFetchedSpectator":[],"CancelCreateNewRanking":[],"CancelRegistration":[],"Confirm":[],"FetchOwned":["Data.Hardware.Ranking"],"FetchMember":["Data.Hardware.Ranking"],"ListSpectator":["Data.Hardware.RankingSearchResult"],"ViewMember":["Data.User.MemberRanking"],"RegisUser":["Data.User.UserInfo"],"RankingNameChg":["String.String"],"StreetAddressChg":["String.String"],"CityAddressChg":["String.String"],"ConfirmNewRanking":["Data.Hardware.Ranking","Data.User.User"],"DialogDeleteOwnedRanking":[],"DeleteOwnedRanking":[],"ViewRank":["Data.Hardware.Rank"],"ConfirmChallenge":["Data.Hardware.Ranking","Data.Hardware.Rank"],"ConfirmResult":["Data.Hardware.ResultOfMatch"],"CancelDialoguePrepareResultView":[],"SearchInputChg":["String.String"],"FetchSpectatorRanking":["String.String"],"SpectatorRankingResponse":["Result.Result Http.Error Data.Hardware.Ranking"],"SpectatorJoin":[],"RegisteredUserJoin":[],"ConfirmJoin":["Data.Hardware.Ranking","String.String","Basics.Int"],"ConfirmLeaveMemberRanking":["Data.Hardware.Ranking","String.String"],"DialogueConfirmJoinView":[],"DialogueConfirmLeaveView":[],"DialogueConfirmDeleteAccount":[],"DeleteAccount":[],"LoginResponse":["Result.Result Http.Error Pages.Hardware.SuccessfulLoginResult"],"LNSConnectResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullLNSConnectResult"],"ProfileResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullProfileResult"],"CallResponse":["Result.Result Http.Error Data.User.UserInfo"]}},"Pages.Market.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Market.Model"]}},"Pages.PingPong.Msg":{"args":[],"tags":{"Send":[],"Receive":["Result.Result Http.Error Pages.PingPong.PongResponse"],"GotInitialModel":["Pages.PingPong.Model"]}},"Pages.Portfolio.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Portfolio.Model"]}},"Pages.Sell.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Sell.Model"]}},"Pages.Support.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Support.Model"]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Time.Zone":{"args":[],"tags":{"Zone":["Basics.Int","List.List Time.Era"]}},"Http.Body":{"args":[],"tags":{"Body":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Pages.Buy.Buy":{"args":[],"tags":{"Buy":["{ name : String.String }"]}},"Pages.Dashboard.Dashboard":{"args":[],"tags":{"Dashboard":["{ name : String.String }"]}},"Grpc.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["{ metadata : Http.Metadata, response : Bytes.Bytes, errMessage : String.String, status : Grpc.GrpcStatus }"],"BadBody":["Bytes.Bytes"],"UnknownGrpcStatus":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Pages.Funds.Funds":{"args":[],"tags":{"Funds":["{ name : String.String }"]}},"Data.User.Gender":{"args":[],"tags":{"Male":[],"Female":[]}},"Http.Header":{"args":[],"tags":{"Header":["String.String","String.String"]}},"List.List":{"args":["a"],"tags":{}},"Pages.Market.Market":{"args":[],"tags":{"Market":["{ name : String.String }"]}},"Pages.PingPong.PingPong":{"args":[],"tags":{"PingPong":["{ name : String.String }"]}},"Pages.Portfolio.Portfolio":{"args":[],"tags":{"Portfolio":["{ name : String.String }"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Data.Hardware.ResultOfMatch":{"args":[],"tags":{"Won":[],"Lost":[],"Undecided":[]}},"Pages.Sell.Sell":{"args":[],"tags":{"Sell":["{ name : String.String }"]}},"Pages.Buy.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Dashboard.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Funds.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Market.Status":{"args":[],"tags":{"Loading":[]}},"Pages.PingPong.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Portfolio.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Sell.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Support":{"args":[],"tags":{"Support":["{ name : String.String }"]}},"Data.User.User":{"args":[],"tags":{"Spectator":["Data.User.UserInfo"],"Registered":["Data.User.UserInfo"]}},"Bytes.Bytes":{"args":[],"tags":{"Bytes":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Grpc.GrpcStatus":{"args":[],"tags":{"Ok_":[],"Cancelled":[],"Unknown":[],"InvalidArgument":[],"DeadlineExceeded":[],"NotFound":[],"AlreadyExists":[],"PermissionDenied":[],"ResourceExhausted":[],"FailedPrecondition":[],"Aborted":[],"OutOfRange":[],"Unimplemented":[],"Internal":[],"Unavailable":[],"DataLoss":[],"Unauthenticated":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$string)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"},"Data.Hardware.BaseAddress":{"args":[],"type":"{ street : String.String, city : String.String }"},"Data.User.Description":{"args":[],"type":"{ level : String.String, comment : String.String }"},"Time.Era":{"args":[],"type":"{ start : Basics.Int, offset : Basics.Int }"},"Proto.Io.Haveno.Protobuffer.GetVersionReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply"},"Pages.Dashboard.HavenoAPKHttpRequest":{"args":[],"type":"{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"},"Pages.Hardware.Identities":{"args":[],"type":"{ id : String.String, provider_type : String.String, provider_id : String.String, provider_data : Pages.Hardware.ProviderData }"},"Data.User.MemberRanking":{"args":[],"type":"{ id : String.String, name : String.String }"},"Pages.Buy.Model":{"args":[],"type":"{ status : Pages.Buy.Status, title : String.String, root : Pages.Buy.Buy }"},"Pages.Dashboard.Model":{"args":[],"type":"{ status : Pages.Dashboard.Status, pagetitle : String.String, root : Pages.Dashboard.Dashboard, balance : String.String, flagUrl : Url.Url, havenoAPKHttpRequest : Maybe.Maybe Pages.Dashboard.HavenoAPKHttpRequest, version : Maybe.Maybe Proto.Io.Haveno.Protobuffer.GetVersionReply, errors : List.List String.String }"},"Pages.Funds.Model":{"args":[],"type":"{ status : Pages.Funds.Status, title : String.String, root : Pages.Funds.Funds }"},"Pages.Market.Model":{"args":[],"type":"{ status : Pages.Market.Status, title : String.String, root : Pages.Market.Market }"},"Pages.PingPong.Model":{"args":[],"type":"{ status : Pages.PingPong.Status, title : String.String, root : Pages.PingPong.PingPong }"},"Pages.Portfolio.Model":{"args":[],"type":"{ status : Pages.Portfolio.Status, title : String.String, root : Pages.Portfolio.Portfolio }"},"Pages.Sell.Model":{"args":[],"type":"{ status : Pages.Sell.Status, title : String.String, root : Pages.Sell.Sell }"},"Pages.Support.Model":{"args":[],"type":"{ status : Pages.Support.Status, title : String.String, root : Pages.Support.Support }"},"Data.User.NickName":{"args":[],"type":"String.String"},"Data.User.Password":{"args":[],"type":"String.String"},"Data.Hardware.Player":{"args":[],"type":"{ id : String.String, nickname : String.String }"},"Pages.PingPong.PongResponse":{"args":[],"type":"{ message : String.String }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply":{"args":[],"type":"{ version : String.String }"},"Pages.Hardware.ProviderData":{"args":[],"type":"{ email : String.String }"},"Data.Hardware.Rank":{"args":[],"type":"{ rank : Basics.Int, player : Data.Hardware.Player, challenger : Data.Hardware.Player }"},"Data.Hardware.Ranking":{"args":[],"type":"{ id : String.String, active : Basics.Bool, name : String.String, owner_id : String.String, baseaddress : Data.Hardware.BaseAddress, ladder : List.List Data.Hardware.Rank, player_count : Basics.Int, owner_name : String.String }"},"Data.Hardware.RankingSearchResult":{"args":[],"type":"{ id : String.String, name : String.String }"},"Pages.Hardware.RegisterUserDetails":{"args":[],"type":"{ resource_id : String.String, user_details : Data.User.User, additional_fields : String.String }"},"Pages.Hardware.SuccessfulLoginResult":{"args":[],"type":"{ access_token : String.String, refresh_token : String.String, user_id : String.String, device_id : String.String }"},"Pages.Dashboard.SuccessfullBalanceResult":{"args":[],"type":"{ deployment_model : String.String, location : String.String, hostname : String.String, ws_hostname : String.String }"},"Pages.Hardware.SuccessfullLNSConnectResult":{"args":[],"type":"{ function : String.String, date : String.String, id : String.String, message : String.String, transport_type : String.String }"},"Pages.Hardware.SuccessfullProfileResult":{"args":[],"type":"{ user_id : String.String, domain_id : String.String, identities : List.List Pages.Hardware.Identities, data : Pages.Hardware.ProviderData, typeOfData : String.String }"},"Data.User.Token":{"args":[],"type":"String.String"},"Data.User.UserInfo":{"args":[],"type":"{ userid : String.String, password : Data.User.Password, passwordValidationError : String.String, token : Maybe.Maybe Data.User.Token, nickname : Data.User.NickName, isNameInputFocused : Basics.Bool, nameValidationError : String.String, age : Basics.Int, gender : Data.User.Gender, email : Maybe.Maybe String.String, isEmailInputFocused : Basics.Bool, emailValidationError : String.String, mobile : Maybe.Maybe String.String, isMobileInputFocused : Basics.Bool, mobileValidationError : String.String, datestamp : Basics.Int, active : Basics.Bool, ownedRankings : List.List Data.Hardware.Ranking, memberRankings : List.List Data.Hardware.Ranking, updatetext : String.String, description : Data.User.Description, credits : Basics.Int, addInfo : String.String }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"ClickedLink":["Browser.UrlRequest"],"GotDashboardMsg":["Pages.Dashboard.Msg"],"GotSellMsg":["Pages.Sell.Msg"],"GotPortfolioMsg":["Pages.Portfolio.Msg"],"GotFundsMsg":["Pages.Funds.Msg"],"GotSupportMsg":["Pages.Support.Msg"],"GotPingPongMsg":["Pages.PingPong.Msg"],"GotBuyMsg":["Pages.Buy.Msg"],"GotMarketMsg":["Pages.Market.Msg"],"GotHardwareMsg":["Pages.Hardware.Msg"],"ChangedUrl":["Url.Url"],"Tick":["Time.Posix"],"AdjustTimeZone":["Time.Zone"],"Recv":["Json.Decode.Value"],"RecvText":["String.String"],"NoOp":[],"HardwareDeviceConnect":[],"ShowPopUp":[],"HidePopUp":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Pages.Buy.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Buy.Model"]}},"Pages.Dashboard.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Dashboard.Model"],"BalanceResponse":["Result.Result Http.Error Pages.Dashboard.SuccessfullBalanceResult"],"GotVersion":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"]}},"Pages.Funds.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Funds.Model"]}},"Pages.Hardware.Msg":{"args":[],"tags":{"BookingForm":["Pages.Hardware.RegisterUserDetails"],"UpdateAge":["Basics.Int"],"UpdateGender":["String.String"],"UpdateEmail":["String.String"],"UpdatePassword":["String.String"],"UpdateNickName":["String.String"],"UpdateLevel":["String.String"],"UpdateComment":["String.String"],"UpdateMobile":["String.String"],"UpdatePhone":["String.String"],"CondoNameInput":["String.String"],"CondoAddressInput":["String.String"],"AddInfoInput":["String.String"],"ConfirmBookingForm":[],"NoOp":[],"DismissErrors":[],"Tick":["Time.Posix"],"InputFocused":["String.String"],"InputBlurred":["String.String"],"SelDateTime":["String.String"],"ToggleReturnUser":[],"UserLoginEmailInputChg":["String.String"],"UserLoginPasswordInputChg":["String.String"],"ClickedHardwareDeviceConnect":[],"ClickedXMRWalletConnect":[],"ClickedXMRInitiateTransaction":["String.String"],"ResponseDataFromMain":["Json.Decode.Value"],"LogOut":[],"Create":[],"CreateNewRanking":["Data.User.UserInfo"],"Cancel":[],"CancelFetchedOwned":["Data.User.UserInfo"],"CancelFetchedMember":[],"CancelFetchedSpectator":[],"CancelCreateNewRanking":[],"CancelRegistration":[],"Confirm":[],"FetchOwned":["Data.Hardware.Ranking"],"FetchMember":["Data.Hardware.Ranking"],"ListSpectator":["Data.Hardware.RankingSearchResult"],"ViewMember":["Data.User.MemberRanking"],"RegisUser":["Data.User.UserInfo"],"RankingNameChg":["String.String"],"StreetAddressChg":["String.String"],"CityAddressChg":["String.String"],"ConfirmNewRanking":["Data.Hardware.Ranking","Data.User.User"],"DialogDeleteOwnedRanking":[],"DeleteOwnedRanking":[],"ViewRank":["Data.Hardware.Rank"],"ConfirmChallenge":["Data.Hardware.Ranking","Data.Hardware.Rank"],"ConfirmResult":["Data.Hardware.ResultOfMatch"],"CancelDialoguePrepareResultView":[],"SearchInputChg":["String.String"],"FetchSpectatorRanking":["String.String"],"SpectatorRankingResponse":["Result.Result Http.Error Data.Hardware.Ranking"],"SpectatorJoin":[],"RegisteredUserJoin":[],"ConfirmJoin":["Data.Hardware.Ranking","String.String","Basics.Int"],"ConfirmLeaveMemberRanking":["Data.Hardware.Ranking","String.String"],"DialogueConfirmJoinView":[],"DialogueConfirmLeaveView":[],"DialogueConfirmDeleteAccount":[],"DeleteAccount":[],"LoginResponse":["Result.Result Http.Error Pages.Hardware.SuccessfulLoginResult"],"LNSConnectResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullLNSConnectResult"],"ProfileResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullProfileResult"],"CallResponse":["Result.Result Http.Error Data.User.UserInfo"]}},"Pages.Market.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Market.Model"]}},"Pages.PingPong.Msg":{"args":[],"tags":{"Send":[],"Receive":["Result.Result Http.Error Pages.PingPong.PongResponse"],"GotInitialModel":["Pages.PingPong.Model"]}},"Pages.Portfolio.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Portfolio.Model"]}},"Pages.Sell.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Sell.Model"]}},"Pages.Support.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Support.Model"]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Time.Zone":{"args":[],"tags":{"Zone":["Basics.Int","List.List Time.Era"]}},"Http.Body":{"args":[],"tags":{"Body":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Pages.Buy.Buy":{"args":[],"tags":{"Buy":["{ name : String.String }"]}},"Pages.Dashboard.Dashboard":{"args":[],"tags":{"Dashboard":["{ name : String.String }"]}},"Grpc.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["{ metadata : Http.Metadata, response : Bytes.Bytes, errMessage : String.String, status : Grpc.GrpcStatus }"],"BadBody":["Bytes.Bytes"],"UnknownGrpcStatus":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Pages.Funds.Funds":{"args":[],"tags":{"Funds":["{ name : String.String }"]}},"Data.User.Gender":{"args":[],"tags":{"Male":[],"Female":[]}},"Http.Header":{"args":[],"tags":{"Header":["String.String","String.String"]}},"List.List":{"args":["a"],"tags":{}},"Pages.Market.Market":{"args":[],"tags":{"Market":["{ name : String.String }"]}},"Pages.PingPong.PingPong":{"args":[],"tags":{"PingPong":["{ name : String.String }"]}},"Pages.Portfolio.Portfolio":{"args":[],"tags":{"Portfolio":["{ name : String.String }"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"Data.Hardware.ResultOfMatch":{"args":[],"tags":{"Won":[],"Lost":[],"Undecided":[]}},"Pages.Sell.Sell":{"args":[],"tags":{"Sell":["{ name : String.String }"]}},"Pages.Buy.Status":{"args":[],"tags":{"Loading":[],"Loaded":[],"Errored":[]}},"Pages.Dashboard.Status":{"args":[],"tags":{"Loading":[],"Loaded":[],"Errored":[]}},"Pages.Funds.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Market.Status":{"args":[],"tags":{"Loading":[]}},"Pages.PingPong.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Portfolio.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Sell.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Support":{"args":[],"tags":{"Support":["{ name : String.String }"]}},"Data.User.User":{"args":[],"tags":{"Spectator":["Data.User.UserInfo"],"Registered":["Data.User.UserInfo"]}},"Bytes.Bytes":{"args":[],"tags":{"Bytes":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Grpc.GrpcStatus":{"args":[],"tags":{"Ok_":[],"Cancelled":[],"Unknown":[],"InvalidArgument":[],"DeadlineExceeded":[],"NotFound":[],"AlreadyExists":[],"PermissionDenied":[],"ResourceExhausted":[],"FailedPrecondition":[],"Aborted":[],"OutOfRange":[],"Unimplemented":[],"Internal":[],"Unavailable":[],"DataLoss":[],"Unauthenticated":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));

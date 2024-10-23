@@ -4,7 +4,18 @@ module Pages.Dashboard exposing (Model, Msg, init, initialModel, update, view)
 -}
 
 import Buttons.Default exposing (defaultButton)
+import Debug exposing (log)
+import Element exposing (Element, el)
+import Element.Font as Font
+import Element.Input as Input
 import Extras.Constants as Consts
+import Framework
+import Framework.Button as Button
+import Framework.Card as Card
+import Framework.Color as Color
+import Framework.Grid as Grid
+import Framework.Heading as Heading
+import Framework.Input as Input
 import Grpc exposing (..)
 import Html exposing (..)
 import Html.Attributes as Attr exposing (..)
@@ -15,11 +26,13 @@ import Json.Encode as E exposing (..)
 import Maybe exposing (withDefault)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
+import Spec.Markup exposing (log)
 import Types.DateType as DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 
 
 
+--import Widget.Material.Typography exposing (h2)
 {- -- NOTE: The Model will contain all the data relevant to this kind of page. If this page,
    or a similar one became more sophisticated, you would start modelling it's data here. If things
    start getting tricky (lots of difficult changes to existing code), ask yourself if you need a similar,
@@ -30,7 +43,7 @@ import Url exposing (Protocol(..), Url)
 
 type alias Model =
     { status : Status
-    , title : String
+    , pagetitle : String
     , root : Dashboard
     , balance : String
     , flagUrl : Url
@@ -46,11 +59,11 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { status = Loading
-    , title = "Dashboard"
+    { status = Loaded
+    , pagetitle = "Dashboard"
     , root = Dashboard { name = "Loading..." }
     , balance = "0.00"
-    , flagUrl = Url Https "example.com" Nothing "" Nothing Nothing
+    , flagUrl = Url Http "localhost" Nothing "/dashboard" Nothing Nothing
     , havenoAPKHttpRequest = Nothing
     , version = Nothing
     , errors = []
@@ -65,6 +78,8 @@ type Dashboard
 
 type Status
     = Loading
+    | Loaded
+    | Errored
 
 
 
@@ -81,18 +96,23 @@ init : FromMainToDashboard -> ( Model, Cmd Msg )
 init fromMainToDashboard =
     let
         -- REVIEW: Not yet clear how/if this will be used here
-        devOrProdServer =
-            if String.contains Consts.localorproductionServerAutoCheck fromMainToDashboard.flagUrl.host then
-                Url fromMainToDashboard.flagUrl.protocol fromMainToDashboard.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
+        {- devOrProdServer =
+           if String.contains Consts.localorproductionServerAutoCheck fromMainToDashboard.flagUrl.host then
+               Url fromMainToDashboard.flagUrl.protocol fromMainToDashboard.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
 
-            else
-                Url fromMainToDashboard.flagUrl.protocol fromMainToDashboard.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
+           else
+               Url fromMainToDashboard.flagUrl.protocol fromMainToDashboard.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
+        -}
+        --newModel =
+        --Model Loading "Haveno-Web Dashboard" (Dashboard { name = "Loading..." }) "0.00" fromMainToDashboard.flagUrl (Just (HavenoAPKHttpRequest Consts.post [] "" Http.emptyBody Nothing Nothing)) Nothing []
+        newUrl =
+            Url Http "localhost" Nothing "/dashboard" Nothing Nothing
 
         newModel =
-            Model Loading "Haveno-Web Dashboard" (Dashboard { name = "Loading..." }) "0.00" fromMainToDashboard.flagUrl (Just (HavenoAPKHttpRequest Consts.post [] "" Http.emptyBody Nothing Nothing)) Nothing []
+            Model Loaded "Dashboard" (Dashboard { name = "Loading..." }) "0.00" newUrl Nothing Nothing []
     in
     ( newModel
-    , sendVersionRequest {}
+    , Cmd.none
     )
 
 
@@ -119,7 +139,7 @@ update msg model =
             ( { model | version = model.version }, Cmd.none )
 
         GotInitialModel newModel ->
-            ( { newModel | title = model.title }, Cmd.none )
+            ( { newModel | pagetitle = model.pagetitle }, Cmd.none )
 
         BalanceResponse (Ok auth) ->
             let
@@ -175,35 +195,32 @@ update msg model =
 
 
 -- NAV: View
--- NOTE: Our view will be Html msg, not Document
--- as we won't use 'title' etc. cos we have our own formatting
 
 
-view : Model -> Html msg
+view : Model -> Html Msg
 view model =
-    section [ Attr.id "page", class "section-background" ]
-        [ div [ class "container container--narrow" ]
-            [ h1 [ classList [ ( "text-center", True ), ( "Dashboard", True ) ] ]
-                [ text "Haveno Web - Dashboard" ]
-            , h2 [ class "text-center" ]
-                [ text "Online Dex" ]
-            , div []
-                [ div [ class "text-center" ]
-                    [ text "Welcome to Haveno Web, the online decentralized exchange for Haveno, the private, untraceable cryptocurrency."
-                    ]
-                ]
-            , div []
-                [ div [ class "text-center" ]
-                    [ text "Your version is:"
-                    ]
-                ]
-            , div []
-                [ div [ class "text-center" ]
-                    [ text (Maybe.withDefault "" (model.version |> Maybe.map .version))
-                    ]
-                ]
+    Framework.responsiveLayout [] <|
+        Element.column Framework.container <|
+            [ Element.el Heading.h1 <|
+                Element.text "Haveno Web - Dashboard"
+            , Element.text "\n"
+
+            --, infoBtn "Connect Hardware Device" <| ClickedHardwareDeviceConnect
+            , Element.text "Your version is:"
+
+            --, infoBtn "Connect XMR Wallet" <| ClickedXMRWalletConnect
+            , Element.el Heading.h4 <| Element.text (Maybe.withDefault "" (model.version |> Maybe.map .version))
+            , Element.text "\n"
+
+            --, infoBtn "Initiate Transaction" <| ClickedXMRInitiateTransaction "0.01"
+            , case model.errors of
+                [] ->
+                    Element.text ""
+
+                _ ->
+                    Element.column Grid.section <|
+                        List.map (\error -> Element.el Heading.h6 (Element.text error)) model.errors
             ]
-        ]
 
 
 
@@ -240,21 +257,6 @@ type alias HavenoAPKHttpRequest =
 -- NAV: Http requests
 -- Function to create the GetVersionRequest
 -- Function to make the HTTP request
-
-
-sendVersionRequest : GetVersionRequest -> Cmd Msg
-sendVersionRequest request =
-    let
-        grpcRequest =
-            Grpc.new getVersion request
-                |> Grpc.addHeader "password" "apitest"
-                -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
-                |> Grpc.setHost "http://localhost:8080"
-    in
-    Grpc.toCmd GotVersion grpcRequest
-
-
-
 -- NAV: Json Decoders
 
 

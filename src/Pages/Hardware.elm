@@ -41,7 +41,6 @@ import Utils.Validation.Validate as V
 
 
 
-
 -- NOTE: To determine. What is the relationship between this model and the one in Main?
 {- Generally, the Model should include data that:
 
@@ -79,27 +78,30 @@ init fromMainToHardware =
 
             else
                 Url fromMainToHardware.flagUrl.protocol fromMainToHardware.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
+
+        newUrl =
+            Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
     in
     -- NOTE: these api's are in mongodbMW.js currently - mabye they will be sent through from elm at a later point
     -- Use the refresh token to obtain a new access token
     ( Model Loaded
         "Hardware"
-        (Hardware { name = "Loading ..." })
-        fromMainToHardware.flagUrl
+        (Hardware { name = "Loading..." })
+        newUrl
         -- NOTE: Datetime updated in Main
         (Maybe.withDefault Nothing (Just fromMainToHardware.time))
         apiSpecsPlaceHolder
-        (Login Consts.emptyEmailPassword)
-        (Just (ToMongoDBMWConfig Consts.post [] (Url.toString updatedFlagUrlToIncludeMongoDBMWSvr) Http.emptyBody Nothing Nothing))
+        LoggedInUser
         False
         False
         False
         False
-        [ "" ]
-        [ Nothing ]
+        ""
+        []
+        []
         False
         False
-        { email = "", password = "" }
+        {email = "", password = ""}
         U.emptySpectator
         ""
         []
@@ -122,11 +124,11 @@ type alias Model =
     , datetimeFromMain : Maybe DateTime
     , apiSpecifics : ApiSpecifics
     , queryType : QueryType
-    , toMongoDBMWConfig : Maybe ToMongoDBMWConfig
     , isValidNewAccessToken : Bool
     , isHardwareLNSConnected : Bool
     , isHardwareLNXConnected : Bool
     , isXMRWalletConnected : Bool
+    , xmrWalletAddress : String
     , errors : List String
     , availableSlots : List (Maybe String)
 
@@ -152,18 +154,18 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { status = Loading
+    { status = Loaded
     , title = "Hardware"
     , root = Hardware { name = "Loading..." }
-    , flagUrl = Url Https "example.com" Nothing "" Nothing Nothing
+    , flagUrl = Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
     , datetimeFromMain = Nothing
-    , apiSpecifics = { maxResults = "10", accessToken = Nothing }
+    , apiSpecifics = { maxResults = "", accessToken = Nothing }
     , queryType = LoggedInUser
-    , toMongoDBMWConfig = Nothing
     , isValidNewAccessToken = False
     , isHardwareLNSConnected = False
     , isHardwareLNXConnected = False
     , isXMRWalletConnected = False
+    , xmrWalletAddress = ""
     , errors = []
     , availableSlots = []
     , isWaitingForResponse = False
@@ -528,13 +530,13 @@ update msg model =
         -- NAV: ResponseDataFromMain - key function
         -- NOTE: All the branching here is configuring the model according to
         -- the json being returned from mondodb and the .js files
-        -- NOTE: receivedJson is always a D.Value, stringified ws issue are dealt
-        -- with in dataFromMongo
+        -- NOTE: receivedJson is always a D.Value
+        -- REVIEW: This data logic is already processed in Main - why do it again here? So that the hardware model is also updated.
         ResponseDataFromMain receivedJson ->
             let
                 -- NOTE: You can only see the rawJsonMessage in the console if you use JE.encode 2
                 -- but you can't decode it if you use it that way
-                --_ = Debug.log "receivedJson" (E.encode 0 receivedJson)
+                
                 decodedHardwareDeviceMsg =
                     case D.decodeValue justmsgFieldFromJsonDecoder receivedJson of
                         Ok message ->
@@ -572,6 +574,7 @@ update msg model =
                   isHardwareLNSConnected = updatedIsLNSConnected
                 , isHardwareLNXConnected = updatedIsLNXConnected
                 , isXMRWalletConnected = updatedIsXMRConnected
+                , xmrWalletAddress = decodedHardwareDeviceMsg
 
                 --, selectedranking = newRanking
                 --, objectJSONfromJSPort = Just decodedJsObj
@@ -737,8 +740,8 @@ update msg model =
                 -- HACK:
                 newModel =
                     { model
-                        | toMongoDBMWConfig = Just newHttpParams
-                        , isValidNewAccessToken = True
+                        | 
+                        isValidNewAccessToken = True
                         , user = U.Registered auth
 
                         --, apiSpecifics = { apiSpecs | accessToken = Just auth.access_token }
@@ -789,8 +792,7 @@ update msg model =
                 -- HACK:
                 newModel =
                     { model
-                        | toMongoDBMWConfig = Just newHttpParams
-                        , isValidNewAccessToken = True
+                        | isValidNewAccessToken = True
 
                         --, apiSpecifics = { apiSpecs | accessToken = Just auth.access_token }
                         --, queryType = LoggedInUser
@@ -841,8 +843,7 @@ update msg model =
                 -- HACK:
                 newModel =
                     { model
-                        | toMongoDBMWConfig = Just newHttpParams
-                        , queryType = LoggedInUser
+                        | queryType = LoggedInUser
                     }
             in
             ( newModel
@@ -902,8 +903,7 @@ update msg model =
                 -- HACK:
                 newModel =
                     { model
-                        | toMongoDBMWConfig = Just newHttpParams
-                        , isValidNewAccessToken = True
+                        | isValidNewAccessToken = True
                         , apiSpecifics = { apiSpecs | accessToken = Just auth.access_token }
                         , queryType = LoggedInUser
                     }
@@ -1098,13 +1098,14 @@ view model =
                         [ div
                             [ class "spinner"
                             ]
-                            []
+                            [text "Loading ..." ]
                         ]
 
                 Errored ->
                     div [] [ text "error" ]
 
                 Loaded ->
+                    
                     div
                         [ class "split-col"
                         ]
@@ -1609,12 +1610,13 @@ globalView searchterm searchResults userVal =
 
 hardwareWalletView : Model -> Html Msg
 hardwareWalletView model =
+    
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
             [ Element.el Heading.h5 <| Element.text "Welcome - Unconnected User"
             , Element.text "\n"
             , infoBtn "Connect Hardware Device" <| ClickedHardwareDeviceConnect
-            , Element.text "\n"
+            , Element.text "Connect XMR Wallet\n"
             , infoBtn "Connect XMR Wallet" <| ClickedXMRWalletConnect
             , Element.text "\n"
             , Element.el Heading.h6 <|
@@ -1626,13 +1628,11 @@ hardwareWalletView model =
                         "Nano X Connected"
 
                      else if model.isXMRWalletConnected then
-                        "XMR Wallet Connected"
+                        "XMR Wallet Connected with Address: " ++ model.xmrWalletAddress
 
                      else
-                        "Not connected yet"
+                        "No hardware device connected"
                     )
-
-            
             , Element.text "\n"
             , infoBtn "Initiate Transaction" <| ClickedXMRInitiateTransaction "0.01"
             , case model.errors of

@@ -3913,6 +3913,156 @@ type alias Process =
             return $elm$core$Maybe$Nothing;
         }
     }
+    function _Time_now(millisToPosix) {
+        return _Scheduler_binding(function(callback) {
+            callback(_Scheduler_succeed(millisToPosix(Date.now())));
+        });
+    }
+    var _Time_setInterval = F2(function(interval, task) {
+        return _Scheduler_binding(function(callback) {
+            var id = setInterval(function() {
+                _Scheduler_rawSpawn(task);
+            }, interval);
+            return function() {
+                clearInterval(id);
+            };
+        });
+    });
+    function _Time_here() {
+        return _Scheduler_binding(function(callback) {
+            callback(_Scheduler_succeed(A2($elm$time$Time$customZone, -new Date().getTimezoneOffset(), _List_Nil)));
+        });
+    }
+    function _Time_getZoneName() {
+        return _Scheduler_binding(function(callback) {
+            try {
+                var name = $elm$time$Time$Name(Intl.DateTimeFormat().resolvedOptions().timeZone);
+            } catch (e) {
+                var name = $elm$time$Time$Offset(new Date().getTimezoneOffset());
+            }
+            callback(_Scheduler_succeed(name));
+        });
+    }
+    // BYTES
+    function _Bytes_width(bytes) {
+        return bytes.byteLength;
+    }
+    var _Bytes_getHostEndianness = F2(function(le, be) {
+        return _Scheduler_binding(function(callback) {
+            callback(_Scheduler_succeed(new Uint8Array(new Uint32Array([
+                1
+            ]))[0] === 1 ? le : be));
+        });
+    });
+    // ENCODERS
+    function _Bytes_encode(encoder) {
+        var mutableBytes = new DataView(new ArrayBuffer($elm$bytes$Bytes$Encode$getWidth(encoder)));
+        $elm$bytes$Bytes$Encode$write(encoder)(mutableBytes)(0);
+        return mutableBytes;
+    }
+    // SIGNED INTEGERS
+    var _Bytes_write_i8 = F3(function(mb, i, n) {
+        mb.setInt8(i, n);
+        return i + 1;
+    });
+    var _Bytes_write_i16 = F4(function(mb, i, n, isLE) {
+        mb.setInt16(i, n, isLE);
+        return i + 2;
+    });
+    var _Bytes_write_i32 = F4(function(mb, i, n, isLE) {
+        mb.setInt32(i, n, isLE);
+        return i + 4;
+    });
+    // UNSIGNED INTEGERS
+    var _Bytes_write_u8 = F3(function(mb, i, n) {
+        mb.setUint8(i, n);
+        return i + 1;
+    });
+    var _Bytes_write_u16 = F4(function(mb, i, n, isLE) {
+        mb.setUint16(i, n, isLE);
+        return i + 2;
+    });
+    var _Bytes_write_u32 = F4(function(mb, i, n, isLE) {
+        mb.setUint32(i, n, isLE);
+        return i + 4;
+    });
+    // FLOATS
+    var _Bytes_write_f32 = F4(function(mb, i, n, isLE) {
+        mb.setFloat32(i, n, isLE);
+        return i + 4;
+    });
+    var _Bytes_write_f64 = F4(function(mb, i, n, isLE) {
+        mb.setFloat64(i, n, isLE);
+        return i + 8;
+    });
+    // BYTES
+    var _Bytes_write_bytes = F3(function(mb, offset, bytes) {
+        for(var i = 0, len = bytes.byteLength, limit = len - 4; i <= limit; i += 4)mb.setUint32(offset + i, bytes.getUint32(i));
+        for(; i < len; i++)mb.setUint8(offset + i, bytes.getUint8(i));
+        return offset + len;
+    });
+    // STRINGS
+    function _Bytes_getStringWidth(string) {
+        for(var width = 0, i = 0; i < string.length; i++){
+            var code = string.charCodeAt(i);
+            width += code < 0x80 ? 1 : code < 0x800 ? 2 : code < 0xD800 || 0xDBFF < code ? 3 : (i++, 4);
+        }
+        return width;
+    }
+    var _Bytes_write_string = F3(function(mb, offset, string) {
+        for(var i = 0; i < string.length; i++){
+            var code = string.charCodeAt(i);
+            offset += code < 0x80 ? (mb.setUint8(offset, code), 1) : code < 0x800 ? (mb.setUint16(offset, 0xC080 /* 0b1100000010000000 */  | (code >>> 6 & 0x1F /* 0b00011111 */ ) << 8 | code & 0x3F /* 0b00111111 */ ), 2) : code < 0xD800 || 0xDBFF < code ? (mb.setUint16(offset, 0xE080 /* 0b1110000010000000 */  | (code >>> 12 & 0xF /* 0b00001111 */ ) << 8 | code >>> 6 & 0x3F /* 0b00111111 */ ), mb.setUint8(offset + 2, 0x80 /* 0b10000000 */  | code & 0x3F /* 0b00111111 */ ), 3) : (code = (code - 0xD800) * 0x400 + string.charCodeAt(++i) - 0xDC00 + 0x10000, mb.setUint32(offset, 0xF0808080 /* 0b11110000100000001000000010000000 */  | (code >>> 18 & 0x7 /* 0b00000111 */ ) << 24 | (code >>> 12 & 0x3F /* 0b00111111 */ ) << 16 | (code >>> 6 & 0x3F /* 0b00111111 */ ) << 8 | code & 0x3F /* 0b00111111 */ ), 4);
+        }
+        return offset;
+    });
+    // DECODER
+    var _Bytes_decode = F2(function(decoder, bytes) {
+        try {
+            return $elm$core$Maybe$Just(A2(decoder, bytes, 0).b);
+        } catch (e) {
+            return $elm$core$Maybe$Nothing;
+        }
+    });
+    var _Bytes_read_i8 = F2(function(bytes, offset) {
+        return _Utils_Tuple2(offset + 1, bytes.getInt8(offset));
+    });
+    var _Bytes_read_i16 = F3(function(isLE, bytes, offset) {
+        return _Utils_Tuple2(offset + 2, bytes.getInt16(offset, isLE));
+    });
+    var _Bytes_read_i32 = F3(function(isLE, bytes, offset) {
+        return _Utils_Tuple2(offset + 4, bytes.getInt32(offset, isLE));
+    });
+    var _Bytes_read_u8 = F2(function(bytes, offset) {
+        return _Utils_Tuple2(offset + 1, bytes.getUint8(offset));
+    });
+    var _Bytes_read_u16 = F3(function(isLE, bytes, offset) {
+        return _Utils_Tuple2(offset + 2, bytes.getUint16(offset, isLE));
+    });
+    var _Bytes_read_u32 = F3(function(isLE, bytes, offset) {
+        return _Utils_Tuple2(offset + 4, bytes.getUint32(offset, isLE));
+    });
+    var _Bytes_read_f32 = F3(function(isLE, bytes, offset) {
+        return _Utils_Tuple2(offset + 4, bytes.getFloat32(offset, isLE));
+    });
+    var _Bytes_read_f64 = F3(function(isLE, bytes, offset) {
+        return _Utils_Tuple2(offset + 8, bytes.getFloat64(offset, isLE));
+    });
+    var _Bytes_read_bytes = F3(function(len, bytes, offset) {
+        return _Utils_Tuple2(offset + len, new DataView(bytes.buffer, bytes.byteOffset + offset, len));
+    });
+    var _Bytes_read_string = F3(function(len, bytes, offset) {
+        var string = "";
+        var end = offset + len;
+        for(; offset < end;){
+            var byte = bytes.getUint8(offset++);
+            string += byte < 128 ? String.fromCharCode(byte) : (byte & 0xE0 /* 0b11100000 */ ) === 0xC0 /* 0b11000000 */  ? String.fromCharCode((byte & 0x1F /* 0b00011111 */ ) << 6 | bytes.getUint8(offset++) & 0x3F /* 0b00111111 */ ) : (byte & 0xF0 /* 0b11110000 */ ) === 0xE0 /* 0b11100000 */  ? String.fromCharCode((byte & 0xF /* 0b00001111 */ ) << 12 | (bytes.getUint8(offset++) & 0x3F /* 0b00111111 */ ) << 6 | bytes.getUint8(offset++) & 0x3F /* 0b00111111 */ ) : (byte = ((byte & 0x7 /* 0b00000111 */ ) << 18 | (bytes.getUint8(offset++) & 0x3F /* 0b00111111 */ ) << 12 | (bytes.getUint8(offset++) & 0x3F /* 0b00111111 */ ) << 6 | bytes.getUint8(offset++) & 0x3F /* 0b00111111 */ ) - 0x10000, String.fromCharCode(Math.floor(byte / 0x400) + 0xD800, byte % 0x400 + 0xDC00));
+        }
+        return _Utils_Tuple2(offset, string);
+    });
+    var _Bytes_decodeFailure = F2(function() {
+        throw 0;
+    });
     // SEND REQUEST
     var _Http_toTask = F3(function(router, toTask, request) {
         return _Scheduler_binding(function(callback) {
@@ -4045,156 +4195,6 @@ type alias Process =
                 received: event.loaded,
                 size: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
             }))));
-        });
-    }
-    // BYTES
-    function _Bytes_width(bytes) {
-        return bytes.byteLength;
-    }
-    var _Bytes_getHostEndianness = F2(function(le, be) {
-        return _Scheduler_binding(function(callback) {
-            callback(_Scheduler_succeed(new Uint8Array(new Uint32Array([
-                1
-            ]))[0] === 1 ? le : be));
-        });
-    });
-    // ENCODERS
-    function _Bytes_encode(encoder) {
-        var mutableBytes = new DataView(new ArrayBuffer($elm$bytes$Bytes$Encode$getWidth(encoder)));
-        $elm$bytes$Bytes$Encode$write(encoder)(mutableBytes)(0);
-        return mutableBytes;
-    }
-    // SIGNED INTEGERS
-    var _Bytes_write_i8 = F3(function(mb, i, n) {
-        mb.setInt8(i, n);
-        return i + 1;
-    });
-    var _Bytes_write_i16 = F4(function(mb, i, n, isLE) {
-        mb.setInt16(i, n, isLE);
-        return i + 2;
-    });
-    var _Bytes_write_i32 = F4(function(mb, i, n, isLE) {
-        mb.setInt32(i, n, isLE);
-        return i + 4;
-    });
-    // UNSIGNED INTEGERS
-    var _Bytes_write_u8 = F3(function(mb, i, n) {
-        mb.setUint8(i, n);
-        return i + 1;
-    });
-    var _Bytes_write_u16 = F4(function(mb, i, n, isLE) {
-        mb.setUint16(i, n, isLE);
-        return i + 2;
-    });
-    var _Bytes_write_u32 = F4(function(mb, i, n, isLE) {
-        mb.setUint32(i, n, isLE);
-        return i + 4;
-    });
-    // FLOATS
-    var _Bytes_write_f32 = F4(function(mb, i, n, isLE) {
-        mb.setFloat32(i, n, isLE);
-        return i + 4;
-    });
-    var _Bytes_write_f64 = F4(function(mb, i, n, isLE) {
-        mb.setFloat64(i, n, isLE);
-        return i + 8;
-    });
-    // BYTES
-    var _Bytes_write_bytes = F3(function(mb, offset, bytes) {
-        for(var i = 0, len = bytes.byteLength, limit = len - 4; i <= limit; i += 4)mb.setUint32(offset + i, bytes.getUint32(i));
-        for(; i < len; i++)mb.setUint8(offset + i, bytes.getUint8(i));
-        return offset + len;
-    });
-    // STRINGS
-    function _Bytes_getStringWidth(string) {
-        for(var width = 0, i = 0; i < string.length; i++){
-            var code = string.charCodeAt(i);
-            width += code < 0x80 ? 1 : code < 0x800 ? 2 : code < 0xD800 || 0xDBFF < code ? 3 : (i++, 4);
-        }
-        return width;
-    }
-    var _Bytes_write_string = F3(function(mb, offset, string) {
-        for(var i = 0; i < string.length; i++){
-            var code = string.charCodeAt(i);
-            offset += code < 0x80 ? (mb.setUint8(offset, code), 1) : code < 0x800 ? (mb.setUint16(offset, 0xC080 /* 0b1100000010000000 */  | (code >>> 6 & 0x1F /* 0b00011111 */ ) << 8 | code & 0x3F /* 0b00111111 */ ), 2) : code < 0xD800 || 0xDBFF < code ? (mb.setUint16(offset, 0xE080 /* 0b1110000010000000 */  | (code >>> 12 & 0xF /* 0b00001111 */ ) << 8 | code >>> 6 & 0x3F /* 0b00111111 */ ), mb.setUint8(offset + 2, 0x80 /* 0b10000000 */  | code & 0x3F /* 0b00111111 */ ), 3) : (code = (code - 0xD800) * 0x400 + string.charCodeAt(++i) - 0xDC00 + 0x10000, mb.setUint32(offset, 0xF0808080 /* 0b11110000100000001000000010000000 */  | (code >>> 18 & 0x7 /* 0b00000111 */ ) << 24 | (code >>> 12 & 0x3F /* 0b00111111 */ ) << 16 | (code >>> 6 & 0x3F /* 0b00111111 */ ) << 8 | code & 0x3F /* 0b00111111 */ ), 4);
-        }
-        return offset;
-    });
-    // DECODER
-    var _Bytes_decode = F2(function(decoder, bytes) {
-        try {
-            return $elm$core$Maybe$Just(A2(decoder, bytes, 0).b);
-        } catch (e) {
-            return $elm$core$Maybe$Nothing;
-        }
-    });
-    var _Bytes_read_i8 = F2(function(bytes, offset) {
-        return _Utils_Tuple2(offset + 1, bytes.getInt8(offset));
-    });
-    var _Bytes_read_i16 = F3(function(isLE, bytes, offset) {
-        return _Utils_Tuple2(offset + 2, bytes.getInt16(offset, isLE));
-    });
-    var _Bytes_read_i32 = F3(function(isLE, bytes, offset) {
-        return _Utils_Tuple2(offset + 4, bytes.getInt32(offset, isLE));
-    });
-    var _Bytes_read_u8 = F2(function(bytes, offset) {
-        return _Utils_Tuple2(offset + 1, bytes.getUint8(offset));
-    });
-    var _Bytes_read_u16 = F3(function(isLE, bytes, offset) {
-        return _Utils_Tuple2(offset + 2, bytes.getUint16(offset, isLE));
-    });
-    var _Bytes_read_u32 = F3(function(isLE, bytes, offset) {
-        return _Utils_Tuple2(offset + 4, bytes.getUint32(offset, isLE));
-    });
-    var _Bytes_read_f32 = F3(function(isLE, bytes, offset) {
-        return _Utils_Tuple2(offset + 4, bytes.getFloat32(offset, isLE));
-    });
-    var _Bytes_read_f64 = F3(function(isLE, bytes, offset) {
-        return _Utils_Tuple2(offset + 8, bytes.getFloat64(offset, isLE));
-    });
-    var _Bytes_read_bytes = F3(function(len, bytes, offset) {
-        return _Utils_Tuple2(offset + len, new DataView(bytes.buffer, bytes.byteOffset + offset, len));
-    });
-    var _Bytes_read_string = F3(function(len, bytes, offset) {
-        var string = "";
-        var end = offset + len;
-        for(; offset < end;){
-            var byte = bytes.getUint8(offset++);
-            string += byte < 128 ? String.fromCharCode(byte) : (byte & 0xE0 /* 0b11100000 */ ) === 0xC0 /* 0b11000000 */  ? String.fromCharCode((byte & 0x1F /* 0b00011111 */ ) << 6 | bytes.getUint8(offset++) & 0x3F /* 0b00111111 */ ) : (byte & 0xF0 /* 0b11110000 */ ) === 0xE0 /* 0b11100000 */  ? String.fromCharCode((byte & 0xF /* 0b00001111 */ ) << 12 | (bytes.getUint8(offset++) & 0x3F /* 0b00111111 */ ) << 6 | bytes.getUint8(offset++) & 0x3F /* 0b00111111 */ ) : (byte = ((byte & 0x7 /* 0b00000111 */ ) << 18 | (bytes.getUint8(offset++) & 0x3F /* 0b00111111 */ ) << 12 | (bytes.getUint8(offset++) & 0x3F /* 0b00111111 */ ) << 6 | bytes.getUint8(offset++) & 0x3F /* 0b00111111 */ ) - 0x10000, String.fromCharCode(Math.floor(byte / 0x400) + 0xD800, byte % 0x400 + 0xDC00));
-        }
-        return _Utils_Tuple2(offset, string);
-    });
-    var _Bytes_decodeFailure = F2(function() {
-        throw 0;
-    });
-    function _Time_now(millisToPosix) {
-        return _Scheduler_binding(function(callback) {
-            callback(_Scheduler_succeed(millisToPosix(Date.now())));
-        });
-    }
-    var _Time_setInterval = F2(function(interval, task) {
-        return _Scheduler_binding(function(callback) {
-            var id = setInterval(function() {
-                _Scheduler_rawSpawn(task);
-            }, interval);
-            return function() {
-                clearInterval(id);
-            };
-        });
-    });
-    function _Time_here() {
-        return _Scheduler_binding(function(callback) {
-            callback(_Scheduler_succeed(A2($elm$time$Time$customZone, -new Date().getTimezoneOffset(), _List_Nil)));
-        });
-    }
-    function _Time_getZoneName() {
-        return _Scheduler_binding(function(callback) {
-            try {
-                var name = $elm$time$Time$Name(Intl.DateTimeFormat().resolvedOptions().timeZone);
-            } catch (e) {
-                var name = $elm$time$Time$Offset(new Date().getTimezoneOffset());
-            }
-            callback(_Scheduler_succeed(name));
         });
     }
     // STRINGS
@@ -8086,33 +8086,140 @@ type alias Process =
         }
     };
     var $elm$browser$Browser$application = _Browser_application;
-    var $author$project$Main$DashboardPage = function(a) {
+    var $author$project$Main$HardwarePage = function(a) {
         return {
-            $: "DashboardPage",
+            $: "HardwarePage",
             a: a
         };
     };
-    var $author$project$Extras$Constants$emptyDefaultUrl = A6($elm$url$Url$Url, $elm$url$Url$Https, "default", $elm$core$Maybe$Nothing, "", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-    var $author$project$Pages$Dashboard$Dashboard = function(a) {
+    var $author$project$Pages$Hardware$Hardware = function(a) {
         return {
-            $: "Dashboard",
+            $: "Hardware",
             a: a
         };
     };
-    var $author$project$Pages$Dashboard$Loading = {
-        $: "Loading"
+    var $author$project$Pages$Hardware$Loaded = {
+        $: "Loaded"
     };
-    var $author$project$Pages$Dashboard$initialModel = {
-        balance: "0.00",
+    var $author$project$Pages$Hardware$LoggedInUser = {
+        $: "LoggedInUser"
+    };
+    var $author$project$Data$User$Spectator = function(a) {
+        return {
+            $: "Spectator",
+            a: a
+        };
+    };
+    var $author$project$Data$User$Male = {
+        $: "Male"
+    };
+    var $author$project$Data$User$UserInfo = function(userid) {
+        return function(password) {
+            return function(passwordValidationError) {
+                return function(token) {
+                    return function(nickname) {
+                        return function(isNameInputFocused) {
+                            return function(nameValidationError) {
+                                return function(age) {
+                                    return function(gender) {
+                                        return function(email) {
+                                            return function(isEmailInputFocused) {
+                                                return function(emailValidationError) {
+                                                    return function(mobile) {
+                                                        return function(isMobileInputFocused) {
+                                                            return function(mobileValidationError) {
+                                                                return function(datestamp) {
+                                                                    return function(active) {
+                                                                        return function(ownedRankings) {
+                                                                            return function(memberRankings) {
+                                                                                return function(updatetext) {
+                                                                                    return function(description) {
+                                                                                        return function(credits) {
+                                                                                            return function(addInfo) {
+                                                                                                return {
+                                                                                                    active: active,
+                                                                                                    addInfo: addInfo,
+                                                                                                    age: age,
+                                                                                                    credits: credits,
+                                                                                                    datestamp: datestamp,
+                                                                                                    description: description,
+                                                                                                    email: email,
+                                                                                                    emailValidationError: emailValidationError,
+                                                                                                    gender: gender,
+                                                                                                    isEmailInputFocused: isEmailInputFocused,
+                                                                                                    isMobileInputFocused: isMobileInputFocused,
+                                                                                                    isNameInputFocused: isNameInputFocused,
+                                                                                                    memberRankings: memberRankings,
+                                                                                                    mobile: mobile,
+                                                                                                    mobileValidationError: mobileValidationError,
+                                                                                                    nameValidationError: nameValidationError,
+                                                                                                    nickname: nickname,
+                                                                                                    ownedRankings: ownedRankings,
+                                                                                                    password: password,
+                                                                                                    passwordValidationError: passwordValidationError,
+                                                                                                    token: token,
+                                                                                                    updatetext: updatetext,
+                                                                                                    userid: userid
+                                                                                                };
+                                                                                            };
+                                                                                        };
+                                                                                    };
+                                                                                };
+                                                                            };
+                                                                        };
+                                                                    };
+                                                                };
+                                                            };
+                                                        };
+                                                    };
+                                                };
+                                            };
+                                        };
+                                    };
+                                };
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    var $author$project$Data$User$emptyDescription = {
+        comment: "",
+        level: ""
+    };
+    var $author$project$Data$User$emptyUserInfo = $author$project$Data$User$UserInfo("")("")("")($elm$core$Maybe$Nothing)("")(false)("")(40)($author$project$Data$User$Male)($elm$core$Maybe$Nothing)(false)("")($elm$core$Maybe$Nothing)(false)("")(0)(false)(_List_Nil)(_List_Nil)("")($author$project$Data$User$emptyDescription)(0)("");
+    var $author$project$Data$User$emptySpectator = $author$project$Data$User$Spectator($author$project$Data$User$emptyUserInfo);
+    var $author$project$Pages$Hardware$initialModel = {
+        apiSpecifics: {
+            accessToken: $elm$core$Maybe$Nothing,
+            maxResults: ""
+        },
+        availableSlots: _List_Nil,
+        datetimeFromMain: $elm$core$Maybe$Nothing,
+        emailpassword: {
+            email: "",
+            password: ""
+        },
         errors: _List_Nil,
-        flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Https, "example.com", $elm$core$Maybe$Nothing, "", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
-        havenoAPKHttpRequest: $elm$core$Maybe$Nothing,
-        root: $author$project$Pages$Dashboard$Dashboard({
+        flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
+        isHardwareLNSConnected: false,
+        isHardwareLNXConnected: false,
+        isReturnUser: false,
+        isValidNewAccessToken: false,
+        isWaitingForResponse: false,
+        isXMRWalletConnected: false,
+        objectJSONfromJSPort: $elm$core$Maybe$Nothing,
+        queryType: $author$project$Pages$Hardware$LoggedInUser,
+        root: $author$project$Pages$Hardware$Hardware({
             name: "Loading..."
         }),
-        status: $author$project$Pages$Dashboard$Loading,
-        title: "Dashboard",
-        version: $elm$core$Maybe$Nothing
+        searchResults: _List_Nil,
+        searchterm: "",
+        status: $author$project$Pages$Hardware$Loaded,
+        title: "Hardware",
+        user: $author$project$Data$User$emptySpectator,
+        xmrWalletAddress: ""
     };
     var $elm$time$Time$Posix = function(a) {
         return {
@@ -8123,17 +8230,19 @@ type alias Process =
     var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
     var $author$project$Main$mainInitModel = {
         errors: _List_Nil,
-        flag: $author$project$Extras$Constants$emptyDefaultUrl,
+        flag: A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
         isHardwareLNSConnected: false,
         isHardwareLNXConnected: false,
-        isNavMenuActive: false,
+        isNavMenuActive: true,
         isPopUpVisible: true,
         isXMRWalletConnected: false,
         key: function(_v0) {
             return $elm$core$Platform$Cmd$none;
         },
-        page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel),
+        page: $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel),
         time: $elm$time$Time$millisToPosix(0),
+        version: $elm$core$Maybe$Nothing,
+        xmrWalletAddress: "",
         zone: $elm$core$Maybe$Nothing
     };
     var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
@@ -8354,77 +8463,408 @@ type alias Process =
             title: "Haveno-Web Buy"
         }), $elm$core$Platform$Cmd$none);
     };
-    var $author$project$Pages$Dashboard$HavenoAPKHttpRequest = F6(function(method, headers, url, body, timeout, tracker) {
+    var $author$project$Pages$Dashboard$Dashboard = function(a) {
         return {
-            body: body,
-            headers: headers,
-            method: method,
-            timeout: timeout,
-            tracker: tracker,
-            url: url
+            $: "Dashboard",
+            a: a
         };
-    });
-    var $author$project$Pages$Dashboard$Model = F8(function(status, title, root, balance, flagUrl, havenoAPKHttpRequest, version, errors) {
+    };
+    var $author$project$Pages$Dashboard$Loaded = {
+        $: "Loaded"
+    };
+    var $author$project$Pages$Dashboard$Model = F8(function(status, pagetitle, root, balance, flagUrl, havenoAPKHttpRequest, version, errors) {
         return {
             balance: balance,
             errors: errors,
             flagUrl: flagUrl,
             havenoAPKHttpRequest: havenoAPKHttpRequest,
+            pagetitle: pagetitle,
             root: root,
             status: status,
-            title: title,
             version: version
         };
     });
-    var $elm$http$Http$BadStatus_ = F2(function(a, b) {
+    var $author$project$Pages$Dashboard$init = function(fromMainToDashboard) {
+        var newUrl = A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Nothing, "/dashboard", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+        var newModel = A8($author$project$Pages$Dashboard$Model, $author$project$Pages$Dashboard$Loaded, "Dashboard", $author$project$Pages$Dashboard$Dashboard({
+            name: "Loading..."
+        }), "0.00", newUrl, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing, _List_Nil);
+        return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
+    };
+    var $author$project$Pages$Funds$Funds = function(a) {
         return {
-            $: "BadStatus_",
-            a: a,
-            b: b
+            $: "Funds",
+            a: a
+        };
+    };
+    var $author$project$Pages$Funds$Loading = {
+        $: "Loading"
+    };
+    var $author$project$Pages$Funds$initialModel = {
+        root: $author$project$Pages$Funds$Funds({
+            name: "Loading..."
+        }),
+        status: $author$project$Pages$Funds$Loading,
+        title: "Funds"
+    };
+    var $author$project$Pages$Funds$init = function(_v0) {
+        return _Utils_Tuple2(_Utils_update($author$project$Pages$Funds$initialModel, {
+            title: "Haveno-Web Funds"
+        }), $elm$core$Platform$Cmd$none);
+    };
+    var $author$project$Pages$Hardware$Model = function(status) {
+        return function(title) {
+            return function(root) {
+                return function(flagUrl) {
+                    return function(datetimeFromMain) {
+                        return function(apiSpecifics) {
+                            return function(queryType) {
+                                return function(isValidNewAccessToken) {
+                                    return function(isHardwareLNSConnected) {
+                                        return function(isHardwareLNXConnected) {
+                                            return function(isXMRWalletConnected) {
+                                                return function(xmrWalletAddress) {
+                                                    return function(errors) {
+                                                        return function(availableSlots) {
+                                                            return function(isWaitingForResponse) {
+                                                                return function(isReturnUser) {
+                                                                    return function(emailpassword) {
+                                                                        return function(user) {
+                                                                            return function(searchterm) {
+                                                                                return function(searchResults) {
+                                                                                    return function(objectJSONfromJSPort) {
+                                                                                        return {
+                                                                                            apiSpecifics: apiSpecifics,
+                                                                                            availableSlots: availableSlots,
+                                                                                            datetimeFromMain: datetimeFromMain,
+                                                                                            emailpassword: emailpassword,
+                                                                                            errors: errors,
+                                                                                            flagUrl: flagUrl,
+                                                                                            isHardwareLNSConnected: isHardwareLNSConnected,
+                                                                                            isHardwareLNXConnected: isHardwareLNXConnected,
+                                                                                            isReturnUser: isReturnUser,
+                                                                                            isValidNewAccessToken: isValidNewAccessToken,
+                                                                                            isWaitingForResponse: isWaitingForResponse,
+                                                                                            isXMRWalletConnected: isXMRWalletConnected,
+                                                                                            objectJSONfromJSPort: objectJSONfromJSPort,
+                                                                                            queryType: queryType,
+                                                                                            root: root,
+                                                                                            searchResults: searchResults,
+                                                                                            searchterm: searchterm,
+                                                                                            status: status,
+                                                                                            title: title,
+                                                                                            user: user,
+                                                                                            xmrWalletAddress: xmrWalletAddress
+                                                                                        };
+                                                                                    };
+                                                                                };
+                                                                            };
+                                                                        };
+                                                                    };
+                                                                };
+                                                            };
+                                                        };
+                                                    };
+                                                };
+                                            };
+                                        };
+                                    };
+                                };
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    var $author$project$Pages$Hardware$ApiSpecifics = F2(function(maxResults, accessToken) {
+        return {
+            accessToken: accessToken,
+            maxResults: maxResults
         };
     });
-    var $elm$http$Http$BadUrl_ = function(a) {
-        return {
-            $: "BadUrl_",
-            a: a
-        };
-    };
-    var $elm$http$Http$GoodStatus_ = F2(function(a, b) {
-        return {
-            $: "GoodStatus_",
-            a: a,
-            b: b
-        };
-    });
-    var $elm$http$Http$NetworkError_ = {
-        $: "NetworkError_"
-    };
-    var $elm$http$Http$Receiving = function(a) {
-        return {
-            $: "Receiving",
-            a: a
-        };
-    };
-    var $elm$http$Http$Sending = function(a) {
-        return {
-            $: "Sending",
-            a: a
-        };
-    };
-    var $elm$http$Http$Timeout_ = {
-        $: "Timeout_"
-    };
-    var $elm$core$Maybe$isJust = function(maybe) {
-        if (maybe.$ === "Just") return true;
-        else return false;
-    };
-    var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
-    var $elm$http$Http$emptyBody = _Http_emptyBody;
+    var $author$project$Pages$Hardware$apiSpecsPlaceHolder = A2($author$project$Pages$Hardware$ApiSpecifics, "", $elm$core$Maybe$Nothing);
     var $author$project$Extras$Constants$localorproductionServerAutoCheck = "haveno-web.squashpassion";
     var $author$project$Extras$Constants$middleWarePath = "/middleware";
-    var $author$project$Extras$Constants$post = "POST";
     var $author$project$Extras$Constants$productionProxyConfig = "/proxy/";
-    var $author$project$Pages$Dashboard$GotVersion = function(a) {
+    var $author$project$Pages$Hardware$init = function(fromMainToHardware) {
+        var updatedFlagUrlToIncludeMongoDBMWSvr = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, fromMainToHardware.flagUrl.host) ? A6($elm$url$Url$Url, fromMainToHardware.flagUrl.protocol, fromMainToHardware.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$productionProxyConfig, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, fromMainToHardware.flagUrl.protocol, fromMainToHardware.flagUrl.host, $elm$core$Maybe$Just(3000), $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+        var newUrl = A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+        return _Utils_Tuple2($author$project$Pages$Hardware$Model($author$project$Pages$Hardware$Loaded)("Hardware")($author$project$Pages$Hardware$Hardware({
+            name: "Loading..."
+        }))(newUrl)(A2($elm$core$Maybe$withDefault, $elm$core$Maybe$Nothing, $elm$core$Maybe$Just(fromMainToHardware.time)))($author$project$Pages$Hardware$apiSpecsPlaceHolder)($author$project$Pages$Hardware$LoggedInUser)(false)(false)(false)(false)("")(_List_Nil)(_List_Nil)(false)(false)({
+            email: "",
+            password: ""
+        })($author$project$Data$User$emptySpectator)("")(_List_Nil)($elm$core$Maybe$Nothing), $elm$core$Platform$Cmd$none);
+    };
+    var $author$project$Pages$Market$Loading = {
+        $: "Loading"
+    };
+    var $author$project$Pages$Market$Market = function(a) {
+        return {
+            $: "Market",
+            a: a
+        };
+    };
+    var $author$project$Pages$Market$initialModel = {
+        root: $author$project$Pages$Market$Market({
+            name: "Loading..."
+        }),
+        status: $author$project$Pages$Market$Loading,
+        title: "Market"
+    };
+    var $author$project$Pages$Market$init = function(_v0) {
+        return _Utils_Tuple2(_Utils_update($author$project$Pages$Market$initialModel, {
+            title: "Haveno-Web Market"
+        }), $elm$core$Platform$Cmd$none);
+    };
+    var $author$project$Pages$PingPong$Loading = {
+        $: "Loading"
+    };
+    var $author$project$Pages$PingPong$PingPong = function(a) {
+        return {
+            $: "PingPong",
+            a: a
+        };
+    };
+    var $author$project$Pages$PingPong$initialModel = {
+        root: $author$project$Pages$PingPong$PingPong({
+            name: "Ready..."
+        }),
+        status: $author$project$Pages$PingPong$Loading,
+        title: "PingPong"
+    };
+    var $author$project$Pages$PingPong$init = function(_v0) {
+        return _Utils_Tuple2(_Utils_update($author$project$Pages$PingPong$initialModel, {
+            title: "Haveno-Web Buy"
+        }), $elm$core$Platform$Cmd$none);
+    };
+    var $author$project$Pages$Portfolio$Loading = {
+        $: "Loading"
+    };
+    var $author$project$Pages$Portfolio$Portfolio = function(a) {
+        return {
+            $: "Portfolio",
+            a: a
+        };
+    };
+    var $author$project$Pages$Portfolio$initialModel = {
+        root: $author$project$Pages$Portfolio$Portfolio({
+            name: "Loading..."
+        }),
+        status: $author$project$Pages$Portfolio$Loading,
+        title: "Portfolio"
+    };
+    var $author$project$Pages$Portfolio$init = function(_v0) {
+        return _Utils_Tuple2(_Utils_update($author$project$Pages$Portfolio$initialModel, {
+            title: "Haveno-Web Portfolio"
+        }), $elm$core$Platform$Cmd$none);
+    };
+    var $author$project$Pages$Sell$Loading = {
+        $: "Loading"
+    };
+    var $author$project$Pages$Sell$Sell = function(a) {
+        return {
+            $: "Sell",
+            a: a
+        };
+    };
+    var $author$project$Pages$Sell$initialModel = {
+        root: $author$project$Pages$Sell$Sell({
+            name: "Loading..."
+        }),
+        status: $author$project$Pages$Sell$Loading,
+        title: "Sell"
+    };
+    var $author$project$Pages$Sell$init = function(_v0) {
+        return _Utils_Tuple2(_Utils_update($author$project$Pages$Sell$initialModel, {
+            title: "Haveno-Web Sell"
+        }), $elm$core$Platform$Cmd$none);
+    };
+    var $author$project$Pages$Support$Loading = {
+        $: "Loading"
+    };
+    var $author$project$Pages$Support$Support = function(a) {
+        return {
+            $: "Support",
+            a: a
+        };
+    };
+    var $author$project$Pages$Support$initialModel = {
+        root: $author$project$Pages$Support$Support({
+            name: "Loading..."
+        }),
+        status: $author$project$Pages$Support$Loading,
+        title: "Support"
+    };
+    var $author$project$Pages$Support$init = function(_v0) {
+        return _Utils_Tuple2(_Utils_update($author$project$Pages$Support$initialModel, {
+            title: "Haveno-Web Support"
+        }), $elm$core$Platform$Cmd$none);
+    };
+    var $elm$url$Url$Parser$State = F5(function(visited, unvisited, params, frag, value) {
+        return {
+            frag: frag,
+            params: params,
+            unvisited: unvisited,
+            value: value,
+            visited: visited
+        };
+    });
+    var $elm$url$Url$Parser$getFirstMatch = function(states) {
+        getFirstMatch: while(true){
+            if (!states.b) return $elm$core$Maybe$Nothing;
+            else {
+                var state = states.a;
+                var rest = states.b;
+                var _v1 = state.unvisited;
+                if (!_v1.b) return $elm$core$Maybe$Just(state.value);
+                else {
+                    if (_v1.a === "" && !_v1.b.b) return $elm$core$Maybe$Just(state.value);
+                    else {
+                        var $temp$states = rest;
+                        states = $temp$states;
+                        continue getFirstMatch;
+                    }
+                }
+            }
+        }
+    };
+    var $elm$url$Url$Parser$removeFinalEmpty = function(segments) {
+        if (!segments.b) return _List_Nil;
+        else {
+            if (segments.a === "" && !segments.b.b) return _List_Nil;
+            else {
+                var segment = segments.a;
+                var rest = segments.b;
+                return A2($elm$core$List$cons, segment, $elm$url$Url$Parser$removeFinalEmpty(rest));
+            }
+        }
+    };
+    var $elm$url$Url$Parser$preparePath = function(path) {
+        var _v0 = A2($elm$core$String$split, "/", path);
+        if (_v0.b && _v0.a === "") {
+            var segments = _v0.b;
+            return $elm$url$Url$Parser$removeFinalEmpty(segments);
+        } else {
+            var segments = _v0;
+            return $elm$url$Url$Parser$removeFinalEmpty(segments);
+        }
+    };
+    var $elm$url$Url$Parser$addToParametersHelp = F2(function(value, maybeList) {
+        if (maybeList.$ === "Nothing") return $elm$core$Maybe$Just(_List_fromArray([
+            value
+        ]));
+        else {
+            var list = maybeList.a;
+            return $elm$core$Maybe$Just(A2($elm$core$List$cons, value, list));
+        }
+    });
+    var $elm$url$Url$Parser$addParam = F2(function(segment, dict) {
+        var _v0 = A2($elm$core$String$split, "=", segment);
+        if (_v0.b && _v0.b.b && !_v0.b.b.b) {
+            var rawKey = _v0.a;
+            var _v1 = _v0.b;
+            var rawValue = _v1.a;
+            var _v2 = $elm$url$Url$percentDecode(rawKey);
+            if (_v2.$ === "Nothing") return dict;
+            else {
+                var key = _v2.a;
+                var _v3 = $elm$url$Url$percentDecode(rawValue);
+                if (_v3.$ === "Nothing") return dict;
+                else {
+                    var value = _v3.a;
+                    return A3($elm$core$Dict$update, key, $elm$url$Url$Parser$addToParametersHelp(value), dict);
+                }
+            }
+        } else return dict;
+    });
+    var $elm$url$Url$Parser$prepareQuery = function(maybeQuery) {
+        if (maybeQuery.$ === "Nothing") return $elm$core$Dict$empty;
+        else {
+            var qry = maybeQuery.a;
+            return A3($elm$core$List$foldr, $elm$url$Url$Parser$addParam, $elm$core$Dict$empty, A2($elm$core$String$split, "&", qry));
+        }
+    };
+    var $elm$url$Url$Parser$parse = F2(function(_v0, url) {
+        var parser = _v0.a;
+        return $elm$url$Url$Parser$getFirstMatch(parser(A5($elm$url$Url$Parser$State, _List_Nil, $elm$url$Url$Parser$preparePath(url.path), $elm$url$Url$Parser$prepareQuery(url.query), url.fragment, $elm$core$Basics$identity)));
+    });
+    var $author$project$Main$AdjustTimeZone = function(a) {
+        return {
+            $: "AdjustTimeZone",
+            a: a
+        };
+    };
+    var $author$project$Main$DashboardPage = function(a) {
+        return {
+            $: "DashboardPage",
+            a: a
+        };
+    };
+    var $author$project$Main$GotDashboardMsg = function(a) {
+        return {
+            $: "GotDashboardMsg",
+            a: a
+        };
+    };
+    var $elm$time$Time$Name = function(a) {
+        return {
+            $: "Name",
+            a: a
+        };
+    };
+    var $elm$time$Time$Offset = function(a) {
+        return {
+            $: "Offset",
+            a: a
+        };
+    };
+    var $elm$time$Time$Zone = F2(function(a, b) {
+        return {
+            $: "Zone",
+            a: a,
+            b: b
+        };
+    });
+    var $elm$time$Time$customZone = $elm$time$Time$Zone;
+    var $elm$time$Time$here = _Time_here(_Utils_Tuple0);
+    var $author$project$Main$toDashboard = F2(function(model, _v0) {
+        var dashboard = _v0.a;
+        var cmd = _v0.b;
+        return _Utils_Tuple2(_Utils_update(model, {
+            page: $author$project$Main$DashboardPage(dashboard)
+        }), $elm$core$Platform$Cmd$batch(_List_fromArray([
+            A2($elm$core$Platform$Cmd$map, $author$project$Main$GotDashboardMsg, cmd),
+            A2($elm$core$Task$perform, $author$project$Main$AdjustTimeZone, $elm$time$Time$here)
+        ])));
+    });
+    var $author$project$Main$FundsPage = function(a) {
+        return {
+            $: "FundsPage",
+            a: a
+        };
+    };
+    var $author$project$Main$GotFundsMsg = function(a) {
+        return {
+            $: "GotFundsMsg",
+            a: a
+        };
+    };
+    var $author$project$Main$toFunds = F2(function(model, _v0) {
+        var funds = _v0.a;
+        var cmd = _v0.b;
+        return _Utils_Tuple2(_Utils_update(model, {
+            page: $author$project$Main$FundsPage(funds)
+        }), A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFundsMsg, cmd));
+    });
+    var $author$project$Main$GotHardwareMsg = function(a) {
+        return {
+            $: "GotHardwareMsg",
+            a: a
+        };
+    };
+    var $author$project$Main$GotVersion = function(a) {
         return {
             $: "GotVersion",
             a: a
@@ -9013,6 +9453,49 @@ type alias Process =
             host: host
         }));
     });
+    var $elm$http$Http$BadStatus_ = F2(function(a, b) {
+        return {
+            $: "BadStatus_",
+            a: a,
+            b: b
+        };
+    });
+    var $elm$http$Http$BadUrl_ = function(a) {
+        return {
+            $: "BadUrl_",
+            a: a
+        };
+    };
+    var $elm$http$Http$GoodStatus_ = F2(function(a, b) {
+        return {
+            $: "GoodStatus_",
+            a: a,
+            b: b
+        };
+    });
+    var $elm$http$Http$NetworkError_ = {
+        $: "NetworkError_"
+    };
+    var $elm$http$Http$Receiving = function(a) {
+        return {
+            $: "Receiving",
+            a: a
+        };
+    };
+    var $elm$http$Http$Sending = function(a) {
+        return {
+            $: "Sending",
+            a: a
+        };
+    };
+    var $elm$http$Http$Timeout_ = {
+        $: "Timeout_"
+    };
+    var $elm$core$Maybe$isJust = function(maybe) {
+        if (maybe.$ === "Just") return true;
+        else return false;
+    };
+    var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
     var $elm$http$Http$bytesBody = _Http_pair;
     var $elm$bytes$Bytes$Encode$Bytes = function(a) {
         return {
@@ -9430,513 +9913,17 @@ type alias Process =
             url: _Utils_ap(req.host, $anmolitor$elm_grpc$Grpc$rpcPath(req.rpc))
         });
     });
-    var $author$project$Pages$Dashboard$sendVersionRequest = function(request) {
+    var $author$project$Main$sendVersionRequest = function(request) {
         var grpcRequest = A2($anmolitor$elm_grpc$Grpc$setHost, "http://localhost:8080", A3($anmolitor$elm_grpc$Grpc$addHeader, "password", "apitest", A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$GetVersion$getVersion, request)));
-        return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Dashboard$GotVersion, grpcRequest);
-    };
-    var $author$project$Pages$Dashboard$init = function(fromMainToDashboard) {
-        var newModel = A8($author$project$Pages$Dashboard$Model, $author$project$Pages$Dashboard$Loading, "Haveno-Web Dashboard", $author$project$Pages$Dashboard$Dashboard({
-            name: "Loading..."
-        }), "0.00", fromMainToDashboard.flagUrl, $elm$core$Maybe$Just(A6($author$project$Pages$Dashboard$HavenoAPKHttpRequest, $author$project$Extras$Constants$post, _List_Nil, "", $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)), $elm$core$Maybe$Nothing, _List_Nil);
-        var devOrProdServer = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, fromMainToDashboard.flagUrl.host) ? A6($elm$url$Url$Url, fromMainToDashboard.flagUrl.protocol, fromMainToDashboard.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$productionProxyConfig, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, fromMainToDashboard.flagUrl.protocol, fromMainToDashboard.flagUrl.host, $elm$core$Maybe$Just(3000), $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-        return _Utils_Tuple2(newModel, $author$project$Pages$Dashboard$sendVersionRequest({}));
-    };
-    var $author$project$Pages$Funds$Funds = function(a) {
-        return {
-            $: "Funds",
-            a: a
-        };
-    };
-    var $author$project$Pages$Funds$Loading = {
-        $: "Loading"
-    };
-    var $author$project$Pages$Funds$initialModel = {
-        root: $author$project$Pages$Funds$Funds({
-            name: "Loading..."
-        }),
-        status: $author$project$Pages$Funds$Loading,
-        title: "Funds"
-    };
-    var $author$project$Pages$Funds$init = function(_v0) {
-        return _Utils_Tuple2(_Utils_update($author$project$Pages$Funds$initialModel, {
-            title: "Haveno-Web Funds"
-        }), $elm$core$Platform$Cmd$none);
-    };
-    var $author$project$Pages$Hardware$Hardware = function(a) {
-        return {
-            $: "Hardware",
-            a: a
-        };
-    };
-    var $author$project$Pages$Hardware$Loaded = {
-        $: "Loaded"
-    };
-    var $author$project$Pages$Hardware$Login = function(a) {
-        return {
-            $: "Login",
-            a: a
-        };
-    };
-    var $author$project$Pages$Hardware$Model = function(status) {
-        return function(title) {
-            return function(root) {
-                return function(flagUrl) {
-                    return function(datetimeFromMain) {
-                        return function(apiSpecifics) {
-                            return function(queryType) {
-                                return function(toMongoDBMWConfig) {
-                                    return function(isValidNewAccessToken) {
-                                        return function(isHardwareLNSConnected) {
-                                            return function(isHardwareLNXConnected) {
-                                                return function(isXMRWalletConnected) {
-                                                    return function(errors) {
-                                                        return function(availableSlots) {
-                                                            return function(isWaitingForResponse) {
-                                                                return function(isReturnUser) {
-                                                                    return function(emailpassword) {
-                                                                        return function(user) {
-                                                                            return function(searchterm) {
-                                                                                return function(searchResults) {
-                                                                                    return function(objectJSONfromJSPort) {
-                                                                                        return {
-                                                                                            apiSpecifics: apiSpecifics,
-                                                                                            availableSlots: availableSlots,
-                                                                                            datetimeFromMain: datetimeFromMain,
-                                                                                            emailpassword: emailpassword,
-                                                                                            errors: errors,
-                                                                                            flagUrl: flagUrl,
-                                                                                            isHardwareLNSConnected: isHardwareLNSConnected,
-                                                                                            isHardwareLNXConnected: isHardwareLNXConnected,
-                                                                                            isReturnUser: isReturnUser,
-                                                                                            isValidNewAccessToken: isValidNewAccessToken,
-                                                                                            isWaitingForResponse: isWaitingForResponse,
-                                                                                            isXMRWalletConnected: isXMRWalletConnected,
-                                                                                            objectJSONfromJSPort: objectJSONfromJSPort,
-                                                                                            queryType: queryType,
-                                                                                            root: root,
-                                                                                            searchResults: searchResults,
-                                                                                            searchterm: searchterm,
-                                                                                            status: status,
-                                                                                            title: title,
-                                                                                            toMongoDBMWConfig: toMongoDBMWConfig,
-                                                                                            user: user
-                                                                                        };
-                                                                                    };
-                                                                                };
-                                                                            };
-                                                                        };
-                                                                    };
-                                                                };
-                                                            };
-                                                        };
-                                                    };
-                                                };
-                                            };
-                                        };
-                                    };
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    var $author$project$Pages$Hardware$ToMongoDBMWConfig = F6(function(method, headers, url, body, timeout, tracker) {
-        return {
-            body: body,
-            headers: headers,
-            method: method,
-            timeout: timeout,
-            tracker: tracker,
-            url: url
-        };
-    });
-    var $author$project$Pages$Hardware$ApiSpecifics = F2(function(maxResults, accessToken) {
-        return {
-            accessToken: accessToken,
-            maxResults: maxResults
-        };
-    });
-    var $author$project$Pages$Hardware$apiSpecsPlaceHolder = A2($author$project$Pages$Hardware$ApiSpecifics, "", $elm$core$Maybe$Nothing);
-    var $author$project$Extras$Constants$emptyEmailPassword = {
-        email: "",
-        password: ""
-    };
-    var $author$project$Data$User$Spectator = function(a) {
-        return {
-            $: "Spectator",
-            a: a
-        };
-    };
-    var $author$project$Data$User$Male = {
-        $: "Male"
-    };
-    var $author$project$Data$User$UserInfo = function(userid) {
-        return function(password) {
-            return function(passwordValidationError) {
-                return function(token) {
-                    return function(nickname) {
-                        return function(isNameInputFocused) {
-                            return function(nameValidationError) {
-                                return function(age) {
-                                    return function(gender) {
-                                        return function(email) {
-                                            return function(isEmailInputFocused) {
-                                                return function(emailValidationError) {
-                                                    return function(mobile) {
-                                                        return function(isMobileInputFocused) {
-                                                            return function(mobileValidationError) {
-                                                                return function(datestamp) {
-                                                                    return function(active) {
-                                                                        return function(ownedRankings) {
-                                                                            return function(memberRankings) {
-                                                                                return function(updatetext) {
-                                                                                    return function(description) {
-                                                                                        return function(credits) {
-                                                                                            return function(addInfo) {
-                                                                                                return {
-                                                                                                    active: active,
-                                                                                                    addInfo: addInfo,
-                                                                                                    age: age,
-                                                                                                    credits: credits,
-                                                                                                    datestamp: datestamp,
-                                                                                                    description: description,
-                                                                                                    email: email,
-                                                                                                    emailValidationError: emailValidationError,
-                                                                                                    gender: gender,
-                                                                                                    isEmailInputFocused: isEmailInputFocused,
-                                                                                                    isMobileInputFocused: isMobileInputFocused,
-                                                                                                    isNameInputFocused: isNameInputFocused,
-                                                                                                    memberRankings: memberRankings,
-                                                                                                    mobile: mobile,
-                                                                                                    mobileValidationError: mobileValidationError,
-                                                                                                    nameValidationError: nameValidationError,
-                                                                                                    nickname: nickname,
-                                                                                                    ownedRankings: ownedRankings,
-                                                                                                    password: password,
-                                                                                                    passwordValidationError: passwordValidationError,
-                                                                                                    token: token,
-                                                                                                    updatetext: updatetext,
-                                                                                                    userid: userid
-                                                                                                };
-                                                                                            };
-                                                                                        };
-                                                                                    };
-                                                                                };
-                                                                            };
-                                                                        };
-                                                                    };
-                                                                };
-                                                            };
-                                                        };
-                                                    };
-                                                };
-                                            };
-                                        };
-                                    };
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    var $author$project$Data$User$emptyDescription = {
-        comment: "",
-        level: ""
-    };
-    var $author$project$Data$User$emptyUserInfo = $author$project$Data$User$UserInfo("")("")("")($elm$core$Maybe$Nothing)("")(false)("")(40)($author$project$Data$User$Male)($elm$core$Maybe$Nothing)(false)("")($elm$core$Maybe$Nothing)(false)("")(0)(false)(_List_Nil)(_List_Nil)("")($author$project$Data$User$emptyDescription)(0)("");
-    var $author$project$Data$User$emptySpectator = $author$project$Data$User$Spectator($author$project$Data$User$emptyUserInfo);
-    var $author$project$Pages$Hardware$init = function(fromMainToHardware) {
-        var updatedFlagUrlToIncludeMongoDBMWSvr = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, fromMainToHardware.flagUrl.host) ? A6($elm$url$Url$Url, fromMainToHardware.flagUrl.protocol, fromMainToHardware.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$productionProxyConfig, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, fromMainToHardware.flagUrl.protocol, fromMainToHardware.flagUrl.host, $elm$core$Maybe$Just(3000), $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-        return _Utils_Tuple2($author$project$Pages$Hardware$Model($author$project$Pages$Hardware$Loaded)("Hardware")($author$project$Pages$Hardware$Hardware({
-            name: "Loading ..."
-        }))(fromMainToHardware.flagUrl)(A2($elm$core$Maybe$withDefault, $elm$core$Maybe$Nothing, $elm$core$Maybe$Just(fromMainToHardware.time)))($author$project$Pages$Hardware$apiSpecsPlaceHolder)($author$project$Pages$Hardware$Login($author$project$Extras$Constants$emptyEmailPassword))($elm$core$Maybe$Just(A6($author$project$Pages$Hardware$ToMongoDBMWConfig, $author$project$Extras$Constants$post, _List_Nil, $elm$url$Url$toString(updatedFlagUrlToIncludeMongoDBMWSvr), $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)))(false)(false)(false)(false)(_List_fromArray([
-            ""
-        ]))(_List_fromArray([
-            $elm$core$Maybe$Nothing
-        ]))(false)(false)({
-            email: "",
-            password: ""
-        })($author$project$Data$User$emptySpectator)("")(_List_Nil)($elm$core$Maybe$Nothing), $elm$core$Platform$Cmd$none);
-    };
-    var $author$project$Pages$Market$Loading = {
-        $: "Loading"
-    };
-    var $author$project$Pages$Market$Market = function(a) {
-        return {
-            $: "Market",
-            a: a
-        };
-    };
-    var $author$project$Pages$Market$initialModel = {
-        root: $author$project$Pages$Market$Market({
-            name: "Loading..."
-        }),
-        status: $author$project$Pages$Market$Loading,
-        title: "Market"
-    };
-    var $author$project$Pages$Market$init = function(_v0) {
-        return _Utils_Tuple2(_Utils_update($author$project$Pages$Market$initialModel, {
-            title: "Haveno-Web Market"
-        }), $elm$core$Platform$Cmd$none);
-    };
-    var $author$project$Pages$PingPong$Loading = {
-        $: "Loading"
-    };
-    var $author$project$Pages$PingPong$PingPong = function(a) {
-        return {
-            $: "PingPong",
-            a: a
-        };
-    };
-    var $author$project$Pages$PingPong$initialModel = {
-        root: $author$project$Pages$PingPong$PingPong({
-            name: "Ready..."
-        }),
-        status: $author$project$Pages$PingPong$Loading,
-        title: "PingPong"
-    };
-    var $author$project$Pages$PingPong$init = function(_v0) {
-        return _Utils_Tuple2(_Utils_update($author$project$Pages$PingPong$initialModel, {
-            title: "Haveno-Web Buy"
-        }), $elm$core$Platform$Cmd$none);
-    };
-    var $author$project$Pages$Portfolio$Loading = {
-        $: "Loading"
-    };
-    var $author$project$Pages$Portfolio$Portfolio = function(a) {
-        return {
-            $: "Portfolio",
-            a: a
-        };
-    };
-    var $author$project$Pages$Portfolio$initialModel = {
-        root: $author$project$Pages$Portfolio$Portfolio({
-            name: "Loading..."
-        }),
-        status: $author$project$Pages$Portfolio$Loading,
-        title: "Portfolio"
-    };
-    var $author$project$Pages$Portfolio$init = function(_v0) {
-        return _Utils_Tuple2(_Utils_update($author$project$Pages$Portfolio$initialModel, {
-            title: "Haveno-Web Portfolio"
-        }), $elm$core$Platform$Cmd$none);
-    };
-    var $author$project$Pages$Sell$Loading = {
-        $: "Loading"
-    };
-    var $author$project$Pages$Sell$Sell = function(a) {
-        return {
-            $: "Sell",
-            a: a
-        };
-    };
-    var $author$project$Pages$Sell$initialModel = {
-        root: $author$project$Pages$Sell$Sell({
-            name: "Loading..."
-        }),
-        status: $author$project$Pages$Sell$Loading,
-        title: "Sell"
-    };
-    var $author$project$Pages$Sell$init = function(_v0) {
-        return _Utils_Tuple2(_Utils_update($author$project$Pages$Sell$initialModel, {
-            title: "Haveno-Web Sell"
-        }), $elm$core$Platform$Cmd$none);
-    };
-    var $author$project$Pages$Support$Loading = {
-        $: "Loading"
-    };
-    var $author$project$Pages$Support$Support = function(a) {
-        return {
-            $: "Support",
-            a: a
-        };
-    };
-    var $author$project$Pages$Support$initialModel = {
-        root: $author$project$Pages$Support$Support({
-            name: "Loading..."
-        }),
-        status: $author$project$Pages$Support$Loading,
-        title: "Support"
-    };
-    var $author$project$Pages$Support$init = function(_v0) {
-        return _Utils_Tuple2(_Utils_update($author$project$Pages$Support$initialModel, {
-            title: "Haveno-Web Support"
-        }), $elm$core$Platform$Cmd$none);
-    };
-    var $elm$core$Debug$log = _Debug_log;
-    var $elm$url$Url$Parser$State = F5(function(visited, unvisited, params, frag, value) {
-        return {
-            frag: frag,
-            params: params,
-            unvisited: unvisited,
-            value: value,
-            visited: visited
-        };
-    });
-    var $elm$url$Url$Parser$getFirstMatch = function(states) {
-        getFirstMatch: while(true){
-            if (!states.b) return $elm$core$Maybe$Nothing;
-            else {
-                var state = states.a;
-                var rest = states.b;
-                var _v1 = state.unvisited;
-                if (!_v1.b) return $elm$core$Maybe$Just(state.value);
-                else {
-                    if (_v1.a === "" && !_v1.b.b) return $elm$core$Maybe$Just(state.value);
-                    else {
-                        var $temp$states = rest;
-                        states = $temp$states;
-                        continue getFirstMatch;
-                    }
-                }
-            }
-        }
-    };
-    var $elm$url$Url$Parser$removeFinalEmpty = function(segments) {
-        if (!segments.b) return _List_Nil;
-        else {
-            if (segments.a === "" && !segments.b.b) return _List_Nil;
-            else {
-                var segment = segments.a;
-                var rest = segments.b;
-                return A2($elm$core$List$cons, segment, $elm$url$Url$Parser$removeFinalEmpty(rest));
-            }
-        }
-    };
-    var $elm$url$Url$Parser$preparePath = function(path) {
-        var _v0 = A2($elm$core$String$split, "/", path);
-        if (_v0.b && _v0.a === "") {
-            var segments = _v0.b;
-            return $elm$url$Url$Parser$removeFinalEmpty(segments);
-        } else {
-            var segments = _v0;
-            return $elm$url$Url$Parser$removeFinalEmpty(segments);
-        }
-    };
-    var $elm$url$Url$Parser$addToParametersHelp = F2(function(value, maybeList) {
-        if (maybeList.$ === "Nothing") return $elm$core$Maybe$Just(_List_fromArray([
-            value
-        ]));
-        else {
-            var list = maybeList.a;
-            return $elm$core$Maybe$Just(A2($elm$core$List$cons, value, list));
-        }
-    });
-    var $elm$url$Url$Parser$addParam = F2(function(segment, dict) {
-        var _v0 = A2($elm$core$String$split, "=", segment);
-        if (_v0.b && _v0.b.b && !_v0.b.b.b) {
-            var rawKey = _v0.a;
-            var _v1 = _v0.b;
-            var rawValue = _v1.a;
-            var _v2 = $elm$url$Url$percentDecode(rawKey);
-            if (_v2.$ === "Nothing") return dict;
-            else {
-                var key = _v2.a;
-                var _v3 = $elm$url$Url$percentDecode(rawValue);
-                if (_v3.$ === "Nothing") return dict;
-                else {
-                    var value = _v3.a;
-                    return A3($elm$core$Dict$update, key, $elm$url$Url$Parser$addToParametersHelp(value), dict);
-                }
-            }
-        } else return dict;
-    });
-    var $elm$url$Url$Parser$prepareQuery = function(maybeQuery) {
-        if (maybeQuery.$ === "Nothing") return $elm$core$Dict$empty;
-        else {
-            var qry = maybeQuery.a;
-            return A3($elm$core$List$foldr, $elm$url$Url$Parser$addParam, $elm$core$Dict$empty, A2($elm$core$String$split, "&", qry));
-        }
-    };
-    var $elm$url$Url$Parser$parse = F2(function(_v0, url) {
-        var parser = _v0.a;
-        return $elm$url$Url$Parser$getFirstMatch(parser(A5($elm$url$Url$Parser$State, _List_Nil, $elm$url$Url$Parser$preparePath(url.path), $elm$url$Url$Parser$prepareQuery(url.query), url.fragment, $elm$core$Basics$identity)));
-    });
-    var $author$project$Main$AdjustTimeZone = function(a) {
-        return {
-            $: "AdjustTimeZone",
-            a: a
-        };
-    };
-    var $author$project$Main$GotDashboardMsg = function(a) {
-        return {
-            $: "GotDashboardMsg",
-            a: a
-        };
-    };
-    var $elm$time$Time$Name = function(a) {
-        return {
-            $: "Name",
-            a: a
-        };
-    };
-    var $elm$time$Time$Offset = function(a) {
-        return {
-            $: "Offset",
-            a: a
-        };
-    };
-    var $elm$time$Time$Zone = F2(function(a, b) {
-        return {
-            $: "Zone",
-            a: a,
-            b: b
-        };
-    });
-    var $elm$time$Time$customZone = $elm$time$Time$Zone;
-    var $elm$time$Time$here = _Time_here(_Utils_Tuple0);
-    var $author$project$Main$toDashboard = F2(function(model, _v0) {
-        var dashboard = _v0.a;
-        var cmd = _v0.b;
-        return _Utils_Tuple2(_Utils_update(model, {
-            page: $author$project$Main$DashboardPage(dashboard)
-        }), $elm$core$Platform$Cmd$batch(_List_fromArray([
-            A2($elm$core$Platform$Cmd$map, $author$project$Main$GotDashboardMsg, cmd),
-            A2($elm$core$Task$perform, $author$project$Main$AdjustTimeZone, $elm$time$Time$here)
-        ])));
-    });
-    var $author$project$Main$FundsPage = function(a) {
-        return {
-            $: "FundsPage",
-            a: a
-        };
-    };
-    var $author$project$Main$GotFundsMsg = function(a) {
-        return {
-            $: "GotFundsMsg",
-            a: a
-        };
-    };
-    var $author$project$Main$toFunds = F2(function(model, _v0) {
-        var funds = _v0.a;
-        var cmd = _v0.b;
-        return _Utils_Tuple2(_Utils_update(model, {
-            page: $author$project$Main$FundsPage(funds)
-        }), A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFundsMsg, cmd));
-    });
-    var $author$project$Main$GotHardwareMsg = function(a) {
-        return {
-            $: "GotHardwareMsg",
-            a: a
-        };
-    };
-    var $author$project$Main$HardwarePage = function(a) {
-        return {
-            $: "HardwarePage",
-            a: a
-        };
+        return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Main$GotVersion, grpcRequest);
     };
     var $author$project$Main$toHardware = F2(function(model, _v0) {
         var hardware = _v0.a;
         var cmd = _v0.b;
-        return _Utils_Tuple2(_Utils_update(model, {
-            isHardwareLNSConnected: hardware.isHardwareLNSConnected,
-            page: $author$project$Main$HardwarePage(hardware)
-        }), A2($elm$core$Platform$Cmd$map, $author$project$Main$GotHardwareMsg, cmd));
+        return _Utils_Tuple2(model, $elm$core$Platform$Cmd$batch(_List_fromArray([
+            A2($elm$core$Platform$Cmd$map, $author$project$Main$GotHardwareMsg, cmd),
+            $author$project$Main$sendVersionRequest({})
+        ])));
     });
     var $author$project$Main$GotMarketMsg = function(a) {
         return {
@@ -10155,17 +10142,21 @@ type alias Process =
         if (_v0.$ === "Just") switch(_v0.a.$){
             case "Dashboard":
                 var _v1 = _v0.a;
-                if (oauthCode.$ === "Nothing") return A2($author$project$Main$toDashboard, model, $author$project$Pages$Dashboard$init({
-                    flagUrl: model.flag,
+                var newFlagUrl = A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/dashboard", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+                var newModel = _Utils_update(model, {
+                    flag: newFlagUrl
+                });
+                if (oauthCode.$ === "Nothing") return A2($author$project$Main$toDashboard, newModel, $author$project$Pages$Dashboard$init({
+                    flagUrl: newFlagUrl,
                     time: $elm$core$Maybe$Nothing
                 }));
                 else {
-                    if (oauthCode.a === "") return A2($author$project$Main$toDashboard, model, $author$project$Pages$Dashboard$init({
-                        flagUrl: model.flag,
+                    if (oauthCode.a === "") return A2($author$project$Main$toDashboard, newModel, $author$project$Pages$Dashboard$init({
+                        flagUrl: newFlagUrl,
                         time: $elm$core$Maybe$Nothing
                     }));
-                    else return A2($author$project$Main$toDashboard, model, $author$project$Pages$Dashboard$init({
-                        flagUrl: model.flag,
+                    else return A2($author$project$Main$toDashboard, newModel, $author$project$Pages$Dashboard$init({
+                        flagUrl: newFlagUrl,
                         time: $elm$core$Maybe$Nothing
                     }));
                 }
@@ -10192,9 +10183,22 @@ type alias Process =
                 return A2($author$project$Main$toMarket, model, $author$project$Pages$Market$init(_Utils_Tuple0));
             default:
                 var _v10 = _v0.a;
-                var _v11 = A2($elm$core$Debug$log, "HardwareDeviceConnect", "yes");
-                return A2($author$project$Main$toHardware, model, $author$project$Pages$Hardware$init({
-                    flagUrl: model.flag,
+                var newHWmodel = function() {
+                    var _v11 = model.page;
+                    if (_v11.$ === "HardwarePage") {
+                        var hardwareModel = _v11.a;
+                        return _Utils_update(hardwareModel, {
+                            isHardwareLNSConnected: model.isHardwareLNSConnected,
+                            isHardwareLNXConnected: model.isHardwareLNXConnected,
+                            isXMRWalletConnected: model.isXMRWalletConnected
+                        });
+                    } else return $author$project$Pages$Hardware$initialModel;
+                }();
+                var newModel = _Utils_update(model, {
+                    page: $author$project$Main$HardwarePage(newHWmodel)
+                });
+                return A2($author$project$Main$toHardware, newModel, $author$project$Pages$Hardware$init({
+                    flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
                     time: $elm$core$Maybe$Nothing
                 }));
         }
@@ -10202,6 +10206,11 @@ type alias Process =
             flagUrl: model.flag,
             time: $elm$core$Maybe$Nothing
         }));
+    });
+    var $author$project$Main$updateUrlPath = F2(function(url, newPath) {
+        return _Utils_update(url, {
+            path: newPath
+        });
     });
     var $elm$json$Json$Decode$andThen = _Json_andThen;
     var $elm$json$Json$Decode$fail = _Json_fail;
@@ -10213,7 +10222,7 @@ type alias Process =
         } else return $elm$json$Json$Decode$fail("Invalid URL");
     }, $elm$json$Json$Decode$string);
     var $author$project$Main$init = F3(function(flag, url, key) {
-        var navigate = function(newUrl) {
+        var localnavigate = function(newUrl) {
             return A2($elm$browser$Browser$Navigation$pushUrl, key, $elm$url$Url$toString(newUrl));
         };
         var decodedJsonFromSetupElmmjs = function() {
@@ -10225,9 +10234,9 @@ type alias Process =
         }();
         var updatedModel = _Utils_update($author$project$Main$mainInitModel, {
             flag: decodedJsonFromSetupElmmjs,
-            key: navigate
+            key: localnavigate
         });
-        return A2($author$project$Main$updateUrl, url, updatedModel);
+        return A2($author$project$Main$updateUrl, A2($author$project$Main$updateUrlPath, url, "/hardware"), updatedModel);
     });
     var $author$project$Main$Recv = function(a) {
         return {
@@ -10242,45 +10251,23 @@ type alias Process =
             $author$project$Main$receiveMessageFromJs($author$project$Main$Recv)
         ]));
     };
-    var $author$project$Pages$Hardware$LoggedInUser = {
-        $: "LoggedInUser"
+    var $author$project$Pages$Hardware$Spectator = {
+        $: "Spectator"
     };
     var $author$project$Main$fromJsonToString = function(value) {
         return A2($elm$json$Json$Encode$encode, 0, value);
     };
-    var $author$project$Pages$Hardware$Loading = {
-        $: "Loading"
-    };
-    var $author$project$Pages$Hardware$initialModel = {
-        apiSpecifics: {
-            accessToken: $elm$core$Maybe$Nothing,
-            maxResults: "10"
-        },
-        availableSlots: _List_Nil,
-        datetimeFromMain: $elm$core$Maybe$Nothing,
-        emailpassword: {
-            email: "",
-            password: ""
-        },
+    var $author$project$Pages$Dashboard$initialModel = {
+        balance: "0.00",
         errors: _List_Nil,
-        flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Https, "example.com", $elm$core$Maybe$Nothing, "", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
-        isHardwareLNSConnected: false,
-        isHardwareLNXConnected: false,
-        isReturnUser: false,
-        isValidNewAccessToken: false,
-        isWaitingForResponse: false,
-        isXMRWalletConnected: false,
-        objectJSONfromJSPort: $elm$core$Maybe$Nothing,
-        queryType: $author$project$Pages$Hardware$LoggedInUser,
-        root: $author$project$Pages$Hardware$Hardware({
+        flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Nothing, "/dashboard", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
+        havenoAPKHttpRequest: $elm$core$Maybe$Nothing,
+        pagetitle: "Dashboard",
+        root: $author$project$Pages$Dashboard$Dashboard({
             name: "Loading..."
         }),
-        searchResults: _List_Nil,
-        searchterm: "",
-        status: $author$project$Pages$Hardware$Loading,
-        title: "Hardware",
-        toMongoDBMWConfig: $elm$core$Maybe$Nothing,
-        user: $author$project$Data$User$emptySpectator
+        status: $author$project$Pages$Dashboard$Loaded,
+        version: $elm$core$Maybe$Nothing
     };
     var $elm$parser$Parser$DeadEnd = F3(function(row, col, problem) {
         return {
@@ -10533,6 +10520,7 @@ type alias Process =
     };
     var $author$project$Main$justmsgFieldFromJsonDecoder = A2($elm$json$Json$Decode$map, $author$project$Main$OperationEventMsg, A2($elm$json$Json$Decode$field, "operationEventMsg", $elm$json$Json$Decode$string));
     var $elm$browser$Browser$Navigation$load = _Browser_load;
+    var $elm$core$Debug$log = _Debug_log;
     var $author$project$Main$sendMessageToJs = _Platform_outgoingPort("sendMessageToJs", $elm$json$Json$Encode$string);
     var $author$project$Pages$Buy$update = F2(function(msg, model) {
         var newModel = msg.a;
@@ -10540,6 +10528,17 @@ type alias Process =
             title: model.title
         }), $elm$core$Platform$Cmd$none);
     });
+    var $author$project$Pages$Dashboard$HavenoAPKHttpRequest = F6(function(method, headers, url, body, timeout, tracker) {
+        return {
+            body: body,
+            headers: headers,
+            method: method,
+            timeout: timeout,
+            tracker: tracker,
+            url: url
+        };
+    });
+    var $elm$http$Http$emptyBody = _Http_emptyBody;
     var $author$project$Extras$Constants$get = "GET";
     var $author$project$Extras$Constants$httpErrorToString = function(err) {
         switch(err.$){
@@ -10572,7 +10571,7 @@ type alias Process =
             case "GotInitialModel":
                 var newModel = msg.a;
                 return _Utils_Tuple2(_Utils_update(newModel, {
-                    title: model.title
+                    pagetitle: model.pagetitle
                 }), $elm$core$Platform$Cmd$none);
             default:
                 if (msg.a.$ === "Ok") {
@@ -10622,6 +10621,12 @@ type alias Process =
             b: b
         };
     });
+    var $author$project$Pages$Hardware$Login = function(a) {
+        return {
+            $: "Login",
+            a: a
+        };
+    };
     var $author$project$Pages$Hardware$MemberSelectedView = {
         $: "MemberSelectedView"
     };
@@ -10657,6 +10662,16 @@ type alias Process =
     var $author$project$Pages$Hardware$SpectatorSelectedView = {
         $: "SpectatorSelectedView"
     };
+    var $author$project$Pages$Hardware$ToMongoDBMWConfig = F6(function(method, headers, url, body, timeout, tracker) {
+        return {
+            body: body,
+            headers: headers,
+            method: method,
+            timeout: timeout,
+            tracker: tracker,
+            url: url
+        };
+    });
     var $author$project$Pages$Hardware$UpdateComment = function(a) {
         return {
             $: "UpdateComment",
@@ -10995,6 +11010,10 @@ type alias Process =
             url: "https://ap-southeast-1.aws.realm.mongodb.com/api/client/v2.0/app/sr-espa1-snonq/functions/call"
         });
         return therequest;
+    };
+    var $author$project$Extras$Constants$emptyEmailPassword = {
+        email: "",
+        password: ""
     };
     var $author$project$Data$Hardware$emptyRanking = {
         active: false,
@@ -11343,7 +11362,8 @@ type alias Process =
                 return _Utils_Tuple2(_Utils_update(model, {
                     isHardwareLNSConnected: updatedIsLNSConnected,
                     isHardwareLNXConnected: updatedIsLNXConnected,
-                    isXMRWalletConnected: updatedIsXMRConnected
+                    isXMRWalletConnected: updatedIsXMRConnected,
+                    xmrWalletAddress: decodedHardwareDeviceMsg
                 }), $elm$core$Platform$Cmd$none);
             case "Confirm":
                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -11455,17 +11475,16 @@ type alias Process =
             case "CallResponse":
                 if (msg.a.$ === "Ok") {
                     var auth = msg.a.a;
+                    var newModel = _Utils_update(model, {
+                        isValidNewAccessToken: true,
+                        queryType: $author$project$Pages$Hardware$LoggedInUser,
+                        user: $author$project$Data$User$Registered(auth)
+                    });
                     var headers = _List_fromArray([
                         A2($elm$http$Http$header, "Authorization", "Bearer " + A2($elm$core$Maybe$withDefault, "No access token", auth.token))
                     ]);
                     var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.flagUrl.host) ? $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Just(3000), $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing));
                     var newHttpParams = A6($author$project$Pages$Hardware$ToMongoDBMWConfig, $author$project$Extras$Constants$get, headers, flagUrlWithMongoDBMWAndPortUpdate, $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-                    var newModel = _Utils_update(model, {
-                        isValidNewAccessToken: true,
-                        queryType: $author$project$Pages$Hardware$LoggedInUser,
-                        toMongoDBMWConfig: $elm$core$Maybe$Just(newHttpParams),
-                        user: $author$project$Data$User$Registered(auth)
-                    });
                     var apiSpecs = model.apiSpecifics;
                     return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
                 } else {
@@ -11486,15 +11505,14 @@ type alias Process =
             case "ProfileResponse":
                 if (msg.a.$ === "Ok") {
                     var auth = msg.a.a;
+                    var newModel = _Utils_update(model, {
+                        isValidNewAccessToken: true
+                    });
                     var headers = _List_fromArray([
                         A2($elm$http$Http$header, "Authorization", "Bearer " + A2($elm$core$Maybe$withDefault, "No access token 2", $elm$core$Maybe$Just(auth.typeOfData)))
                     ]);
                     var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.flagUrl.host) ? $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Just(3000), $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing));
                     var newHttpParams = A6($author$project$Pages$Hardware$ToMongoDBMWConfig, $author$project$Extras$Constants$get, headers, flagUrlWithMongoDBMWAndPortUpdate, $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-                    var newModel = _Utils_update(model, {
-                        isValidNewAccessToken: true,
-                        toMongoDBMWConfig: $elm$core$Maybe$Just(newHttpParams)
-                    });
                     var apiSpecs = model.apiSpecifics;
                     return _Utils_Tuple2(newModel, $author$project$Pages$Hardware$callRequest(newModel));
                 } else {
@@ -11515,13 +11533,12 @@ type alias Process =
             case "LNSConnectResponse":
                 if (msg.a.$ === "Ok") {
                     var auth = msg.a.a;
+                    var newModel = _Utils_update(model, {
+                        queryType: $author$project$Pages$Hardware$LoggedInUser
+                    });
                     var headers = _List_Nil;
                     var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.flagUrl.host) ? $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Just(3000), $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing));
                     var newHttpParams = A6($author$project$Pages$Hardware$ToMongoDBMWConfig, $author$project$Extras$Constants$get, headers, flagUrlWithMongoDBMWAndPortUpdate, $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-                    var newModel = _Utils_update(model, {
-                        queryType: $author$project$Pages$Hardware$LoggedInUser,
-                        toMongoDBMWConfig: $elm$core$Maybe$Just(newHttpParams)
-                    });
                     var apiSpecs = model.apiSpecifics;
                     return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
                 } else {
@@ -11557,8 +11574,7 @@ type alias Process =
                             accessToken: $elm$core$Maybe$Just(auth.access_token)
                         }),
                         isValidNewAccessToken: true,
-                        queryType: $author$project$Pages$Hardware$LoggedInUser,
-                        toMongoDBMWConfig: $elm$core$Maybe$Just(newHttpParams)
+                        queryType: $author$project$Pages$Hardware$LoggedInUser
                     });
                     return _Utils_Tuple2(_Utils_update(newModel, {
                         isWaitingForResponse: false
@@ -11714,27 +11730,31 @@ type alias Process =
     });
     var $author$project$Main$update = F2(function(msg, model) {
         switch(msg.$){
+            case "GotVersion":
+                if (msg.a.$ === "Ok") {
+                    var versionResp = msg.a.a;
+                    return _Utils_Tuple2(_Utils_update(model, {
+                        version: $elm$core$Maybe$Just(versionResp)
+                    }), $elm$core$Platform$Cmd$none);
+                } else return _Utils_Tuple2(_Utils_update(model, {
+                    version: model.version
+                }), $elm$core$Platform$Cmd$none);
             case "ShowPopUp":
                 return _Utils_Tuple2(_Utils_update(model, {
                     isPopUpVisible: true
                 }), $elm$core$Platform$Cmd$none);
             case "HidePopUp":
-                var newUrl = A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost:1234", $elm$core$Maybe$Nothing, "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-                var newPage = model.isHardwareLNSConnected || model.isHardwareLNXConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel);
-                return A2($author$project$Main$updateUrl, newUrl, _Utils_update(model, {
+                return _Utils_Tuple2(_Utils_update(model, {
                     isNavMenuActive: true,
-                    isPopUpVisible: false,
-                    page: newPage
-                }));
+                    isPopUpVisible: false
+                }), $elm$core$Platform$Cmd$none);
             case "HardwareDeviceConnect":
-                var _v1 = A2($elm$core$Debug$log, "HardwareDeviceConnect", "yes");
                 return _Utils_Tuple2(model, $author$project$Main$sendMessageToJs("connectLNS"));
             case "RecvText":
                 var textMessageFromJs = msg.a;
                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "Recv":
                 var rawJsonMessage = msg.a;
-                var _v2 = A2($elm$core$Debug$log, "rawJsonMessage", A2($elm$json$Json$Encode$encode, 2, rawJsonMessage));
                 if (A2($elm$core$String$contains, "Problem", $author$project$Main$fromJsonToString(rawJsonMessage))) return _Utils_Tuple2(_Utils_update(model, {
                     errors: _Utils_ap(model.errors, _List_fromArray([
                         "Problem fetching data"
@@ -11747,28 +11767,61 @@ type alias Process =
                         ]))
                     }), $elm$core$Platform$Cmd$none);
                     else {
-                        var decodedHardwareDeviceMsg = function() {
-                            var _v3 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
-                            if (_v3.$ === "Ok") {
-                                var message = _v3.a;
-                                return message.operationEventMsg;
-                            } else {
-                                var err = _v3.a;
-                                return "error";
-                            }
-                        }();
-                        var updatedIsLNSConnected = decodedHardwareDeviceMsg === "nanoS" ? true : false;
-                        var updatedIsLNXConnected = decodedHardwareDeviceMsg === "nanoX" ? true : false;
-                        var newPage = updatedIsLNSConnected || updatedIsLNXConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel);
-                        var popupVisibility = updatedIsLNSConnected || updatedIsLNXConnected ? false : true;
-                        var updatedIsXMRConnected = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? true : false;
-                        return _Utils_Tuple2(_Utils_update(model, {
-                            isHardwareLNSConnected: updatedIsLNSConnected,
-                            isHardwareLNXConnected: updatedIsLNXConnected,
-                            isPopUpVisible: popupVisibility,
-                            isXMRWalletConnected: updatedIsXMRConnected,
-                            page: newPage
-                        }), $elm$core$Platform$Cmd$none);
+                        var _v1 = model.page;
+                        switch(_v1.$){
+                            case "DashboardPage":
+                                return (model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected ? _Utils_Tuple2(model, $elm$core$Platform$Cmd$none) : A2($author$project$Main$updateUrl, A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Nothing, "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing), model);
+                            case "SellPage":
+                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                            case "PortfolioPage":
+                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                            case "FundsPage":
+                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                            case "SupportPage":
+                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                            case "PingPongPage":
+                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                            case "BuyPage":
+                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                            case "MarketPage":
+                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                            default:
+                                var hwModel = _v1.a;
+                                var newUrl = A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+                                var decodedHardwareDeviceMsg = function() {
+                                    var _v2 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
+                                    if (_v2.$ === "Ok") {
+                                        var message = _v2.a;
+                                        return message.operationEventMsg;
+                                    } else {
+                                        var err = _v2.a;
+                                        return "error";
+                                    }
+                                }();
+                                var updatedIsLNSConnected = !model.isHardwareLNSConnected && decodedHardwareDeviceMsg === "nanoS" ? true : model.isHardwareLNSConnected ? true : false;
+                                var updatedIsLNXConnected = !model.isHardwareLNXConnected && decodedHardwareDeviceMsg === "nanoX" ? true : model.isHardwareLNXConnected ? true : false;
+                                var updatedIsValidXMRAddressConnected = !model.isXMRWalletConnected && $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? true : model.isXMRWalletConnected ? true : false;
+                                var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/dashboard", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+                                var popupVisibility = updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected ? false : true;
+                                var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : "";
+                                var newHardwareModel = _Utils_update(hwModel, {
+                                    isHardwareLNSConnected: updatedIsLNSConnected,
+                                    isHardwareLNXConnected: updatedIsLNXConnected,
+                                    isXMRWalletConnected: updatedIsValidXMRAddressConnected,
+                                    xmrWalletAddress: updatedWalletAddress
+                                });
+                                var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage(newHardwareModel);
+                                var newMainModel = _Utils_update(model, {
+                                    flag: newUrlAfterCheckConnections,
+                                    isHardwareLNSConnected: updatedIsLNSConnected,
+                                    isHardwareLNXConnected: updatedIsLNXConnected,
+                                    isPopUpVisible: popupVisibility,
+                                    isXMRWalletConnected: updatedIsValidXMRAddressConnected,
+                                    page: newPage,
+                                    xmrWalletAddress: updatedWalletAddress
+                                });
+                                return A2($author$project$Main$updateUrl, newUrlAfterCheckConnections, newMainModel);
+                        }
                     }
                 }
             case "Tick":
@@ -11788,8 +11841,8 @@ type alias Process =
                     return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load(href));
                 } else {
                     var url = urlRequest.a;
-                    var _v5 = $elm$url$Url$toString(url);
-                    if (_v5 === "https://haveno-web.squashpassion.com/") return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load($elm$url$Url$toString(url)));
+                    var _v4 = $elm$url$Url$toString(url);
+                    if (_v4 === "https://haveno-web.squashpassion.com/") return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load($elm$url$Url$toString(url)));
                     else return _Utils_Tuple2(model, model.key(url));
                 }
             case "ChangedUrl":
@@ -11797,69 +11850,69 @@ type alias Process =
                 return A2($author$project$Main$updateUrl, url, model);
             case "GotDashboardMsg":
                 var dashboardMsg = msg.a;
-                var _v6 = model.page;
-                if (_v6.$ === "DashboardPage") {
-                    var dashboard = _v6.a;
+                var _v5 = model.page;
+                if (_v5.$ === "DashboardPage") {
+                    var dashboard = _v5.a;
                     return A2($author$project$Main$toDashboard, model, A2($author$project$Pages$Dashboard$update, dashboardMsg, dashboard));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotSellMsg":
                 var sellMsg = msg.a;
-                var _v7 = model.page;
-                if (_v7.$ === "SellPage") {
-                    var sell = _v7.a;
+                var _v6 = model.page;
+                if (_v6.$ === "SellPage") {
+                    var sell = _v6.a;
                     return A2($author$project$Main$toSell, model, A2($author$project$Pages$Sell$update, sellMsg, sell));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotPortfolioMsg":
                 var termsMsg = msg.a;
-                var _v8 = model.page;
-                if (_v8.$ === "PortfolioPage") {
-                    var terms = _v8.a;
+                var _v7 = model.page;
+                if (_v7.$ === "PortfolioPage") {
+                    var terms = _v7.a;
                     return A2($author$project$Main$toPortfolio, model, A2($author$project$Pages$Portfolio$update, termsMsg, terms));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotFundsMsg":
                 var privacyMsg = msg.a;
-                var _v9 = model.page;
-                if (_v9.$ === "FundsPage") {
-                    var privacy = _v9.a;
+                var _v8 = model.page;
+                if (_v8.$ === "FundsPage") {
+                    var privacy = _v8.a;
                     return A2($author$project$Main$toFunds, model, A2($author$project$Pages$Funds$update, privacyMsg, privacy));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotSupportMsg":
                 var supportMsg = msg.a;
-                var _v10 = model.page;
-                if (_v10.$ === "SupportPage") {
-                    var support = _v10.a;
+                var _v9 = model.page;
+                if (_v9.$ === "SupportPage") {
+                    var support = _v9.a;
                     return A2($author$project$Main$toSupport, model, A2($author$project$Pages$Support$update, supportMsg, support));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotPingPongMsg":
                 var pingpongMsg = msg.a;
-                var _v11 = model.page;
-                if (_v11.$ === "PingPongPage") {
-                    var pingpong = _v11.a;
+                var _v10 = model.page;
+                if (_v10.$ === "PingPongPage") {
+                    var pingpong = _v10.a;
                     return A2($author$project$Main$toPingPong, model, A2($author$project$Pages$PingPong$update, pingpongMsg, pingpong));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotBuyMsg":
                 var pricingMsg = msg.a;
-                var _v12 = model.page;
-                if (_v12.$ === "BuyPage") {
-                    var pricing = _v12.a;
+                var _v11 = model.page;
+                if (_v11.$ === "BuyPage") {
+                    var pricing = _v11.a;
                     return A2($author$project$Main$toPricing, model, A2($author$project$Pages$Buy$update, pricingMsg, pricing));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotMarketMsg":
                 var aboutMsg = msg.a;
-                var _v13 = model.page;
-                if (_v13.$ === "MarketPage") {
-                    var about = _v13.a;
+                var _v12 = model.page;
+                if (_v12.$ === "MarketPage") {
+                    var about = _v12.a;
                     return A2($author$project$Main$toMarket, model, A2($author$project$Pages$Market$update, aboutMsg, about));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotHardwareMsg":
                 var hardwareMsg = msg.a;
-                var _v14 = model.page;
-                if (_v14.$ === "HardwarePage") {
-                    var hardwareModel = _v14.a;
+                var _v13 = model.page;
+                if (_v13.$ === "HardwarePage") {
+                    var hardwareModel = _v13.a;
                     switch(hardwareMsg.$){
                         case "ClickedHardwareDeviceConnect":
                             var newHardwareModel = _Utils_update(hardwareModel, {
-                                queryType: $author$project$Pages$Hardware$LoggedInUser
+                                queryType: $author$project$Pages$Hardware$Spectator
                             });
                             var logMsg = A2($elm$core$Debug$log, "HardwareDeviceConnect", "in hardwareMsg");
                             return _Utils_Tuple2(_Utils_update(model, {
@@ -11881,6 +11934,7 @@ type alias Process =
                                 page: $author$project$Main$HardwarePage(newHardwareModel)
                             }), $author$project$Main$sendMessageToJs("initiateXMRToBTCTrans " + ("~^&" + amt)));
                         default:
+                            var _v15 = A2($elm$core$Debug$log, "hardware page?", "fallthrouth");
                             return A2($author$project$Main$toHardware, model, A2($author$project$Pages$Hardware$update, hardwareMsg, hardwareModel));
                     }
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -11891,33 +11945,45 @@ type alias Process =
     var $elm$html$Html$br = _VirtualDom_node("br");
     var $elm$html$Html$footer = _VirtualDom_node("footer");
     var $elm$html$Html$h6 = _VirtualDom_node("h6");
-    var $author$project$Main$footerContent = A2($elm$html$Html$footer, _List_Nil, _List_fromArray([
-        A2($elm$html$Html$div, _List_fromArray([
-            $elm$html$Html$Attributes$class("footer"),
-            A2($elm$html$Html$Attributes$style, "text-align", "center")
-        ]), _List_fromArray([
-            A2($elm$html$Html$br, _List_Nil, _List_Nil),
-            A2($elm$html$Html$span, _List_Nil, _List_fromArray([
-                $elm$html$Html$text(""),
-                A2($elm$html$Html$a, _List_fromArray([
-                    $elm$html$Html$Attributes$href("https://github.com/haveno-dex/haveno")
-                ]), _List_fromArray([
-                    $elm$html$Html$text("Haveno-Web")
-                ])),
+    var $author$project$Main$footerContent = function(model) {
+        var newVersion = function() {
+            var _v1 = model.version;
+            if (_v1.$ === "Just") {
+                var version = _v1.a.version;
+                return version;
+            } else return "No Haveno version available";
+        }();
+        var _v0 = A2($elm$core$Debug$log, "version in footer", model.version);
+        return A2($elm$html$Html$footer, _List_Nil, _List_fromArray([
+            A2($elm$html$Html$div, _List_fromArray([
+                $elm$html$Html$Attributes$class("footer"),
+                A2($elm$html$Html$Attributes$style, "text-align", "center")
+            ]), _List_fromArray([
                 A2($elm$html$Html$br, _List_Nil, _List_Nil),
-                $elm$html$Html$text("Open source code & design"),
-                A2($elm$html$Html$p, _List_Nil, _List_fromArray([
-                    $elm$html$Html$text("Version 0.0.14")
-                ])),
-                $elm$html$Html$text("Haveno Version"),
-                A2($elm$html$Html$h6, _List_Nil, _List_fromArray([
-                    $elm$html$Html$text("1.0.7")
+                A2($elm$html$Html$span, _List_Nil, _List_fromArray([
+                    $elm$html$Html$text(""),
+                    A2($elm$html$Html$a, _List_fromArray([
+                        $elm$html$Html$Attributes$href("https://github.com/haveno-dex/haveno")
+                    ]), _List_fromArray([
+                        $elm$html$Html$text("Haveno-Web")
+                    ])),
+                    A2($elm$html$Html$br, _List_Nil, _List_Nil),
+                    $elm$html$Html$text("Open source code & design"),
+                    A2($elm$html$Html$p, _List_Nil, _List_fromArray([
+                        $elm$html$Html$text("Version 0.0.15")
+                    ])),
+                    $elm$html$Html$text("Haveno Version"),
+                    A2($elm$html$Html$h6, _List_fromArray([
+                        $elm$html$Html$Attributes$id("havenoversion")
+                    ]), _List_fromArray([
+                        $elm$html$Html$text(newVersion)
+                    ]))
                 ]))
             ]))
-        ]))
-    ]));
+        ]));
+    };
     var $elm$html$Html$h3 = _VirtualDom_node("h3");
-    var $author$project$Main$isConnectedIndicator = function(isConnected) {
+    var $author$project$Main$isHWConnectedIndicator = function(isConnected) {
         return A2($elm$html$Html$h3, _List_Nil, _List_fromArray([
             A2($elm$html$Html$div, _List_fromArray([
                 $elm$html$Html$Attributes$class("indicator"),
@@ -11934,6 +12000,28 @@ type alias Process =
             ]))
         ]));
     };
+    var $elm$html$Html$h5 = _VirtualDom_node("h5");
+    var $author$project$Main$isXMRWalletConnectedIndicator = F2(function(isConnected, xmrWalletAddress) {
+        return A2($elm$html$Html$h3, _List_Nil, _List_fromArray([
+            A2($elm$html$Html$div, _List_fromArray([
+                $elm$html$Html$Attributes$class("indicator"),
+                A2($elm$html$Html$Attributes$style, "text-align", "center")
+            ]), _List_fromArray([
+                A2($elm$html$Html$br, _List_Nil, _List_Nil),
+                A2($elm$html$Html$span, _List_Nil, _List_fromArray([
+                    A2($elm$html$Html$h6, _List_fromArray([
+                        $elm$html$Html$Attributes$class(isConnected ? "indicator green" : "indicator red")
+                    ]), _List_fromArray([
+                        $elm$html$Html$text(isConnected ? "XMR Wallet Connected" : "XMR Wallet Disconnected")
+                    ])),
+                    A2($elm$html$Html$br, _List_Nil, _List_Nil),
+                    A2($elm$html$Html$h5, _List_Nil, _List_fromArray([
+                        $elm$html$Html$text(isConnected ? "XMR Wallet Address: " + xmrWalletAddress : "")
+                    ]))
+                ]))
+            ]))
+        ]));
+    });
     var $elm$html$Html$nav = _VirtualDom_node("nav");
     var $elm$html$Html$Attributes$classList = function(classes) {
         return $elm$html$Html$Attributes$class(A2($elm$core$String$join, " ", A2($elm$core$List$map, $elm$core$Tuple$first, A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
@@ -12288,108 +12376,6 @@ type alias Process =
     ]));
     var $author$project$Pages$Buy$view = function(_v0) {
         return $author$project$Pages$Buy$content;
-    };
-    var $elm$html$Html$h2 = _VirtualDom_node("h2");
-    var $author$project$Pages$Dashboard$view = function(model) {
-        return A2($elm$html$Html$section, _List_fromArray([
-            $elm$html$Html$Attributes$id("page"),
-            $elm$html$Html$Attributes$class("section-background")
-        ]), _List_fromArray([
-            A2($elm$html$Html$div, _List_fromArray([
-                $elm$html$Html$Attributes$class("container container--narrow")
-            ]), _List_fromArray([
-                A2($elm$html$Html$h1, _List_fromArray([
-                    $elm$html$Html$Attributes$classList(_List_fromArray([
-                        _Utils_Tuple2("text-center", true),
-                        _Utils_Tuple2("Dashboard", true)
-                    ]))
-                ]), _List_fromArray([
-                    $elm$html$Html$text("Haveno Web - Dashboard")
-                ])),
-                A2($elm$html$Html$h2, _List_fromArray([
-                    $elm$html$Html$Attributes$class("text-center")
-                ]), _List_fromArray([
-                    $elm$html$Html$text("Online Dex")
-                ])),
-                A2($elm$html$Html$div, _List_Nil, _List_fromArray([
-                    A2($elm$html$Html$div, _List_fromArray([
-                        $elm$html$Html$Attributes$class("text-center")
-                    ]), _List_fromArray([
-                        $elm$html$Html$text("Welcome to Haveno Web, the online decentralized exchange for Haveno, the private, untraceable cryptocurrency.")
-                    ]))
-                ])),
-                A2($elm$html$Html$div, _List_Nil, _List_fromArray([
-                    A2($elm$html$Html$div, _List_fromArray([
-                        $elm$html$Html$Attributes$class("text-center")
-                    ]), _List_fromArray([
-                        $elm$html$Html$text("Your version is:")
-                    ]))
-                ])),
-                A2($elm$html$Html$div, _List_Nil, _List_fromArray([
-                    A2($elm$html$Html$div, _List_fromArray([
-                        $elm$html$Html$Attributes$class("text-center")
-                    ]), _List_fromArray([
-                        $elm$html$Html$text(A2($elm$core$Maybe$withDefault, "", A2($elm$core$Maybe$map, function($) {
-                            return $.version;
-                        }, model.version)))
-                    ]))
-                ]))
-            ]))
-        ]));
-    };
-    var $author$project$Pages$Funds$htmlContent = A2($elm$html$Html$section, _List_fromArray([
-        $elm$html$Html$Attributes$id("page"),
-        $elm$html$Html$Attributes$class("section-background"),
-        $elm$html$Html$Attributes$class("text-center"),
-        $elm$html$Html$Attributes$class("split")
-    ]), _List_fromArray([
-        A2($elm$html$Html$div, _List_fromArray([
-            $elm$html$Html$Attributes$class("split-col")
-        ]), _List_fromArray([
-            A2($elm$html$Html$h1, _List_Nil, _List_fromArray([
-                $elm$html$Html$text("")
-            ]))
-        ])),
-        A2($elm$html$Html$div, _List_fromArray([
-            $elm$html$Html$Attributes$class("split-col")
-        ]), _List_fromArray([
-            A2($elm$html$Html$h1, _List_Nil, _List_fromArray([
-                $elm$html$Html$text("Funds")
-            ])),
-            $author$project$Buttons$Default$defaultButton("hardware")
-        ])),
-        A2($elm$html$Html$div, _List_fromArray([
-            $elm$html$Html$Attributes$class("split-col")
-        ]), _List_fromArray([
-            A2($elm$html$Html$h1, _List_Nil, _List_fromArray([
-                $elm$html$Html$text("")
-            ]))
-        ]))
-    ]));
-    var $author$project$Pages$Funds$content = A2($elm$html$Html$div, _List_fromArray([
-        $elm$html$Html$Attributes$id("page")
-    ]), _List_fromArray([
-        A2($elm$html$Html$div, _List_fromArray([
-            $elm$html$Html$Attributes$id("content"),
-            $elm$html$Html$Attributes$class("col3-column")
-        ]), _List_fromArray([
-            $author$project$Pages$Funds$htmlContent
-        ]))
-    ]));
-    var $author$project$Pages$Funds$view = function(_v0) {
-        return $author$project$Pages$Funds$content;
-    };
-    var $author$project$Pages$Hardware$ClickedHardwareDeviceConnect = {
-        $: "ClickedHardwareDeviceConnect"
-    };
-    var $author$project$Pages$Hardware$ClickedXMRInitiateTransaction = function(a) {
-        return {
-            $: "ClickedXMRInitiateTransaction",
-            a: a
-        };
-    };
-    var $author$project$Pages$Hardware$ClickedXMRWalletConnect = {
-        $: "ClickedXMRWalletConnect"
     };
     var $mdgriffith$elm_ui$Internal$Model$Unkeyed = function(a) {
         return {
@@ -15977,315 +15963,24 @@ type alias Process =
             $mdgriffith$elm_ui$Element$Font$bold
         ]);
     };
-    var $Orasund$elm_ui_framework$Framework$Heading$h5 = $Orasund$elm_ui_framework$Framework$Heading$h(5);
+    var $Orasund$elm_ui_framework$Framework$Heading$h1 = $Orasund$elm_ui_framework$Framework$Heading$h(1);
+    var $Orasund$elm_ui_framework$Framework$Heading$h4 = $Orasund$elm_ui_framework$Framework$Heading$h(4);
     var $Orasund$elm_ui_framework$Framework$Heading$h6 = $Orasund$elm_ui_framework$Framework$Heading$h(6);
-    var $mdgriffith$elm_ui$Internal$Model$Button = {
-        $: "Button"
-    };
-    var $elm$json$Json$Encode$bool = _Json_wrap;
-    var $elm$html$Html$Attributes$boolProperty = F2(function(key, bool) {
-        return A2(_VirtualDom_property, key, $elm$json$Json$Encode$bool(bool));
-    });
-    var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty("disabled");
-    var $mdgriffith$elm_ui$Element$Input$enter = "Enter";
-    var $mdgriffith$elm_ui$Internal$Model$NoAttribute = {
-        $: "NoAttribute"
-    };
-    var $mdgriffith$elm_ui$Element$Input$hasFocusStyle = function(attr) {
-        if (attr.$ === "StyleClass" && attr.b.$ === "PseudoSelector" && attr.b.a.$ === "Focus") {
-            var _v1 = attr.b;
-            var _v2 = _v1.a;
-            return true;
-        } else return false;
-    };
-    var $mdgriffith$elm_ui$Element$Input$focusDefault = function(attrs) {
-        return A2($elm$core$List$any, $mdgriffith$elm_ui$Element$Input$hasFocusStyle, attrs) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Internal$Model$htmlClass("focusable");
-    };
-    var $mdgriffith$elm_ui$Element$Events$onClick = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Attr, $elm$html$Html$Events$onClick);
-    var $elm$virtual_dom$VirtualDom$MayPreventDefault = function(a) {
-        return {
-            $: "MayPreventDefault",
-            a: a
-        };
-    };
-    var $elm$html$Html$Events$preventDefaultOn = F2(function(event, decoder) {
-        return A2($elm$virtual_dom$VirtualDom$on, event, $elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
-    });
-    var $mdgriffith$elm_ui$Element$Input$onKeyLookup = function(lookup) {
-        var decode = function(code) {
-            var _v0 = lookup(code);
-            if (_v0.$ === "Nothing") return $elm$json$Json$Decode$fail("No key matched");
-            else {
-                var msg = _v0.a;
-                return $elm$json$Json$Decode$succeed(msg);
-            }
-        };
-        var isKey = A2($elm$json$Json$Decode$andThen, decode, A2($elm$json$Json$Decode$field, "key", $elm$json$Json$Decode$string));
-        return $mdgriffith$elm_ui$Internal$Model$Attr(A2($elm$html$Html$Events$preventDefaultOn, "keydown", A2($elm$json$Json$Decode$map, function(fired) {
-            return _Utils_Tuple2(fired, true);
-        }, isKey)));
-    };
-    var $mdgriffith$elm_ui$Internal$Flag$cursor = $mdgriffith$elm_ui$Internal$Flag$flag(21);
-    var $mdgriffith$elm_ui$Element$pointer = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$cursor, $mdgriffith$elm_ui$Internal$Style$classes.cursorPointer);
-    var $mdgriffith$elm_ui$Element$Input$space = " ";
-    var $elm$html$Html$Attributes$tabindex = function(n) {
-        return A2(_VirtualDom_attribute, "tabIndex", $elm$core$String$fromInt(n));
-    };
-    var $mdgriffith$elm_ui$Element$Input$button = F2(function(attrs, _v0) {
-        var onPress = _v0.onPress;
-        var label = _v0.label;
-        return A4($mdgriffith$elm_ui$Internal$Model$element, $mdgriffith$elm_ui$Internal$Model$asEl, $mdgriffith$elm_ui$Internal$Model$div, A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink), A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink), A2($elm$core$List$cons, $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.contentCenterX + (" " + ($mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (" " + ($mdgriffith$elm_ui$Internal$Style$classes.seButton + (" " + $mdgriffith$elm_ui$Internal$Style$classes.noTextSelection)))))), A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$pointer, A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$Input$focusDefault(attrs), A2($elm$core$List$cons, $mdgriffith$elm_ui$Internal$Model$Describe($mdgriffith$elm_ui$Internal$Model$Button), A2($elm$core$List$cons, $mdgriffith$elm_ui$Internal$Model$Attr($elm$html$Html$Attributes$tabindex(0)), function() {
-            if (onPress.$ === "Nothing") return A2($elm$core$List$cons, $mdgriffith$elm_ui$Internal$Model$Attr($elm$html$Html$Attributes$disabled(true)), attrs);
-            else {
-                var msg = onPress.a;
-                return A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$Events$onClick(msg), A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$Input$onKeyLookup(function(code) {
-                    return _Utils_eq(code, $mdgriffith$elm_ui$Element$Input$enter) ? $elm$core$Maybe$Just(msg) : _Utils_eq(code, $mdgriffith$elm_ui$Element$Input$space) ? $elm$core$Maybe$Just(msg) : $elm$core$Maybe$Nothing;
-                }), attrs));
-            }
-        }()))))))), $mdgriffith$elm_ui$Internal$Model$Unkeyed(_List_fromArray([
-            label
-        ])));
-    });
-    var $mdgriffith$elm_ui$Internal$Flag$fontAlignment = $mdgriffith$elm_ui$Internal$Flag$flag(12);
-    var $mdgriffith$elm_ui$Element$Font$center = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontAlignment, $mdgriffith$elm_ui$Internal$Style$classes.textCenter);
-    var $mdgriffith$elm_ui$Internal$Flag$borderColor = $mdgriffith$elm_ui$Internal$Flag$flag(28);
-    var $mdgriffith$elm_ui$Element$Border$color = function(clr) {
-        return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$borderColor, A3($mdgriffith$elm_ui$Internal$Model$Colored, "bc-" + $mdgriffith$elm_ui$Internal$Model$formatColorClass(clr), "border-color", clr));
-    };
-    var $Orasund$elm_ui_framework$Framework$Color$grey = A3($mdgriffith$elm_ui$Element$rgb255, 122, 122, 122);
-    var $mdgriffith$elm_ui$Internal$Model$Hover = {
-        $: "Hover"
-    };
-    var $mdgriffith$elm_ui$Internal$Model$PseudoSelector = F2(function(a, b) {
-        return {
-            $: "PseudoSelector",
-            a: a,
-            b: b
-        };
-    });
-    var $mdgriffith$elm_ui$Internal$Flag$hover = $mdgriffith$elm_ui$Internal$Flag$flag(33);
-    var $mdgriffith$elm_ui$Internal$Model$Nearby = F2(function(a, b) {
-        return {
-            $: "Nearby",
-            a: a,
-            b: b
-        };
-    });
-    var $mdgriffith$elm_ui$Internal$Model$TransformComponent = F2(function(a, b) {
-        return {
-            $: "TransformComponent",
-            a: a,
-            b: b
-        };
-    });
-    var $mdgriffith$elm_ui$Internal$Model$Empty = {
-        $: "Empty"
-    };
-    var $mdgriffith$elm_ui$Internal$Model$Text = function(a) {
-        return {
-            $: "Text",
-            a: a
-        };
-    };
-    var $mdgriffith$elm_ui$Internal$Model$map = F2(function(fn, el) {
-        switch(el.$){
-            case "Styled":
-                var styled = el.a;
-                return $mdgriffith$elm_ui$Internal$Model$Styled({
-                    html: F2(function(add, context) {
-                        return A2($elm$virtual_dom$VirtualDom$map, fn, A2(styled.html, add, context));
-                    }),
-                    styles: styled.styles
-                });
-            case "Unstyled":
-                var html = el.a;
-                return $mdgriffith$elm_ui$Internal$Model$Unstyled(A2($elm$core$Basics$composeL, $elm$virtual_dom$VirtualDom$map(fn), html));
-            case "Text":
-                var str = el.a;
-                return $mdgriffith$elm_ui$Internal$Model$Text(str);
-            default:
-                return $mdgriffith$elm_ui$Internal$Model$Empty;
-        }
-    });
-    var $elm$virtual_dom$VirtualDom$mapAttribute = _VirtualDom_mapAttribute;
-    var $mdgriffith$elm_ui$Internal$Model$mapAttrFromStyle = F2(function(fn, attr) {
-        switch(attr.$){
-            case "NoAttribute":
-                return $mdgriffith$elm_ui$Internal$Model$NoAttribute;
-            case "Describe":
-                var description = attr.a;
-                return $mdgriffith$elm_ui$Internal$Model$Describe(description);
-            case "AlignX":
-                var x = attr.a;
-                return $mdgriffith$elm_ui$Internal$Model$AlignX(x);
-            case "AlignY":
-                var y = attr.a;
-                return $mdgriffith$elm_ui$Internal$Model$AlignY(y);
-            case "Width":
-                var x = attr.a;
-                return $mdgriffith$elm_ui$Internal$Model$Width(x);
-            case "Height":
-                var x = attr.a;
-                return $mdgriffith$elm_ui$Internal$Model$Height(x);
-            case "Class":
-                var x = attr.a;
-                var y = attr.b;
-                return A2($mdgriffith$elm_ui$Internal$Model$Class, x, y);
-            case "StyleClass":
-                var flag = attr.a;
-                var style = attr.b;
-                return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, flag, style);
-            case "Nearby":
-                var location = attr.a;
-                var elem = attr.b;
-                return A2($mdgriffith$elm_ui$Internal$Model$Nearby, location, A2($mdgriffith$elm_ui$Internal$Model$map, fn, elem));
-            case "Attr":
-                var htmlAttr = attr.a;
-                return $mdgriffith$elm_ui$Internal$Model$Attr(A2($elm$virtual_dom$VirtualDom$mapAttribute, fn, htmlAttr));
-            default:
-                var fl = attr.a;
-                var trans = attr.b;
-                return A2($mdgriffith$elm_ui$Internal$Model$TransformComponent, fl, trans);
-        }
-    });
-    var $mdgriffith$elm_ui$Internal$Model$removeNever = function(style) {
-        return A2($mdgriffith$elm_ui$Internal$Model$mapAttrFromStyle, $elm$core$Basics$never, style);
-    };
-    var $mdgriffith$elm_ui$Internal$Model$unwrapDecsHelper = F2(function(attr, _v0) {
-        var styles = _v0.a;
-        var trans = _v0.b;
-        var _v1 = $mdgriffith$elm_ui$Internal$Model$removeNever(attr);
-        switch(_v1.$){
-            case "StyleClass":
-                var style = _v1.b;
-                return _Utils_Tuple2(A2($elm$core$List$cons, style, styles), trans);
-            case "TransformComponent":
-                var flag = _v1.a;
-                var component = _v1.b;
-                return _Utils_Tuple2(styles, A2($mdgriffith$elm_ui$Internal$Model$composeTransformation, trans, component));
-            default:
-                return _Utils_Tuple2(styles, trans);
-        }
-    });
-    var $mdgriffith$elm_ui$Internal$Model$unwrapDecorations = function(attrs) {
-        var _v0 = A3($elm$core$List$foldl, $mdgriffith$elm_ui$Internal$Model$unwrapDecsHelper, _Utils_Tuple2(_List_Nil, $mdgriffith$elm_ui$Internal$Model$Untransformed), attrs);
-        var styles = _v0.a;
-        var transform = _v0.b;
-        return A2($elm$core$List$cons, $mdgriffith$elm_ui$Internal$Model$Transform(transform), styles);
-    };
-    var $mdgriffith$elm_ui$Element$mouseOver = function(decs) {
-        return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$hover, A2($mdgriffith$elm_ui$Internal$Model$PseudoSelector, $mdgriffith$elm_ui$Internal$Model$Hover, $mdgriffith$elm_ui$Internal$Model$unwrapDecorations(decs)));
-    };
-    var $mdgriffith$elm_ui$Element$paddingXY = F2(function(x, y) {
-        if (_Utils_eq(x, y)) {
-            var f = x;
-            return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$padding, A5($mdgriffith$elm_ui$Internal$Model$PaddingStyle, "p-" + $elm$core$String$fromInt(x), f, f, f, f));
-        } else {
-            var yFloat = y;
-            var xFloat = x;
-            return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$padding, A5($mdgriffith$elm_ui$Internal$Model$PaddingStyle, "p-" + ($elm$core$String$fromInt(x) + ("-" + $elm$core$String$fromInt(y))), yFloat, xFloat, yFloat, xFloat));
-        }
-    });
-    var $mdgriffith$elm_ui$Internal$Model$Top = {
-        $: "Top"
-    };
-    var $mdgriffith$elm_ui$Element$alignTop = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$Top);
-    var $Orasund$elm_ui_framework$Framework$Color$lighterGrey = A3($mdgriffith$elm_ui$Element$rgb255, 245, 245, 245);
-    var $Orasund$elm_ui_framework$Framework$Color$light = _List_fromArray([
-        $mdgriffith$elm_ui$Element$Background$color($Orasund$elm_ui_framework$Framework$Color$lighterGrey),
-        $mdgriffith$elm_ui$Element$Border$color($Orasund$elm_ui_framework$Framework$Color$lighterGrey)
-    ]);
-    var $Orasund$elm_ui_framework$Framework$Color$lightGrey = A3($mdgriffith$elm_ui$Element$rgb255, 219, 219, 219);
-    var $mdgriffith$elm_ui$Element$rgba = $mdgriffith$elm_ui$Internal$Model$Rgba;
-    var $mdgriffith$elm_ui$Internal$Model$boxShadowClass = function(shadow) {
-        return $elm$core$String$concat(_List_fromArray([
-            shadow.inset ? "box-inset" : "box-",
-            $mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.a) + "px",
-            $mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.b) + "px",
-            $mdgriffith$elm_ui$Internal$Model$floatClass(shadow.blur) + "px",
-            $mdgriffith$elm_ui$Internal$Model$floatClass(shadow.size) + "px",
-            $mdgriffith$elm_ui$Internal$Model$formatColorClass(shadow.color)
-        ]));
-    };
-    var $mdgriffith$elm_ui$Internal$Flag$shadows = $mdgriffith$elm_ui$Internal$Flag$flag(19);
-    var $mdgriffith$elm_ui$Element$Border$shadow = function(almostShade) {
-        var shade = {
-            blur: almostShade.blur,
-            color: almostShade.color,
-            inset: false,
-            offset: almostShade.offset,
-            size: almostShade.size
-        };
-        return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$shadows, A3($mdgriffith$elm_ui$Internal$Model$Single, $mdgriffith$elm_ui$Internal$Model$boxShadowClass(shade), "box-shadow", $mdgriffith$elm_ui$Internal$Model$formatBoxShadow(shade)));
-    };
-    var $mdgriffith$elm_ui$Internal$Flag$borderRound = $mdgriffith$elm_ui$Internal$Flag$flag(17);
-    var $mdgriffith$elm_ui$Element$Border$rounded = function(radius) {
-        return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$borderRound, A3($mdgriffith$elm_ui$Internal$Model$Single, "br-" + $elm$core$String$fromInt(radius), "border-radius", $elm$core$String$fromInt(radius) + "px"));
-    };
-    var $Orasund$elm_ui_framework$Framework$Color$simple = _List_fromArray([
-        $mdgriffith$elm_ui$Element$Background$color($Orasund$elm_ui_framework$Framework$Color$lightGrey),
-        $mdgriffith$elm_ui$Element$Border$color($Orasund$elm_ui_framework$Framework$Color$lightGrey)
-    ]);
-    var $Orasund$elm_ui_framework$Framework$Tag$simple = _Utils_ap($Orasund$elm_ui_framework$Framework$Color$simple, _List_fromArray([
-        $mdgriffith$elm_ui$Element$Border$rounded(4),
-        A2($mdgriffith$elm_ui$Element$paddingXY, 7, 4)
-    ]));
-    var $mdgriffith$elm_ui$Internal$Model$BorderWidth = F5(function(a, b, c, d, e) {
-        return {
-            $: "BorderWidth",
-            a: a,
-            b: b,
-            c: c,
-            d: d,
-            e: e
-        };
-    });
-    var $mdgriffith$elm_ui$Element$Border$width = function(v) {
-        return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$borderWidth, A5($mdgriffith$elm_ui$Internal$Model$BorderWidth, "b-" + $elm$core$String$fromInt(v), v, v, v, v));
-    };
-    var $Orasund$elm_ui_framework$Framework$Card$simple = _Utils_ap($Orasund$elm_ui_framework$Framework$Tag$simple, _Utils_ap($Orasund$elm_ui_framework$Framework$Color$light, _List_fromArray([
-        $mdgriffith$elm_ui$Element$Border$shadow({
-            blur: 10,
-            color: A4($mdgriffith$elm_ui$Element$rgba, 0, 0, 0, 0.05),
-            offset: _Utils_Tuple2(0, 2),
-            size: 1
-        }),
-        $mdgriffith$elm_ui$Element$Border$width(1),
-        $mdgriffith$elm_ui$Element$Border$color($Orasund$elm_ui_framework$Framework$Color$lightGrey),
-        $mdgriffith$elm_ui$Element$alignTop,
-        $mdgriffith$elm_ui$Element$padding(20),
-        $mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink)
-    ])));
-    var $Orasund$elm_ui_framework$Framework$Button$simple = _Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, _Utils_ap($Orasund$elm_ui_framework$Framework$Color$simple, _List_fromArray([
-        $mdgriffith$elm_ui$Element$Font$center,
-        $mdgriffith$elm_ui$Element$mouseOver(_List_fromArray([
-            $mdgriffith$elm_ui$Element$Border$color($Orasund$elm_ui_framework$Framework$Color$grey)
-        ])),
-        A2($mdgriffith$elm_ui$Element$paddingXY, 16, 12)
-    ])));
-    var $Orasund$elm_ui_framework$Framework$Button$fill = _Utils_ap($Orasund$elm_ui_framework$Framework$Button$simple, _List_fromArray([
-        $mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-    ]));
-    var $Orasund$elm_ui_framework$Framework$Color$cyan = A3($mdgriffith$elm_ui$Element$rgb255, 32, 156, 238);
-    var $Orasund$elm_ui_framework$Framework$Color$info = _List_fromArray([
-        $mdgriffith$elm_ui$Element$Background$color($Orasund$elm_ui_framework$Framework$Color$cyan),
-        $mdgriffith$elm_ui$Element$Border$color($Orasund$elm_ui_framework$Framework$Color$cyan)
-    ]);
-    var $mdgriffith$elm_ui$Element$text = function(content) {
-        return $mdgriffith$elm_ui$Internal$Model$Text(content);
-    };
-    var $author$project$Pages$Hardware$infoBtn = F2(function(label, msg) {
-        return A2($mdgriffith$elm_ui$Element$Input$button, _Utils_ap($Orasund$elm_ui_framework$Framework$Button$simple, _Utils_ap($Orasund$elm_ui_framework$Framework$Button$fill, $Orasund$elm_ui_framework$Framework$Color$info)), {
-            label: $mdgriffith$elm_ui$Element$text(label),
-            onPress: $elm$core$Maybe$Just(msg)
-        });
-    });
     var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
     var $mdgriffith$elm_ui$Internal$Flag$fontColor = $mdgriffith$elm_ui$Internal$Flag$flag(14);
     var $mdgriffith$elm_ui$Element$Font$color = function(fontColor) {
         return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$fontColor, A3($mdgriffith$elm_ui$Internal$Model$Colored, "fc-" + $mdgriffith$elm_ui$Internal$Model$formatColorClass(fontColor), "color", fontColor));
     };
     var $Orasund$elm_ui_framework$Framework$Color$darkerGrey = A3($mdgriffith$elm_ui$Element$rgb255, 18, 18, 18);
+    var $mdgriffith$elm_ui$Internal$Flag$borderColor = $mdgriffith$elm_ui$Internal$Flag$flag(28);
+    var $mdgriffith$elm_ui$Element$Border$color = function(clr) {
+        return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$borderColor, A3($mdgriffith$elm_ui$Internal$Model$Colored, "bc-" + $mdgriffith$elm_ui$Internal$Model$formatColorClass(clr), "border-color", clr));
+    };
+    var $Orasund$elm_ui_framework$Framework$Color$lighterGrey = A3($mdgriffith$elm_ui$Element$rgb255, 245, 245, 245);
+    var $Orasund$elm_ui_framework$Framework$Color$light = _List_fromArray([
+        $mdgriffith$elm_ui$Element$Background$color($Orasund$elm_ui_framework$Framework$Color$lighterGrey),
+        $mdgriffith$elm_ui$Element$Border$color($Orasund$elm_ui_framework$Framework$Color$lighterGrey)
+    ]);
     var $Orasund$elm_ui_framework$Framework$layoutAttributes = _Utils_ap(_List_fromArray([
         $mdgriffith$elm_ui$Element$Font$size(16),
         $mdgriffith$elm_ui$Element$Font$color($Orasund$elm_ui_framework$Framework$Color$darkerGrey)
@@ -16507,6 +16202,11 @@ type alias Process =
             A2($Orasund$elm_ui_framework$Framework$layout, attributes, view)
         ]));
     });
+    var $Orasund$elm_ui_framework$Framework$Color$lightGrey = A3($mdgriffith$elm_ui$Element$rgb255, 219, 219, 219);
+    var $mdgriffith$elm_ui$Internal$Model$Top = {
+        $: "Top"
+    };
+    var $mdgriffith$elm_ui$Element$alignTop = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$Top);
     var $mdgriffith$elm_ui$Internal$Model$SpacingStyle = F3(function(a, b, c) {
         return {
             $: "SpacingStyle",
@@ -16527,6 +16227,19 @@ type alias Process =
         $mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
         $mdgriffith$elm_ui$Element$alignTop
     ]);
+    var $mdgriffith$elm_ui$Internal$Model$BorderWidth = F5(function(a, b, c, d, e) {
+        return {
+            $: "BorderWidth",
+            a: a,
+            b: b,
+            c: c,
+            d: d,
+            e: e
+        };
+    });
+    var $mdgriffith$elm_ui$Element$Border$width = function(v) {
+        return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$borderWidth, A5($mdgriffith$elm_ui$Internal$Model$BorderWidth, "b-" + $elm$core$String$fromInt(v), v, v, v, v));
+    };
     var $mdgriffith$elm_ui$Element$Border$widthXY = F2(function(x, y) {
         return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$borderWidth, A5($mdgriffith$elm_ui$Internal$Model$BorderWidth, "b-" + ($elm$core$String$fromInt(x) + ("-" + $elm$core$String$fromInt(y))), y, x, y, x));
     });
@@ -16552,15 +16265,362 @@ type alias Process =
             top: 10
         })
     ]));
+    var $mdgriffith$elm_ui$Internal$Model$Text = function(a) {
+        return {
+            $: "Text",
+            a: a
+        };
+    };
+    var $mdgriffith$elm_ui$Element$text = function(content) {
+        return $mdgriffith$elm_ui$Internal$Model$Text(content);
+    };
+    var $author$project$Pages$Dashboard$view = function(model) {
+        return A2($Orasund$elm_ui_framework$Framework$responsiveLayout, _List_Nil, A2($mdgriffith$elm_ui$Element$column, $Orasund$elm_ui_framework$Framework$container, _List_fromArray([
+            A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h1, $mdgriffith$elm_ui$Element$text("Haveno Web - Dashboard")),
+            $mdgriffith$elm_ui$Element$text("\n"),
+            $mdgriffith$elm_ui$Element$text("Your version is:"),
+            A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h4, $mdgriffith$elm_ui$Element$text(A2($elm$core$Maybe$withDefault, "", A2($elm$core$Maybe$map, function($) {
+                return $.version;
+            }, model.version)))),
+            $mdgriffith$elm_ui$Element$text("\n"),
+            function() {
+                var _v0 = model.errors;
+                if (!_v0.b) return $mdgriffith$elm_ui$Element$text("");
+                else return A2($mdgriffith$elm_ui$Element$column, $Orasund$elm_ui_framework$Framework$Grid$section, A2($elm$core$List$map, function(error) {
+                    return A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h6, $mdgriffith$elm_ui$Element$text(error));
+                }, model.errors));
+            }()
+        ])));
+    };
+    var $author$project$Pages$Funds$htmlContent = A2($elm$html$Html$section, _List_fromArray([
+        $elm$html$Html$Attributes$id("page"),
+        $elm$html$Html$Attributes$class("section-background"),
+        $elm$html$Html$Attributes$class("text-center"),
+        $elm$html$Html$Attributes$class("split")
+    ]), _List_fromArray([
+        A2($elm$html$Html$div, _List_fromArray([
+            $elm$html$Html$Attributes$class("split-col")
+        ]), _List_fromArray([
+            A2($elm$html$Html$h1, _List_Nil, _List_fromArray([
+                $elm$html$Html$text("")
+            ]))
+        ])),
+        A2($elm$html$Html$div, _List_fromArray([
+            $elm$html$Html$Attributes$class("split-col")
+        ]), _List_fromArray([
+            A2($elm$html$Html$h1, _List_Nil, _List_fromArray([
+                $elm$html$Html$text("Funds")
+            ])),
+            $author$project$Buttons$Default$defaultButton("hardware")
+        ])),
+        A2($elm$html$Html$div, _List_fromArray([
+            $elm$html$Html$Attributes$class("split-col")
+        ]), _List_fromArray([
+            A2($elm$html$Html$h1, _List_Nil, _List_fromArray([
+                $elm$html$Html$text("")
+            ]))
+        ]))
+    ]));
+    var $author$project$Pages$Funds$content = A2($elm$html$Html$div, _List_fromArray([
+        $elm$html$Html$Attributes$id("page")
+    ]), _List_fromArray([
+        A2($elm$html$Html$div, _List_fromArray([
+            $elm$html$Html$Attributes$id("content"),
+            $elm$html$Html$Attributes$class("col3-column")
+        ]), _List_fromArray([
+            $author$project$Pages$Funds$htmlContent
+        ]))
+    ]));
+    var $author$project$Pages$Funds$view = function(_v0) {
+        return $author$project$Pages$Funds$content;
+    };
+    var $author$project$Pages$Hardware$ClickedHardwareDeviceConnect = {
+        $: "ClickedHardwareDeviceConnect"
+    };
+    var $author$project$Pages$Hardware$ClickedXMRInitiateTransaction = function(a) {
+        return {
+            $: "ClickedXMRInitiateTransaction",
+            a: a
+        };
+    };
+    var $author$project$Pages$Hardware$ClickedXMRWalletConnect = {
+        $: "ClickedXMRWalletConnect"
+    };
+    var $Orasund$elm_ui_framework$Framework$Heading$h5 = $Orasund$elm_ui_framework$Framework$Heading$h(5);
+    var $mdgriffith$elm_ui$Internal$Model$Button = {
+        $: "Button"
+    };
+    var $elm$json$Json$Encode$bool = _Json_wrap;
+    var $elm$html$Html$Attributes$boolProperty = F2(function(key, bool) {
+        return A2(_VirtualDom_property, key, $elm$json$Json$Encode$bool(bool));
+    });
+    var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty("disabled");
+    var $mdgriffith$elm_ui$Element$Input$enter = "Enter";
+    var $mdgriffith$elm_ui$Internal$Model$NoAttribute = {
+        $: "NoAttribute"
+    };
+    var $mdgriffith$elm_ui$Element$Input$hasFocusStyle = function(attr) {
+        if (attr.$ === "StyleClass" && attr.b.$ === "PseudoSelector" && attr.b.a.$ === "Focus") {
+            var _v1 = attr.b;
+            var _v2 = _v1.a;
+            return true;
+        } else return false;
+    };
+    var $mdgriffith$elm_ui$Element$Input$focusDefault = function(attrs) {
+        return A2($elm$core$List$any, $mdgriffith$elm_ui$Element$Input$hasFocusStyle, attrs) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Internal$Model$htmlClass("focusable");
+    };
+    var $mdgriffith$elm_ui$Element$Events$onClick = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Attr, $elm$html$Html$Events$onClick);
+    var $elm$virtual_dom$VirtualDom$MayPreventDefault = function(a) {
+        return {
+            $: "MayPreventDefault",
+            a: a
+        };
+    };
+    var $elm$html$Html$Events$preventDefaultOn = F2(function(event, decoder) {
+        return A2($elm$virtual_dom$VirtualDom$on, event, $elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
+    });
+    var $mdgriffith$elm_ui$Element$Input$onKeyLookup = function(lookup) {
+        var decode = function(code) {
+            var _v0 = lookup(code);
+            if (_v0.$ === "Nothing") return $elm$json$Json$Decode$fail("No key matched");
+            else {
+                var msg = _v0.a;
+                return $elm$json$Json$Decode$succeed(msg);
+            }
+        };
+        var isKey = A2($elm$json$Json$Decode$andThen, decode, A2($elm$json$Json$Decode$field, "key", $elm$json$Json$Decode$string));
+        return $mdgriffith$elm_ui$Internal$Model$Attr(A2($elm$html$Html$Events$preventDefaultOn, "keydown", A2($elm$json$Json$Decode$map, function(fired) {
+            return _Utils_Tuple2(fired, true);
+        }, isKey)));
+    };
+    var $mdgriffith$elm_ui$Internal$Flag$cursor = $mdgriffith$elm_ui$Internal$Flag$flag(21);
+    var $mdgriffith$elm_ui$Element$pointer = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$cursor, $mdgriffith$elm_ui$Internal$Style$classes.cursorPointer);
+    var $mdgriffith$elm_ui$Element$Input$space = " ";
+    var $elm$html$Html$Attributes$tabindex = function(n) {
+        return A2(_VirtualDom_attribute, "tabIndex", $elm$core$String$fromInt(n));
+    };
+    var $mdgriffith$elm_ui$Element$Input$button = F2(function(attrs, _v0) {
+        var onPress = _v0.onPress;
+        var label = _v0.label;
+        return A4($mdgriffith$elm_ui$Internal$Model$element, $mdgriffith$elm_ui$Internal$Model$asEl, $mdgriffith$elm_ui$Internal$Model$div, A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink), A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink), A2($elm$core$List$cons, $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.contentCenterX + (" " + ($mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (" " + ($mdgriffith$elm_ui$Internal$Style$classes.seButton + (" " + $mdgriffith$elm_ui$Internal$Style$classes.noTextSelection)))))), A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$pointer, A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$Input$focusDefault(attrs), A2($elm$core$List$cons, $mdgriffith$elm_ui$Internal$Model$Describe($mdgriffith$elm_ui$Internal$Model$Button), A2($elm$core$List$cons, $mdgriffith$elm_ui$Internal$Model$Attr($elm$html$Html$Attributes$tabindex(0)), function() {
+            if (onPress.$ === "Nothing") return A2($elm$core$List$cons, $mdgriffith$elm_ui$Internal$Model$Attr($elm$html$Html$Attributes$disabled(true)), attrs);
+            else {
+                var msg = onPress.a;
+                return A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$Events$onClick(msg), A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$Input$onKeyLookup(function(code) {
+                    return _Utils_eq(code, $mdgriffith$elm_ui$Element$Input$enter) ? $elm$core$Maybe$Just(msg) : _Utils_eq(code, $mdgriffith$elm_ui$Element$Input$space) ? $elm$core$Maybe$Just(msg) : $elm$core$Maybe$Nothing;
+                }), attrs));
+            }
+        }()))))))), $mdgriffith$elm_ui$Internal$Model$Unkeyed(_List_fromArray([
+            label
+        ])));
+    });
+    var $mdgriffith$elm_ui$Internal$Flag$fontAlignment = $mdgriffith$elm_ui$Internal$Flag$flag(12);
+    var $mdgriffith$elm_ui$Element$Font$center = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontAlignment, $mdgriffith$elm_ui$Internal$Style$classes.textCenter);
+    var $Orasund$elm_ui_framework$Framework$Color$grey = A3($mdgriffith$elm_ui$Element$rgb255, 122, 122, 122);
+    var $mdgriffith$elm_ui$Internal$Model$Hover = {
+        $: "Hover"
+    };
+    var $mdgriffith$elm_ui$Internal$Model$PseudoSelector = F2(function(a, b) {
+        return {
+            $: "PseudoSelector",
+            a: a,
+            b: b
+        };
+    });
+    var $mdgriffith$elm_ui$Internal$Flag$hover = $mdgriffith$elm_ui$Internal$Flag$flag(33);
+    var $mdgriffith$elm_ui$Internal$Model$Nearby = F2(function(a, b) {
+        return {
+            $: "Nearby",
+            a: a,
+            b: b
+        };
+    });
+    var $mdgriffith$elm_ui$Internal$Model$TransformComponent = F2(function(a, b) {
+        return {
+            $: "TransformComponent",
+            a: a,
+            b: b
+        };
+    });
+    var $mdgriffith$elm_ui$Internal$Model$Empty = {
+        $: "Empty"
+    };
+    var $mdgriffith$elm_ui$Internal$Model$map = F2(function(fn, el) {
+        switch(el.$){
+            case "Styled":
+                var styled = el.a;
+                return $mdgriffith$elm_ui$Internal$Model$Styled({
+                    html: F2(function(add, context) {
+                        return A2($elm$virtual_dom$VirtualDom$map, fn, A2(styled.html, add, context));
+                    }),
+                    styles: styled.styles
+                });
+            case "Unstyled":
+                var html = el.a;
+                return $mdgriffith$elm_ui$Internal$Model$Unstyled(A2($elm$core$Basics$composeL, $elm$virtual_dom$VirtualDom$map(fn), html));
+            case "Text":
+                var str = el.a;
+                return $mdgriffith$elm_ui$Internal$Model$Text(str);
+            default:
+                return $mdgriffith$elm_ui$Internal$Model$Empty;
+        }
+    });
+    var $elm$virtual_dom$VirtualDom$mapAttribute = _VirtualDom_mapAttribute;
+    var $mdgriffith$elm_ui$Internal$Model$mapAttrFromStyle = F2(function(fn, attr) {
+        switch(attr.$){
+            case "NoAttribute":
+                return $mdgriffith$elm_ui$Internal$Model$NoAttribute;
+            case "Describe":
+                var description = attr.a;
+                return $mdgriffith$elm_ui$Internal$Model$Describe(description);
+            case "AlignX":
+                var x = attr.a;
+                return $mdgriffith$elm_ui$Internal$Model$AlignX(x);
+            case "AlignY":
+                var y = attr.a;
+                return $mdgriffith$elm_ui$Internal$Model$AlignY(y);
+            case "Width":
+                var x = attr.a;
+                return $mdgriffith$elm_ui$Internal$Model$Width(x);
+            case "Height":
+                var x = attr.a;
+                return $mdgriffith$elm_ui$Internal$Model$Height(x);
+            case "Class":
+                var x = attr.a;
+                var y = attr.b;
+                return A2($mdgriffith$elm_ui$Internal$Model$Class, x, y);
+            case "StyleClass":
+                var flag = attr.a;
+                var style = attr.b;
+                return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, flag, style);
+            case "Nearby":
+                var location = attr.a;
+                var elem = attr.b;
+                return A2($mdgriffith$elm_ui$Internal$Model$Nearby, location, A2($mdgriffith$elm_ui$Internal$Model$map, fn, elem));
+            case "Attr":
+                var htmlAttr = attr.a;
+                return $mdgriffith$elm_ui$Internal$Model$Attr(A2($elm$virtual_dom$VirtualDom$mapAttribute, fn, htmlAttr));
+            default:
+                var fl = attr.a;
+                var trans = attr.b;
+                return A2($mdgriffith$elm_ui$Internal$Model$TransformComponent, fl, trans);
+        }
+    });
+    var $mdgriffith$elm_ui$Internal$Model$removeNever = function(style) {
+        return A2($mdgriffith$elm_ui$Internal$Model$mapAttrFromStyle, $elm$core$Basics$never, style);
+    };
+    var $mdgriffith$elm_ui$Internal$Model$unwrapDecsHelper = F2(function(attr, _v0) {
+        var styles = _v0.a;
+        var trans = _v0.b;
+        var _v1 = $mdgriffith$elm_ui$Internal$Model$removeNever(attr);
+        switch(_v1.$){
+            case "StyleClass":
+                var style = _v1.b;
+                return _Utils_Tuple2(A2($elm$core$List$cons, style, styles), trans);
+            case "TransformComponent":
+                var flag = _v1.a;
+                var component = _v1.b;
+                return _Utils_Tuple2(styles, A2($mdgriffith$elm_ui$Internal$Model$composeTransformation, trans, component));
+            default:
+                return _Utils_Tuple2(styles, trans);
+        }
+    });
+    var $mdgriffith$elm_ui$Internal$Model$unwrapDecorations = function(attrs) {
+        var _v0 = A3($elm$core$List$foldl, $mdgriffith$elm_ui$Internal$Model$unwrapDecsHelper, _Utils_Tuple2(_List_Nil, $mdgriffith$elm_ui$Internal$Model$Untransformed), attrs);
+        var styles = _v0.a;
+        var transform = _v0.b;
+        return A2($elm$core$List$cons, $mdgriffith$elm_ui$Internal$Model$Transform(transform), styles);
+    };
+    var $mdgriffith$elm_ui$Element$mouseOver = function(decs) {
+        return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$hover, A2($mdgriffith$elm_ui$Internal$Model$PseudoSelector, $mdgriffith$elm_ui$Internal$Model$Hover, $mdgriffith$elm_ui$Internal$Model$unwrapDecorations(decs)));
+    };
+    var $mdgriffith$elm_ui$Element$paddingXY = F2(function(x, y) {
+        if (_Utils_eq(x, y)) {
+            var f = x;
+            return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$padding, A5($mdgriffith$elm_ui$Internal$Model$PaddingStyle, "p-" + $elm$core$String$fromInt(x), f, f, f, f));
+        } else {
+            var yFloat = y;
+            var xFloat = x;
+            return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$padding, A5($mdgriffith$elm_ui$Internal$Model$PaddingStyle, "p-" + ($elm$core$String$fromInt(x) + ("-" + $elm$core$String$fromInt(y))), yFloat, xFloat, yFloat, xFloat));
+        }
+    });
+    var $mdgriffith$elm_ui$Element$rgba = $mdgriffith$elm_ui$Internal$Model$Rgba;
+    var $mdgriffith$elm_ui$Internal$Model$boxShadowClass = function(shadow) {
+        return $elm$core$String$concat(_List_fromArray([
+            shadow.inset ? "box-inset" : "box-",
+            $mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.a) + "px",
+            $mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.b) + "px",
+            $mdgriffith$elm_ui$Internal$Model$floatClass(shadow.blur) + "px",
+            $mdgriffith$elm_ui$Internal$Model$floatClass(shadow.size) + "px",
+            $mdgriffith$elm_ui$Internal$Model$formatColorClass(shadow.color)
+        ]));
+    };
+    var $mdgriffith$elm_ui$Internal$Flag$shadows = $mdgriffith$elm_ui$Internal$Flag$flag(19);
+    var $mdgriffith$elm_ui$Element$Border$shadow = function(almostShade) {
+        var shade = {
+            blur: almostShade.blur,
+            color: almostShade.color,
+            inset: false,
+            offset: almostShade.offset,
+            size: almostShade.size
+        };
+        return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$shadows, A3($mdgriffith$elm_ui$Internal$Model$Single, $mdgriffith$elm_ui$Internal$Model$boxShadowClass(shade), "box-shadow", $mdgriffith$elm_ui$Internal$Model$formatBoxShadow(shade)));
+    };
+    var $mdgriffith$elm_ui$Internal$Flag$borderRound = $mdgriffith$elm_ui$Internal$Flag$flag(17);
+    var $mdgriffith$elm_ui$Element$Border$rounded = function(radius) {
+        return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, $mdgriffith$elm_ui$Internal$Flag$borderRound, A3($mdgriffith$elm_ui$Internal$Model$Single, "br-" + $elm$core$String$fromInt(radius), "border-radius", $elm$core$String$fromInt(radius) + "px"));
+    };
+    var $Orasund$elm_ui_framework$Framework$Color$simple = _List_fromArray([
+        $mdgriffith$elm_ui$Element$Background$color($Orasund$elm_ui_framework$Framework$Color$lightGrey),
+        $mdgriffith$elm_ui$Element$Border$color($Orasund$elm_ui_framework$Framework$Color$lightGrey)
+    ]);
+    var $Orasund$elm_ui_framework$Framework$Tag$simple = _Utils_ap($Orasund$elm_ui_framework$Framework$Color$simple, _List_fromArray([
+        $mdgriffith$elm_ui$Element$Border$rounded(4),
+        A2($mdgriffith$elm_ui$Element$paddingXY, 7, 4)
+    ]));
+    var $Orasund$elm_ui_framework$Framework$Card$simple = _Utils_ap($Orasund$elm_ui_framework$Framework$Tag$simple, _Utils_ap($Orasund$elm_ui_framework$Framework$Color$light, _List_fromArray([
+        $mdgriffith$elm_ui$Element$Border$shadow({
+            blur: 10,
+            color: A4($mdgriffith$elm_ui$Element$rgba, 0, 0, 0, 0.05),
+            offset: _Utils_Tuple2(0, 2),
+            size: 1
+        }),
+        $mdgriffith$elm_ui$Element$Border$width(1),
+        $mdgriffith$elm_ui$Element$Border$color($Orasund$elm_ui_framework$Framework$Color$lightGrey),
+        $mdgriffith$elm_ui$Element$alignTop,
+        $mdgriffith$elm_ui$Element$padding(20),
+        $mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink)
+    ])));
+    var $Orasund$elm_ui_framework$Framework$Button$simple = _Utils_ap($Orasund$elm_ui_framework$Framework$Card$simple, _Utils_ap($Orasund$elm_ui_framework$Framework$Color$simple, _List_fromArray([
+        $mdgriffith$elm_ui$Element$Font$center,
+        $mdgriffith$elm_ui$Element$mouseOver(_List_fromArray([
+            $mdgriffith$elm_ui$Element$Border$color($Orasund$elm_ui_framework$Framework$Color$grey)
+        ])),
+        A2($mdgriffith$elm_ui$Element$paddingXY, 16, 12)
+    ])));
+    var $Orasund$elm_ui_framework$Framework$Button$fill = _Utils_ap($Orasund$elm_ui_framework$Framework$Button$simple, _List_fromArray([
+        $mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+    ]));
+    var $Orasund$elm_ui_framework$Framework$Color$cyan = A3($mdgriffith$elm_ui$Element$rgb255, 32, 156, 238);
+    var $Orasund$elm_ui_framework$Framework$Color$info = _List_fromArray([
+        $mdgriffith$elm_ui$Element$Background$color($Orasund$elm_ui_framework$Framework$Color$cyan),
+        $mdgriffith$elm_ui$Element$Border$color($Orasund$elm_ui_framework$Framework$Color$cyan)
+    ]);
+    var $author$project$Pages$Hardware$infoBtn = F2(function(label, msg) {
+        return A2($mdgriffith$elm_ui$Element$Input$button, _Utils_ap($Orasund$elm_ui_framework$Framework$Button$simple, _Utils_ap($Orasund$elm_ui_framework$Framework$Button$fill, $Orasund$elm_ui_framework$Framework$Color$info)), {
+            label: $mdgriffith$elm_ui$Element$text(label),
+            onPress: $elm$core$Maybe$Just(msg)
+        });
+    });
     var $author$project$Pages$Hardware$hardwareWalletView = function(model) {
         return A2($Orasund$elm_ui_framework$Framework$responsiveLayout, _List_Nil, A2($mdgriffith$elm_ui$Element$column, $Orasund$elm_ui_framework$Framework$container, _List_fromArray([
             A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h5, $mdgriffith$elm_ui$Element$text("Welcome - Unconnected User")),
             $mdgriffith$elm_ui$Element$text("\n"),
             A2($author$project$Pages$Hardware$infoBtn, "Connect Hardware Device", $author$project$Pages$Hardware$ClickedHardwareDeviceConnect),
-            $mdgriffith$elm_ui$Element$text("\n"),
+            $mdgriffith$elm_ui$Element$text("Connect XMR Wallet\n"),
             A2($author$project$Pages$Hardware$infoBtn, "Connect XMR Wallet", $author$project$Pages$Hardware$ClickedXMRWalletConnect),
             $mdgriffith$elm_ui$Element$text("\n"),
-            A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h6, $mdgriffith$elm_ui$Element$text(model.isHardwareLNSConnected ? "Nano S Connected" : model.isHardwareLNXConnected ? "Nano X Connected" : model.isXMRWalletConnected ? "XMR Wallet Connected" : "Not connected yet")),
+            A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h6, $mdgriffith$elm_ui$Element$text(model.isHardwareLNSConnected ? "Nano S Connected" : model.isHardwareLNXConnected ? "Nano X Connected" : model.isXMRWalletConnected ? "XMR Wallet Connected with Address: " + model.xmrWalletAddress : "No hardware device connected")),
             $mdgriffith$elm_ui$Element$text("\n"),
             A2($author$project$Pages$Hardware$infoBtn, "Initiate Transaction", $author$project$Pages$Hardware$ClickedXMRInitiateTransaction("0.01")),
             function() {
@@ -16591,7 +16651,9 @@ type alias Process =
                             return A2($elm$html$Html$div, _List_Nil, _List_fromArray([
                                 A2($elm$html$Html$div, _List_fromArray([
                                     $elm$html$Html$Attributes$class("spinner")
-                                ]), _List_Nil)
+                                ]), _List_fromArray([
+                                    $elm$html$Html$text("Loading ...")
+                                ]))
                             ]));
                         case "Errored":
                             return A2($elm$html$Html$div, _List_Nil, _List_fromArray([
@@ -16779,6 +16841,7 @@ type alias Process =
     var $author$project$Main$HidePopUp = {
         $: "HidePopUp"
     };
+    var $elm$html$Html$h2 = _VirtualDom_node("h2");
     var $author$project$Main$viewPopUp = function(model) {
         return A2($elm$html$Html$div, _List_Nil, _List_fromArray([
             model.isPopUpVisible ? A2($elm$html$Html$div, _List_fromArray([
@@ -16810,39 +16873,38 @@ type alias Process =
         ]));
     };
     var $author$project$Main$view = function(model) {
+        var isConnected = model.isHardwareLNSConnected || model.isHardwareLNXConnected ? true : false;
         var contentByPage = function() {
-            if (model.isNavMenuActive) {
-                var _v0 = model.page;
-                switch(_v0.$){
-                    case "DashboardPage":
-                        var dashboard = _v0.a;
-                        return A2($elm$html$Html$map, $author$project$Main$GotDashboardMsg, $author$project$Pages$Dashboard$view(dashboard));
-                    case "SellPage":
-                        var dashboard = _v0.a;
-                        return A2($elm$html$Html$map, $author$project$Main$GotSellMsg, $author$project$Pages$Sell$view(dashboard));
-                    case "PortfolioPage":
-                        var terms = _v0.a;
-                        return A2($elm$html$Html$map, $author$project$Main$GotPortfolioMsg, $author$project$Pages$Portfolio$view(terms));
-                    case "FundsPage":
-                        var privacy = _v0.a;
-                        return A2($elm$html$Html$map, $author$project$Main$GotFundsMsg, $author$project$Pages$Funds$view(privacy));
-                    case "SupportPage":
-                        var support = _v0.a;
-                        return A2($elm$html$Html$map, $author$project$Main$GotSupportMsg, $author$project$Pages$Support$view(support));
-                    case "PingPongPage":
-                        var pingpong = _v0.a;
-                        return A2($elm$html$Html$map, $author$project$Main$GotPingPongMsg, $author$project$Pages$PingPong$view(pingpong));
-                    case "BuyPage":
-                        var buy = _v0.a;
-                        return A2($elm$html$Html$map, $author$project$Main$GotBuyMsg, $author$project$Pages$Buy$view(buy));
-                    case "MarketPage":
-                        var market = _v0.a;
-                        return A2($elm$html$Html$map, $author$project$Main$GotMarketMsg, $author$project$Pages$Market$view(market));
-                    default:
-                        var hardware = _v0.a;
-                        return A2($elm$html$Html$map, $author$project$Main$GotHardwareMsg, $author$project$Pages$Hardware$view(hardware));
-                }
-            } else return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+            var _v0 = model.page;
+            switch(_v0.$){
+                case "DashboardPage":
+                    var dashboard = _v0.a;
+                    return A2($elm$html$Html$map, $author$project$Main$GotDashboardMsg, $author$project$Pages$Dashboard$view(dashboard));
+                case "SellPage":
+                    var dashboard = _v0.a;
+                    return A2($elm$html$Html$map, $author$project$Main$GotSellMsg, $author$project$Pages$Sell$view(dashboard));
+                case "PortfolioPage":
+                    var terms = _v0.a;
+                    return A2($elm$html$Html$map, $author$project$Main$GotPortfolioMsg, $author$project$Pages$Portfolio$view(terms));
+                case "FundsPage":
+                    var privacy = _v0.a;
+                    return A2($elm$html$Html$map, $author$project$Main$GotFundsMsg, $author$project$Pages$Funds$view(privacy));
+                case "SupportPage":
+                    var support = _v0.a;
+                    return A2($elm$html$Html$map, $author$project$Main$GotSupportMsg, $author$project$Pages$Support$view(support));
+                case "PingPongPage":
+                    var pingpong = _v0.a;
+                    return A2($elm$html$Html$map, $author$project$Main$GotPingPongMsg, $author$project$Pages$PingPong$view(pingpong));
+                case "BuyPage":
+                    var buy = _v0.a;
+                    return A2($elm$html$Html$map, $author$project$Main$GotBuyMsg, $author$project$Pages$Buy$view(buy));
+                case "MarketPage":
+                    var market = _v0.a;
+                    return A2($elm$html$Html$map, $author$project$Main$GotMarketMsg, $author$project$Pages$Market$view(market));
+                default:
+                    var hardware = _v0.a;
+                    return A2($elm$html$Html$map, $author$project$Main$GotHardwareMsg, $author$project$Pages$Hardware$view(hardware));
+            }
         }();
         return {
             body: _List_fromArray([
@@ -16850,8 +16912,9 @@ type alias Process =
                 $author$project$Main$showVideoOrBanner(model.page),
                 $author$project$Main$viewPopUp(model),
                 contentByPage,
-                $author$project$Main$isConnectedIndicator(model.isHardwareLNSConnected || model.isHardwareLNXConnected),
-                $author$project$Main$footerContent
+                $author$project$Main$isHWConnectedIndicator(isConnected),
+                A2($author$project$Main$isXMRWalletConnectedIndicator, model.isXMRWalletConnected, model.xmrWalletAddress),
+                $author$project$Main$footerContent(model)
             ]),
             title: "Haveno-Web"
         };
@@ -16873,6 +16936,14 @@ type alias Process =
                 "types": {
                     "message": "Main.Msg",
                     "aliases": {
+                        "Proto.Io.Haveno.Protobuffer.GetVersionReply": {
+                            "args": [],
+                            "type": "Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply"
+                        },
+                        "Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply": {
+                            "args": [],
+                            "type": "{ version : String.String }"
+                        },
                         "Url.Url": {
                             "args": [],
                             "type": "{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"
@@ -16893,10 +16964,6 @@ type alias Process =
                             "args": [],
                             "type": "{ start : Basics.Int, offset : Basics.Int }"
                         },
-                        "Proto.Io.Haveno.Protobuffer.GetVersionReply": {
-                            "args": [],
-                            "type": "Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply"
-                        },
                         "Pages.Dashboard.HavenoAPKHttpRequest": {
                             "args": [],
                             "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"
@@ -16909,13 +16976,17 @@ type alias Process =
                             "args": [],
                             "type": "{ id : String.String, name : String.String }"
                         },
+                        "Http.Metadata": {
+                            "args": [],
+                            "type": "{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"
+                        },
                         "Pages.Buy.Model": {
                             "args": [],
                             "type": "{ status : Pages.Buy.Status, title : String.String, root : Pages.Buy.Buy }"
                         },
                         "Pages.Dashboard.Model": {
                             "args": [],
-                            "type": "{ status : Pages.Dashboard.Status, title : String.String, root : Pages.Dashboard.Dashboard, balance : String.String, flagUrl : Url.Url, havenoAPKHttpRequest : Maybe.Maybe Pages.Dashboard.HavenoAPKHttpRequest, version : Maybe.Maybe Proto.Io.Haveno.Protobuffer.GetVersionReply, errors : List.List String.String }"
+                            "type": "{ status : Pages.Dashboard.Status, pagetitle : String.String, root : Pages.Dashboard.Dashboard, balance : String.String, flagUrl : Url.Url, havenoAPKHttpRequest : Maybe.Maybe Pages.Dashboard.HavenoAPKHttpRequest, version : Maybe.Maybe Proto.Io.Haveno.Protobuffer.GetVersionReply, errors : List.List String.String }"
                         },
                         "Pages.Funds.Model": {
                             "args": [],
@@ -16956,10 +17027,6 @@ type alias Process =
                         "Pages.PingPong.PongResponse": {
                             "args": [],
                             "type": "{ message : String.String }"
-                        },
-                        "Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply": {
-                            "args": [],
-                            "type": "{ version : String.String }"
                         },
                         "Pages.Hardware.ProviderData": {
                             "args": [],
@@ -17004,10 +17071,6 @@ type alias Process =
                         "Data.User.UserInfo": {
                             "args": [],
                             "type": "{ userid : String.String, password : Data.User.Password, passwordValidationError : String.String, token : Maybe.Maybe Data.User.Token, nickname : Data.User.NickName, isNameInputFocused : Basics.Bool, nameValidationError : String.String, age : Basics.Int, gender : Data.User.Gender, email : Maybe.Maybe String.String, isEmailInputFocused : Basics.Bool, emailValidationError : String.String, mobile : Maybe.Maybe String.String, isMobileInputFocused : Basics.Bool, mobileValidationError : String.String, datestamp : Basics.Int, active : Basics.Bool, ownedRankings : List.List Data.Hardware.Ranking, memberRankings : List.List Data.Hardware.Ranking, updatetext : String.String, description : Data.User.Description, credits : Basics.Int, addInfo : String.String }"
-                        },
-                        "Http.Metadata": {
-                            "args": [],
-                            "type": "{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"
                         }
                     },
                     "unions": {
@@ -17062,7 +17125,29 @@ type alias Process =
                                 "NoOp": [],
                                 "HardwareDeviceConnect": [],
                                 "ShowPopUp": [],
-                                "HidePopUp": []
+                                "HidePopUp": [],
+                                "GotVersion": [
+                                    "Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"
+                                ]
+                            }
+                        },
+                        "Grpc.Error": {
+                            "args": [],
+                            "tags": {
+                                "BadUrl": [
+                                    "String.String"
+                                ],
+                                "Timeout": [],
+                                "NetworkError": [],
+                                "BadStatus": [
+                                    "{ metadata : Http.Metadata, response : Bytes.Bytes, errMessage : String.String, status : Grpc.GrpcStatus }"
+                                ],
+                                "BadBody": [
+                                    "Bytes.Bytes"
+                                ],
+                                "UnknownGrpcStatus": [
+                                    "String.String"
+                                ]
                             }
                         },
                         "Basics.Int": {
@@ -17336,6 +17421,20 @@ type alias Process =
                                 "Https": []
                             }
                         },
+                        "Result.Result": {
+                            "args": [
+                                "error",
+                                "value"
+                            ],
+                            "tags": {
+                                "Ok": [
+                                    "value"
+                                ],
+                                "Err": [
+                                    "error"
+                                ]
+                            }
+                        },
                         "String.String": {
                             "args": [],
                             "tags": {
@@ -17389,6 +17488,12 @@ type alias Process =
                                 ]
                             }
                         },
+                        "Bytes.Bytes": {
+                            "args": [],
+                            "tags": {
+                                "Bytes": []
+                            }
+                        },
                         "Pages.Dashboard.Dashboard": {
                             "args": [],
                             "tags": {
@@ -17397,23 +17502,20 @@ type alias Process =
                                 ]
                             }
                         },
-                        "Grpc.Error": {
-                            "args": [],
+                        "Dict.Dict": {
+                            "args": [
+                                "k",
+                                "v"
+                            ],
                             "tags": {
-                                "BadUrl": [
-                                    "String.String"
+                                "RBNode_elm_builtin": [
+                                    "Dict.NColor",
+                                    "k",
+                                    "v",
+                                    "Dict.Dict k v",
+                                    "Dict.Dict k v"
                                 ],
-                                "Timeout": [],
-                                "NetworkError": [],
-                                "BadStatus": [
-                                    "{ metadata : Http.Metadata, response : Bytes.Bytes, errMessage : String.String, status : Grpc.GrpcStatus }"
-                                ],
-                                "BadBody": [
-                                    "Bytes.Bytes"
-                                ],
-                                "UnknownGrpcStatus": [
-                                    "String.String"
-                                ]
+                                "RBEmpty_elm_builtin": []
                             }
                         },
                         "Http.Error": {
@@ -17451,6 +17553,28 @@ type alias Process =
                             "tags": {
                                 "Male": [],
                                 "Female": []
+                            }
+                        },
+                        "Grpc.GrpcStatus": {
+                            "args": [],
+                            "tags": {
+                                "Ok_": [],
+                                "Cancelled": [],
+                                "Unknown": [],
+                                "InvalidArgument": [],
+                                "DeadlineExceeded": [],
+                                "NotFound": [],
+                                "AlreadyExists": [],
+                                "PermissionDenied": [],
+                                "ResourceExhausted": [],
+                                "FailedPrecondition": [],
+                                "Aborted": [],
+                                "OutOfRange": [],
+                                "Unimplemented": [],
+                                "Internal": [],
+                                "Unavailable": [],
+                                "DataLoss": [],
+                                "Unauthenticated": []
                             }
                         },
                         "Http.Header": {
@@ -17492,20 +17616,6 @@ type alias Process =
                                 ]
                             }
                         },
-                        "Result.Result": {
-                            "args": [
-                                "error",
-                                "value"
-                            ],
-                            "tags": {
-                                "Ok": [
-                                    "value"
-                                ],
-                                "Err": [
-                                    "error"
-                                ]
-                            }
-                        },
                         "Data.Hardware.ResultOfMatch": {
                             "args": [],
                             "tags": {
@@ -17525,13 +17635,17 @@ type alias Process =
                         "Pages.Buy.Status": {
                             "args": [],
                             "tags": {
-                                "Loading": []
+                                "Loading": [],
+                                "Loaded": [],
+                                "Errored": []
                             }
                         },
                         "Pages.Dashboard.Status": {
                             "args": [],
                             "tags": {
-                                "Loading": []
+                                "Loading": [],
+                                "Loaded": [],
+                                "Errored": []
                             }
                         },
                         "Pages.Funds.Status": {
@@ -17587,50 +17701,6 @@ type alias Process =
                                 "Registered": [
                                     "Data.User.UserInfo"
                                 ]
-                            }
-                        },
-                        "Bytes.Bytes": {
-                            "args": [],
-                            "tags": {
-                                "Bytes": []
-                            }
-                        },
-                        "Dict.Dict": {
-                            "args": [
-                                "k",
-                                "v"
-                            ],
-                            "tags": {
-                                "RBNode_elm_builtin": [
-                                    "Dict.NColor",
-                                    "k",
-                                    "v",
-                                    "Dict.Dict k v",
-                                    "Dict.Dict k v"
-                                ],
-                                "RBEmpty_elm_builtin": []
-                            }
-                        },
-                        "Grpc.GrpcStatus": {
-                            "args": [],
-                            "tags": {
-                                "Ok_": [],
-                                "Cancelled": [],
-                                "Unknown": [],
-                                "InvalidArgument": [],
-                                "DeadlineExceeded": [],
-                                "NotFound": [],
-                                "AlreadyExists": [],
-                                "PermissionDenied": [],
-                                "ResourceExhausted": [],
-                                "FailedPrecondition": [],
-                                "Aborted": [],
-                                "OutOfRange": [],
-                                "Unimplemented": [],
-                                "Internal": [],
-                                "Unavailable": [],
-                                "DataLoss": [],
-                                "Unauthenticated": []
                             }
                         },
                         "Dict.NColor": {

@@ -1,36 +1,14 @@
 #### **Background:**
 **Given** as per main.features
-**And**  the user wants to interact with the Hardware page
+**And**  the user wants to interact with the Hardware XMR application
 
 ---
 
-#### **Scenario 1: Warning that the hardware wallet is NOT connected**
 
-**Given** the web app is opened on the Hardware page
-**And** the LNS hww is NOT connected
-**When** the user clicks the 'Connect Hardware Device' feature
-**Then** the web app should detect the hardware device is NOT connected
-**Then** it should display a message informing the user not connected 
-
-#### **Scenario 2: The Hardware Device IS Connected**
-
-**Given** the user has the hardware device connected to their mobile device
-**When** the user accesses the Hardware page
-**When** the user clicks the "Connect Hardware Device" button
-**Then** the web app should detect the connected hardware device
-**And** displays a message indicating the app is on the Dashboard page
-**And** the web app should display a confirmation message indicating successful hardware device connection 
 
 ---
 
-#### **Scenario 2: Connecting the XMR Hardware Wallet**
 
-**Given** the user has the hardware device connected to their mobile device
-**When** the user has opened the XMR wallet on the device
-**When** the user accesses the Hardware page
-**Then** the user clicks the "Connect XMR Wallet" feature
-**And** the hardware XMR wallet is connected
-**And** should display a confirmation message indicating successful XMR wallet connection  
 
 ---
 

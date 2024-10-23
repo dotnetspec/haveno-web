@@ -25,8 +25,8 @@ type Buy
 
 type Status
     = Loading
-    -- | Loaded
-    -- | Errored
+    | Loaded
+    | Errored
 
 
 initialModel : Model

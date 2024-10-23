@@ -1,6 +1,8 @@
 ### **Feature: MVP Mobile Tor-Based Haveno Web App**
 Gherkin/BDD scenarios describing the behavior of a mobile Tor-based web app that communicates with a Haveno daemon via HTTPS to handle hardware wallet transactions. The app will use the hardware wallet as the sole form of identity, and no additional authorization is required.
 
+Main is for functionality that persists across all pages (e.g. Dis/Connected indicator)
+
 -- NOTE: For simplicity, 'And' and 'Then' are just 'When' in the code
 
 #### **Background:**
@@ -12,9 +14,11 @@ Gherkin/BDD scenarios describing the behavior of a mobile Tor-based web app that
 #### **Scenario 1: Warning that the hardware wallet is NOT connected**
 
 **Given** the web app is opened
-**And** the LNS hww is NOT connected
+**And** the LNS hww is NOT detected
 **And** it should ensure the navigation menu is disabled
 **Then** it should display a message informing the user not connected
+**And** it should display the 'Connected' indicator as Disconnected (red)
+
 
 
 #### **Scenario 2: hww NOT connected, user clicks the 'Connect Hardware' button, navs to Hardware page**
@@ -27,28 +31,28 @@ Gherkin/BDD scenarios describing the behavior of a mobile Tor-based web app that
 **And** it should display the 'Connected' indicator as Disconnected (red)
 
 
-#### **Scenario 3: Confirming that the LNS hardware wallet is connected**
+#### **Scenario 3: If the the LNS hardware wallet is already connected, indicate this and nav to Dashbooard page**
    **Given** the web app is opened
-   **And** the LNS hww is connected
    **When** the LNS hww is detected
    **Then** the popup should not be visible
    **And** it should determine the LNS hww type
    **And** it should display a constant (no matter which page on) text indicator that the LNS is connected
    **Then** it should display the dashboard
 
+#### **Scenario 4: Connecting the XMR Hardware Wallet**
+
+**Given** the user accesses the Hardware page
+**And** the user has the hardware device connected to their mobile device 
+**And** the user has opened the XMR wallet on the device
+**When** the user clicks the "Connect XMR Wallet" feature
+**Then** it should display a confirmation message indicating successful XMR wallet connection
+**And** it should display the address
 
 
-
-#### **Scenario 3: Display the Haveno core app version number**
+#### **Scenario 5: Display the Haveno core app version number**
 
 **Given** the app is open
-**Then** the user can view the correct Haveno version
-
-
-
-
-
-
+**Then** the user can view the correct Haveno version in the footer
 
 
 

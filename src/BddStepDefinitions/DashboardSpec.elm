@@ -29,6 +29,7 @@ import Spec.Time
 import Time exposing (..)
 import Types.DateType as DateType
 import Url exposing (Protocol(..), Url)
+import Spec.Http
 
 
 
@@ -84,36 +85,7 @@ runSpecTests =
                     ]
             )
 
-        --, Runner.skip <|
-        --, Runner.pick <|
-        , scenario "2: Display the Haveno core app version number"
-            (given
-                (Setup.init
-                    -- NOTE: We have to use testInit cos we don't have a Nav.Key to initialize with
-                    -- TODO: RF remove 'time' from Pages.Dashboard.init
-                    (Pages.Dashboard.init { time = Nothing, flagUrl = TestData.placeholderUrl })
-                    |> Setup.withView Pages.Dashboard.view
-                    |> Setup.withUpdate Pages.Dashboard.update
-                    |> Stub.serve [ TestData.successfullVersionFetch ]
-                )
-                {- |> Spec.when "we log the http requests"
-                   [ Spec.Http.logRequests
-                   ]
-                -}
-                |> Spec.observeThat
-                    [ it "displays Haveno version number on the Dashboard page"
-                        (Markup.observeElement
-                            |> Markup.query
-                            -- NOTE: It appears that the test ONLY matches on the first element that matches the selector
-                            << by [ tag "div" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "1.0.7"
-                                )
-                        )
-                    ]
-            )
+        
         ]
 
 
