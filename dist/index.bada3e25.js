@@ -8195,12 +8195,7 @@ type alias Process =
             accessToken: $elm$core$Maybe$Nothing,
             maxResults: ""
         },
-        availableSlots: _List_Nil,
         datetimeFromMain: $elm$core$Maybe$Nothing,
-        emailpassword: {
-            email: "",
-            password: ""
-        },
         errors: _List_Nil,
         flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
         isHardwareLNSConnected: false,
@@ -8214,8 +8209,6 @@ type alias Process =
         root: $author$project$Pages$Hardware$Hardware({
             name: "Loading..."
         }),
-        searchResults: _List_Nil,
-        searchterm: "",
         status: $author$project$Pages$Hardware$Loaded,
         title: "Hardware",
         user: $author$project$Data$User$emptySpectator,
@@ -8442,6 +8435,27 @@ type alias Process =
     var $author$project$Main$gotCodeFromUrl = function(url) {
         return $elm$core$Maybe$Just(A2($elm$core$String$join, "", A2($RomanErnst$erl$Erl$getQueryValuesForKey, "code", $RomanErnst$erl$Erl$parse($elm$url$Url$toString(url)))));
     };
+    var $author$project$Pages$Blank$Blank = function(a) {
+        return {
+            $: "Blank",
+            a: a
+        };
+    };
+    var $author$project$Pages$Blank$Loading = {
+        $: "Loading"
+    };
+    var $author$project$Pages$Blank$initialModel = {
+        root: $author$project$Pages$Blank$Blank({
+            name: "Loading..."
+        }),
+        status: $author$project$Pages$Blank$Loading,
+        title: "Blank"
+    };
+    var $author$project$Pages$Blank$init = function(_v0) {
+        return _Utils_Tuple2(_Utils_update($author$project$Pages$Blank$initialModel, {
+            title: "Haveno-Web Main"
+        }), $elm$core$Platform$Cmd$none);
+    };
     var $author$project$Pages$Buy$Buy = function(a) {
         return {
             $: "Buy",
@@ -8525,40 +8539,28 @@ type alias Process =
                                             return function(isXMRWalletConnected) {
                                                 return function(xmrWalletAddress) {
                                                     return function(errors) {
-                                                        return function(availableSlots) {
-                                                            return function(isWaitingForResponse) {
-                                                                return function(isReturnUser) {
-                                                                    return function(emailpassword) {
-                                                                        return function(user) {
-                                                                            return function(searchterm) {
-                                                                                return function(searchResults) {
-                                                                                    return function(objectJSONfromJSPort) {
-                                                                                        return {
-                                                                                            apiSpecifics: apiSpecifics,
-                                                                                            availableSlots: availableSlots,
-                                                                                            datetimeFromMain: datetimeFromMain,
-                                                                                            emailpassword: emailpassword,
-                                                                                            errors: errors,
-                                                                                            flagUrl: flagUrl,
-                                                                                            isHardwareLNSConnected: isHardwareLNSConnected,
-                                                                                            isHardwareLNXConnected: isHardwareLNXConnected,
-                                                                                            isReturnUser: isReturnUser,
-                                                                                            isValidNewAccessToken: isValidNewAccessToken,
-                                                                                            isWaitingForResponse: isWaitingForResponse,
-                                                                                            isXMRWalletConnected: isXMRWalletConnected,
-                                                                                            objectJSONfromJSPort: objectJSONfromJSPort,
-                                                                                            queryType: queryType,
-                                                                                            root: root,
-                                                                                            searchResults: searchResults,
-                                                                                            searchterm: searchterm,
-                                                                                            status: status,
-                                                                                            title: title,
-                                                                                            user: user,
-                                                                                            xmrWalletAddress: xmrWalletAddress
-                                                                                        };
-                                                                                    };
-                                                                                };
-                                                                            };
+                                                        return function(isWaitingForResponse) {
+                                                            return function(isReturnUser) {
+                                                                return function(user) {
+                                                                    return function(objectJSONfromJSPort) {
+                                                                        return {
+                                                                            apiSpecifics: apiSpecifics,
+                                                                            datetimeFromMain: datetimeFromMain,
+                                                                            errors: errors,
+                                                                            flagUrl: flagUrl,
+                                                                            isHardwareLNSConnected: isHardwareLNSConnected,
+                                                                            isHardwareLNXConnected: isHardwareLNXConnected,
+                                                                            isReturnUser: isReturnUser,
+                                                                            isValidNewAccessToken: isValidNewAccessToken,
+                                                                            isWaitingForResponse: isWaitingForResponse,
+                                                                            isXMRWalletConnected: isXMRWalletConnected,
+                                                                            objectJSONfromJSPort: objectJSONfromJSPort,
+                                                                            queryType: queryType,
+                                                                            root: root,
+                                                                            status: status,
+                                                                            title: title,
+                                                                            user: user,
+                                                                            xmrWalletAddress: xmrWalletAddress
                                                                         };
                                                                     };
                                                                 };
@@ -8592,10 +8594,7 @@ type alias Process =
         var newUrl = A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
         return _Utils_Tuple2($author$project$Pages$Hardware$Model($author$project$Pages$Hardware$Loaded)("Hardware")($author$project$Pages$Hardware$Hardware({
             name: "Loading..."
-        }))(newUrl)(A2($elm$core$Maybe$withDefault, $elm$core$Maybe$Nothing, $elm$core$Maybe$Just(fromMainToHardware.time)))($author$project$Pages$Hardware$apiSpecsPlaceHolder)($author$project$Pages$Hardware$LoggedInUser)(false)(false)(false)(false)("")(_List_Nil)(_List_Nil)(false)(false)({
-            email: "",
-            password: ""
-        })($author$project$Data$User$emptySpectator)("")(_List_Nil)($elm$core$Maybe$Nothing), $elm$core$Platform$Cmd$none);
+        }))(newUrl)(A2($elm$core$Maybe$withDefault, $elm$core$Maybe$Nothing, $elm$core$Maybe$Just(fromMainToHardware.time)))($author$project$Pages$Hardware$apiSpecsPlaceHolder)($author$project$Pages$Hardware$LoggedInUser)(false)(false)(false)(false)("")(_List_Nil)(false)(false)($author$project$Data$User$emptySpectator)($elm$core$Maybe$Nothing), $elm$core$Platform$Cmd$none);
     };
     var $author$project$Pages$Market$Loading = {
         $: "Loading"
@@ -8616,27 +8615,6 @@ type alias Process =
     var $author$project$Pages$Market$init = function(_v0) {
         return _Utils_Tuple2(_Utils_update($author$project$Pages$Market$initialModel, {
             title: "Haveno-Web Market"
-        }), $elm$core$Platform$Cmd$none);
-    };
-    var $author$project$Pages$PingPong$Loading = {
-        $: "Loading"
-    };
-    var $author$project$Pages$PingPong$PingPong = function(a) {
-        return {
-            $: "PingPong",
-            a: a
-        };
-    };
-    var $author$project$Pages$PingPong$initialModel = {
-        root: $author$project$Pages$PingPong$PingPong({
-            name: "Ready..."
-        }),
-        status: $author$project$Pages$PingPong$Loading,
-        title: "PingPong"
-    };
-    var $author$project$Pages$PingPong$init = function(_v0) {
-        return _Utils_Tuple2(_Utils_update($author$project$Pages$PingPong$initialModel, {
-            title: "Haveno-Web Buy"
         }), $elm$core$Platform$Cmd$none);
     };
     var $author$project$Pages$Portfolio$Loading = {
@@ -8789,6 +8767,25 @@ type alias Process =
     var $elm$url$Url$Parser$parse = F2(function(_v0, url) {
         var parser = _v0.a;
         return $elm$url$Url$Parser$getFirstMatch(parser(A5($elm$url$Url$Parser$State, _List_Nil, $elm$url$Url$Parser$preparePath(url.path), $elm$url$Url$Parser$prepareQuery(url.query), url.fragment, $elm$core$Basics$identity)));
+    });
+    var $author$project$Main$BlankPage = function(a) {
+        return {
+            $: "BlankPage",
+            a: a
+        };
+    };
+    var $author$project$Main$GotBlankMsg = function(a) {
+        return {
+            $: "GotBlankMsg",
+            a: a
+        };
+    };
+    var $author$project$Main$toBlank = F2(function(model, _v0) {
+        var blank = _v0.a;
+        var cmd = _v0.b;
+        return _Utils_Tuple2(_Utils_update(model, {
+            page: $author$project$Main$BlankPage(blank)
+        }), A2($elm$core$Platform$Cmd$map, $author$project$Main$GotBlankMsg, cmd));
     });
     var $author$project$Main$AdjustTimeZone = function(a) {
         return {
@@ -9944,25 +9941,6 @@ type alias Process =
             page: $author$project$Main$MarketPage(market)
         }), A2($elm$core$Platform$Cmd$map, $author$project$Main$GotMarketMsg, cmd));
     });
-    var $author$project$Main$GotPingPongMsg = function(a) {
-        return {
-            $: "GotPingPongMsg",
-            a: a
-        };
-    };
-    var $author$project$Main$PingPongPage = function(a) {
-        return {
-            $: "PingPongPage",
-            a: a
-        };
-    };
-    var $author$project$Main$toPingPong = F2(function(model, _v0) {
-        var pingpong = _v0.a;
-        var cmd = _v0.b;
-        return _Utils_Tuple2(_Utils_update(model, {
-            page: $author$project$Main$PingPongPage(pingpong)
-        }), A2($elm$core$Platform$Cmd$map, $author$project$Main$GotPingPongMsg, cmd));
-    });
     var $author$project$Main$GotPortfolioMsg = function(a) {
         return {
             $: "GotPortfolioMsg",
@@ -10039,6 +10017,9 @@ type alias Process =
             page: $author$project$Main$SupportPage(support)
         }), A2($elm$core$Platform$Cmd$map, $author$project$Main$GotSupportMsg, cmd));
     });
+    var $author$project$Main$Blank = {
+        $: "Blank"
+    };
     var $author$project$Main$Buy = {
         $: "Buy"
     };
@@ -10053,9 +10034,6 @@ type alias Process =
     };
     var $author$project$Main$Market = {
         $: "Market"
-    };
-    var $author$project$Main$PingPong = {
-        $: "PingPong"
     };
     var $author$project$Main$Portfolio = {
         $: "Portfolio"
@@ -10122,13 +10100,13 @@ type alias Process =
         ]);
     });
     var $author$project$Main$urlAsPageParser = $elm$url$Url$Parser$oneOf(_List_fromArray([
-        A2($elm$url$Url$Parser$map, $author$project$Main$Dashboard, $elm$url$Url$Parser$s("index.html")),
-        A2($elm$url$Url$Parser$map, $author$project$Main$Dashboard, $elm$url$Url$Parser$top),
+        A2($elm$url$Url$Parser$map, $author$project$Main$Blank, $elm$url$Url$Parser$s("index.html")),
+        A2($elm$url$Url$Parser$map, $author$project$Main$Blank, $elm$url$Url$Parser$top),
+        A2($elm$url$Url$Parser$map, $author$project$Main$Dashboard, $elm$url$Url$Parser$s("dashboard")),
         A2($elm$url$Url$Parser$map, $author$project$Main$Sell, $elm$url$Url$Parser$s("sell")),
         A2($elm$url$Url$Parser$map, $author$project$Main$Portfolio, $elm$url$Url$Parser$s("portfolio")),
         A2($elm$url$Url$Parser$map, $author$project$Main$Funds, $elm$url$Url$Parser$s("funds")),
         A2($elm$url$Url$Parser$map, $author$project$Main$Support, $elm$url$Url$Parser$s("support")),
-        A2($elm$url$Url$Parser$map, $author$project$Main$PingPong, $elm$url$Url$Parser$s("pingpong")),
         A2($elm$url$Url$Parser$map, $author$project$Main$Buy, $elm$url$Url$Parser$s("buy")),
         A2($elm$url$Url$Parser$map, $author$project$Main$Market, $elm$url$Url$Parser$s("market")),
         A2($elm$url$Url$Parser$map, $author$project$Main$Hardware, $elm$url$Url$Parser$s("hardware"))
@@ -10163,18 +10141,18 @@ type alias Process =
             case "Sell":
                 var _v3 = _v0.a;
                 return A2($author$project$Main$toSell, model, $author$project$Pages$Sell$init(_Utils_Tuple0));
-            case "Portfolio":
+            case "Blank":
                 var _v4 = _v0.a;
+                return A2($author$project$Main$toBlank, model, $author$project$Pages$Blank$init(_Utils_Tuple0));
+            case "Portfolio":
+                var _v5 = _v0.a;
                 return A2($author$project$Main$toPortfolio, model, $author$project$Pages$Portfolio$init(_Utils_Tuple0));
             case "Funds":
-                var _v5 = _v0.a;
+                var _v6 = _v0.a;
                 return A2($author$project$Main$toFunds, model, $author$project$Pages$Funds$init(_Utils_Tuple0));
             case "Support":
-                var _v6 = _v0.a;
-                return A2($author$project$Main$toSupport, model, $author$project$Pages$Support$init(_Utils_Tuple0));
-            case "PingPong":
                 var _v7 = _v0.a;
-                return A2($author$project$Main$toPingPong, model, $author$project$Pages$PingPong$init(_Utils_Tuple0));
+                return A2($author$project$Main$toSupport, model, $author$project$Pages$Support$init(_Utils_Tuple0));
             case "Buy":
                 var _v8 = _v0.a;
                 return A2($author$project$Main$toPricing, model, $author$project$Pages$Buy$init(_Utils_Tuple0));
@@ -10520,8 +10498,13 @@ type alias Process =
     };
     var $author$project$Main$justmsgFieldFromJsonDecoder = A2($elm$json$Json$Decode$map, $author$project$Main$OperationEventMsg, A2($elm$json$Json$Decode$field, "operationEventMsg", $elm$json$Json$Decode$string));
     var $elm$browser$Browser$Navigation$load = _Browser_load;
-    var $elm$core$Debug$log = _Debug_log;
     var $author$project$Main$sendMessageToJs = _Platform_outgoingPort("sendMessageToJs", $elm$json$Json$Encode$string);
+    var $author$project$Pages$Blank$update = F2(function(msg, model) {
+        var newModel = msg.a;
+        return _Utils_Tuple2(_Utils_update(newModel, {
+            title: model.title
+        }), $elm$core$Platform$Cmd$none);
+    });
     var $author$project$Pages$Buy$update = F2(function(msg, model) {
         var newModel = msg.a;
         return _Utils_Tuple2(_Utils_update(newModel, {
@@ -10678,12 +10661,6 @@ type alias Process =
             a: a
         };
     };
-    var $author$project$Pages$Hardware$UpdateEmail = function(a) {
-        return {
-            $: "UpdateEmail",
-            a: a
-        };
-    };
     var $author$project$Pages$Hardware$UpdateLevel = function(a) {
         return {
             $: "UpdateLevel",
@@ -10699,12 +10676,6 @@ type alias Process =
     var $author$project$Pages$Hardware$UpdateNickName = function(a) {
         return {
             $: "UpdateNickName",
-            a: a
-        };
-    };
-    var $author$project$Pages$Hardware$UpdatePassword = function(a) {
-        return {
-            $: "UpdatePassword",
             a: a
         };
     };
@@ -11095,16 +11066,6 @@ type alias Process =
             a: a
         };
     };
-    var $author$project$Pages$Hardware$validateEmail = function(eml) {
-        var pattern = $elm$regex$Regex$fromString("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
-        if (eml.$ === "Just") {
-            var email = eml.a;
-            if (pattern.$ === "Just") {
-                var patn = pattern.a;
-                return A2($elm$regex$Regex$contains, patn, email) ? $elm$core$Result$Ok(email) : $elm$core$Result$Err("Please enter a valid email format");
-            } else return $elm$core$Result$Err("");
-        } else return $elm$core$Result$Err("Email ");
-    };
     var $author$project$Pages$Hardware$validateName = function(nme) {
         var pattern = $elm$regex$Regex$fromString("^[a-zA-Z\\s]+$");
         if (nme.$ === "Just") {
@@ -11122,13 +11083,6 @@ type alias Process =
                 }
             }
         } else return $elm$core$Result$Err("Name ");
-    };
-    var $author$project$Pages$Hardware$validatePassword = function(pword) {
-        var pattern = $elm$regex$Regex$fromString("^.{6,30}$");
-        if (pattern.$ === "Just") {
-            var patn = pattern.a;
-            return A2($elm$regex$Regex$contains, patn, pword) ? $elm$core$Result$Ok(pword) : $elm$core$Result$Err("Please enter a password between 6 and 30 characters in length");
-        } else return $elm$core$Result$Err("");
     };
     var $author$project$Pages$Hardware$updateNewUserRegistrationFormField = F3(function(msg, queryType, model) {
         var newUserDetails = function() {
@@ -11169,35 +11123,6 @@ type alias Process =
                         }();
                         return _Utils_update(userDetails, {
                             gender: newValue
-                        });
-                    case "UpdateEmail":
-                        var email = msg.a;
-                        var newemail = email === "" ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(email);
-                        var vldResult = function() {
-                            var _v5 = $author$project$Pages$Hardware$validateEmail(newemail);
-                            if (_v5.$ === "Ok") return "";
-                            else {
-                                var err = _v5.a;
-                                return err;
-                            }
-                        }();
-                        return _Utils_update(userDetails, {
-                            email: newemail,
-                            emailValidationError: vldResult
-                        });
-                    case "UpdatePassword":
-                        var pword = msg.a;
-                        var vldResult = function() {
-                            var _v6 = $author$project$Pages$Hardware$validatePassword(pword);
-                            if (_v6.$ === "Ok") return "";
-                            else {
-                                var err = _v6.a;
-                                return err;
-                            }
-                        }();
-                        return _Utils_update(userDetails, {
-                            password: pword,
-                            passwordValidationError: vldResult
                         });
                     case "UpdateLevel":
                         var value = msg.a;
@@ -11405,27 +11330,6 @@ type alias Process =
                 return _Utils_Tuple2(_Utils_update(model, {
                     queryType: $author$project$Pages$Hardware$RegisterUser($author$project$Data$User$emptyUserInfo)
                 }), $elm$core$Platform$Cmd$none);
-            case "SearchInputChg":
-                var searchTerm = msg.a;
-                return _Utils_Tuple2(_Utils_update(model, {
-                    searchterm: searchTerm
-                }), $elm$core$Platform$Cmd$none);
-            case "UserLoginEmailInputChg":
-                var newemail = msg.a;
-                return _Utils_Tuple2(_Utils_update(model, {
-                    emailpassword: {
-                        email: newemail,
-                        password: model.emailpassword.password
-                    }
-                }), $elm$core$Platform$Cmd$none);
-            case "UserLoginPasswordInputChg":
-                var newPwrd = msg.a;
-                return _Utils_Tuple2(_Utils_update(model, {
-                    emailpassword: {
-                        email: model.emailpassword.email,
-                        password: newPwrd
-                    }
-                }), $elm$core$Platform$Cmd$none);
             case "ToggleReturnUser":
                 return _Utils_Tuple2(_Utils_update(model, {
                     isReturnUser: !model.isReturnUser
@@ -11614,12 +11518,6 @@ type alias Process =
             case "UpdateGender":
                 var value = msg.a;
                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-            case "UpdateEmail":
-                var email = msg.a;
-                return _Utils_Tuple2(A3($author$project$Pages$Hardware$updateNewUserRegistrationFormField, $author$project$Pages$Hardware$UpdateEmail(email), model.queryType, model), $elm$core$Platform$Cmd$none);
-            case "UpdatePassword":
-                var pword = msg.a;
-                return _Utils_Tuple2(A3($author$project$Pages$Hardware$updateNewUserRegistrationFormField, $author$project$Pages$Hardware$UpdatePassword(pword), model.queryType, model), $elm$core$Platform$Cmd$none);
             case "UpdateLevel":
                 var lvel = msg.a;
                 return _Utils_Tuple2(A3($author$project$Pages$Hardware$updateNewUserRegistrationFormField, $author$project$Pages$Hardware$UpdateLevel(lvel), model.queryType, model), $elm$core$Platform$Cmd$none);
@@ -11653,62 +11551,6 @@ type alias Process =
         return _Utils_Tuple2(_Utils_update(newModel, {
             title: model.title
         }), $elm$core$Platform$Cmd$none);
-    });
-    var $author$project$Pages$PingPong$Receive = function(a) {
-        return {
-            $: "Receive",
-            a: a
-        };
-    };
-    var $author$project$Pages$PingPong$PongResponse = function(message) {
-        return {
-            message: message
-        };
-    };
-    var $author$project$Pages$PingPong$decodePongResponse = A2($elm$json$Json$Decode$map, $author$project$Pages$PingPong$PongResponse, A2($elm$json$Json$Decode$field, "message", $elm$json$Json$Decode$string));
-    var $author$project$Pages$PingPong$encodePingRequest = function(request) {
-        return $elm$json$Json$Encode$object(_List_fromArray([
-            _Utils_Tuple2("message", $elm$json$Json$Encode$string(request.message))
-        ]));
-    };
-    var $author$project$Pages$PingPong$update = F2(function(msg, model) {
-        switch(msg.$){
-            case "GotInitialModel":
-                var newModel = msg.a;
-                return _Utils_Tuple2(_Utils_update(newModel, {
-                    title: model.title
-                }), $elm$core$Platform$Cmd$none);
-            case "Send":
-                var therequest = $elm$http$Http$request({
-                    body: $elm$http$Http$jsonBody($author$project$Pages$PingPong$encodePingRequest({
-                        message: "Ping"
-                    })),
-                    expect: A2($elm$http$Http$expectJson, $author$project$Pages$PingPong$Receive, $author$project$Pages$PingPong$decodePongResponse),
-                    headers: _List_Nil,
-                    method: "POST",
-                    timeout: $elm$core$Maybe$Nothing,
-                    tracker: $elm$core$Maybe$Nothing,
-                    url: "http://localhost:9001/ping"
-                });
-                return _Utils_Tuple2(_Utils_update(model, {
-                    root: $author$project$Pages$PingPong$PingPong({
-                        name: "Sending ..."
-                    })
-                }), therequest);
-            default:
-                if (msg.a.$ === "Ok") {
-                    var response = msg.a.a;
-                    return _Utils_Tuple2(_Utils_update(model, {
-                        root: $author$project$Pages$PingPong$PingPong({
-                            name: "Received: " + response.message
-                        })
-                    }), $elm$core$Platform$Cmd$none);
-                } else return _Utils_Tuple2(_Utils_update(model, {
-                    root: $author$project$Pages$PingPong$PingPong({
-                        name: "Error receiving response"
-                    })
-                }), $elm$core$Platform$Cmd$none);
-        }
     });
     var $author$project$Pages$Portfolio$update = F2(function(msg, model) {
         var newModel = msg.a;
@@ -11773,13 +11615,13 @@ type alias Process =
                                 return (model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected ? _Utils_Tuple2(model, $elm$core$Platform$Cmd$none) : A2($author$project$Main$updateUrl, A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Nothing, "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing), model);
                             case "SellPage":
                                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                            case "BlankPage":
+                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                             case "PortfolioPage":
                                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                             case "FundsPage":
                                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                             case "SupportPage":
-                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-                            case "PingPongPage":
                                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                             case "BuyPage":
                                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -11862,33 +11704,33 @@ type alias Process =
                     var sell = _v6.a;
                     return A2($author$project$Main$toSell, model, A2($author$project$Pages$Sell$update, sellMsg, sell));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+            case "GotBlankMsg":
+                var blankMsg = msg.a;
+                var _v7 = model.page;
+                if (_v7.$ === "BlankPage") {
+                    var blank = _v7.a;
+                    return A2($author$project$Main$toBlank, model, A2($author$project$Pages$Blank$update, blankMsg, blank));
+                } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotPortfolioMsg":
                 var termsMsg = msg.a;
-                var _v7 = model.page;
-                if (_v7.$ === "PortfolioPage") {
-                    var terms = _v7.a;
+                var _v8 = model.page;
+                if (_v8.$ === "PortfolioPage") {
+                    var terms = _v8.a;
                     return A2($author$project$Main$toPortfolio, model, A2($author$project$Pages$Portfolio$update, termsMsg, terms));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotFundsMsg":
                 var privacyMsg = msg.a;
-                var _v8 = model.page;
-                if (_v8.$ === "FundsPage") {
-                    var privacy = _v8.a;
+                var _v9 = model.page;
+                if (_v9.$ === "FundsPage") {
+                    var privacy = _v9.a;
                     return A2($author$project$Main$toFunds, model, A2($author$project$Pages$Funds$update, privacyMsg, privacy));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotSupportMsg":
                 var supportMsg = msg.a;
-                var _v9 = model.page;
-                if (_v9.$ === "SupportPage") {
-                    var support = _v9.a;
-                    return A2($author$project$Main$toSupport, model, A2($author$project$Pages$Support$update, supportMsg, support));
-                } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-            case "GotPingPongMsg":
-                var pingpongMsg = msg.a;
                 var _v10 = model.page;
-                if (_v10.$ === "PingPongPage") {
-                    var pingpong = _v10.a;
-                    return A2($author$project$Main$toPingPong, model, A2($author$project$Pages$PingPong$update, pingpongMsg, pingpong));
+                if (_v10.$ === "SupportPage") {
+                    var support = _v10.a;
+                    return A2($author$project$Main$toSupport, model, A2($author$project$Pages$Support$update, supportMsg, support));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotBuyMsg":
                 var pricingMsg = msg.a;
@@ -11914,7 +11756,6 @@ type alias Process =
                             var newHardwareModel = _Utils_update(hardwareModel, {
                                 queryType: $author$project$Pages$Hardware$Spectator
                             });
-                            var logMsg = A2($elm$core$Debug$log, "HardwareDeviceConnect", "in hardwareMsg");
                             return _Utils_Tuple2(_Utils_update(model, {
                                 page: $author$project$Main$HardwarePage(newHardwareModel)
                             }), $author$project$Main$sendMessageToJs("connectLNS"));
@@ -11934,7 +11775,6 @@ type alias Process =
                                 page: $author$project$Main$HardwarePage(newHardwareModel)
                             }), $author$project$Main$sendMessageToJs("initiateXMRToBTCTrans " + ("~^&" + amt)));
                         default:
-                            var _v15 = A2($elm$core$Debug$log, "hardware page?", "fallthrouth");
                             return A2($author$project$Main$toHardware, model, A2($author$project$Pages$Hardware$update, hardwareMsg, hardwareModel));
                     }
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -11947,13 +11787,12 @@ type alias Process =
     var $elm$html$Html$h6 = _VirtualDom_node("h6");
     var $author$project$Main$footerContent = function(model) {
         var newVersion = function() {
-            var _v1 = model.version;
-            if (_v1.$ === "Just") {
-                var version = _v1.a.version;
+            var _v0 = model.version;
+            if (_v0.$ === "Just") {
+                var version = _v0.a.version;
                 return version;
             } else return "No Haveno version available";
         }();
-        var _v0 = A2($elm$core$Debug$log, "version in footer", model.version);
         return A2($elm$html$Html$footer, _List_Nil, _List_fromArray([
             A2($elm$html$Html$div, _List_fromArray([
                 $elm$html$Html$Attributes$class("footer"),
@@ -12047,32 +11886,32 @@ type alias Process =
                     var _v5 = _v1.a;
                     return false;
                 }
-            case "Portfolio":
-                if (_v1.b.$ === "PortfolioPage") {
+            case "Blank":
+                if (_v1.b.$ === "BlankPage") {
                     var _v6 = _v1.a;
                     return true;
                 } else {
                     var _v7 = _v1.a;
                     return false;
                 }
-            case "Funds":
-                if (_v1.b.$ === "FundsPage") {
+            case "Portfolio":
+                if (_v1.b.$ === "PortfolioPage") {
                     var _v8 = _v1.a;
                     return true;
                 } else {
                     var _v9 = _v1.a;
                     return false;
                 }
-            case "Support":
-                if (_v1.b.$ === "SupportPage") {
+            case "Funds":
+                if (_v1.b.$ === "FundsPage") {
                     var _v10 = _v1.a;
                     return true;
                 } else {
                     var _v11 = _v1.a;
                     return false;
                 }
-            case "PingPong":
-                if (_v1.b.$ === "PingPongPage") {
+            case "Support":
+                if (_v1.b.$ === "SupportPage") {
                     var _v12 = _v1.a;
                     return true;
                 } else {
@@ -12165,10 +12004,6 @@ type alias Process =
             A2(navLink, $author$project$Main$Support, {
                 caption: "Support",
                 url: "support"
-            }),
-            A2(navLink, $author$project$Main$PingPong, {
-                caption: "PingPong",
-                url: "pingpong"
             }),
             A2(navLink, $author$project$Main$Sell, {
                 caption: "Sell",
@@ -12322,6 +12157,14 @@ type alias Process =
             $elm$html$Html$Attributes$title("Monero Banner")
         ]), _List_Nil);
     };
+    var $elm$html$Html$section = _VirtualDom_node("section");
+    var $author$project$Pages$Blank$content = A2($elm$html$Html$section, _List_fromArray([
+        $elm$html$Html$Attributes$class("section-background"),
+        $elm$html$Html$Attributes$id("page")
+    ]), _List_Nil);
+    var $author$project$Pages$Blank$view = function(_v0) {
+        return $author$project$Pages$Blank$content;
+    };
     var $author$project$Buttons$Default$defaultButton = function(btnName) {
         return A2($elm$html$Html$div, _List_fromArray([
             A2($elm$html$Html$Attributes$style, "align-self", "center")
@@ -12359,7 +12202,6 @@ type alias Process =
         ]));
     };
     var $elm$html$Html$h1 = _VirtualDom_node("h1");
-    var $elm$html$Html$section = _VirtualDom_node("section");
     var $author$project$Pages$Buy$content = A2($elm$html$Html$section, _List_fromArray([
         $elm$html$Html$Attributes$id("page"),
         $elm$html$Html$Attributes$class("section-background"),
@@ -16714,21 +16556,6 @@ type alias Process =
     var $author$project$Pages$Market$view = function(_v0) {
         return $author$project$Pages$Market$content;
     };
-    var $author$project$Pages$PingPong$Send = {
-        $: "Send"
-    };
-    var $author$project$Pages$PingPong$view = function(model) {
-        var _v0 = model.root;
-        var name = _v0.a.name;
-        return A2($elm$html$Html$div, _List_Nil, _List_fromArray([
-            $elm$html$Html$text(name),
-            A2($elm$html$Html$button, _List_fromArray([
-                $elm$html$Html$Events$onClick($author$project$Pages$PingPong$Send)
-            ]), _List_fromArray([
-                $elm$html$Html$text("Send Ping")
-            ]))
-        ]));
-    };
     var $author$project$Pages$Portfolio$htmlContent = A2($elm$html$Html$section, _List_fromArray([
         $elm$html$Html$Attributes$id("page"),
         $elm$html$Html$Attributes$class("section-background"),
@@ -16880,6 +16707,9 @@ type alias Process =
                 case "DashboardPage":
                     var dashboard = _v0.a;
                     return A2($elm$html$Html$map, $author$project$Main$GotDashboardMsg, $author$project$Pages$Dashboard$view(dashboard));
+                case "BlankPage":
+                    var dashboard = _v0.a;
+                    return A2($elm$html$Html$map, $author$project$Main$GotBlankMsg, $author$project$Pages$Blank$view(dashboard));
                 case "SellPage":
                     var dashboard = _v0.a;
                     return A2($elm$html$Html$map, $author$project$Main$GotSellMsg, $author$project$Pages$Sell$view(dashboard));
@@ -16892,9 +16722,6 @@ type alias Process =
                 case "SupportPage":
                     var support = _v0.a;
                     return A2($elm$html$Html$map, $author$project$Main$GotSupportMsg, $author$project$Pages$Support$view(support));
-                case "PingPongPage":
-                    var pingpong = _v0.a;
-                    return A2($elm$html$Html$map, $author$project$Main$GotPingPongMsg, $author$project$Pages$PingPong$view(pingpong));
                 case "BuyPage":
                     var buy = _v0.a;
                     return A2($elm$html$Html$map, $author$project$Main$GotBuyMsg, $author$project$Pages$Buy$view(buy));
@@ -16980,6 +16807,10 @@ type alias Process =
                             "args": [],
                             "type": "{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"
                         },
+                        "Pages.Blank.Model": {
+                            "args": [],
+                            "type": "{ status : Pages.Blank.Status, title : String.String, root : Pages.Blank.Blank }"
+                        },
                         "Pages.Buy.Model": {
                             "args": [],
                             "type": "{ status : Pages.Buy.Status, title : String.String, root : Pages.Buy.Buy }"
@@ -16995,10 +16826,6 @@ type alias Process =
                         "Pages.Market.Model": {
                             "args": [],
                             "type": "{ status : Pages.Market.Status, title : String.String, root : Pages.Market.Market }"
-                        },
-                        "Pages.PingPong.Model": {
-                            "args": [],
-                            "type": "{ status : Pages.PingPong.Status, title : String.String, root : Pages.PingPong.PingPong }"
                         },
                         "Pages.Portfolio.Model": {
                             "args": [],
@@ -17023,10 +16850,6 @@ type alias Process =
                         "Data.Hardware.Player": {
                             "args": [],
                             "type": "{ id : String.String, nickname : String.String }"
-                        },
-                        "Pages.PingPong.PongResponse": {
-                            "args": [],
-                            "type": "{ message : String.String }"
                         },
                         "Pages.Hardware.ProviderData": {
                             "args": [],
@@ -17086,6 +16909,9 @@ type alias Process =
                                 "GotSellMsg": [
                                     "Pages.Sell.Msg"
                                 ],
+                                "GotBlankMsg": [
+                                    "Pages.Blank.Msg"
+                                ],
                                 "GotPortfolioMsg": [
                                     "Pages.Portfolio.Msg"
                                 ],
@@ -17094,9 +16920,6 @@ type alias Process =
                                 ],
                                 "GotSupportMsg": [
                                     "Pages.Support.Msg"
-                                ],
-                                "GotPingPongMsg": [
-                                    "Pages.PingPong.Msg"
                                 ],
                                 "GotBuyMsg": [
                                     "Pages.Buy.Msg"
@@ -17167,6 +16990,14 @@ type alias Process =
                                 "Nothing": []
                             }
                         },
+                        "Pages.Blank.Msg": {
+                            "args": [],
+                            "tags": {
+                                "GotInitialModel": [
+                                    "Pages.Blank.Model"
+                                ]
+                            }
+                        },
                         "Pages.Buy.Msg": {
                             "args": [],
                             "tags": {
@@ -17209,12 +17040,6 @@ type alias Process =
                                 "UpdateGender": [
                                     "String.String"
                                 ],
-                                "UpdateEmail": [
-                                    "String.String"
-                                ],
-                                "UpdatePassword": [
-                                    "String.String"
-                                ],
                                 "UpdateNickName": [
                                     "String.String"
                                 ],
@@ -17255,12 +17080,6 @@ type alias Process =
                                     "String.String"
                                 ],
                                 "ToggleReturnUser": [],
-                                "UserLoginEmailInputChg": [
-                                    "String.String"
-                                ],
-                                "UserLoginPasswordInputChg": [
-                                    "String.String"
-                                ],
                                 "ClickedHardwareDeviceConnect": [],
                                 "ClickedXMRWalletConnect": [],
                                 "ClickedXMRInitiateTransaction": [
@@ -17324,9 +17143,6 @@ type alias Process =
                                     "Data.Hardware.ResultOfMatch"
                                 ],
                                 "CancelDialoguePrepareResultView": [],
-                                "SearchInputChg": [
-                                    "String.String"
-                                ],
                                 "FetchSpectatorRanking": [
                                     "String.String"
                                 ],
@@ -17367,18 +17183,6 @@ type alias Process =
                             "tags": {
                                 "GotInitialModel": [
                                     "Pages.Market.Model"
-                                ]
-                            }
-                        },
-                        "Pages.PingPong.Msg": {
-                            "args": [],
-                            "tags": {
-                                "Send": [],
-                                "Receive": [
-                                    "Result.Result Http.Error Pages.PingPong.PongResponse"
-                                ],
-                                "GotInitialModel": [
-                                    "Pages.PingPong.Model"
                                 ]
                             }
                         },
@@ -17464,6 +17268,14 @@ type alias Process =
                                 "Zone": [
                                     "Basics.Int",
                                     "List.List Time.Era"
+                                ]
+                            }
+                        },
+                        "Pages.Blank.Blank": {
+                            "args": [],
+                            "tags": {
+                                "Blank": [
+                                    "{ name : String.String }"
                                 ]
                             }
                         },
@@ -17600,14 +17412,6 @@ type alias Process =
                                 ]
                             }
                         },
-                        "Pages.PingPong.PingPong": {
-                            "args": [],
-                            "tags": {
-                                "PingPong": [
-                                    "{ name : String.String }"
-                                ]
-                            }
-                        },
                         "Pages.Portfolio.Portfolio": {
                             "args": [],
                             "tags": {
@@ -17630,6 +17434,12 @@ type alias Process =
                                 "Sell": [
                                     "{ name : String.String }"
                                 ]
+                            }
+                        },
+                        "Pages.Blank.Status": {
+                            "args": [],
+                            "tags": {
+                                "Loading": []
                             }
                         },
                         "Pages.Buy.Status": {
@@ -17655,12 +17465,6 @@ type alias Process =
                             }
                         },
                         "Pages.Market.Status": {
-                            "args": [],
-                            "tags": {
-                                "Loading": []
-                            }
-                        },
-                        "Pages.PingPong.Status": {
                             "args": [],
                             "tags": {
                                 "Loading": []

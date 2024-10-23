@@ -98,12 +98,9 @@ init fromMainToHardware =
         False
         ""
         []
-        []
         False
         False
         U.emptySpectator
-        ""
-        []
         Nothing
     , Cmd.none
     )
@@ -129,19 +126,11 @@ type alias Model =
     , isXMRWalletConnected : Bool
     , xmrWalletAddress : String
     , errors : List String
-    , availableSlots : List (Maybe String)
 
     -- REVIEW: Same as Status?
     , isWaitingForResponse : Bool
     , isReturnUser : Bool
-
-    --, selectedranking : R.RankingStatus
-    --, selectedSingleRank : R.Rank
     , user : U.User
-
-    --, result : R.ResultOfMatch
-    , searchterm : String
-    , searchResults : List R.RankingSearchResult
     , objectJSONfromJSPort : Maybe JsonMsgFromJs
     }
 
@@ -165,17 +154,9 @@ initialModel =
     , isXMRWalletConnected = False
     , xmrWalletAddress = ""
     , errors = []
-    , availableSlots = []
     , isWaitingForResponse = False
     , isReturnUser = False
-
-    --, selectedranking = R.DefaultRankingStatus
-    --, selectedSingleRank = R.DefaultRank
     , user = U.emptySpectator
-
-    --, result = R.DefaultResultOfMatch
-    , searchterm = ""
-    , searchResults = []
     , objectJSONfromJSPort = Nothing
     }
 
@@ -245,7 +226,6 @@ type Msg
     | ConfirmChallenge R.Ranking R.Rank
     | ConfirmResult R.ResultOfMatch
     | CancelDialoguePrepareResultView
-    | SearchInputChg String
     | FetchSpectatorRanking String
     | SpectatorRankingResponse (Result Http.Error R.Ranking)
     | SpectatorJoin
@@ -640,9 +620,6 @@ update msg model =
               }
             , Cmd.none
             )
-
-        SearchInputChg searchTerm ->
-            ( { model | searchterm = searchTerm }, Cmd.none )
 
         -- NOTE: Start of old Haveno-Web-blahblahZoho code:
         ToggleReturnUser ->
@@ -1555,7 +1532,6 @@ spectatorView =
             , Element.text "\n"
 
             --, infoBtn "Cancel" <| Cancel U.emptyUserInfo
-            --, displayGlobalRankingBtns searchterm searchResults userVal
             ]
 
 

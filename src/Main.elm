@@ -27,6 +27,7 @@ import Pages.Funds
 import Pages.Hardware exposing (hardwareSubscriptions)
 import Pages.Market
 import Pages.Portfolio
+import Pages.Blank
 import Pages.Sell
 import Pages.Support
 import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
@@ -113,7 +114,7 @@ init flag url key =
 
 
 --updateUrl url updatedModel
--- FORGET THE KEY AND USE FLAG FOR INDICATING NAVIGATION
+-- REVIEW:  FORGET THE KEY AND USE FLAG FOR INDICATING NAVIGATION
 
 
 updateUrlPath : Url.Url -> String -> Url.Url
@@ -217,6 +218,7 @@ type Msg
       -- NOTE: the type of GotDashboardMsg is (Pages.Dashboard.Msg -> Msg)
     | GotDashboardMsg Pages.Dashboard.Msg
     | GotSellMsg Pages.Sell.Msg
+    | GotBlankMsg Pages.Blank.Msg
     | GotPortfolioMsg Pages.Portfolio.Msg
     | GotFundsMsg Pages.Funds.Msg
     | GotSupportMsg Pages.Support.Msg
@@ -294,6 +296,9 @@ update msg model =
                             updateUrl (Url.Url Http "localhost" Nothing "/hardware" Nothing Nothing) model
 
                     SellPage _ ->
+                        ( model, Cmd.none )
+
+                    BlankPage _ ->
                         ( model, Cmd.none )
 
                     PortfolioPage _ ->
@@ -477,6 +482,14 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        GotBlankMsg blankMsg ->
+            case model.page of
+                BlankPage blank ->
+                    toBlank model (Pages.Blank.update blankMsg blank)
+
+                _ ->
+                    ( model, Cmd.none )
+
         GotPortfolioMsg termsMsg ->
             case model.page of
                 PortfolioPage terms ->
@@ -621,6 +634,10 @@ view model =
                         -}
                         |> Html.map GotDashboardMsg
 
+                BlankPage dashboard ->
+                    Pages.Blank.view dashboard
+                        |> Html.map GotBlankMsg
+
                 SellPage dashboard ->
                     Pages.Sell.view dashboard
                         |> Html.map GotSellMsg
@@ -700,6 +717,7 @@ type Route
     | Buy
     | Market
     | Hardware
+    | Blank
 
 
 
@@ -718,6 +736,7 @@ type
     | BuyPage Pages.Buy.Model
     | MarketPage Pages.Market.Model
     | HardwarePage Pages.Hardware.Model
+    | BlankPage Pages.Blank.Model
 
 
 
@@ -781,8 +800,9 @@ urlAsPageParser =
     -- If a Route value representing a Page is sent as input to the parser function,
     -- the resulting 'a' will be a Page (or whatever type Page represents in your specific code).
     oneOf
-        [ Url.Parser.map Dashboard (s "index.html")
-        , Url.Parser.map Dashboard Url.Parser.top
+        [ Url.Parser.map Blank (s "index.html")
+        , Url.Parser.map Blank Url.Parser.top
+        , Url.Parser.map Dashboard (Url.Parser.s "dashboard")
         , Url.Parser.map Sell (Url.Parser.s "sell")
         , Url.Parser.map Portfolio (Url.Parser.s "portfolio")
         , Url.Parser.map Funds (Url.Parser.s "funds")
@@ -872,6 +892,9 @@ updateUrl url model =
         Just Sell ->
             Pages.Sell.init ()
                 |> toSell model
+        Just Blank ->
+            Pages.Blank.init ()
+                |> toBlank model
 
         Just Portfolio ->
             Pages.Portfolio.init ()
@@ -939,6 +962,15 @@ toSell model ( sell, cmd ) =
          but you're not explicitly applying it. Cmd.map will take care of applying GotSellMsg to each value that the command produces.
       -}
     , Cmd.map GotSellMsg cmd
+    )
+
+toBlank : Model -> ( Pages.Blank.Model, Cmd Pages.Blank.Msg ) -> ( Model, Cmd Msg )
+toBlank model ( blank, cmd ) =
+    ( { model | page = BlankPage blank }
+      {- -- NOTE: In your example, Cmd.map GotSellMsg cmd, GotSellMsg is indeed a function,
+         but you're not explicitly applying it. Cmd.map will take care of applying GotSellMsg to each value that the command produces.
+      -}
+    , Cmd.map GotBlankMsg cmd
     )
 
 
@@ -1520,6 +1552,12 @@ isActive { link, page } =
             True
 
         ( Sell, _ ) ->
+            False
+
+        ( Blank, BlankPage _ ) ->
+            True
+
+        ( Blank, _ ) ->
             False
 
         ( Portfolio, PortfolioPage _ ) ->
