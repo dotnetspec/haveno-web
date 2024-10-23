@@ -24,6 +24,7 @@ import Json.Encode as JE
 import Pages.Buy
 import Pages.Dashboard
 import Pages.Funds
+import Pages.Accounts exposing (hardwareSubscriptions)
 import Pages.Hardware exposing (hardwareSubscriptions)
 import Pages.Market
 import Pages.Portfolio
