@@ -101,7 +101,6 @@ init fromMainToHardware =
         []
         False
         False
-        {email = "", password = ""}
         U.emptySpectator
         ""
         []
@@ -135,7 +134,6 @@ type alias Model =
     -- REVIEW: Same as Status?
     , isWaitingForResponse : Bool
     , isReturnUser : Bool
-    , emailpassword : EmailPasswordLogin
 
     --, selectedranking : R.RankingStatus
     --, selectedSingleRank : R.Rank
@@ -170,7 +168,6 @@ initialModel =
     , availableSlots = []
     , isWaitingForResponse = False
     , isReturnUser = False
-    , emailpassword = { email = "", password = "" }
 
     --, selectedranking = R.DefaultRankingStatus
     --, selectedSingleRank = R.DefaultRank
@@ -198,8 +195,6 @@ type Msg
     = BookingForm RegisterUserDetails
     | UpdateAge Int
     | UpdateGender String
-    | UpdateEmail String
-    | UpdatePassword String
     | UpdateNickName String
     | UpdateLevel String
     | UpdateComment String
@@ -216,9 +211,6 @@ type Msg
     | InputBlurred String
     | SelDateTime String
     | ToggleReturnUser
-      -- NOTE: Start of new Msg variants from espa1
-    | UserLoginEmailInputChg String
-    | UserLoginPasswordInputChg String
     | ClickedHardwareDeviceConnect
     | ClickedXMRWalletConnect
     | ClickedXMRInitiateTransaction String
@@ -536,7 +528,6 @@ update msg model =
             let
                 -- NOTE: You can only see the rawJsonMessage in the console if you use JE.encode 2
                 -- but you can't decode it if you use it that way
-                
                 decodedHardwareDeviceMsg =
                     case D.decodeValue justmsgFieldFromJsonDecoder receivedJson of
                         Ok message ->
@@ -653,13 +644,6 @@ update msg model =
         SearchInputChg searchTerm ->
             ( { model | searchterm = searchTerm }, Cmd.none )
 
-        -- NOTE: Initial login deliberately has separate email/pwrd to registration (where these fields are buried in user details)
-        UserLoginEmailInputChg newemail ->
-            ( { model | emailpassword = { email = newemail, password = model.emailpassword.password } }, Cmd.none )
-
-        UserLoginPasswordInputChg newPwrd ->
-            ( { model | emailpassword = { email = model.emailpassword.email, password = newPwrd } }, Cmd.none )
-
         -- NOTE: Start of old Haveno-Web-blahblahZoho code:
         ToggleReturnUser ->
             ( { model | isReturnUser = not model.isReturnUser }, Cmd.none )
@@ -740,8 +724,7 @@ update msg model =
                 -- HACK:
                 newModel =
                     { model
-                        | 
-                        isValidNewAccessToken = True
+                        | isValidNewAccessToken = True
                         , user = U.Registered auth
 
                         --, apiSpecifics = { apiSpecs | accessToken = Just auth.access_token }
@@ -975,16 +958,6 @@ update msg model =
             , Cmd.none
             )
 
-        UpdateEmail email ->
-            ( updateNewUserRegistrationFormField (UpdateEmail email) model.queryType model
-            , Cmd.none
-            )
-
-        UpdatePassword pword ->
-            ( updateNewUserRegistrationFormField (UpdatePassword pword) model.queryType model
-            , Cmd.none
-            )
-
         UpdateLevel lvel ->
             ( updateNewUserRegistrationFormField (UpdateLevel lvel) model.queryType model
             , Cmd.none
@@ -1098,14 +1071,13 @@ view model =
                         [ div
                             [ class "spinner"
                             ]
-                            [text "Loading ..." ]
+                            [ text "Loading ..." ]
                         ]
 
                 Errored ->
                     div [] [ text "error" ]
 
                 Loaded ->
-                    
                     div
                         [ class "split-col"
                         ]
@@ -1610,7 +1582,6 @@ globalView searchterm searchResults userVal =
 
 hardwareWalletView : Model -> Html Msg
 hardwareWalletView model =
-    
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
             [ Element.el Heading.h5 <| Element.text "Welcome - Unconnected User"
@@ -1653,22 +1624,7 @@ registerView userInfo =
             , Element.wrappedRow (Card.fill ++ Grid.simple)
                 [ Element.column
                     Grid.simple
-                    [ Input.email (Input.simple ++ [ Element.htmlAttribute (Attr.id "userEmail"), Input.focusedOnLoad ])
-                        { onChange = UpdateEmail
-                        , text = Maybe.withDefault "" userInfo.email
-                        , placeholder = Just <| Input.placeholder [] (Element.text "Email")
-                        , label = Input.labelLeft (Input.label ++ [ Element.moveLeft 11.0 ]) (Element.text "Email*")
-                        }
-                    , emailValidationErr (Maybe.withDefault "" userInfo.email)
-                    , Input.newPassword (Input.simple ++ [ Element.htmlAttribute (Attr.id "Password") ])
-                        { -- HACK: until ready to implement the changes
-                          onChange = UpdatePassword
-                        , text = userInfo.password
-                        , placeholder = Just <| Input.placeholder [] (Element.text "Password")
-                        , label = Input.labelLeft (Input.label ++ [ Element.moveLeft 11.0 ]) (Element.text "Password*")
-                        , show = False
-                        }
-                    , El.passwordValidView userInfo
+                    [ El.passwordValidView userInfo
                     , Input.text (Input.simple ++ [ Element.htmlAttribute (Attr.id "nickName") ])
                         { onChange = UpdateNickName
                         , text = userInfo.nickname
@@ -2348,23 +2304,6 @@ lnsConnectRequest model =
     therequest
 
 
-loginRequest : Model -> Cmd Msg
-loginRequest model =
-    let
-        therequest =
-            Http.request
-                { body = Http.jsonBody <| prepareEmailPwordLogin model.emailpassword
-                , method = "POST"
-                , headers = [ Http.header "Accept" "application/json" ]
-                , url = "https://ap-southeast-1.aws.realm.mongodb.com/api/client/v2.0/app/sr-espa1-snonq/auth/providers/local-userpass/login"
-                , expect = Http.expectJson LoginResponse successfullLoginResultDecoder
-                , timeout = Nothing
-                , tracker = Nothing
-                }
-    in
-    therequest
-
-
 profileRequest : Model -> Cmd Msg
 profileRequest model =
     let
@@ -2918,37 +2857,6 @@ updateNewUserRegistrationFormField msg queryType model =
                                             U.Male
                             in
                             { userDetails | gender = newValue }
-
-                        UpdateEmail email ->
-                            let
-                                newemail =
-                                    if email == "" then
-                                        Nothing
-
-                                    else
-                                        Just email
-
-                                vldResult =
-                                    case validateEmail newemail of
-                                        Ok _ ->
-                                            ""
-
-                                        Err err ->
-                                            err
-                            in
-                            { userDetails | email = newemail, emailValidationError = vldResult }
-
-                        UpdatePassword pword ->
-                            let
-                                vldResult =
-                                    case validatePassword pword of
-                                        Ok _ ->
-                                            ""
-
-                                        Err err ->
-                                            err
-                            in
-                            { userDetails | password = pword, passwordValidationError = vldResult }
 
                         UpdateLevel value ->
                             let
