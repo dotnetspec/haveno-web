@@ -99,7 +99,6 @@ init fromMainToHardware =
         ""
         []
         False
-        False
         U.emptySpectator
         Nothing
     , Cmd.none
@@ -126,9 +125,6 @@ type alias Model =
     , isXMRWalletConnected : Bool
     , xmrWalletAddress : String
     , errors : List String
-
-    -- REVIEW: Same as Status?
-    , isWaitingForResponse : Bool
     , isReturnUser : Bool
     , user : U.User
     , objectJSONfromJSPort : Maybe JsonMsgFromJs
@@ -154,7 +150,6 @@ initialModel =
     , isXMRWalletConnected = False
     , xmrWalletAddress = ""
     , errors = []
-    , isWaitingForResponse = False
     , isReturnUser = False
     , user = U.emptySpectator
     , objectJSONfromJSPort = Nothing
@@ -239,7 +234,6 @@ type Msg
     | LoginResponse (Result Http.Error SuccessfulLoginResult)
     | LNSConnectResponse (Result Http.Error SuccessfullLNSConnectResult)
     | ProfileResponse (Result Http.Error SuccessfullProfileResult)
-   
 
 
 
@@ -678,8 +672,6 @@ update msg model =
         DismissErrors ->
             ( { model | errors = [] }, Cmd.none )
 
-        
-
         ProfileResponse (Ok auth) ->
             let
                 headers =
@@ -818,15 +810,8 @@ update msg model =
                         , apiSpecifics = { apiSpecs | accessToken = Just auth.access_token }
                         , queryType = LoggedInUser
                     }
-
-                --}
             in
-            ( { newModel
-                -- REVIEW: Maybe handle specRankingResult differently?
-                | isWaitingForResponse = False
-
-                --, selectedranking = R.Spectator specRankingResult
-              }
+            ( newModel
             , profileRequest newModel
             )
 
@@ -849,13 +834,7 @@ update msg model =
             )
 
         SpectatorRankingResponse (Ok specRankingResult) ->
-            ( {- { model
-                   -- REVIEW: Maybe handle specRankingResult differently?
-                   | isWaitingForResponse = False
-                   , selectedranking = R.Spectator specRankingResult
-                 }
-              -}
-              model
+            ( model
             , Cmd.none
             )
 
@@ -925,44 +904,7 @@ update msg model =
         -- NOTE: If, in future updates/releases, you want to do a lot of validation
         -- at this point can -- REF: Haveno-Web-Responsive-Zoho app. Don't need here.
         FetchSpectatorRanking rankingId ->
-            {- let
-                   -- NOTE: Build the json body
-                   postDataForMongoDBMWSvr : E.Value
-                   postDataForMongoDBMWSvr =
-                       E.object
-                           [ -- NOTE: Sending to API url
-                             ( "apiUrl"
-                             , E.string <|
-                                   Url.toString Consts.placeholderUrl
-                             )
-                           , ( "query_type", E.string "fetch" )
-                           , ( "rankingid", E.string <| rankingId )
-                           ]
-
-                   -- NOTE: Update the model with the new postDataForMongoDBMWSvr
-                   -- RF
-                   updatedFlagUrlToIncludeMongoDBMWSvr =
-                       -- TODO: Replace with sportsrank for production:
-                       if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
-                           Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
-
-                       else
-                           Url.toString <| Url model.flagUrl.protocol model.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
-
-                   updatModelWithNewPostData =
-                       { model
-                           | toMongoDBMWConfig = Just (ToMongoDBMWConfig Consts.post [] updatedFlagUrlToIncludeMongoDBMWSvr (Http.jsonBody postDataForMongoDBMWSvr) Nothing Nothing)
-                           , queryType = SpectatorSelectedView
-                           , isWaitingForResponse = True
-                           , errors = [ "" ]
-                           , selectedranking = R.Spectator R.emptyRanking
-                       }
-               in
-            -}
-            -- NOTE: set isWaitingForResponse to disable button in case user presses submit multiple times
-            -- NOTE: rankingId - straight from the UI into the model
-            ( --updatModelWithNewPostData
-              model
+            ( model
             , -- NOTE: Until figure out why browsers are prejudiced against elm (cors), although this Msg enables updating the model
               -- the 'work' is done in sendMessageToJs in Main as usual.
               Cmd.none
@@ -2250,9 +2192,6 @@ profileRequest model =
                 }
     in
     therequest
-
-
-
 
 
 

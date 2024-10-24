@@ -21,14 +21,14 @@ import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick)
 import Json.Decode as JD
 import Json.Encode as JE
+import Pages.Accounts exposing (hardwareSubscriptions)
+import Pages.Blank
 import Pages.Buy
 import Pages.Dashboard
 import Pages.Funds
-import Pages.Accounts exposing (hardwareSubscriptions)
 import Pages.Hardware exposing (hardwareSubscriptions)
 import Pages.Market
 import Pages.Portfolio
-import Pages.Blank
 import Pages.Sell
 import Pages.Support
 import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
@@ -264,7 +264,6 @@ update msg model =
             )
 
         HardwareDeviceConnect ->
-            
             ( model
             , -- NOTE: Old msg showing formatting - 'sendMessageToJs ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")'
               sendMessageToJs
@@ -277,7 +276,6 @@ update msg model =
         -- NAV: Recv rawJsonMessage
         -- NOTE: This is updated when a message from js is received
         Recv rawJsonMessage ->
-            
             -- NOTE: rawJsonMessage is a Json value that is ready to be decoded. It does not need to be
             -- converted to a string.
             if String.contains "Problem" (fromJsonToString rawJsonMessage) then
@@ -335,7 +333,6 @@ update msg model =
 
                             updatedIsLNSConnected =
                                 if model.isHardwareLNSConnected == False && decodedHardwareDeviceMsg == "nanoS" then
-                                    
                                     True
 
                                 else if model.isHardwareLNSConnected == True then
@@ -346,7 +343,6 @@ update msg model =
 
                             updatedIsLNXConnected =
                                 if model.isHardwareLNXConnected == False && decodedHardwareDeviceMsg == "nanoX" then
-                                    
                                     True
 
                                 else if model.isHardwareLNXConnected == True then
@@ -546,8 +542,6 @@ update msg model =
                     case hardwareMsg of
                         Pages.Hardware.ClickedHardwareDeviceConnect ->
                             let
-                                
-
                                 newHardwareModel =
                                     { hardwareModel | queryType = Pages.Hardware.Spectator }
                             in
@@ -583,7 +577,6 @@ update msg model =
                             )
 
                         _ ->
-                            
                             -- otherwise operate within the Hardware sub module:
                             toHardware model (Pages.Hardware.update hardwareMsg hardwareModel)
 
@@ -664,7 +657,6 @@ view model =
                         |> Html.map GotMarketMsg
 
                 HardwarePage hardware ->
-                    
                     Pages.Hardware.view hardware
                         |> Html.map GotHardwareMsg
 
@@ -893,6 +885,7 @@ updateUrl url model =
         Just Sell ->
             Pages.Sell.init ()
                 |> toSell model
+
         Just Blank ->
             Pages.Blank.init ()
                 |> toBlank model
@@ -964,6 +957,7 @@ toSell model ( sell, cmd ) =
       -}
     , Cmd.map GotSellMsg cmd
     )
+
 
 toBlank : Model -> ( Pages.Blank.Model, Cmd Pages.Blank.Msg ) -> ( Model, Cmd Msg )
 toBlank model ( blank, cmd ) =
