@@ -252,7 +252,7 @@ update msg model =
             ( { model | isPopUpVisible = True }, Cmd.none )
 
         HidePopUp ->
-            ( { model | isPopUpVisible = False, isNavMenuActive = True, page = HardwarePage Pages.Hardware.initialModel }
+            ( { model | isPopUpVisible = False, page = HardwarePage Pages.Hardware.initialModel }
             , Cmd.none
             )
 

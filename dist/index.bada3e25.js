@@ -11322,7 +11322,6 @@ type alias Process =
                 }), $elm$core$Platform$Cmd$none);
             case "HidePopUp":
                 return _Utils_Tuple2(_Utils_update(model, {
-                    isNavMenuActive: true,
                     isPopUpVisible: false,
                     page: $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel)
                 }), $elm$core$Platform$Cmd$none);

@@ -191,6 +191,11 @@ runSpecTests =
                                         Claim.isStringContaining 1 "Disconnected"
                                 )
                         )
+                    , it "should NOT be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isFalse
+                        )
                     ]
             )
 

@@ -22,8 +22,6 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **And** it should NOT be possible to use the Menu
 
 
-
-
 #### **Scenario 2: hww NOT connected, user clicks the 'Connect Hardware' button, navs to Hardware page**
 
 **Given** the web app is opened
@@ -32,6 +30,7 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **Then** it hides the popup
 **And** it should display the Hardware page
 **And** it should display the 'Connected' indicator as Disconnected (red)
+**And** it should NOT be possible to use the Menu
 
 
 #### **Scenario 3: If the the LNS hardware wallet is already connected, indicate this and nav to Dashbooard page**
