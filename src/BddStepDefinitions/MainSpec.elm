@@ -59,14 +59,14 @@ import Url exposing (Protocol(..), Url)
 
 -- NOTE: App.Model and App.Msg are type paramters for the Spec type
 -- They make Spec type more flexible as it can be used with any model and msg types
-
 {- #### **Scenario 1: Popup warning that the hardware wallet is NOT connected on application start**
 
-**Given** the web app is opened
-**And** the LNS hww is NOT detected
-**And** it should ensure the navigation menu is disabled
-**Then** it should display a message informing the user not connected
-**And** it should not display the 'Connected' indicator in the background -}
+   **Given** the web app is opened
+   **And** the LNS hww is NOT detected
+   **And** it should ensure the navigation menu is disabled
+   **Then** it should display a message informing the user not connected
+   **And** it should not display the 'Connected' indicator in the background
+-}
 
 
 runSpecTests : Spec Main.Model Main.Msg
@@ -89,9 +89,10 @@ runSpecTests =
                     |> Spec.Setup.withLocation placeholderUrl
                 )
                 {- |> when "the LNS hww is NOT detected"
-                    [ -- NOTE: 'send' here means send from js to elm
-                      Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
-                    ] -}
+                   [ -- NOTE: 'send' here means send from js to elm
+                     Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
+                   ]
+                -}
                 -- NOTE: Each 'it' block resolves to an Elm-spec Plan type and receives a Script from 'given' and 'when' blocks
                 |> Spec.observeThat
                     [ -- TODO: Sort the logic around disabling the menu so it doesn't interfere with the necessary display of pages
@@ -134,8 +135,14 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
+                                        -- NOTE: Test won't work for text ""
                                         Claim.isStringContaining 1 "_"
                                 )
+                        )
+                    , it "should NOT be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isFalse
                         )
                     ]
             )

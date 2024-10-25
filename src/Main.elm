@@ -101,7 +101,7 @@ init flag url key =
             , isXMRWalletConnected = False
             , xmrWalletAddress = ""
             , isPopUpVisible = True
-            , isNavMenuActive = True
+            , isNavMenuActive = False
             , version = Nothing
             }
     in
@@ -397,9 +397,6 @@ update msg model =
                                 else
                                     Url.Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
 
-                            _ =
-                                Debug.log "newPage" newPage
-
                             newMainModel =
                                 { model
                                     | page = newPage
@@ -677,7 +674,7 @@ view model =
     -- NOTE: 'pagetitle' or 'title' in pages is not the same as 'title' in the document
     { title = "Haveno-Web"
     , body =
-        [ pageHeader model.page
+        [ pageHeader model
         , showVideoOrBanner model.page
         , viewPopUp model
         , contentByPage
@@ -1091,7 +1088,7 @@ viewPopUp model =
                 [ div [ class "modal-content" ]
                     [ h2 [] [ text "Haveno Web App" ]
                     , p [] [ text "No Hardware Device Detected!" ]
-                    , p [] [ text "Please connect your hardware device to continue" ]
+                    , p [] [ text "Please connect your LNS/LNX hardware device to continue" ]
                     , button [ onClick HidePopUp ] [ text "Connect Hardware" ]
                     ]
                 ]
@@ -1308,14 +1305,18 @@ socialsLinks =
 {- -- NOTE: What gets displayed here is heavily dependent on css -}
 
 
-pageHeader : Page -> Html msg
-pageHeader page =
+pageHeader : Model -> Html msg
+pageHeader model =
     let
         pageheader =
             header []
                 [ div [ Attr.class "topLinks-flex-container" ]
                     {- -- NOTE: When, how and/or if burgerMenu, topLinksLogo or topLinksLeft is displayed is determined by the .css -}
-                    [ burgerMenu page
+                    [ if model.isNavMenuActive then
+                        burgerMenu model.page
+
+                      else
+                        div [] []
                     , topLinksLogo
                     , topLinksLeft
                     , socialsLinks
@@ -1337,7 +1338,7 @@ pageHeader page =
                     --,
                     , div [ class "nav-section-above800px" ]
                         [ --div [ Attr.class "topLinksLogo" ] [ hrefLogoImage ]
-                          nav [ class "above800pxnavlinks" ] [ navLinks page ]
+                          nav [ class "above800pxnavlinks" ] [ navLinks model.page ]
                         ]
                     , div [ class "section" ]
                         [--socialsLinks
@@ -1442,6 +1443,9 @@ isHWConnectedIndicator model isConnected =
                         (if isConnected then
                             "indicator green"
 
+                            else if model.isPopUpVisible then
+                            "indicator white"
+
                          else
                             "indicator red"
                         )
@@ -1463,7 +1467,7 @@ isHWConnectedIndicator model isConnected =
 
 
 isXMRWalletConnectedIndicator : Model -> Html msg
-isXMRWalletConnectedIndicator model  =
+isXMRWalletConnectedIndicator model =
     h3 []
         [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
             [ br [] []
@@ -1472,6 +1476,9 @@ isXMRWalletConnectedIndicator model  =
                     [ Attr.class
                         (if model.isHardwareLNSConnected || model.isHardwareLNXConnected then
                             "indicator green"
+
+                         else if model.isPopUpVisible then
+                            "indicator white"
 
                          else
                             "indicator red"

@@ -10185,7 +10185,7 @@ type alias Process =
             flag: decodedJsonFromSetupElmmjs,
             isHardwareLNSConnected: false,
             isHardwareLNXConnected: false,
-            isNavMenuActive: true,
+            isNavMenuActive: false,
             isPopUpVisible: true,
             isXMRWalletConnected: false,
             key: key,
@@ -10479,7 +10479,6 @@ type alias Process =
     };
     var $author$project$Main$justmsgFieldFromJsonDecoder = A2($elm$json$Json$Decode$map, $author$project$Main$OperationEventMsg, A2($elm$json$Json$Decode$field, "operationEventMsg", $elm$json$Json$Decode$string));
     var $elm$browser$Browser$Navigation$load = _Browser_load;
-    var $elm$core$Debug$log = _Debug_log;
     var $author$project$Main$pageToUrlPath = function(page) {
         switch(page.$){
             case "HardwarePage":
@@ -11368,12 +11367,12 @@ type alias Process =
                                 var hwModel = _v1.a;
                                 var newUrl = A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
                                 var decodedHardwareDeviceMsg = function() {
-                                    var _v3 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
-                                    if (_v3.$ === "Ok") {
-                                        var message = _v3.a;
+                                    var _v2 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
+                                    if (_v2.$ === "Ok") {
+                                        var message = _v2.a;
                                         return message.operationEventMsg;
                                     } else {
-                                        var err = _v3.a;
+                                        var err = _v2.a;
                                         return "error";
                                     }
                                 }();
@@ -11399,7 +11398,6 @@ type alias Process =
                                     page: newPage,
                                     xmrWalletAddress: updatedWalletAddress
                                 });
-                                var _v2 = A2($elm$core$Debug$log, "newPage", newPage);
                                 return A2($author$project$Main$updateUrl, newUrlAfterCheckConnections, newMainModel);
                         }
                     }
@@ -11421,8 +11419,8 @@ type alias Process =
                     return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load(href));
                 } else {
                     var url = urlRequest.a;
-                    var _v5 = $elm$url$Url$toString(url);
-                    if (_v5 === "https://haveno-web.squashpassion.com/") return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load($elm$url$Url$toString(url)));
+                    var _v4 = $elm$url$Url$toString(url);
+                    if (_v4 === "https://haveno-web.squashpassion.com/") return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load($elm$url$Url$toString(url)));
                     else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                 }
             case "ChangedUrl":
@@ -11430,65 +11428,65 @@ type alias Process =
                 return A2($author$project$Main$updateUrl, url, model);
             case "GotDashboardMsg":
                 var dashboardMsg = msg.a;
-                var _v6 = model.page;
-                if (_v6.$ === "DashboardPage") {
-                    var dashboard = _v6.a;
+                var _v5 = model.page;
+                if (_v5.$ === "DashboardPage") {
+                    var dashboard = _v5.a;
                     return A2($author$project$Main$toDashboard, model, A2($author$project$Pages$Dashboard$update, dashboardMsg, dashboard));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotSellMsg":
                 var sellMsg = msg.a;
-                var _v7 = model.page;
-                if (_v7.$ === "SellPage") {
-                    var sell = _v7.a;
+                var _v6 = model.page;
+                if (_v6.$ === "SellPage") {
+                    var sell = _v6.a;
                     return A2($author$project$Main$toSell, model, A2($author$project$Pages$Sell$update, sellMsg, sell));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotBlankMsg":
                 var blankMsg = msg.a;
-                var _v8 = model.page;
-                if (_v8.$ === "BlankPage") {
-                    var blank = _v8.a;
+                var _v7 = model.page;
+                if (_v7.$ === "BlankPage") {
+                    var blank = _v7.a;
                     return A2($author$project$Main$toBlank, model, A2($author$project$Pages$Blank$update, blankMsg, blank));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotPortfolioMsg":
                 var termsMsg = msg.a;
-                var _v9 = model.page;
-                if (_v9.$ === "PortfolioPage") {
-                    var terms = _v9.a;
+                var _v8 = model.page;
+                if (_v8.$ === "PortfolioPage") {
+                    var terms = _v8.a;
                     return A2($author$project$Main$toPortfolio, model, A2($author$project$Pages$Portfolio$update, termsMsg, terms));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotFundsMsg":
                 var privacyMsg = msg.a;
-                var _v10 = model.page;
-                if (_v10.$ === "FundsPage") {
-                    var privacy = _v10.a;
+                var _v9 = model.page;
+                if (_v9.$ === "FundsPage") {
+                    var privacy = _v9.a;
                     return A2($author$project$Main$toFunds, model, A2($author$project$Pages$Funds$update, privacyMsg, privacy));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotSupportMsg":
                 var supportMsg = msg.a;
-                var _v11 = model.page;
-                if (_v11.$ === "SupportPage") {
-                    var support = _v11.a;
+                var _v10 = model.page;
+                if (_v10.$ === "SupportPage") {
+                    var support = _v10.a;
                     return A2($author$project$Main$toSupport, model, A2($author$project$Pages$Support$update, supportMsg, support));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotBuyMsg":
                 var pricingMsg = msg.a;
-                var _v12 = model.page;
-                if (_v12.$ === "BuyPage") {
-                    var pricing = _v12.a;
+                var _v11 = model.page;
+                if (_v11.$ === "BuyPage") {
+                    var pricing = _v11.a;
                     return A2($author$project$Main$toPricing, model, A2($author$project$Pages$Buy$update, pricingMsg, pricing));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotMarketMsg":
                 var aboutMsg = msg.a;
-                var _v13 = model.page;
-                if (_v13.$ === "MarketPage") {
-                    var about = _v13.a;
+                var _v12 = model.page;
+                if (_v12.$ === "MarketPage") {
+                    var about = _v12.a;
                     return A2($author$project$Main$toMarket, model, A2($author$project$Pages$Market$update, aboutMsg, about));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotHardwareMsg":
                 var hardwareMsg = msg.a;
-                var _v14 = model.page;
-                if (_v14.$ === "HardwarePage") {
-                    var hardwareModel = _v14.a;
+                var _v13 = model.page;
+                if (_v13.$ === "HardwarePage") {
+                    var hardwareModel = _v13.a;
                     switch(hardwareMsg.$){
                         case "ClickedHardwareDeviceConnect":
                             var newHardwareModel = _Utils_update(hardwareModel, {
@@ -11569,7 +11567,7 @@ type alias Process =
                 A2($elm$html$Html$br, _List_Nil, _List_Nil),
                 A2($elm$html$Html$span, _List_Nil, _List_fromArray([
                     A2($elm$html$Html$span, _List_fromArray([
-                        $elm$html$Html$Attributes$class(isConnected ? "indicator green" : "indicator red")
+                        $elm$html$Html$Attributes$class(isConnected ? "indicator green" : model.isPopUpVisible ? "indicator white" : "indicator red")
                     ]), _List_fromArray([
                         $elm$html$Html$text(isConnected ? "Connected" : model.isPopUpVisible ? "_" : "Disconnected")
                     ]))
@@ -11587,7 +11585,7 @@ type alias Process =
                 A2($elm$html$Html$br, _List_Nil, _List_Nil),
                 A2($elm$html$Html$span, _List_Nil, _List_fromArray([
                     A2($elm$html$Html$h6, _List_fromArray([
-                        $elm$html$Html$Attributes$class(model.isHardwareLNSConnected || model.isHardwareLNXConnected ? "indicator green" : "indicator red")
+                        $elm$html$Html$Attributes$class(model.isHardwareLNSConnected || model.isHardwareLNXConnected ? "indicator green" : model.isPopUpVisible ? "indicator white" : "indicator red")
                     ]), _List_fromArray([
                         $elm$html$Html$text(model.isHardwareLNSConnected || model.isHardwareLNXConnected ? "XMR Wallet Connected" : model.isPopUpVisible ? "_" : "XMR Wallet Disconnected")
                     ])),
@@ -11857,12 +11855,12 @@ type alias Process =
             $author$project$Main$topLinksLogoImage
         ]))
     ]));
-    var $author$project$Main$pageHeader = function(page) {
+    var $author$project$Main$pageHeader = function(model) {
         var pageheader = A2($elm$html$Html$header, _List_Nil, _List_fromArray([
             A2($elm$html$Html$div, _List_fromArray([
                 $elm$html$Html$Attributes$class("topLinks-flex-container")
             ]), _List_fromArray([
-                $author$project$Main$burgerMenu(page),
+                model.isNavMenuActive ? $author$project$Main$burgerMenu(model.page) : A2($elm$html$Html$div, _List_Nil, _List_Nil),
                 $author$project$Main$topLinksLogo,
                 $author$project$Main$topLinksLeft,
                 $author$project$Main$socialsLinks
@@ -11879,7 +11877,7 @@ type alias Process =
                     A2($elm$html$Html$nav, _List_fromArray([
                         $elm$html$Html$Attributes$class("above800pxnavlinks")
                     ]), _List_fromArray([
-                        $author$project$Main$navLinks(page)
+                        $author$project$Main$navLinks(model.page)
                     ]))
                 ])),
                 A2($elm$html$Html$div, _List_fromArray([
@@ -16426,7 +16424,7 @@ type alias Process =
                         $elm$html$Html$text("No Hardware Device Detected!")
                     ])),
                     A2($elm$html$Html$p, _List_Nil, _List_fromArray([
-                        $elm$html$Html$text("Please connect your hardware device to continue")
+                        $elm$html$Html$text("Please connect your LNS/LNX hardware device to continue")
                     ])),
                     A2($elm$html$Html$button, _List_fromArray([
                         $elm$html$Html$Events$onClick($author$project$Main$HidePopUp)
@@ -16477,7 +16475,7 @@ type alias Process =
         }();
         return {
             body: _List_fromArray([
-                $author$project$Main$pageHeader(model.page),
+                $author$project$Main$pageHeader(model),
                 $author$project$Main$showVideoOrBanner(model.page),
                 $author$project$Main$viewPopUp(model),
                 contentByPage,

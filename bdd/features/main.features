@@ -19,6 +19,7 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **Then** it should display a message informing the user not connected
 **And** it should not display the 'Connected' indicator in the background
 **And** it should NOT display the 'XMR Wallet address' indicator in the background
+**And** it should NOT be possible to use the Menu
 
 
 
