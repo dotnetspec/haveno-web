@@ -681,7 +681,7 @@ view model =
         , showVideoOrBanner model.page
         , viewPopUp model
         , contentByPage
-        , isHWConnectedIndicator isConnected
+        , isHWConnectedIndicator model isConnected
         , isXMRWalletConnectedIndicator model.isXMRWalletConnected model.xmrWalletAddress
         , footerContent model
         ]
@@ -1431,8 +1431,8 @@ logOutUser =
 -- NAV: Main Persistent
 
 
-isHWConnectedIndicator : Bool -> Html msg
-isHWConnectedIndicator isConnected =
+isHWConnectedIndicator : Model -> Bool -> Html msg
+isHWConnectedIndicator model isConnected =
     h3 []
         [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
             [ br [] []
@@ -1449,6 +1449,9 @@ isHWConnectedIndicator isConnected =
                     [ text
                         (if isConnected then
                             "Connected"
+
+                         else if model.isPopUpVisible then
+                            "_"
 
                          else
                             "Disconnected"

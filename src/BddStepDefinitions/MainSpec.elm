@@ -60,6 +60,14 @@ import Url exposing (Protocol(..), Url)
 -- NOTE: App.Model and App.Msg are type paramters for the Spec type
 -- They make Spec type more flexible as it can be used with any model and msg types
 
+{- #### **Scenario 1: Popup warning that the hardware wallet is NOT connected on application start**
+
+**Given** the web app is opened
+**And** the LNS hww is NOT detected
+**And** it should ensure the navigation menu is disabled
+**Then** it should display a message informing the user not connected
+**And** it should not display the 'Connected' indicator in the background -}
+
 
 runSpecTests : Spec Main.Model Main.Msg
 runSpecTests =
@@ -68,7 +76,7 @@ runSpecTests =
         [ --Runner.skip <|
           --Runner.pick <|
           --,
-          scenario "1: Warning that the hardware wallet is NOT connected after port response"
+          scenario "1: Popup warning that the hardware wallet is NOT connected on application start"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -80,10 +88,10 @@ runSpecTests =
                         }
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-                |> when "the LNS hww is NOT detected"
+                {- |> when "the LNS hww is NOT detected"
                     [ -- NOTE: 'send' here means send from js to elm
                       Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
-                    ]
+                    ] -}
                 -- NOTE: Each 'it' block resolves to an Elm-spec Plan type and receives a Script from 'given' and 'when' blocks
                 |> Spec.observeThat
                     [ -- TODO: Sort the logic around disabling the menu so it doesn't interfere with the necessary display of pages
@@ -109,14 +117,14 @@ runSpecTests =
                                         Claim.isStringContaining 1 "No Hardware Device Detected!"
                                 )
                         )
-                    , it "should display the 'Connected' indicator as Disconnected (red)"
+                    , it "should NOT display the 'Connected' indicator in the background"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ tag "h3" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Disconnected"
+                                        Claim.isStringContaining 1 "_"
                                 )
                         )
                     ]

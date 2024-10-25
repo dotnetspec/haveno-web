@@ -8086,132 +8086,27 @@ type alias Process =
         }
     };
     var $elm$browser$Browser$application = _Browser_application;
-    var $author$project$Main$HardwarePage = function(a) {
+    var $author$project$Main$BlankPage = function(a) {
         return {
-            $: "HardwarePage",
+            $: "BlankPage",
             a: a
         };
     };
-    var $author$project$Pages$Hardware$Hardware = function(a) {
+    var $author$project$Pages$Blank$Blank = function(a) {
         return {
-            $: "Hardware",
+            $: "Blank",
             a: a
         };
     };
-    var $author$project$Pages$Hardware$Loaded = {
-        $: "Loaded"
+    var $author$project$Pages$Blank$Loading = {
+        $: "Loading"
     };
-    var $author$project$Pages$Hardware$LoggedInUser = {
-        $: "LoggedInUser"
-    };
-    var $author$project$Data$User$Spectator = function(a) {
-        return {
-            $: "Spectator",
-            a: a
-        };
-    };
-    var $author$project$Data$User$Male = {
-        $: "Male"
-    };
-    var $author$project$Data$User$UserInfo = function(userid) {
-        return function(password) {
-            return function(passwordValidationError) {
-                return function(token) {
-                    return function(nickname) {
-                        return function(isNameInputFocused) {
-                            return function(nameValidationError) {
-                                return function(age) {
-                                    return function(gender) {
-                                        return function(email) {
-                                            return function(isEmailInputFocused) {
-                                                return function(emailValidationError) {
-                                                    return function(mobile) {
-                                                        return function(isMobileInputFocused) {
-                                                            return function(mobileValidationError) {
-                                                                return function(datestamp) {
-                                                                    return function(active) {
-                                                                        return function(ownedRankings) {
-                                                                            return function(memberRankings) {
-                                                                                return function(updatetext) {
-                                                                                    return function(description) {
-                                                                                        return function(credits) {
-                                                                                            return function(addInfo) {
-                                                                                                return {
-                                                                                                    active: active,
-                                                                                                    addInfo: addInfo,
-                                                                                                    age: age,
-                                                                                                    credits: credits,
-                                                                                                    datestamp: datestamp,
-                                                                                                    description: description,
-                                                                                                    email: email,
-                                                                                                    emailValidationError: emailValidationError,
-                                                                                                    gender: gender,
-                                                                                                    isEmailInputFocused: isEmailInputFocused,
-                                                                                                    isMobileInputFocused: isMobileInputFocused,
-                                                                                                    isNameInputFocused: isNameInputFocused,
-                                                                                                    memberRankings: memberRankings,
-                                                                                                    mobile: mobile,
-                                                                                                    mobileValidationError: mobileValidationError,
-                                                                                                    nameValidationError: nameValidationError,
-                                                                                                    nickname: nickname,
-                                                                                                    ownedRankings: ownedRankings,
-                                                                                                    password: password,
-                                                                                                    passwordValidationError: passwordValidationError,
-                                                                                                    token: token,
-                                                                                                    updatetext: updatetext,
-                                                                                                    userid: userid
-                                                                                                };
-                                                                                            };
-                                                                                        };
-                                                                                    };
-                                                                                };
-                                                                            };
-                                                                        };
-                                                                    };
-                                                                };
-                                                            };
-                                                        };
-                                                    };
-                                                };
-                                            };
-                                        };
-                                    };
-                                };
-                            };
-                        };
-                    };
-                };
-            };
-        };
-    };
-    var $author$project$Data$User$emptyDescription = {
-        comment: "",
-        level: ""
-    };
-    var $author$project$Data$User$emptyUserInfo = $author$project$Data$User$UserInfo("")("")("")($elm$core$Maybe$Nothing)("")(false)("")(40)($author$project$Data$User$Male)($elm$core$Maybe$Nothing)(false)("")($elm$core$Maybe$Nothing)(false)("")(0)(false)(_List_Nil)(_List_Nil)("")($author$project$Data$User$emptyDescription)(0)("");
-    var $author$project$Data$User$emptySpectator = $author$project$Data$User$Spectator($author$project$Data$User$emptyUserInfo);
-    var $author$project$Pages$Hardware$initialModel = {
-        apiSpecifics: {
-            accessToken: $elm$core$Maybe$Nothing,
-            maxResults: ""
-        },
-        datetimeFromMain: $elm$core$Maybe$Nothing,
-        errors: _List_Nil,
-        flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
-        isHardwareLNSConnected: false,
-        isHardwareLNXConnected: false,
-        isReturnUser: false,
-        isValidNewAccessToken: false,
-        isXMRWalletConnected: false,
-        objectJSONfromJSPort: $elm$core$Maybe$Nothing,
-        queryType: $author$project$Pages$Hardware$LoggedInUser,
-        root: $author$project$Pages$Hardware$Hardware({
+    var $author$project$Pages$Blank$initialModel = {
+        root: $author$project$Pages$Blank$Blank({
             name: "Loading..."
         }),
-        status: $author$project$Pages$Hardware$Loaded,
-        title: "Hardware",
-        user: $author$project$Data$User$emptySpectator,
-        xmrWalletAddress: ""
+        status: $author$project$Pages$Blank$Loading,
+        title: "Blank"
     };
     var $elm$time$Time$Posix = function(a) {
         return {
@@ -8220,45 +8115,11 @@ type alias Process =
         };
     };
     var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
-    var $author$project$Main$mainInitModel = {
-        errors: _List_Nil,
-        flag: A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
-        isHardwareLNSConnected: false,
-        isHardwareLNXConnected: false,
-        isNavMenuActive: true,
-        isPopUpVisible: true,
-        isXMRWalletConnected: false,
-        key: function(_v0) {
-            return $elm$core$Platform$Cmd$none;
-        },
-        page: $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel),
-        time: $elm$time$Time$millisToPosix(0),
-        version: $elm$core$Maybe$Nothing,
-        xmrWalletAddress: "",
-        zone: $elm$core$Maybe$Nothing
-    };
-    var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
-    var $elm$url$Url$addPort = F2(function(maybePort, starter) {
-        if (maybePort.$ === "Nothing") return starter;
-        else {
-            var port_ = maybePort.a;
-            return starter + (":" + $elm$core$String$fromInt(port_));
-        }
-    });
-    var $elm$url$Url$addPrefixed = F3(function(prefix, maybeSegment, starter) {
-        if (maybeSegment.$ === "Nothing") return starter;
-        else {
-            var segment = maybeSegment.a;
-            return _Utils_ap(starter, _Utils_ap(prefix, segment));
-        }
-    });
-    var $elm$url$Url$toString = function(url) {
-        var http = function() {
-            var _v0 = url.protocol;
-            if (_v0.$ === "Http") return "http://";
-            else return "https://";
-        }();
-        return A3($elm$url$Url$addPrefixed, "#", url.fragment, A3($elm$url$Url$addPrefixed, "?", url.query, _Utils_ap(A2($elm$url$Url$addPort, url.port_, _Utils_ap(http, url.host)), url.path)));
+    var $author$project$Main$HardwarePage = function(a) {
+        return {
+            $: "HardwarePage",
+            a: a
+        };
     };
     var $elm$core$List$filter = F2(function(isGood, list) {
         return A3($elm$core$List$foldr, F2(function(x, xs) {
@@ -8431,24 +8292,30 @@ type alias Process =
             username: ""
         };
     };
+    var $elm$url$Url$addPort = F2(function(maybePort, starter) {
+        if (maybePort.$ === "Nothing") return starter;
+        else {
+            var port_ = maybePort.a;
+            return starter + (":" + $elm$core$String$fromInt(port_));
+        }
+    });
+    var $elm$url$Url$addPrefixed = F3(function(prefix, maybeSegment, starter) {
+        if (maybeSegment.$ === "Nothing") return starter;
+        else {
+            var segment = maybeSegment.a;
+            return _Utils_ap(starter, _Utils_ap(prefix, segment));
+        }
+    });
+    var $elm$url$Url$toString = function(url) {
+        var http = function() {
+            var _v0 = url.protocol;
+            if (_v0.$ === "Http") return "http://";
+            else return "https://";
+        }();
+        return A3($elm$url$Url$addPrefixed, "#", url.fragment, A3($elm$url$Url$addPrefixed, "?", url.query, _Utils_ap(A2($elm$url$Url$addPort, url.port_, _Utils_ap(http, url.host)), url.path)));
+    };
     var $author$project$Main$gotCodeFromUrl = function(url) {
         return $elm$core$Maybe$Just(A2($elm$core$String$join, "", A2($RomanErnst$erl$Erl$getQueryValuesForKey, "code", $RomanErnst$erl$Erl$parse($elm$url$Url$toString(url)))));
-    };
-    var $author$project$Pages$Blank$Blank = function(a) {
-        return {
-            $: "Blank",
-            a: a
-        };
-    };
-    var $author$project$Pages$Blank$Loading = {
-        $: "Loading"
-    };
-    var $author$project$Pages$Blank$initialModel = {
-        root: $author$project$Pages$Blank$Blank({
-            name: "Loading..."
-        }),
-        status: $author$project$Pages$Blank$Loading,
-        title: "Blank"
     };
     var $author$project$Pages$Blank$init = function(_v0) {
         return _Utils_Tuple2(_Utils_update($author$project$Pages$Blank$initialModel, {
@@ -8525,6 +8392,18 @@ type alias Process =
             title: "Haveno-Web Funds"
         }), $elm$core$Platform$Cmd$none);
     };
+    var $author$project$Pages$Hardware$Hardware = function(a) {
+        return {
+            $: "Hardware",
+            a: a
+        };
+    };
+    var $author$project$Pages$Hardware$Loaded = {
+        $: "Loaded"
+    };
+    var $author$project$Pages$Hardware$LoggedInUser = {
+        $: "LoggedInUser"
+    };
     var $author$project$Pages$Hardware$Model = function(status) {
         return function(title) {
             return function(root) {
@@ -8582,6 +8461,92 @@ type alias Process =
         };
     });
     var $author$project$Pages$Hardware$apiSpecsPlaceHolder = A2($author$project$Pages$Hardware$ApiSpecifics, "", $elm$core$Maybe$Nothing);
+    var $author$project$Data$User$Spectator = function(a) {
+        return {
+            $: "Spectator",
+            a: a
+        };
+    };
+    var $author$project$Data$User$Male = {
+        $: "Male"
+    };
+    var $author$project$Data$User$UserInfo = function(userid) {
+        return function(password) {
+            return function(passwordValidationError) {
+                return function(token) {
+                    return function(nickname) {
+                        return function(isNameInputFocused) {
+                            return function(nameValidationError) {
+                                return function(age) {
+                                    return function(gender) {
+                                        return function(email) {
+                                            return function(isEmailInputFocused) {
+                                                return function(emailValidationError) {
+                                                    return function(mobile) {
+                                                        return function(isMobileInputFocused) {
+                                                            return function(mobileValidationError) {
+                                                                return function(datestamp) {
+                                                                    return function(active) {
+                                                                        return function(ownedRankings) {
+                                                                            return function(memberRankings) {
+                                                                                return function(updatetext) {
+                                                                                    return function(description) {
+                                                                                        return function(credits) {
+                                                                                            return function(addInfo) {
+                                                                                                return {
+                                                                                                    active: active,
+                                                                                                    addInfo: addInfo,
+                                                                                                    age: age,
+                                                                                                    credits: credits,
+                                                                                                    datestamp: datestamp,
+                                                                                                    description: description,
+                                                                                                    email: email,
+                                                                                                    emailValidationError: emailValidationError,
+                                                                                                    gender: gender,
+                                                                                                    isEmailInputFocused: isEmailInputFocused,
+                                                                                                    isMobileInputFocused: isMobileInputFocused,
+                                                                                                    isNameInputFocused: isNameInputFocused,
+                                                                                                    memberRankings: memberRankings,
+                                                                                                    mobile: mobile,
+                                                                                                    mobileValidationError: mobileValidationError,
+                                                                                                    nameValidationError: nameValidationError,
+                                                                                                    nickname: nickname,
+                                                                                                    ownedRankings: ownedRankings,
+                                                                                                    password: password,
+                                                                                                    passwordValidationError: passwordValidationError,
+                                                                                                    token: token,
+                                                                                                    updatetext: updatetext,
+                                                                                                    userid: userid
+                                                                                                };
+                                                                                            };
+                                                                                        };
+                                                                                    };
+                                                                                };
+                                                                            };
+                                                                        };
+                                                                    };
+                                                                };
+                                                            };
+                                                        };
+                                                    };
+                                                };
+                                            };
+                                        };
+                                    };
+                                };
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    };
+    var $author$project$Data$User$emptyDescription = {
+        comment: "",
+        level: ""
+    };
+    var $author$project$Data$User$emptyUserInfo = $author$project$Data$User$UserInfo("")("")("")($elm$core$Maybe$Nothing)("")(false)("")(40)($author$project$Data$User$Male)($elm$core$Maybe$Nothing)(false)("")($elm$core$Maybe$Nothing)(false)("")(0)(false)(_List_Nil)(_List_Nil)("")($author$project$Data$User$emptyDescription)(0)("");
+    var $author$project$Data$User$emptySpectator = $author$project$Data$User$Spectator($author$project$Data$User$emptyUserInfo);
     var $author$project$Extras$Constants$localorproductionServerAutoCheck = "haveno-web.squashpassion";
     var $author$project$Extras$Constants$middleWarePath = "/middleware";
     var $author$project$Extras$Constants$productionProxyConfig = "/proxy/";
@@ -8676,6 +8641,29 @@ type alias Process =
             title: "Haveno-Web Support"
         }), $elm$core$Platform$Cmd$none);
     };
+    var $author$project$Pages$Hardware$initialModel = {
+        apiSpecifics: {
+            accessToken: $elm$core$Maybe$Nothing,
+            maxResults: ""
+        },
+        datetimeFromMain: $elm$core$Maybe$Nothing,
+        errors: _List_Nil,
+        flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
+        isHardwareLNSConnected: false,
+        isHardwareLNXConnected: false,
+        isReturnUser: false,
+        isValidNewAccessToken: false,
+        isXMRWalletConnected: false,
+        objectJSONfromJSPort: $elm$core$Maybe$Nothing,
+        queryType: $author$project$Pages$Hardware$LoggedInUser,
+        root: $author$project$Pages$Hardware$Hardware({
+            name: "Loading..."
+        }),
+        status: $author$project$Pages$Hardware$Loaded,
+        title: "Hardware",
+        user: $author$project$Data$User$emptySpectator,
+        xmrWalletAddress: ""
+    };
     var $elm$url$Url$Parser$State = F5(function(visited, unvisited, params, frag, value) {
         return {
             frag: frag,
@@ -8764,12 +8752,6 @@ type alias Process =
         var parser = _v0.a;
         return $elm$url$Url$Parser$getFirstMatch(parser(A5($elm$url$Url$Parser$State, _List_Nil, $elm$url$Url$Parser$preparePath(url.path), $elm$url$Url$Parser$prepareQuery(url.query), url.fragment, $elm$core$Basics$identity)));
     });
-    var $author$project$Main$BlankPage = function(a) {
-        return {
-            $: "BlankPage",
-            a: a
-        };
-    };
     var $author$project$Main$GotBlankMsg = function(a) {
         return {
             $: "GotBlankMsg",
@@ -10191,9 +10173,6 @@ type alias Process =
         } else return $elm$json$Json$Decode$fail("Invalid URL");
     }, $elm$json$Json$Decode$string);
     var $author$project$Main$init = F3(function(flag, url, key) {
-        var localnavigate = function(newUrl) {
-            return A2($elm$browser$Browser$Navigation$pushUrl, key, $elm$url$Url$toString(newUrl));
-        };
         var decodedJsonFromSetupElmmjs = function() {
             var _v0 = A2($elm$json$Json$Decode$decodeString, $author$project$Main$urlDecoder, flag);
             if (_v0.$ === "Ok") {
@@ -10201,10 +10180,21 @@ type alias Process =
                 return urL;
             } else return A6($elm$url$Url$Url, $elm$url$Url$Https, "haveno-web.squashpassion.com", $elm$core$Maybe$Nothing, "", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
         }();
-        var updatedModel = _Utils_update($author$project$Main$mainInitModel, {
+        var updatedModel = {
+            errors: _List_Nil,
             flag: decodedJsonFromSetupElmmjs,
-            key: localnavigate
-        });
+            isHardwareLNSConnected: false,
+            isHardwareLNXConnected: false,
+            isNavMenuActive: true,
+            isPopUpVisible: true,
+            isXMRWalletConnected: false,
+            key: key,
+            page: $author$project$Main$BlankPage($author$project$Pages$Blank$initialModel),
+            time: $elm$time$Time$millisToPosix(0),
+            version: $elm$core$Maybe$Nothing,
+            xmrWalletAddress: "",
+            zone: $elm$core$Maybe$Nothing
+        };
         return A2($author$project$Main$updateUrl, url, updatedModel);
     });
     var $author$project$Main$Recv = function(a) {
@@ -10490,6 +10480,17 @@ type alias Process =
     var $author$project$Main$justmsgFieldFromJsonDecoder = A2($elm$json$Json$Decode$map, $author$project$Main$OperationEventMsg, A2($elm$json$Json$Decode$field, "operationEventMsg", $elm$json$Json$Decode$string));
     var $elm$browser$Browser$Navigation$load = _Browser_load;
     var $elm$core$Debug$log = _Debug_log;
+    var $author$project$Main$pageToUrlPath = function(page) {
+        switch(page.$){
+            case "HardwarePage":
+                return "/hardware";
+            case "DashboardPage":
+                return "/dashboard";
+            default:
+                return "/";
+        }
+    };
+    var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
     var $author$project$Main$sendMessageToJs = _Platform_outgoingPort("sendMessageToJs", $elm$json$Json$Encode$string);
     var $author$project$Pages$Blank$update = F2(function(msg, model) {
         var newModel = msg.a;
@@ -11301,6 +11302,12 @@ type alias Process =
     });
     var $author$project$Main$update = F2(function(msg, model) {
         switch(msg.$){
+            case "NavigateTo":
+                var newpage = msg.a;
+                var newUrl = A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), $author$project$Main$pageToUrlPath(newpage), $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+                return _Utils_Tuple2(_Utils_update(model, {
+                    page: newpage
+                }), A2($elm$browser$Browser$Navigation$pushUrl, model.key, $author$project$Main$pageToUrlPath(newpage)));
             case "GotVersion":
                 if (msg.a.$ === "Ok") {
                     var versionResp = msg.a.a;
@@ -11416,7 +11423,7 @@ type alias Process =
                     var url = urlRequest.a;
                     var _v5 = $elm$url$Url$toString(url);
                     if (_v5 === "https://haveno-web.squashpassion.com/") return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load($elm$url$Url$toString(url)));
-                    else return _Utils_Tuple2(model, model.key(url));
+                    else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                 }
             case "ChangedUrl":
                 var url = msg.a;
@@ -11553,7 +11560,7 @@ type alias Process =
         ]));
     };
     var $elm$html$Html$h3 = _VirtualDom_node("h3");
-    var $author$project$Main$isHWConnectedIndicator = function(isConnected) {
+    var $author$project$Main$isHWConnectedIndicator = F2(function(model, isConnected) {
         return A2($elm$html$Html$h3, _List_Nil, _List_fromArray([
             A2($elm$html$Html$div, _List_fromArray([
                 $elm$html$Html$Attributes$class("indicator"),
@@ -11564,12 +11571,12 @@ type alias Process =
                     A2($elm$html$Html$span, _List_fromArray([
                         $elm$html$Html$Attributes$class(isConnected ? "indicator green" : "indicator red")
                     ]), _List_fromArray([
-                        $elm$html$Html$text(isConnected ? "Connected" : "Disconnected")
+                        $elm$html$Html$text(isConnected ? "Connected" : model.isPopUpVisible ? "_" : "Disconnected")
                     ]))
                 ]))
             ]))
         ]));
-    };
+    });
     var $elm$html$Html$h5 = _VirtualDom_node("h5");
     var $author$project$Main$isXMRWalletConnectedIndicator = F2(function(isConnected, xmrWalletAddress) {
         return A2($elm$html$Html$h3, _List_Nil, _List_fromArray([
@@ -16474,7 +16481,7 @@ type alias Process =
                 $author$project$Main$showVideoOrBanner(model.page),
                 $author$project$Main$viewPopUp(model),
                 contentByPage,
-                $author$project$Main$isHWConnectedIndicator(isConnected),
+                A2($author$project$Main$isHWConnectedIndicator, model, isConnected),
                 A2($author$project$Main$isXMRWalletConnectedIndicator, model.isXMRWalletConnected, model.xmrWalletAddress),
                 $author$project$Main$footerContent(model)
             ]),
@@ -16514,6 +16521,14 @@ type alias Process =
                             "args": [],
                             "type": "Json.Encode.Value"
                         },
+                        "Pages.Hardware.AdditionalDataFromJs": {
+                            "args": [],
+                            "type": "{ userid : String.String, nickname : String.String }"
+                        },
+                        "Pages.Hardware.ApiSpecifics": {
+                            "args": [],
+                            "type": "{ maxResults : String.String, accessToken : Maybe.Maybe String.String }"
+                        },
                         "Data.Hardware.BaseAddress": {
                             "args": [],
                             "type": "{ street : String.String, city : String.String }"
@@ -16533,6 +16548,10 @@ type alias Process =
                         "Pages.Hardware.Identities": {
                             "args": [],
                             "type": "{ id : String.String, provider_type : String.String, provider_id : String.String, provider_data : Pages.Hardware.ProviderData }"
+                        },
+                        "Pages.Hardware.JsonMsgFromJs": {
+                            "args": [],
+                            "type": "{ operationEventMsg : String.String, dataFromMongo : Pages.Hardware.DataFromMongo, additionalDataFromJs : Pages.Hardware.AdditionalDataFromJs }"
                         },
                         "Data.User.MemberRanking": {
                             "args": [],
@@ -16557,6 +16576,10 @@ type alias Process =
                         "Pages.Funds.Model": {
                             "args": [],
                             "type": "{ status : Pages.Funds.Status, title : String.String, root : Pages.Funds.Funds }"
+                        },
+                        "Pages.Hardware.Model": {
+                            "args": [],
+                            "type": "{ status : Pages.Hardware.Status, title : String.String, root : Pages.Hardware.Hardware, flagUrl : Url.Url, datetimeFromMain : Maybe.Maybe Types.DateType.DateTime, apiSpecifics : Pages.Hardware.ApiSpecifics, queryType : Pages.Hardware.QueryType, isValidNewAccessToken : Basics.Bool, isHardwareLNSConnected : Basics.Bool, isHardwareLNXConnected : Basics.Bool, isXMRWalletConnected : Basics.Bool, xmrWalletAddress : String.String, errors : List.List String.String, isReturnUser : Basics.Bool, user : Data.User.User, objectJSONfromJSPort : Maybe.Maybe Pages.Hardware.JsonMsgFromJs }"
                         },
                         "Pages.Market.Model": {
                             "args": [],
@@ -16629,6 +16652,14 @@ type alias Process =
                         "Data.User.UserInfo": {
                             "args": [],
                             "type": "{ userid : String.String, password : Data.User.Password, passwordValidationError : String.String, token : Maybe.Maybe Data.User.Token, nickname : Data.User.NickName, isNameInputFocused : Basics.Bool, nameValidationError : String.String, age : Basics.Int, gender : Data.User.Gender, email : Maybe.Maybe String.String, isEmailInputFocused : Basics.Bool, emailValidationError : String.String, mobile : Maybe.Maybe String.String, isMobileInputFocused : Basics.Bool, mobileValidationError : String.String, datestamp : Basics.Int, active : Basics.Bool, ownedRankings : List.List Data.Hardware.Ranking, memberRankings : List.List Data.Hardware.Ranking, updatetext : String.String, description : Data.User.Description, credits : Basics.Int, addInfo : String.String }"
+                        },
+                        "Pages.Hardware.EmailPasswordLogin": {
+                            "args": [],
+                            "type": "{ email : String.String, password : String.String }"
+                        },
+                        "Pages.Hardware.RefreshTokenQueryParams": {
+                            "args": [],
+                            "type": "{ grant_type : String.String }"
                         }
                     },
                     "unions": {
@@ -16686,6 +16717,9 @@ type alias Process =
                                 "HidePopUp": [],
                                 "GotVersion": [
                                     "Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"
+                                ],
+                                "NavigateTo": [
+                                    "Main.Page"
                                 ]
                             }
                         },
@@ -16942,6 +16976,38 @@ type alias Process =
                                 ]
                             }
                         },
+                        "Main.Page": {
+                            "args": [],
+                            "tags": {
+                                "DashboardPage": [
+                                    "Pages.Dashboard.Model"
+                                ],
+                                "SellPage": [
+                                    "Pages.Sell.Model"
+                                ],
+                                "PortfolioPage": [
+                                    "Pages.Portfolio.Model"
+                                ],
+                                "FundsPage": [
+                                    "Pages.Funds.Model"
+                                ],
+                                "SupportPage": [
+                                    "Pages.Support.Model"
+                                ],
+                                "BuyPage": [
+                                    "Pages.Buy.Model"
+                                ],
+                                "MarketPage": [
+                                    "Pages.Market.Model"
+                                ],
+                                "HardwarePage": [
+                                    "Pages.Hardware.Model"
+                                ],
+                                "BlankPage": [
+                                    "Pages.Blank.Model"
+                                ]
+                            }
+                        },
                         "Time.Posix": {
                             "args": [],
                             "tags": {
@@ -17046,6 +17112,30 @@ type alias Process =
                                 ]
                             }
                         },
+                        "Pages.Hardware.DataFromMongo": {
+                            "args": [],
+                            "tags": {
+                                "JsonData": [
+                                    "Json.Decode.Value"
+                                ],
+                                "StringData": [
+                                    "String.String"
+                                ]
+                            }
+                        },
+                        "Types.DateType.DateTime": {
+                            "args": [],
+                            "tags": {
+                                "CurrentDateTime": [
+                                    "Time.Posix",
+                                    "Time.Zone"
+                                ],
+                                "SelectedDateTime": [
+                                    "Time.Posix",
+                                    "Time.Zone"
+                                ]
+                            }
+                        },
                         "Dict.Dict": {
                             "args": [
                                 "k",
@@ -17121,6 +17211,14 @@ type alias Process =
                                 "Unauthenticated": []
                             }
                         },
+                        "Pages.Hardware.Hardware": {
+                            "args": [],
+                            "tags": {
+                                "Hardware": [
+                                    "{ name : String.String }"
+                                ]
+                            }
+                        },
                         "Http.Header": {
                             "args": [],
                             "tags": {
@@ -17150,6 +17248,44 @@ type alias Process =
                                 "Portfolio": [
                                     "{ name : String.String }"
                                 ]
+                            }
+                        },
+                        "Pages.Hardware.QueryType": {
+                            "args": [],
+                            "tags": {
+                                "RefreshTknQP": [
+                                    "Pages.Hardware.RefreshTokenQueryParams"
+                                ],
+                                "Login": [
+                                    "Pages.Hardware.EmailPasswordLogin"
+                                ],
+                                "Spectator": [],
+                                "RegisterUser": [
+                                    "Data.User.UserInfo"
+                                ],
+                                "LoggedInUser": [],
+                                "CreatingNewLadder": [
+                                    "Data.User.UserInfo"
+                                ],
+                                "OwnedSelectedView": [],
+                                "MemberSelectedView": [],
+                                "SpectatorSelectedView": [],
+                                "ConfirmDeleteOwnedRanking": [],
+                                "CreateChallengeView": [
+                                    "Data.Hardware.Rank",
+                                    "Data.Hardware.Ranking"
+                                ],
+                                "ConfirmChallengeView": [
+                                    "Data.Hardware.Rank",
+                                    "Data.Hardware.Ranking"
+                                ],
+                                "PrepareResult": [],
+                                "Error": [
+                                    "String.String"
+                                ],
+                                "ConfirmJoinMemberView": [],
+                                "ConfirmLeaveMemberView": [],
+                                "ConfirmDeleteUserView": []
                             }
                         },
                         "Data.Hardware.ResultOfMatch": {
@@ -17194,6 +17330,14 @@ type alias Process =
                             "args": [],
                             "tags": {
                                 "Loading": []
+                            }
+                        },
+                        "Pages.Hardware.Status": {
+                            "args": [],
+                            "tags": {
+                                "Loading": [],
+                                "Loaded": [],
+                                "Errored": []
                             }
                         },
                         "Pages.Market.Status": {

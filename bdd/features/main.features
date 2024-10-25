@@ -11,13 +11,14 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **And**  there is an HTTPS server running a Haveno daemon configured for securely handling transactions
 **And**  the Haveno-Web app is connected to the Internet
 
-#### **Scenario 1: Warning that the hardware wallet is NOT connected**
+#### **Scenario 1: Popup warning that the hardware wallet is NOT connected on application start**
 
 **Given** the web app is opened
 **And** the LNS hww is NOT detected
 **And** it should ensure the navigation menu is disabled
 **Then** it should display a message informing the user not connected
-**And** it should display the 'Connected' indicator as Disconnected (red)
+**And** it should not display the 'Connected' indicator in the background
+
 
 
 
