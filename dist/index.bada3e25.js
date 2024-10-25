@@ -11578,7 +11578,7 @@ type alias Process =
         ]));
     });
     var $elm$html$Html$h5 = _VirtualDom_node("h5");
-    var $author$project$Main$isXMRWalletConnectedIndicator = F2(function(isConnected, xmrWalletAddress) {
+    var $author$project$Main$isXMRWalletConnectedIndicator = function(model) {
         return A2($elm$html$Html$h3, _List_Nil, _List_fromArray([
             A2($elm$html$Html$div, _List_fromArray([
                 $elm$html$Html$Attributes$class("indicator"),
@@ -11587,18 +11587,18 @@ type alias Process =
                 A2($elm$html$Html$br, _List_Nil, _List_Nil),
                 A2($elm$html$Html$span, _List_Nil, _List_fromArray([
                     A2($elm$html$Html$h6, _List_fromArray([
-                        $elm$html$Html$Attributes$class(isConnected ? "indicator green" : "indicator red")
+                        $elm$html$Html$Attributes$class(model.isHardwareLNSConnected || model.isHardwareLNXConnected ? "indicator green" : "indicator red")
                     ]), _List_fromArray([
-                        $elm$html$Html$text(isConnected ? "XMR Wallet Connected" : "XMR Wallet Disconnected")
+                        $elm$html$Html$text(model.isHardwareLNSConnected || model.isHardwareLNXConnected ? "XMR Wallet Connected" : model.isPopUpVisible ? "_" : "XMR Wallet Disconnected")
                     ])),
                     A2($elm$html$Html$br, _List_Nil, _List_Nil),
                     A2($elm$html$Html$h5, _List_Nil, _List_fromArray([
-                        $elm$html$Html$text(isConnected ? "XMR Wallet Address: " + xmrWalletAddress : "")
+                        $elm$html$Html$text(model.isHardwareLNSConnected || model.isHardwareLNXConnected ? "XMR Wallet Address: " + model.xmrWalletAddress : model.isPopUpVisible ? "_" : "No XMR Wallet Address")
                     ]))
                 ]))
             ]))
         ]));
-    });
+    };
     var $elm$html$Html$nav = _VirtualDom_node("nav");
     var $elm$html$Html$Attributes$classList = function(classes) {
         return $elm$html$Html$Attributes$class(A2($elm$core$String$join, " ", A2($elm$core$List$map, $elm$core$Tuple$first, A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
@@ -16482,7 +16482,7 @@ type alias Process =
                 $author$project$Main$viewPopUp(model),
                 contentByPage,
                 A2($author$project$Main$isHWConnectedIndicator, model, isConnected),
-                A2($author$project$Main$isXMRWalletConnectedIndicator, model.isXMRWalletConnected, model.xmrWalletAddress),
+                $author$project$Main$isXMRWalletConnectedIndicator(model),
                 $author$project$Main$footerContent(model)
             ]),
             title: "Haveno-Web"

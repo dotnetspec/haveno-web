@@ -127,6 +127,16 @@ runSpecTests =
                                         Claim.isStringContaining 1 "_"
                                 )
                         )
+                    , it "should NOT display the 'XMR Wallet address' indicator in the background"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ tag "h5" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "_"
+                                )
+                        )
                     ]
             )
         , --Runner.skip <|

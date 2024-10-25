@@ -682,7 +682,7 @@ view model =
         , viewPopUp model
         , contentByPage
         , isHWConnectedIndicator model isConnected
-        , isXMRWalletConnectedIndicator model.isXMRWalletConnected model.xmrWalletAddress
+        , isXMRWalletConnectedIndicator model
         , footerContent model
         ]
     }
@@ -1462,15 +1462,15 @@ isHWConnectedIndicator model isConnected =
         ]
 
 
-isXMRWalletConnectedIndicator : Bool -> String -> Html msg
-isXMRWalletConnectedIndicator isConnected xmrWalletAddress =
+isXMRWalletConnectedIndicator : Model -> Html msg
+isXMRWalletConnectedIndicator model  =
     h3 []
         [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
             [ br [] []
             , span []
                 [ h6
                     [ Attr.class
-                        (if isConnected then
+                        (if model.isHardwareLNSConnected || model.isHardwareLNXConnected then
                             "indicator green"
 
                          else
@@ -1478,8 +1478,11 @@ isXMRWalletConnectedIndicator isConnected xmrWalletAddress =
                         )
                     ]
                     [ text
-                        (if isConnected then
+                        (if model.isHardwareLNSConnected || model.isHardwareLNXConnected then
                             "XMR Wallet Connected"
+
+                         else if model.isPopUpVisible then
+                            "_"
 
                          else
                             "XMR Wallet Disconnected"
@@ -1488,11 +1491,14 @@ isXMRWalletConnectedIndicator isConnected xmrWalletAddress =
                 , br [] []
                 , h5 []
                     [ text
-                        (if isConnected then
-                            "XMR Wallet Address: " ++ xmrWalletAddress
+                        (if model.isHardwareLNSConnected || model.isHardwareLNXConnected then
+                            "XMR Wallet Address: " ++ model.xmrWalletAddress
+
+                         else if model.isPopUpVisible then
+                            "_"
 
                          else
-                            ""
+                            "No XMR Wallet Address"
                         )
                     ]
                 ]
