@@ -204,15 +204,9 @@ view model =
             [ Element.el Heading.h1 <|
                 Element.text "Haveno Web - Dashboard"
             , Element.text "\n"
-
-            --, infoBtn "Connect Hardware Device" <| ClickedHardwareDeviceConnect
             , Element.text "Your version is:"
-
-            --, infoBtn "Connect XMR Wallet" <| ClickedXMRWalletConnect
             , Element.el Heading.h4 <| Element.text (Maybe.withDefault "" (model.version |> Maybe.map .version))
             , Element.text "\n"
-
-            --, infoBtn "Initiate Transaction" <| ClickedXMRInitiateTransaction "0.01"
             , case model.errors of
                 [] ->
                     Element.text ""

@@ -16198,7 +16198,7 @@ type alias Process =
             A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h5, $mdgriffith$elm_ui$Element$text("Welcome - Unconnected User")),
             $mdgriffith$elm_ui$Element$text("\n"),
             A2($author$project$Pages$Hardware$infoBtn, "Connect Hardware Device", $author$project$Pages$Hardware$ClickedHardwareDeviceConnect),
-            $mdgriffith$elm_ui$Element$text("Connect XMR Wallet\n"),
+            $mdgriffith$elm_ui$Element$text("\n"),
             A2($author$project$Pages$Hardware$infoBtn, "Connect XMR Wallet", $author$project$Pages$Hardware$ClickedXMRWalletConnect),
             $mdgriffith$elm_ui$Element$text("\n"),
             A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h6, $mdgriffith$elm_ui$Element$text(model.isHardwareLNSConnected ? "Nano S Connected" : model.isHardwareLNXConnected ? "Nano X Connected" : model.isXMRWalletConnected ? "XMR Wallet Connected with Address: " + model.xmrWalletAddress : "No hardware device connected")),

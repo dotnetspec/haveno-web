@@ -1456,7 +1456,7 @@ hardwareWalletView model =
             [ Element.el Heading.h5 <| Element.text "Welcome - Unconnected User"
             , Element.text "\n"
             , infoBtn "Connect Hardware Device" <| ClickedHardwareDeviceConnect
-            , Element.text "Connect XMR Wallet\n"
+            , Element.text "\n"
             , infoBtn "Connect XMR Wallet" <| ClickedXMRWalletConnect
             , Element.text "\n"
             , Element.el Heading.h6 <|
