@@ -1,7 +1,8 @@
 port module Main exposing (..)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
--- Main loads Dashboard initially.
+-- Main loads Blank initially.
+-- and uses a top level Model where data that needs to be persisted ACROSS pages is held
 -- NOTE: exposing Url exposes a different type of Url to
 -- just import Url
 
@@ -70,26 +71,7 @@ main =
 
 
 -- NAV: Init
--- NOTE: Nav.Key is a special Elm type to avoid bugs - just pass, and leave, it
-{- -- NOTE: we need to populate Pages.Dashboard.Model values in our init function. How can
-   we obtain a Pages.Dashboard.Model value? By calling Dashboard.init .
-
-   Change the type (here and in Main) of any flag you pass in if necessary.
-
-   We're using init to store data in our top level Model where data that needs to be
-   persisted ACROSS 'pages' is held
--}
-{- init : String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-   init flag url maybeKey =
-
-       case maybeKey of
-           Just key ->
-               actualInit flag url key
-
-           Nothing ->
-               testInit flag url
-       updateUrl url { page = NotFound, key = key, flag = decodedJsonFromSetupElmmjs, time = Time.millisToPosix 0, zone = Just Time.utc, errors = [ "" ] }
--}
+-- NOTE: This is used to initialize the model in init and spec tests
 
 
 init : String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -104,17 +86,30 @@ init flag url key =
                     -- Handle the case where decoding fails
                     Url.Url Https "haveno-web.squashpassion.com" Nothing "" Nothing Nothing
 
-        localnavigate newUrl =
-            Nav.pushUrl key (Url.toString newUrl)
-
+        -- NOTE: Initialize the whole model here so that can assign Nav.Key
         updatedModel =
-            { mainInitModel | flag = decodedJsonFromSetupElmmjs, key = localnavigate }
+            { page = BlankPage Pages.Blank.initialModel
+            , flag = decodedJsonFromSetupElmmjs
+            , key = key
+
+            --, flag = Url.Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
+            , time = Time.millisToPosix 0
+            , zone = Nothing -- Replace with the actual time zone if available
+            , errors = []
+            , isHardwareLNSConnected = False
+            , isHardwareLNXConnected = False
+            , isXMRWalletConnected = False
+            , xmrWalletAddress = ""
+            , isPopUpVisible = True
+            , isNavMenuActive = True
+            , version = Nothing
+            }
     in
-    updateUrl (updateUrlPath url "/hardware") updatedModel
+    --updateUrl (updateUrlPath url "/hardware") updatedModel
+    updateUrl url updatedModel
 
 
 
---updateUrl url updatedModel
 -- REVIEW:  FORGET THE KEY AND USE FLAG FOR INDICATING NAVIGATION
 
 
@@ -133,7 +128,7 @@ updateUrlPath url newPath =
 
 type alias Model =
     { page : Page
-    , key : Url -> Cmd Msg
+    , key : Nav.Key
     , flag : Url
     , time : Time.Posix
     , zone : Maybe Time.Zone
@@ -156,31 +151,6 @@ navigate thekey =
 
 -- forNavigation needs this to be:
 --  #{ onUrlChange : Url -> msg, onUrlRequest : Browser.UrlRequest -> msg }#
--- NOTE: This is used to initialize the model in init and spec tests
--- NAV: Main's Initial Model
-
-
-mainInitModel : Model
-mainInitModel =
-    { page = HardwarePage Pages.Hardware.initialModel
-
-    -- NOTE: The following 2 params are replaced in init:
-    , key = \_ -> Cmd.none
-    , flag = Url.Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
-    , time = Time.millisToPosix 0
-    , zone = Nothing -- Replace with the actual time zone if available
-    , errors = []
-    , isHardwareLNSConnected = False
-    , isHardwareLNXConnected = False
-    , isXMRWalletConnected = False
-    , xmrWalletAddress = ""
-    , isPopUpVisible = True
-    , isNavMenuActive = True
-    , version = Nothing
-    }
-
-
-
 -- NAV: Msg
 -- REVIEW: Move these notes to a separate file somewhere?
 -- We 'talk' (e.g. send time to schedule) to the other pages via the Msgs defined here and in those pages.
@@ -236,6 +206,7 @@ type Msg
     | ShowPopUp
     | HidePopUp
     | GotVersion (Result Grpc.Error GetVersionReply)
+    | NavigateTo Page
 
 
 
@@ -246,9 +217,31 @@ type Msg
 -- was handled before sending the page model where it could be used
 
 
+pageToUrlPath : Page -> String
+pageToUrlPath page =
+    case page of
+        HardwarePage _ ->
+            "/hardware"
+
+        DashboardPage _ ->
+            "/dashboard"
+
+        _ ->
+            "/"
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        NavigateTo newpage ->
+            let
+                newUrl =
+                    Url.Url Http "localhost" (Just 1234) (pageToUrlPath newpage) Nothing Nothing
+            in
+            ( { model | page = newpage }
+            , Nav.pushUrl model.key (pageToUrlPath newpage)
+            )
+
         GotVersion (Ok versionResp) ->
             ( { model | version = Just versionResp }, Cmd.none )
 
@@ -259,7 +252,7 @@ update msg model =
             ( { model | isPopUpVisible = True }, Cmd.none )
 
         HidePopUp ->
-            ( { model | isPopUpVisible = False, isNavMenuActive = True }
+            ( { model | isPopUpVisible = False, isNavMenuActive = True, page = HardwarePage Pages.Hardware.initialModel }
             , Cmd.none
             )
 
@@ -287,17 +280,20 @@ update msg model =
             else
                 case model.page of
                     DashboardPage _ ->
-                        if (model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected then
-                            ( model, Cmd.none )
-
-                        else
-                            --toHardware model (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) Pages.Hardware.initialModel)
-                            updateUrl (Url.Url Http "localhost" Nothing "/hardware" Nothing Nothing) model
+                        ( model, Cmd.none )
 
                     SellPage _ ->
                         ( model, Cmd.none )
 
                     BlankPage _ ->
+                        {- if (model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected then
+                               ( { model | page = DashboardPage Pages.Dashboard.initialModel }, Cmd.none )
+
+                           else
+                               --toHardware model (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) Pages.Hardware.initialModel)
+                               updateUrl (Url.Url Http "localhost" Nothing "/hardware" Nothing Nothing) model
+                               --( { model | page = HardwarePage Pages.Hardware.initialModel }, Cmd.none )
+                        -}
                         ( model, Cmd.none )
 
                     PortfolioPage _ ->
@@ -401,6 +397,9 @@ update msg model =
                                 else
                                     Url.Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
 
+                            _ =
+                                Debug.log "newPage" newPage
+
                             newMainModel =
                                 { model
                                     | page = newPage
@@ -454,12 +453,13 @@ update msg model =
                         -- NOTE: Nav.pushUrl only manipulates the address bar
                         -- and triggers ChangedUrl
                         _ ->
-                            ( model, model.key url )
+                            ( model, Cmd.none )
 
         -- NOTE: translate URL (e.g. Back btn) into a Page and store it in our Model
         -- this is the place to handle transitions. This is where we can get more fancy
         -- with clicked links (use Erl package on the links e.g. Erl.extractPath)
         {- It looks like we're supposed to use this instead of Browser.onUrlChange in Subscriptions (as per older docs) -}
+        -- NOTE: The only way this is triggered currently is by the js menu code clicks
         ChangedUrl url ->
             updateUrl url model
 
@@ -837,6 +837,7 @@ codeParser =
 -- NOTE: Data you want to pass fom Main to another module's model can be done in the to<functions>
 -- updateUrl is a helper function to init
 -- NAV: UpdateUrl - update sub-modules from Main AND update Main from the sub-modules
+-- NOTE: Triggered by ChangedUrl
 
 
 updateUrl : Url.Url -> Model -> ( Model, Cmd Msg )
@@ -850,6 +851,7 @@ updateUrl url model =
         oauthCode =
             gotCodeFromUrl url
     in
+    -- NOTE: Parse the url to get a ROUTE type
     case Url.Parser.parse urlAsPageParser urlMinusQueryStr of
         Just Dashboard ->
             let
@@ -1360,12 +1362,21 @@ burgerMenu page =
 navLinks : Page -> Html msg
 navLinks page =
     let
+        -- NOTE: A key function in that it takes a Route and a { url, caption } and returns an Html msg
+        -- which when clicked will send a message to the update function (ChangedUrl) with the relevant url
+        -- Route and page are also there for isActive.
+        navLink : Route -> { url : String, caption : String } -> Html msg
+        navLink route { url, caption } =
+            li [ classList [ ( "active", isActive { link = route, page = page } ), ( "navLink", True ) ] ]
+                [ a [ href url ] [ text caption ] ]
+
         links =
             ul
                 [-- NOTE: img is now managed separately so is can be shrunk etc. withouth affecting the links
                 ]
                 [ li [ class "logo" ] [ a [ Attr.href "https://haveno-web.squashpassion.com", Attr.class "logoImageShrink" ] [ logoImage ] ]
-                , navLink Dashboard { url = "/", caption = "Dashboard" }
+                , navLink Blank { url = "/", caption = "" }
+                , navLink Dashboard { url = "dashboard", caption = "Dashboard" }
                 , navLink Market { url = "market", caption = "Market" }
                 , navLink Support { url = "support", caption = "Support" }
                 , navLink Sell { url = "sell", caption = "Sell" }
@@ -1373,14 +1384,6 @@ navLinks page =
                 , navLink Hardware { url = "hardware", caption = "Hardware" }
                 , navLink Portfolio { url = "portfolio", caption = "Portfolio" }
                 ]
-
-        -- NOTE: route and page are only there for isActive.
-        -- navLink just writes out some html and helps us manage isActive
-        -- it doesn't parse routes etc.
-        navLink : Route -> { url : String, caption : String } -> Html msg
-        navLink route { url, caption } =
-            li [ classList [ ( "active", isActive { link = route, page = page } ), ( "navLink", True ) ] ]
-                [ a [ href url ] [ text caption ] ]
     in
     links
 

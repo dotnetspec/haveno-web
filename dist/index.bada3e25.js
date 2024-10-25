@@ -8202,7 +8202,6 @@ type alias Process =
         isHardwareLNXConnected: false,
         isReturnUser: false,
         isValidNewAccessToken: false,
-        isWaitingForResponse: false,
         isXMRWalletConnected: false,
         objectJSONfromJSPort: $elm$core$Maybe$Nothing,
         queryType: $author$project$Pages$Hardware$LoggedInUser,
@@ -8539,29 +8538,26 @@ type alias Process =
                                             return function(isXMRWalletConnected) {
                                                 return function(xmrWalletAddress) {
                                                     return function(errors) {
-                                                        return function(isWaitingForResponse) {
-                                                            return function(isReturnUser) {
-                                                                return function(user) {
-                                                                    return function(objectJSONfromJSPort) {
-                                                                        return {
-                                                                            apiSpecifics: apiSpecifics,
-                                                                            datetimeFromMain: datetimeFromMain,
-                                                                            errors: errors,
-                                                                            flagUrl: flagUrl,
-                                                                            isHardwareLNSConnected: isHardwareLNSConnected,
-                                                                            isHardwareLNXConnected: isHardwareLNXConnected,
-                                                                            isReturnUser: isReturnUser,
-                                                                            isValidNewAccessToken: isValidNewAccessToken,
-                                                                            isWaitingForResponse: isWaitingForResponse,
-                                                                            isXMRWalletConnected: isXMRWalletConnected,
-                                                                            objectJSONfromJSPort: objectJSONfromJSPort,
-                                                                            queryType: queryType,
-                                                                            root: root,
-                                                                            status: status,
-                                                                            title: title,
-                                                                            user: user,
-                                                                            xmrWalletAddress: xmrWalletAddress
-                                                                        };
+                                                        return function(isReturnUser) {
+                                                            return function(user) {
+                                                                return function(objectJSONfromJSPort) {
+                                                                    return {
+                                                                        apiSpecifics: apiSpecifics,
+                                                                        datetimeFromMain: datetimeFromMain,
+                                                                        errors: errors,
+                                                                        flagUrl: flagUrl,
+                                                                        isHardwareLNSConnected: isHardwareLNSConnected,
+                                                                        isHardwareLNXConnected: isHardwareLNXConnected,
+                                                                        isReturnUser: isReturnUser,
+                                                                        isValidNewAccessToken: isValidNewAccessToken,
+                                                                        isXMRWalletConnected: isXMRWalletConnected,
+                                                                        objectJSONfromJSPort: objectJSONfromJSPort,
+                                                                        queryType: queryType,
+                                                                        root: root,
+                                                                        status: status,
+                                                                        title: title,
+                                                                        user: user,
+                                                                        xmrWalletAddress: xmrWalletAddress
                                                                     };
                                                                 };
                                                             };
@@ -8594,7 +8590,7 @@ type alias Process =
         var newUrl = A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
         return _Utils_Tuple2($author$project$Pages$Hardware$Model($author$project$Pages$Hardware$Loaded)("Hardware")($author$project$Pages$Hardware$Hardware({
             name: "Loading..."
-        }))(newUrl)(A2($elm$core$Maybe$withDefault, $elm$core$Maybe$Nothing, $elm$core$Maybe$Just(fromMainToHardware.time)))($author$project$Pages$Hardware$apiSpecsPlaceHolder)($author$project$Pages$Hardware$LoggedInUser)(false)(false)(false)(false)("")(_List_Nil)(false)(false)($author$project$Data$User$emptySpectator)($elm$core$Maybe$Nothing), $elm$core$Platform$Cmd$none);
+        }))(newUrl)(A2($elm$core$Maybe$withDefault, $elm$core$Maybe$Nothing, $elm$core$Maybe$Just(fromMainToHardware.time)))($author$project$Pages$Hardware$apiSpecsPlaceHolder)($author$project$Pages$Hardware$LoggedInUser)(false)(false)(false)(false)("")(_List_Nil)(false)($author$project$Data$User$emptySpectator)($elm$core$Maybe$Nothing), $elm$core$Platform$Cmd$none);
     };
     var $author$project$Pages$Market$Loading = {
         $: "Loading"
@@ -10185,11 +10181,6 @@ type alias Process =
             time: $elm$core$Maybe$Nothing
         }));
     });
-    var $author$project$Main$updateUrlPath = F2(function(url, newPath) {
-        return _Utils_update(url, {
-            path: newPath
-        });
-    });
     var $elm$json$Json$Decode$andThen = _Json_andThen;
     var $elm$json$Json$Decode$fail = _Json_fail;
     var $author$project$Main$urlDecoder = A2($elm$json$Json$Decode$andThen, function(s) {
@@ -10214,7 +10205,7 @@ type alias Process =
             flag: decodedJsonFromSetupElmmjs,
             key: localnavigate
         });
-        return A2($author$project$Main$updateUrl, A2($author$project$Main$updateUrlPath, url, "/hardware"), updatedModel);
+        return A2($author$project$Main$updateUrl, url, updatedModel);
     });
     var $author$project$Main$Recv = function(a) {
         return {
@@ -10498,6 +10489,7 @@ type alias Process =
     };
     var $author$project$Main$justmsgFieldFromJsonDecoder = A2($elm$json$Json$Decode$map, $author$project$Main$OperationEventMsg, A2($elm$json$Json$Decode$field, "operationEventMsg", $elm$json$Json$Decode$string));
     var $elm$browser$Browser$Navigation$load = _Browser_load;
+    var $elm$core$Debug$log = _Debug_log;
     var $author$project$Main$sendMessageToJs = _Platform_outgoingPort("sendMessageToJs", $elm$json$Json$Encode$string);
     var $author$project$Pages$Blank$update = F2(function(msg, model) {
         var newModel = msg.a;
@@ -10629,12 +10621,6 @@ type alias Process =
             a: a
         };
     };
-    var $author$project$Data$User$Registered = function(a) {
-        return {
-            $: "Registered",
-            a: a
-        };
-    };
     var $author$project$Types$DateType$SelectedDateTime = F2(function(a, b) {
         return {
             $: "SelectedDateTime",
@@ -10685,109 +10671,54 @@ type alias Process =
             a: a
         };
     };
-    var $author$project$Pages$Hardware$CallResponse = function(a) {
+    var $author$project$Extras$Constants$emptyEmailPassword = {
+        email: "",
+        password: ""
+    };
+    var $author$project$Data$Hardware$emptyRank = {
+        challenger: {
+            id: "String",
+            nickname: "String"
+        },
+        player: {
+            id: "String",
+            nickname: "String"
+        },
+        rank: 0
+    };
+    var $author$project$Data$Hardware$emptyRanking = {
+        active: false,
+        baseaddress: {
+            city: "",
+            street: ""
+        },
+        id: "",
+        ladder: _List_fromArray([
+            $author$project$Data$Hardware$emptyRank
+        ]),
+        name: "",
+        owner_id: "",
+        owner_name: "",
+        player_count: 0
+    };
+    var $author$project$Pages$Hardware$isValidXMRAddress = function(str) {
+        var _v0 = A2($elm$parser$Parser$run, $author$project$Data$Hardware$validXMRAddressParser, str);
+        if (_v0.$ === "Ok") return true;
+        else return false;
+    };
+    var $author$project$Pages$Hardware$OperationEventMsg = function(operationEventMsg) {
         return {
-            $: "CallResponse",
+            operationEventMsg: operationEventMsg
+        };
+    };
+    var $author$project$Pages$Hardware$justmsgFieldFromJsonDecoder = A2($elm$json$Json$Decode$map, $author$project$Pages$Hardware$OperationEventMsg, A2($elm$json$Json$Decode$field, "operationEventMsg", $elm$json$Json$Decode$string));
+    var $author$project$Extras$Constants$noCurrentChallengerId = "6353e8b6aedf80653eb34191";
+    var $author$project$Pages$Hardware$ProfileResponse = function(a) {
+        return {
+            $: "ProfileResponse",
             a: a
         };
     };
-    var $author$project$Extras$Constants$jsonKeyValue = F2(function(key, value) {
-        return _Utils_Tuple2(key, $elm$json$Json$Encode$string(value));
-    });
-    var $author$project$Extras$Constants$numIntObject = function(str) {
-        return $elm$json$Json$Encode$object(_List_fromArray([
-            _Utils_Tuple2("$numberInt", $elm$json$Json$Encode$string(str))
-        ]));
-    };
-    var $author$project$Extras$Constants$pipelineRequest = A2($elm$json$Json$Encode$list, $elm$core$Basics$identity, _List_fromArray([
-        $elm$json$Json$Encode$object(_List_fromArray([
-            _Utils_Tuple2("$match", $elm$json$Json$Encode$object(_List_fromArray([
-                _Utils_Tuple2("_id", $elm$json$Json$Encode$object(_List_fromArray([
-                    A2($author$project$Extras$Constants$jsonKeyValue, "$oid", "651fa006b15a534c69b119ef")
-                ])))
-            ])))
-        ])),
-        $elm$json$Json$Encode$object(_List_fromArray([
-            _Utils_Tuple2("$lookup", $elm$json$Json$Encode$object(_List_fromArray([
-                A2($author$project$Extras$Constants$jsonKeyValue, "from", "rankings"),
-                _Utils_Tuple2("localField", $elm$json$Json$Encode$string("ownerOf")),
-                _Utils_Tuple2("foreignField", $elm$json$Json$Encode$string("_id")),
-                _Utils_Tuple2("as", $elm$json$Json$Encode$string("ownedRankings"))
-            ])))
-        ])),
-        $elm$json$Json$Encode$object(_List_fromArray([
-            _Utils_Tuple2("$lookup", $elm$json$Json$Encode$object(_List_fromArray([
-                _Utils_Tuple2("from", $elm$json$Json$Encode$string("rankings")),
-                _Utils_Tuple2("localField", $elm$json$Json$Encode$string("memberOf")),
-                _Utils_Tuple2("foreignField", $elm$json$Json$Encode$string("_id")),
-                _Utils_Tuple2("as", $elm$json$Json$Encode$string("memberRankings"))
-            ])))
-        ])),
-        $elm$json$Json$Encode$object(_List_fromArray([
-            _Utils_Tuple2("$lookup", $elm$json$Json$Encode$object(_List_fromArray([
-                _Utils_Tuple2("from", $elm$json$Json$Encode$string("users")),
-                _Utils_Tuple2("localField", $elm$json$Json$Encode$string("memberRankings.owner_id")),
-                _Utils_Tuple2("foreignField", $elm$json$Json$Encode$string("_id")),
-                _Utils_Tuple2("as", $elm$json$Json$Encode$string("memberRankingsWithOwnerName"))
-            ])))
-        ])),
-        $elm$json$Json$Encode$object(_List_fromArray([
-            _Utils_Tuple2("$project", $elm$json$Json$Encode$object(_List_fromArray([
-                _Utils_Tuple2("_id", $author$project$Extras$Constants$numIntObject("1")),
-                _Utils_Tuple2("userid", $author$project$Extras$Constants$numIntObject("1")),
-                _Utils_Tuple2("nickname", $author$project$Extras$Constants$numIntObject("1")),
-                _Utils_Tuple2("active", $author$project$Extras$Constants$numIntObject("1")),
-                _Utils_Tuple2("description", $author$project$Extras$Constants$numIntObject("1")),
-                _Utils_Tuple2("datestamp", $author$project$Extras$Constants$numIntObject("1")),
-                _Utils_Tuple2("token", $author$project$Extras$Constants$numIntObject("1")),
-                _Utils_Tuple2("updatetext", $author$project$Extras$Constants$numIntObject("1")),
-                _Utils_Tuple2("mobile", $author$project$Extras$Constants$numIntObject("1")),
-                _Utils_Tuple2("credits", $author$project$Extras$Constants$numIntObject("1")),
-                _Utils_Tuple2("ownedRankings", $elm$json$Json$Encode$object(_List_fromArray([
-                    _Utils_Tuple2("_id", $author$project$Extras$Constants$numIntObject("1")),
-                    _Utils_Tuple2("active", $author$project$Extras$Constants$numIntObject("1")),
-                    _Utils_Tuple2("owner_id", $author$project$Extras$Constants$numIntObject("1")),
-                    _Utils_Tuple2("baseaddress", $author$project$Extras$Constants$numIntObject("1")),
-                    _Utils_Tuple2("ranking", $author$project$Extras$Constants$numIntObject("1")),
-                    _Utils_Tuple2("player_count", $author$project$Extras$Constants$numIntObject("1")),
-                    _Utils_Tuple2("name", $author$project$Extras$Constants$numIntObject("1")),
-                    A2($author$project$Extras$Constants$jsonKeyValue, "owner_name", "$nickname")
-                ]))),
-                _Utils_Tuple2("memberRankings", $elm$json$Json$Encode$object(_List_fromArray([
-                    _Utils_Tuple2("_id", $author$project$Extras$Constants$numIntObject("1")),
-                    _Utils_Tuple2("name", $author$project$Extras$Constants$numIntObject("1")),
-                    _Utils_Tuple2("active", $author$project$Extras$Constants$numIntObject("1")),
-                    _Utils_Tuple2("owner_id", $author$project$Extras$Constants$numIntObject("1")),
-                    _Utils_Tuple2("baseaddress", $author$project$Extras$Constants$numIntObject("1")),
-                    _Utils_Tuple2("ranking", $author$project$Extras$Constants$numIntObject("1")),
-                    _Utils_Tuple2("player_count", $author$project$Extras$Constants$numIntObject("1")),
-                    _Utils_Tuple2("owner_name", $elm$json$Json$Encode$object(_List_fromArray([
-                        _Utils_Tuple2("owner_name", $elm$json$Json$Encode$string("$memberRankingsWithOwnerName.nickname"))
-                    ])))
-                ]))),
-                _Utils_Tuple2("owner_ranking_count", $elm$json$Json$Encode$object(_List_fromArray([
-                    _Utils_Tuple2("$size", $elm$json$Json$Encode$string("$ownedRankings"))
-                ]))),
-                _Utils_Tuple2("member_ranking_count", $elm$json$Json$Encode$object(_List_fromArray([
-                    _Utils_Tuple2("$size", $elm$json$Json$Encode$string("$memberRankings"))
-                ]))),
-                _Utils_Tuple2("addInfo", $author$project$Extras$Constants$numIntObject("1")),
-                _Utils_Tuple2("gender", $author$project$Extras$Constants$numIntObject("1")),
-                _Utils_Tuple2("age", $author$project$Extras$Constants$numIntObject("1"))
-            ])))
-        ]))
-    ]));
-    var $author$project$Extras$Constants$callRequestJson = $elm$json$Json$Encode$object(_List_fromArray([
-        _Utils_Tuple2("name", $elm$json$Json$Encode$string("aggregate")),
-        _Utils_Tuple2("arguments", A2($elm$json$Json$Encode$list, $elm$core$Basics$identity, _List_fromArray([
-            $elm$json$Json$Encode$object(_List_fromArray([
-                _Utils_Tuple2("database", $elm$json$Json$Encode$string("sportrank")),
-                _Utils_Tuple2("collection", $elm$json$Json$Encode$string("users")),
-                _Utils_Tuple2("pipeline", $author$project$Extras$Constants$pipelineRequest)
-            ]))
-        ]))),
-        _Utils_Tuple2("service", $elm$json$Json$Encode$string("mongodb-atlas"))
-    ]));
     var $elm$http$Http$expectStringResponse = F2(function(toMsg, toResult) {
         return A3(_Http_expect, "", $elm$core$Basics$identity, A2($elm$core$Basics$composeR, toResult, toMsg));
     });
@@ -10846,179 +10777,6 @@ type alias Process =
             return A2($elm$core$Result$mapError, $elm$json$Json$Decode$errorToString, A2($elm$json$Json$Decode$decodeString, decoder, string));
         }));
     });
-    var $elm$json$Json$Decode$index = _Json_decodeIndex;
-    var $elm$http$Http$jsonBody = function(value) {
-        return A2(_Http_pair, "application/json", A2($elm$json$Json$Encode$encode, 0, value));
-    };
-    var $elm$json$Json$Decode$bool = _Json_decodeBool;
-    var $author$project$Data$User$Description = F2(function(level, comment) {
-        return {
-            comment: comment,
-            level: level
-        };
-    });
-    var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
-    var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(function(key, valDecoder, decoder) {
-        return A2($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom, A2($elm$json$Json$Decode$field, key, valDecoder), decoder);
-    });
-    var $author$project$Data$User$descriptionDecoder = A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "comment", $elm$json$Json$Decode$string, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "level", $elm$json$Json$Decode$string, $elm$json$Json$Decode$succeed($author$project$Data$User$Description)));
-    var $author$project$Data$User$Female = {
-        $: "Female"
-    };
-    var $author$project$Data$User$genderDecoder = A2($elm$json$Json$Decode$andThen, function(str) {
-        switch(str){
-            case "Male":
-                return $elm$json$Json$Decode$succeed($author$project$Data$User$Male);
-            case "Female":
-                return $elm$json$Json$Decode$succeed($author$project$Data$User$Female);
-            default:
-                return $elm$json$Json$Decode$fail("Invalid gender");
-        }
-    }, $elm$json$Json$Decode$string);
-    var $author$project$Data$User$idDecoder = A2($elm$json$Json$Decode$field, "$oid", $elm$json$Json$Decode$string);
-    var $elm$json$Json$Decode$oneOf = _Json_oneOf;
-    var $elm$json$Json$Decode$maybe = function(decoder) {
-        return $elm$json$Json$Decode$oneOf(_List_fromArray([
-            A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder),
-            $elm$json$Json$Decode$succeed($elm$core$Maybe$Nothing)
-        ]));
-    };
-    var $author$project$Data$User$numberDecoder = A2($elm$json$Json$Decode$andThen, function(str) {
-        var _v0 = $elm$core$String$toInt(str);
-        if (_v0.$ === "Just") {
-            var num = _v0.a;
-            return $elm$json$Json$Decode$succeed(num);
-        } else return $elm$json$Json$Decode$fail("Expected an integer");
-    }, A2($elm$json$Json$Decode$field, "$numberInt", $elm$json$Json$Decode$string));
-    var $elm$json$Json$Decode$null = _Json_decodeNull;
-    var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalDecoder = F3(function(path, valDecoder, fallback) {
-        var nullOr = function(decoder) {
-            return $elm$json$Json$Decode$oneOf(_List_fromArray([
-                decoder,
-                $elm$json$Json$Decode$null(fallback)
-            ]));
-        };
-        var handleResult = function(input) {
-            var _v0 = A2($elm$json$Json$Decode$decodeValue, A2($elm$json$Json$Decode$at, path, $elm$json$Json$Decode$value), input);
-            if (_v0.$ === "Ok") {
-                var rawValue = _v0.a;
-                var _v1 = A2($elm$json$Json$Decode$decodeValue, nullOr(valDecoder), rawValue);
-                if (_v1.$ === "Ok") {
-                    var finalResult = _v1.a;
-                    return $elm$json$Json$Decode$succeed(finalResult);
-                } else return A2($elm$json$Json$Decode$at, path, nullOr(valDecoder));
-            } else return $elm$json$Json$Decode$succeed(fallback);
-        };
-        return A2($elm$json$Json$Decode$andThen, handleResult, $elm$json$Json$Decode$value);
-    });
-    var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional = F4(function(key, valDecoder, fallback, decoder) {
-        return A2($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optionalDecoder, _List_fromArray([
-            key
-        ]), valDecoder, fallback), decoder);
-    });
-    var $author$project$Data$Hardware$Ranking = F8(function(id, active, name, owner_id, baseaddress, ladder, player_count, owner_name) {
-        return {
-            active: active,
-            baseaddress: baseaddress,
-            id: id,
-            ladder: ladder,
-            name: name,
-            owner_id: owner_id,
-            owner_name: owner_name,
-            player_count: player_count
-        };
-    });
-    var $author$project$Data$Hardware$BaseAddress = F2(function(street, city) {
-        return {
-            city: city,
-            street: street
-        };
-    });
-    var $author$project$Data$Hardware$baseAddressDecoder = A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "city", $elm$json$Json$Decode$string, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "street", $elm$json$Json$Decode$string, $elm$json$Json$Decode$succeed($author$project$Data$Hardware$BaseAddress)));
-    var $author$project$Data$Hardware$emptyRank = {
-        challenger: {
-            id: "String",
-            nickname: "String"
-        },
-        player: {
-            id: "String",
-            nickname: "String"
-        },
-        rank: 0
-    };
-    var $author$project$Data$Hardware$idDecoder = A2($elm$json$Json$Decode$field, "$oid", $elm$json$Json$Decode$string);
-    var $author$project$Data$Hardware$ownerIdDecoder = A2($elm$json$Json$Decode$field, "$oid", $elm$json$Json$Decode$string);
-    var $author$project$Data$Hardware$Player = F2(function(id, nickname) {
-        return {
-            id: id,
-            nickname: nickname
-        };
-    });
-    var $author$project$Data$Hardware$playerDecoder = A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "nickname", $elm$json$Json$Decode$string, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "_id", $elm$json$Json$Decode$string, $elm$json$Json$Decode$succeed($author$project$Data$Hardware$Player)));
-    var $author$project$Data$Hardware$rankDecoder = A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "challenger", $author$project$Data$Hardware$playerDecoder, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "player", $author$project$Data$Hardware$playerDecoder, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "rank", $elm$json$Json$Decode$int, $elm$json$Json$Decode$succeed($author$project$Data$Hardware$Rank))));
-    var $author$project$Data$Hardware$rankingDecoder = A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "owner_name", $elm$json$Json$Decode$string, A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "player_count", $elm$json$Json$Decode$int, 1, A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "ranking", $elm$json$Json$Decode$list($author$project$Data$Hardware$rankDecoder), _List_fromArray([
-        $author$project$Data$Hardware$emptyRank
-    ]), A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "baseaddress", $author$project$Data$Hardware$baseAddressDecoder, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "owner_id", $author$project$Data$Hardware$ownerIdDecoder, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "name", $elm$json$Json$Decode$string, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "active", $elm$json$Json$Decode$bool, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "_id", $author$project$Data$Hardware$idDecoder, $elm$json$Json$Decode$succeed($author$project$Data$Hardware$Ranking)))))))));
-    var $author$project$Data$User$stringToIntDecoder = A2($elm$json$Json$Decode$andThen, function(str) {
-        var _v0 = $elm$core$String$toInt(str);
-        if (_v0.$ === "Just") {
-            var num = _v0.a;
-            return $elm$json$Json$Decode$succeed(num);
-        } else return $elm$json$Json$Decode$fail("Expected an integer");
-    }, $elm$json$Json$Decode$string);
-    var $author$project$Data$User$userInfoDecoder = A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "addInfo", $elm$json$Json$Decode$string, "No additional info supplied", A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "credits", A2($elm$json$Json$Decode$field, "$numberInt", $author$project$Data$User$stringToIntDecoder), A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "description", $author$project$Data$User$descriptionDecoder, A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "updatetext", $elm$json$Json$Decode$string, "", A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "memberRankings", $elm$json$Json$Decode$list($author$project$Data$Hardware$rankingDecoder), A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "ownedRankings", $elm$json$Json$Decode$list($author$project$Data$Hardware$rankingDecoder), A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "active", $elm$json$Json$Decode$bool, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "datestamp", $author$project$Data$User$numberDecoder, A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "mobileValidationError", $elm$json$Json$Decode$string, "", A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "isMobileInputFocused", $elm$json$Json$Decode$bool, false, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "mobile", $elm$json$Json$Decode$maybe($elm$json$Json$Decode$string), A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "emailValidationError", $elm$json$Json$Decode$string, "", A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "isEmailInputFocused", $elm$json$Json$Decode$bool, false, A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "email", $elm$json$Json$Decode$maybe($elm$json$Json$Decode$string), $elm$core$Maybe$Nothing, A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "gender", $author$project$Data$User$genderDecoder, $author$project$Data$User$Male, A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "age", $author$project$Data$User$numberDecoder, 20, A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "nameValidationError", $elm$json$Json$Decode$string, "", A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "isNameInputFocused", $elm$json$Json$Decode$bool, false, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "nickname", $elm$json$Json$Decode$string, A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "token", $elm$json$Json$Decode$maybe($elm$json$Json$Decode$string), A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "password", $elm$json$Json$Decode$string, "", A4($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$optional, "email", $elm$json$Json$Decode$string, "", A3($NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required, "_id", $author$project$Data$User$idDecoder, $elm$json$Json$Decode$succeed($author$project$Data$User$UserInfo))))))))))))))))))))))));
-    var $author$project$Pages$Hardware$callRequest = function(model) {
-        var headers = _List_fromArray([
-            A2($elm$http$Http$header, "Authorization", "Bearer " + A2($elm$core$Maybe$withDefault, "No access token ", model.apiSpecifics.accessToken))
-        ]);
-        var therequest = $elm$http$Http$request({
-            body: $elm$http$Http$jsonBody($author$project$Extras$Constants$callRequestJson),
-            expect: A2($elm$http$Http$expectJson, $author$project$Pages$Hardware$CallResponse, A2($elm$json$Json$Decode$index, 0, $author$project$Data$User$userInfoDecoder)),
-            headers: headers,
-            method: "POST",
-            timeout: $elm$core$Maybe$Nothing,
-            tracker: $elm$core$Maybe$Nothing,
-            url: "https://ap-southeast-1.aws.realm.mongodb.com/api/client/v2.0/app/sr-espa1-snonq/functions/call"
-        });
-        return therequest;
-    };
-    var $author$project$Extras$Constants$emptyEmailPassword = {
-        email: "",
-        password: ""
-    };
-    var $author$project$Data$Hardware$emptyRanking = {
-        active: false,
-        baseaddress: {
-            city: "",
-            street: ""
-        },
-        id: "",
-        ladder: _List_fromArray([
-            $author$project$Data$Hardware$emptyRank
-        ]),
-        name: "",
-        owner_id: "",
-        owner_name: "",
-        player_count: 0
-    };
-    var $author$project$Pages$Hardware$isValidXMRAddress = function(str) {
-        var _v0 = A2($elm$parser$Parser$run, $author$project$Data$Hardware$validXMRAddressParser, str);
-        if (_v0.$ === "Ok") return true;
-        else return false;
-    };
-    var $author$project$Pages$Hardware$OperationEventMsg = function(operationEventMsg) {
-        return {
-            operationEventMsg: operationEventMsg
-        };
-    };
-    var $author$project$Pages$Hardware$justmsgFieldFromJsonDecoder = A2($elm$json$Json$Decode$map, $author$project$Pages$Hardware$OperationEventMsg, A2($elm$json$Json$Decode$field, "operationEventMsg", $elm$json$Json$Decode$string));
-    var $author$project$Extras$Constants$noCurrentChallengerId = "6353e8b6aedf80653eb34191";
-    var $author$project$Pages$Hardware$ProfileResponse = function(a) {
-        return {
-            $: "ProfileResponse",
-            a: a
-        };
-    };
     var $author$project$Pages$Hardware$SuccessfullProfileResult = F5(function(user_id, domain_id, identities, data, typeOfData) {
         return {
             data: data,
@@ -11065,6 +10823,9 @@ type alias Process =
             $: "Error",
             a: a
         };
+    };
+    var $author$project$Data$User$Female = {
+        $: "Female"
     };
     var $author$project$Pages$Hardware$validateName = function(nme) {
         var pattern = $elm$regex$Regex$fromString("^[a-zA-Z\\s]+$");
@@ -11376,36 +11137,6 @@ type alias Process =
                 return _Utils_Tuple2(_Utils_update(model, {
                     errors: _List_Nil
                 }), $elm$core$Platform$Cmd$none);
-            case "CallResponse":
-                if (msg.a.$ === "Ok") {
-                    var auth = msg.a.a;
-                    var newModel = _Utils_update(model, {
-                        isValidNewAccessToken: true,
-                        queryType: $author$project$Pages$Hardware$LoggedInUser,
-                        user: $author$project$Data$User$Registered(auth)
-                    });
-                    var headers = _List_fromArray([
-                        A2($elm$http$Http$header, "Authorization", "Bearer " + A2($elm$core$Maybe$withDefault, "No access token", auth.token))
-                    ]);
-                    var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.flagUrl.host) ? $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Just(3000), $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing));
-                    var newHttpParams = A6($author$project$Pages$Hardware$ToMongoDBMWConfig, $author$project$Extras$Constants$get, headers, flagUrlWithMongoDBMWAndPortUpdate, $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-                    var apiSpecs = model.apiSpecifics;
-                    return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
-                } else {
-                    var responseErr = msg.a.a;
-                    var respErr = $author$project$Extras$Constants$httpErrorToString(responseErr);
-                    var apiSpecs = model.apiSpecifics;
-                    var newapiSpecs = _Utils_update(apiSpecs, {
-                        accessToken: $elm$core$Maybe$Nothing
-                    });
-                    return _Utils_Tuple2(_Utils_update(model, {
-                        apiSpecifics: newapiSpecs,
-                        errors: _Utils_ap(model.errors, _List_fromArray([
-                            respErr
-                        ])),
-                        isValidNewAccessToken: false
-                    }), $elm$core$Platform$Cmd$none);
-                }
             case "ProfileResponse":
                 if (msg.a.$ === "Ok") {
                     var auth = msg.a.a;
@@ -11418,7 +11149,7 @@ type alias Process =
                     var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.flagUrl.host) ? $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Just(3000), $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing));
                     var newHttpParams = A6($author$project$Pages$Hardware$ToMongoDBMWConfig, $author$project$Extras$Constants$get, headers, flagUrlWithMongoDBMWAndPortUpdate, $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
                     var apiSpecs = model.apiSpecifics;
-                    return _Utils_Tuple2(newModel, $author$project$Pages$Hardware$callRequest(newModel));
+                    return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
                 } else {
                     var responseErr = msg.a.a;
                     var respErr = $author$project$Extras$Constants$httpErrorToString(responseErr);
@@ -11480,9 +11211,7 @@ type alias Process =
                         isValidNewAccessToken: true,
                         queryType: $author$project$Pages$Hardware$LoggedInUser
                     });
-                    return _Utils_Tuple2(_Utils_update(newModel, {
-                        isWaitingForResponse: false
-                    }), $author$project$Pages$Hardware$profileRequest(newModel));
+                    return _Utils_Tuple2(newModel, $author$project$Pages$Hardware$profileRequest(newModel));
                 } else {
                     var responseErr = msg.a.a;
                     var newFailedErr = function() {
@@ -11588,7 +11317,8 @@ type alias Process =
             case "HidePopUp":
                 return _Utils_Tuple2(_Utils_update(model, {
                     isNavMenuActive: true,
-                    isPopUpVisible: false
+                    isPopUpVisible: false,
+                    page: $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel)
                 }), $elm$core$Platform$Cmd$none);
             case "HardwareDeviceConnect":
                 return _Utils_Tuple2(model, $author$project$Main$sendMessageToJs("connectLNS"));
@@ -11612,7 +11342,7 @@ type alias Process =
                         var _v1 = model.page;
                         switch(_v1.$){
                             case "DashboardPage":
-                                return (model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected ? _Utils_Tuple2(model, $elm$core$Platform$Cmd$none) : A2($author$project$Main$updateUrl, A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Nothing, "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing), model);
+                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                             case "SellPage":
                                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                             case "BlankPage":
@@ -11631,12 +11361,12 @@ type alias Process =
                                 var hwModel = _v1.a;
                                 var newUrl = A6($elm$url$Url$Url, $elm$url$Url$Http, "localhost", $elm$core$Maybe$Just(1234), "/hardware", $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
                                 var decodedHardwareDeviceMsg = function() {
-                                    var _v2 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
-                                    if (_v2.$ === "Ok") {
-                                        var message = _v2.a;
+                                    var _v3 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
+                                    if (_v3.$ === "Ok") {
+                                        var message = _v3.a;
                                         return message.operationEventMsg;
                                     } else {
-                                        var err = _v2.a;
+                                        var err = _v3.a;
                                         return "error";
                                     }
                                 }();
@@ -11662,6 +11392,7 @@ type alias Process =
                                     page: newPage,
                                     xmrWalletAddress: updatedWalletAddress
                                 });
+                                var _v2 = A2($elm$core$Debug$log, "newPage", newPage);
                                 return A2($author$project$Main$updateUrl, newUrlAfterCheckConnections, newMainModel);
                         }
                     }
@@ -11683,8 +11414,8 @@ type alias Process =
                     return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load(href));
                 } else {
                     var url = urlRequest.a;
-                    var _v4 = $elm$url$Url$toString(url);
-                    if (_v4 === "https://haveno-web.squashpassion.com/") return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load($elm$url$Url$toString(url)));
+                    var _v5 = $elm$url$Url$toString(url);
+                    if (_v5 === "https://haveno-web.squashpassion.com/") return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load($elm$url$Url$toString(url)));
                     else return _Utils_Tuple2(model, model.key(url));
                 }
             case "ChangedUrl":
@@ -11692,65 +11423,65 @@ type alias Process =
                 return A2($author$project$Main$updateUrl, url, model);
             case "GotDashboardMsg":
                 var dashboardMsg = msg.a;
-                var _v5 = model.page;
-                if (_v5.$ === "DashboardPage") {
-                    var dashboard = _v5.a;
+                var _v6 = model.page;
+                if (_v6.$ === "DashboardPage") {
+                    var dashboard = _v6.a;
                     return A2($author$project$Main$toDashboard, model, A2($author$project$Pages$Dashboard$update, dashboardMsg, dashboard));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotSellMsg":
                 var sellMsg = msg.a;
-                var _v6 = model.page;
-                if (_v6.$ === "SellPage") {
-                    var sell = _v6.a;
+                var _v7 = model.page;
+                if (_v7.$ === "SellPage") {
+                    var sell = _v7.a;
                     return A2($author$project$Main$toSell, model, A2($author$project$Pages$Sell$update, sellMsg, sell));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotBlankMsg":
                 var blankMsg = msg.a;
-                var _v7 = model.page;
-                if (_v7.$ === "BlankPage") {
-                    var blank = _v7.a;
+                var _v8 = model.page;
+                if (_v8.$ === "BlankPage") {
+                    var blank = _v8.a;
                     return A2($author$project$Main$toBlank, model, A2($author$project$Pages$Blank$update, blankMsg, blank));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotPortfolioMsg":
                 var termsMsg = msg.a;
-                var _v8 = model.page;
-                if (_v8.$ === "PortfolioPage") {
-                    var terms = _v8.a;
+                var _v9 = model.page;
+                if (_v9.$ === "PortfolioPage") {
+                    var terms = _v9.a;
                     return A2($author$project$Main$toPortfolio, model, A2($author$project$Pages$Portfolio$update, termsMsg, terms));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotFundsMsg":
                 var privacyMsg = msg.a;
-                var _v9 = model.page;
-                if (_v9.$ === "FundsPage") {
-                    var privacy = _v9.a;
+                var _v10 = model.page;
+                if (_v10.$ === "FundsPage") {
+                    var privacy = _v10.a;
                     return A2($author$project$Main$toFunds, model, A2($author$project$Pages$Funds$update, privacyMsg, privacy));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotSupportMsg":
                 var supportMsg = msg.a;
-                var _v10 = model.page;
-                if (_v10.$ === "SupportPage") {
-                    var support = _v10.a;
+                var _v11 = model.page;
+                if (_v11.$ === "SupportPage") {
+                    var support = _v11.a;
                     return A2($author$project$Main$toSupport, model, A2($author$project$Pages$Support$update, supportMsg, support));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotBuyMsg":
                 var pricingMsg = msg.a;
-                var _v11 = model.page;
-                if (_v11.$ === "BuyPage") {
-                    var pricing = _v11.a;
+                var _v12 = model.page;
+                if (_v12.$ === "BuyPage") {
+                    var pricing = _v12.a;
                     return A2($author$project$Main$toPricing, model, A2($author$project$Pages$Buy$update, pricingMsg, pricing));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotMarketMsg":
                 var aboutMsg = msg.a;
-                var _v12 = model.page;
-                if (_v12.$ === "MarketPage") {
-                    var about = _v12.a;
+                var _v13 = model.page;
+                if (_v13.$ === "MarketPage") {
+                    var about = _v13.a;
                     return A2($author$project$Main$toMarket, model, A2($author$project$Pages$Market$update, aboutMsg, about));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "GotHardwareMsg":
                 var hardwareMsg = msg.a;
-                var _v13 = model.page;
-                if (_v13.$ === "HardwarePage") {
-                    var hardwareModel = _v13.a;
+                var _v14 = model.page;
+                if (_v14.$ === "HardwarePage") {
+                    var hardwareModel = _v14.a;
                     switch(hardwareMsg.$){
                         case "ClickedHardwareDeviceConnect":
                             var newHardwareModel = _Utils_update(hardwareModel, {
@@ -11993,9 +11724,13 @@ type alias Process =
                     $author$project$Main$logoImage
                 ]))
             ])),
+            A2(navLink, $author$project$Main$Blank, {
+                caption: "",
+                url: "/"
+            }),
             A2(navLink, $author$project$Main$Dashboard, {
                 caption: "Dashboard",
-                url: "/"
+                url: "dashboard"
             }),
             A2(navLink, $author$project$Main$Market, {
                 caption: "Market",
@@ -17172,9 +16907,6 @@ type alias Process =
                                 ],
                                 "ProfileResponse": [
                                     "Result.Result Http.Error Pages.Hardware.SuccessfullProfileResult"
-                                ],
-                                "CallResponse": [
-                                    "Result.Result Http.Error Data.User.UserInfo"
                                 ]
                             }
                         },
