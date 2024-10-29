@@ -11,7 +11,7 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **And**  there is an HTTPS server running a Haveno daemon configured for securely handling transactions
 **And**  the Haveno-Web app is connected to the Internet
 
-#### **Scenario 1: Popup warning that the hardware wallet is NOT connected on application start**
+#### **Scenario 1: Popup warning that the hardware device is NOT connected on application start**
 
 **Given** the web app is opened
 **And** the LNS hww is NOT detected
@@ -20,6 +20,7 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **And** it should not display the 'Connected' indicator in the background
 **And** it should NOT display the 'XMR Wallet address' indicator in the background
 **And** it should NOT be possible to use the Menu
+**And** it should NOT be possible to see the Hardware page
 
 
 #### **Scenario 2: hww NOT connected, user clicks the 'Connect Hardware' button, navs to Hardware page**
@@ -33,15 +34,26 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **And** it should NOT be possible to use the Menu
 
 
-#### **Scenario 3: If the the LNS hardware wallet is already connected, indicate this and nav to Dashbooard page**
+#### **Scenario 3: If the the LNS/LNX device is already connected, indicate this and nav to Hardware page**
    **Given** the web app is opened
-   **When** the LNS hww is detected
+   **When** the LNS/LNX hww is detected
    **Then** the popup should not be visible
-   **And** it should determine the LNS hww type
-   **And** it should display a constant (no matter which page on) text indicator that the LNS is connected
-   **Then** it should display the dashboard
+   **And** it should determine the LNS/LNX hww type
+   **And** it should display a constant (no matter which page on) text indicator that the LNS/LNX is connected
+   **Then** it should display the hardware page
+   **And** it should NOT be possible to use the Menu
 
-#### **Scenario 4: Connecting the XMR Hardware Wallet**
+#### **Scenario 4: Before the XMR Hardware Wallet Is Connected**
+
+**Given** the user accesses the Hardware page
+**And** the user has the hardware device connected to their mobile device 
+**And** the user has opened the XMR wallet on the device
+**Then** it hides the popup
+**And** it should display the Hardware page
+**And** it should display the 'XMR Wallet Not Connected' indicator in red
+**And** it should NOT be possible to use the Menu
+
+#### **Scenario 5: Connecting the XMR Hardware Wallet**
 
 **Given** the user accesses the Hardware page
 **And** the user has the hardware device connected to their mobile device 

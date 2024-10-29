@@ -132,7 +132,7 @@ globalHeading : U.User -> Element msg
 globalHeading user =
     case user of
         U.Spectator _ ->
-            Element.el Heading.h5 <| Element.text "Welcome - Unconnected User"
+            Element.el Heading.h5 <| Element.text "Global Heading - Welcome - Please Connect XMR Wallet"
 
         U.Registered (userInfo ) ->
             Element.el Heading.h5 <| Element.text <| "SportRank - Welcome Back - " ++ userInfo.nickname

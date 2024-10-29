@@ -23,7 +23,7 @@ export async function handleMessageFromElm(message, app) {
       try {
         //connectLNS(app);
         // Perform further actions with the device
-        //console.log("about to checkDeviceConnection : ", app);
+        console.log("about to checkDeviceConnection : ", app);
         await checkDeviceConnection(app);
       } catch (error) {
         console.error("Device connection error:", error);

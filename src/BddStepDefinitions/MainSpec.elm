@@ -34,7 +34,7 @@ import Browser
 import Browser.Navigation as Nav exposing (Key)
 import Expect exposing (equal)
 import Extras.TestData as TestData exposing (placeholderUrl)
-import Html exposing (Html, div)
+import Html exposing (Html, div, i)
 import Json.Encode as E
 import Main exposing (Model, Msg, Page(..), Route(..), init, navigate, subscriptions, update, view, viewPopUp)
 import Pages.Dashboard as Dashboard exposing (..)
@@ -88,22 +88,13 @@ runSpecTests =
                         }
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-                {- |> when "the LNS hww is NOT detected"
-                   [ -- NOTE: 'send' here means send from js to elm
-                     Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
-                   ]
-                -}
+                |> when "the LNS hww is NOT detected"
+                    [ -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
+                    ]
                 -- NOTE: Each 'it' block resolves to an Elm-spec Plan type and receives a Script from 'given' and 'when' blocks
                 |> Spec.observeThat
-                    [ -- TODO: Sort the logic around disabling the menu so it doesn't interfere with the necessary display of pages
-                      {- it "it should ensure the navigation menu is disabled"
-                             (Observer.observeModel .isNavMenuActive
-                                 |> Spec.expect
-                                     Claim.isFalse
-                             )
-                         ,
-                      -}
-                      it "should display a message informing the user not connected"
+                    [ it "should display a message informing the user not connected"
                         (Observer.observeModel .isPopUpVisible
                             |> Spec.expect
                                 Claim.isTrue
@@ -139,10 +130,19 @@ runSpecTests =
                                         Claim.isStringContaining 1 "_"
                                 )
                         )
+
+                    -- TODO: Sort the logic around disabling the menu so it doesn't interfere with the necessary display of pages
                     , it "should NOT be possible to use the Menu"
                         (Observer.observeModel .isNavMenuActive
                             |> Spec.expect
                                 Claim.isFalse
+                        )
+                    , it "should NOT be possible to see the Hardware page"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "hardwareWalletView" ]
+                            |> Spec.expect
+                                Claim.isNothing
                         )
                     ]
             )
@@ -178,7 +178,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Welcome - Unconnected User"
+                                        Claim.isStringContaining 1 "Welcome - Please Connect XMR Wallet"
                                 )
                         )
                     , it "should display the 'Connected' indicator as Disconnected (red)"
@@ -209,7 +209,7 @@ runSpecTests =
         -}
         , --Runner.skip <|
           --Runner.pick <|
-          scenario "3: If the the LNS hardware wallet is already connected, indicate this and nav to Dashboard page"
+          scenario "3: If the the LNS/LNX hardware wallet is already connected, indicate this and nav to Hardware page"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -222,16 +222,18 @@ runSpecTests =
                     |> Spec.Setup.withLocation placeholderUrl
                 )
                 -- NOTE: Bypass the popup
-                |> when "the user clicks the Connect Hardware button"
-                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
-                |> when "the LNS hww is detected"
+                {- |> when "the user clicks the Connect Hardware button"
+                   [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                -}
+                |> when "the LNS/LNX hww is detected"
                     [ -- NOTE: 'send' here means send from js to elm
                       Spec.Port.send "receiveMessageFromJs" jsonNanoSDetected
                     ]
-                |> when "the Monero wallet address is retrieved from hardware device"
-                    [ -- NOTE: 'send' here means send from js to elm
-                      Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
-                    ]
+                {- |> when "the Monero wallet address is retrieved from hardware device"
+                   [ -- NOTE: 'send' here means send from js to elm
+                     Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
+                   ]
+                -}
                 |> Spec.observeThat
                     [ it "a.hides the popup"
                         (Observer.observeModel .isPopUpVisible
@@ -243,7 +245,7 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isTrue
                         )
-                    , it "d. should display a constant (no matter which page on) text indicator that the LNS is connected"
+                    , it "d. should display a constant (no matter which page on) text indicator that the LNS/LNX is connected"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ tag "span" ]
@@ -253,29 +255,26 @@ runSpecTests =
                                         Claim.isStringContaining 1 "Connected"
                                 )
                         )
-                    , it "e. should display a dashboard page"
+                    , it "e. should display the hardware page"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ tag "h1" ]
+                            << by [ tag "h5" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Haveno Web - Dashboard"
+                                        Claim.isStringContaining 1 "Welcome - Please Connect XMR Wallet"
                                 )
                         )
-
-                    -- NOTE: It appears that we can check that the page is the Dashboard page by checking the model
-                    -- but we cannot check the text in the page, without an update e.g. from button click,
-                    -- because it's not the setup module's (Main) responsibility
-                    , it "f.is on the Dashboard page"
-                        (Observer.observeModel .page
-                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.DashboardPage Dashboard.initialModel)
+                    , it "should NOT be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isFalse
                         )
                     ]
             )
         , --Runner.skip <|
           --Runner.pick <|
-          scenario "4: Display the XMR wallet address"
+          scenario "4: Before the XMR Hardware Wallet Is Connected"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -285,49 +284,106 @@ runSpecTests =
                         { onUrlRequest = Main.ClickedLink
                         , onUrlChange = Main.ChangedUrl
                         }
-                    -- NOTE: Currently believe this is equivalent to the user clicking a link
                     |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
                 )
-                -- NOTE: You need to do this to get away from 'Blank' page
-                |> when "the user clicks the Connect Hardware button"
-                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
                 |> when "the LNX hww is detected"
                     [ -- NOTE: 'send' here means send from js to elm
                       Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
                     ]
-                |> when "the hardware XMR wallet returns a valid XMR address"
-                    [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
-                    ]
                 |> Spec.observeThat
-                    [ it "a. is on the Dashboard page"
-                        (Observer.observeModel .page
-                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.DashboardPage Dashboard.initialModel)
-                        )
-                    , it "displays a message indicating the XMR wallet is connected"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ tag "h6" ]
+                    [ it "a.hides the popup"
+                        (Observer.observeModel .isPopUpVisible
                             |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "XMR Wallet Connected"
-                                )
+                                Claim.isFalse
                         )
-                    , it "should display a confirmation message indicating successful discovery of XMR wallet address"
+                    , it "e. should display the hardware page"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ tag "h5" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "XMR Wallet Address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        Claim.isStringContaining 1 "Welcome - Please Connect XMR Wallet"
+                                )
+                        )
+                    , it "displays a message indicating the XMR wallet is NOT connected"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "xmrwalletconnection" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "XMR Wallet Not Connected"
                                 )
                         )
                     ]
             )
         , --Runner.skip <|
           --Runner.pick <|
-          scenario "5: Display a message that the Haveno core app is not yet connected"
+            scenario "5: Display the XMR wallet address"
+                (given
+                    (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                        |> Spec.Setup.withDocument Main.view
+                        |> Spec.Setup.withUpdate Main.update
+                        |> Spec.Setup.withSubscriptions Main.subscriptions
+                        |> Spec.Setup.forNavigation
+                            { onUrlRequest = Main.ClickedLink
+                            , onUrlChange = Main.ChangedUrl
+                            }
+                        -- NOTE: Currently believe this is equivalent to the user clicking a link
+                        |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                    )
+                    -- NOTE: You need to do this to get away from 'Blank' page
+                    |> when "the user clicks the Connect Hardware button"
+                        [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                    |> when "the LNX hww is detected"
+                        [ -- NOTE: 'send' here means send from js to elm
+                          Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
+                        ]
+                    |> when "the hardware XMR wallet returns a valid XMR address"
+                        [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
+                        ]
+                    |> Spec.observeThat
+                        [ it "a.hides the popup"
+                            (Observer.observeModel .isPopUpVisible
+                                |> Spec.expect
+                                    Claim.isFalse
+                            )
+                        , it "b.is on the Dashboard page" -- NOTE: Cos connected with valid XMR address
+                            (Observer.observeModel .page
+                            -- NOTE: This is the model's page, not the page in the browser - Dashboard.initialModel is a placeholder for the test only here
+                                |> Spec.expect (Claim.isEqual Debug.toString <| Main.DashboardPage Dashboard.initialModel)
+                            )
+                        , it "c. confirms the hardware LNX is connected"
+                            (Observer.observeModel .isHardwareLNXConnected
+                                |> Spec.expect
+                                    Claim.isTrue
+                            )
+                        , it "d. displays a message indicating the XMR wallet is connected"
+                            (Markup.observeElement
+                                |> Markup.query
+                                << by [ Spec.Markup.Selector.id "xmrwalletconnection" ]
+                                |> Spec.expect
+                                    (Claim.isSomethingWhere <|
+                                        Markup.text <|
+                                            Claim.isStringContaining 1 "XMR Wallet Connected"
+                                    )
+                            )
+                        , it "e. should display a confirmation message indicating successful discovery of XMR wallet address"
+                            (Markup.observeElement
+                                |> Markup.query
+                                << by [ Spec.Markup.Selector.id "xmrwalletaddress" ]
+                                |> Spec.expect
+                                    (Claim.isSomethingWhere <|
+                                        Markup.text <|
+                                            Claim.isStringContaining 1 "XMR Wallet Address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                    )
+                            )
+                        ]
+                )
+        , --Runner.skip <|
+          --Runner.pick <|
+          scenario "6: Display a message that the Haveno core app is not yet connected"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -374,7 +430,7 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isTrue
                         )
-                    , it "displays Haveno version number in the footer"
+                    , it "d. displays Haveno version number in the footer"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ Spec.Markup.Selector.id "havenoversion" ]
@@ -406,7 +462,7 @@ runSpecTests =
             )
         , --Runner.skip <|
           --Runner.pick <|
-          scenario "6: Display the Haveno core app version number"
+          scenario "7: Display the Haveno core app version number"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -419,9 +475,9 @@ runSpecTests =
                     |> Spec.Setup.withLocation placeholderUrl
                     |> Stub.serve [ TestData.successfullVersionFetch ]
                 )
-                |> Spec.when "we log the http requests"
+                {- |> Spec.when "we log the http requests"
                     [ Spec.Http.logRequests
-                    ]
+                    ] -}
                 |> when "the user clicks the Connect Hardware button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
                 -- NOTE: These shouldn't be necessary to get the version number:
@@ -445,12 +501,7 @@ runSpecTests =
                                 )
                         )
 
-                    {- , it "is on the Hardware page"
-                       (Observer.observeModel .page
-                           |> Spec.expect (Claim.isEqual Debug.toString <| Main.HardwarePage Hardware.initialModel)
-
-                       )
-                    -}
+                    
                     , it "e. should display a dashboard page"
                         (Markup.observeElement
                             |> Markup.query
@@ -469,7 +520,7 @@ runSpecTests =
                         (Observer.observeModel .page
                             |> Spec.expect (Claim.isEqual Debug.toString <| Main.DashboardPage Dashboard.initialModel)
                         )
-                    , it "displays Haveno version number in the footer"
+                    , it "g. displays Haveno version number in the footer"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ Spec.Markup.Selector.id "havenoversion" ]

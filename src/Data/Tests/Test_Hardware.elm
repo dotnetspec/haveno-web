@@ -50,8 +50,6 @@ gotLowestRankTest =
 
 
 
--- isValidXMRAddress
-
 
 getPlayer : Int -> Player
 getPlayer i =
@@ -82,10 +80,8 @@ tests : Test
 tests =
     describe "Ranking tests"
         [ fuzzTestValidXMRAddressParser
+        , simpleTestValidXMRAddress
         ]
-
-
-
 
 
 parseValidXMRAddressKey : String -> Result (List Parser.DeadEnd) String
@@ -142,3 +138,23 @@ fuzzTestValidXMRAddressParser =
                     Err _ ->
                         Expect.equal True True
         ]
+
+
+
+-- New unit test for the specific XMR address
+
+
+simpleTestValidXMRAddress : Test
+simpleTestValidXMRAddress =
+    test "Valid XMR address should be parsed successfully" <|
+        \() ->
+            let
+                xmrAddress =
+                    "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+            in
+            case parseValidXMRAddressKey xmrAddress of
+                Ok _ ->
+                    Expect.equal True True
+
+                Err _ ->
+                    Expect.equal True False

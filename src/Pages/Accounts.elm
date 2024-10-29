@@ -1058,7 +1058,7 @@ view model =
                     div
                         [ class "split-col"
                         ]
-                        [ hardwareWalletView model
+                        [ accountInfoView model
                         ]
             , div
                 [ class "split-col"
@@ -1556,30 +1556,14 @@ globalView searchterm searchResults userVal =
                     ]
 
 
-hardwareWalletView : Model -> Html Msg
-hardwareWalletView model =
+accountInfoView : Model -> Html Msg
+accountInfoView model =
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
-            [ Element.el Heading.h5 <| Element.text "Welcome - Unconnected User"
-            , Element.text "\n"
-            , infoBtn "Connect Hardware Device" <| ClickedHardwareDeviceConnect
-            , Element.text "\n"
-            , infoBtn "Connect XMR Wallet" <| ClickedXMRWalletConnect
+            [ Element.el Heading.h5 <| Element.text ""
             , Element.text "\n"
             , Element.el Heading.h6 <|
-                Element.text
-                    (if model.isHardwareLNSConnected then
-                        "Nano S Connected"
-
-                     else if model.isHardwareLNXConnected then
-                        "Nano X Connected"
-
-                     else if model.isXMRWalletConnected then
-                        "XMR Wallet Connected with Address: " ++ model.xmrWalletAddress
-
-                     else
-                        "No hardware device connected"
-                    )
+                Element.text "placeholder"
             , Element.text "\n"
             , infoBtn "Initiate Transaction" <| ClickedXMRInitiateTransaction "0.01"
             , case model.errors of
@@ -2070,8 +2054,7 @@ profileDecoder =
 
 hardwareSubscriptions : Model -> Sub Msg
 hardwareSubscriptions _ =
-    -- Replace with your actual subscription logic
-    --Sub.batch [ receiveMessageFromJs ResponseDataFromMain ]
+    
     Sub.none
 
 

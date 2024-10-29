@@ -950,6 +950,7 @@ view model =
                 Loaded ->
                     div
                         [ class "split-col"
+                        , id "hardwareWalletView"
                         ]
                         [ hardwareWalletView model
                         ]
@@ -1453,13 +1454,13 @@ hardwareWalletView : Model -> Html Msg
 hardwareWalletView model =
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
-            [ Element.el Heading.h5 <| Element.text "Welcome - Unconnected User"
+            [ Element.el Heading.h5 <| Element.text "Welcome - Please Connect XMR Wallet"
             , Element.text "\n"
             , infoBtn "Connect Hardware Device" <| ClickedHardwareDeviceConnect
             , Element.text "\n"
             , infoBtn "Connect XMR Wallet" <| ClickedXMRWalletConnect
             , Element.text "\n"
-            , Element.el Heading.h6 <|
+            , Element.el (List.append [ Element.htmlAttribute (Attr.id "hardwareWalletStatus") ] Heading.h6) <|
                 Element.text
                     (if model.isHardwareLNSConnected then
                         "Nano S Connected"
@@ -1963,8 +1964,6 @@ profileDecoder =
 
 hardwareSubscriptions : Model -> Sub Msg
 hardwareSubscriptions _ =
-    -- Replace with your actual subscription logic
-    --Sub.batch [ receiveMessageFromJs ResponseDataFromMain ]
     Sub.none
 
 
