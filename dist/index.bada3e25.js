@@ -11571,7 +11571,6 @@ type alias Process =
     };
     var $elm$html$Html$br = _VirtualDom_node("br");
     var $elm$html$Html$footer = _VirtualDom_node("footer");
-    var $elm$html$Html$h6 = _VirtualDom_node("h6");
     var $author$project$Main$footerContent = function(model) {
         var newVersion = function() {
             var _v0 = model.version;
@@ -11599,7 +11598,7 @@ type alias Process =
                         $elm$html$Html$text("Version 0.0.15")
                     ])),
                     $elm$html$Html$text("Haveno Version"),
-                    A2($elm$html$Html$h6, _List_fromArray([
+                    A2($elm$html$Html$p, _List_fromArray([
                         $elm$html$Html$Attributes$id("havenoversion")
                     ]), _List_fromArray([
                         $elm$html$Html$text(newVersion)
@@ -11608,41 +11607,38 @@ type alias Process =
             ]))
         ]));
     };
-    var $elm$html$Html$h3 = _VirtualDom_node("h3");
+    var $elm$html$Html$h4 = _VirtualDom_node("h4");
     var $author$project$Main$isHWConnectedIndicator = F2(function(model, isConnected) {
-        return A2($elm$html$Html$h3, _List_Nil, _List_fromArray([
+        return A2($elm$html$Html$h4, _List_Nil, _List_fromArray([
             A2($elm$html$Html$div, _List_fromArray([
                 $elm$html$Html$Attributes$class("indicator"),
                 A2($elm$html$Html$Attributes$style, "text-align", "center")
             ]), _List_fromArray([
-                A2($elm$html$Html$br, _List_Nil, _List_Nil),
                 A2($elm$html$Html$span, _List_Nil, _List_fromArray([
                     A2($elm$html$Html$span, _List_fromArray([
                         $elm$html$Html$Attributes$class(isConnected ? "indicator green" : model.isPopUpVisible ? "indicator white" : "indicator red")
                     ]), _List_fromArray([
-                        $elm$html$Html$text(isConnected ? "Connected" : model.isPopUpVisible ? "_" : "Disconnected")
+                        $elm$html$Html$text(model.isPopUpVisible ? "_" : model.isHardwareLNSConnected ? "Nano S Connected" : model.isHardwareLNXConnected ? "Nano X Connected" : "No hardware device connected")
                     ]))
                 ]))
             ]))
         ]));
     });
-    var $elm$html$Html$h5 = _VirtualDom_node("h5");
     var $author$project$Main$isXMRWalletConnectedIndicator = function(model) {
-        return A2($elm$html$Html$h3, _List_Nil, _List_fromArray([
+        return A2($elm$html$Html$h4, _List_Nil, _List_fromArray([
             A2($elm$html$Html$div, _List_fromArray([
                 $elm$html$Html$Attributes$class("indicator"),
                 A2($elm$html$Html$Attributes$style, "text-align", "center")
             ]), _List_fromArray([
-                A2($elm$html$Html$br, _List_Nil, _List_Nil),
                 A2($elm$html$Html$span, _List_Nil, _List_fromArray([
-                    A2($elm$html$Html$h6, _List_fromArray([
+                    A2($elm$html$Html$h4, _List_fromArray([
                         $elm$html$Html$Attributes$class((model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected ? "indicator green" : model.isPopUpVisible ? "indicator white" : "indicator red"),
                         $elm$html$Html$Attributes$id("xmrwalletconnection")
                     ]), _List_fromArray([
                         $elm$html$Html$text((model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected ? "XMR Wallet Connected" : model.isPopUpVisible ? "_" : "XMR Wallet Not Connected")
                     ])),
-                    A2($elm$html$Html$br, _List_Nil, _List_Nil),
-                    A2($elm$html$Html$h5, _List_fromArray([
+                    A2($elm$html$Html$h4, _List_fromArray([
+                        $elm$html$Html$Attributes$class((model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected ? "indicator green" : model.isPopUpVisible ? "indicator white" : "indicator red"),
                         $elm$html$Html$Attributes$id("xmrwalletaddress")
                     ]), _List_fromArray([
                         $elm$html$Html$text((model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected ? "XMR Wallet Address: " + model.xmrWalletAddress : model.isPopUpVisible ? "_" : "No XMR Wallet Address")
@@ -15983,7 +15979,6 @@ type alias Process =
         $: "ClickedXMRWalletConnect"
     };
     var $Orasund$elm_ui_framework$Framework$Heading$h5 = $Orasund$elm_ui_framework$Framework$Heading$h(5);
-    var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
     var $mdgriffith$elm_ui$Internal$Model$Button = {
         $: "Button"
     };
@@ -16257,10 +16252,6 @@ type alias Process =
             $mdgriffith$elm_ui$Element$text("\n"),
             A2($author$project$Pages$Hardware$infoBtn, "Connect XMR Wallet", $author$project$Pages$Hardware$ClickedXMRWalletConnect),
             $mdgriffith$elm_ui$Element$text("\n"),
-            A2($mdgriffith$elm_ui$Element$el, A2($elm$core$List$append, _List_fromArray([
-                $mdgriffith$elm_ui$Element$htmlAttribute($elm$html$Html$Attributes$id("hardwareWalletStatus"))
-            ]), $Orasund$elm_ui_framework$Framework$Heading$h6), $mdgriffith$elm_ui$Element$text(model.isHardwareLNSConnected ? "Nano S Connected" : model.isHardwareLNXConnected ? "Nano X Connected" : model.isXMRWalletConnected ? "XMR Wallet Connected with Address: " + model.xmrWalletAddress : "No hardware device connected")),
-            $mdgriffith$elm_ui$Element$text("\n"),
             A2($author$project$Pages$Hardware$infoBtn, "Initiate Transaction", $author$project$Pages$Hardware$ClickedXMRInitiateTransaction("0.01")),
             function() {
                 var _v0 = model.errors;
@@ -16313,6 +16304,8 @@ type alias Process =
             ]))
         ]));
     };
+    var $elm$html$Html$h3 = _VirtualDom_node("h3");
+    var $elm$html$Html$h6 = _VirtualDom_node("h6");
     var $author$project$Pages$Market$content = A2($elm$html$Html$section, _List_fromArray([
         $elm$html$Html$Attributes$id("page"),
         $elm$html$Html$Attributes$class("section-background")
@@ -16402,7 +16395,6 @@ type alias Process =
     var $author$project$Pages$Portfolio$view = function(_v0) {
         return $author$project$Pages$Portfolio$content;
     };
-    var $elm$html$Html$h4 = _VirtualDom_node("h4");
     var $author$project$Pages$Sell$content = A2($elm$html$Html$section, _List_fromArray([
         $elm$html$Html$Attributes$class("section-background"),
         $elm$html$Html$Attributes$id("page")

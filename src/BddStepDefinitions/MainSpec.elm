@@ -112,7 +112,7 @@ runSpecTests =
                     , it "should NOT display the 'Connected' indicator in the background"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ tag "h3" ]
+                            << by [ tag "h4" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
@@ -122,7 +122,7 @@ runSpecTests =
                     , it "should NOT display the 'XMR Wallet address' indicator in the background"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ tag "h5" ]
+                            << by [ tag "h4" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
@@ -184,11 +184,11 @@ runSpecTests =
                     , it "should display the 'Connected' indicator as Disconnected (red)"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ tag "h3" ]
+                            << by [ tag "h4" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Disconnected"
+                                        Claim.isStringContaining 1 "No hardware device connected"
                                 )
                         )
                     , it "should NOT be possible to use the Menu"

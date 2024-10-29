@@ -17,7 +17,7 @@ import Extras.Constants as Constants exposing (yck_id)
 import Extras.TestData as TestData exposing (placeholderUrl)
 import Framework.Heading as Heading
 import Grpc exposing (..)
-import Html exposing (Html, a, br, button, div, footer, h2, h3, h5, h6, header, i, img, li, nav, node, p, source, span, text, ul)
+import Html exposing (Html, a, br, button, div, footer, h2, h3, h4, h5, h6, header, i, img, li, nav, node, p, source, span, text, ul)
 import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick)
 import Json.Decode as JD
@@ -351,10 +351,9 @@ update msg model =
 
                             newHardwareModel =
                                 { hwModel
-                                    | 
-                                    --isHardwareLNSConnected = updatedIsLNSConnected
-                                    --, 
-                                    isHardwareLNXConnected = updatedIsLNXConnected
+                                    | --isHardwareLNSConnected = updatedIsLNSConnected
+                                      --,
+                                      isHardwareLNXConnected = updatedIsLNXConnected
                                     , isXMRWalletConnected = updatedIsValidXMRAddressConnected
                                     , xmrWalletAddress = updatedWalletAddress
                                 }
@@ -474,10 +473,9 @@ update msg model =
 
                             newHardwareModel =
                                 { hwModel
-                                    | 
-                                    --isHardwareLNSConnected = updatedIsLNSConnected
-                                    --, 
-                                    isHardwareLNXConnected = updatedIsLNXConnected
+                                    | --isHardwareLNSConnected = updatedIsLNSConnected
+                                      --,
+                                      isHardwareLNXConnected = updatedIsLNXConnected
                                     , isXMRWalletConnected = updatedIsValidXMRAddressConnected
                                     , xmrWalletAddress = updatedWalletAddress
                                 }
@@ -1013,8 +1011,8 @@ updateUrl url model =
                             -- NOTE: Update Hardware page with relevant parts of Main's model
                             { hardwareModel
                                 | --isHardwareLNSConnected = model.isHardwareLNSConnected
-                                --, 
-                                isHardwareLNXConnected = model.isHardwareLNXConnected
+                                  --,
+                                  isHardwareLNXConnected = model.isHardwareLNXConnected
                                 , isXMRWalletConnected = model.isXMRWalletConnected
                             }
 
@@ -1143,8 +1141,7 @@ toHardware model ( _, cmd ) =
          function to create new values.
       -}
       model
-    , 
-      Cmd.batch [ Cmd.map GotHardwareMsg cmd, sendVersionRequest {} ]
+    , Cmd.batch [ Cmd.map GotHardwareMsg cmd, sendVersionRequest {} ]
     )
 
 
@@ -1165,9 +1162,10 @@ type alias FromMainToSchedule =
 
 
 -- NAV: gRPC commands
-
 -- NOTE: This causes 'Error: Uncaught [TypeError: First argument to DataView constructor must be an ArrayBuffer]' in test
 -- whilst still passing the test (cos response is stubbed). Issue has been logged here: -- REF: https://github.com/brian-watkins/elm-spec/issues/75
+
+
 sendVersionRequest : GetVersionRequest -> Cmd Msg
 sendVersionRequest request =
     let
@@ -1518,10 +1516,9 @@ logOutUser =
 
 isHWConnectedIndicator : Model -> Bool -> Html msg
 isHWConnectedIndicator model isConnected =
-    h3 []
+    h4 []
         [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
-            [ br [] []
-            , span []
+            [ span []
                 [ span
                     [ Attr.class
                         (if isConnected then
@@ -1535,14 +1532,17 @@ isHWConnectedIndicator model isConnected =
                         )
                     ]
                     [ text
-                        (if isConnected then
-                            "Connected"
-
-                         else if model.isPopUpVisible then
+                        (if model.isPopUpVisible then
                             "_"
 
+                         else if model.isHardwareLNSConnected then
+                            "Nano S Connected"
+
+                         else if model.isHardwareLNXConnected then
+                            "Nano X Connected"
+
                          else
-                            "Disconnected"
+                            "No hardware device connected"
                         )
                     ]
                 ]
@@ -1552,11 +1552,10 @@ isHWConnectedIndicator model isConnected =
 
 isXMRWalletConnectedIndicator : Model -> Html msg
 isXMRWalletConnectedIndicator model =
-    h3 []
+    h4 []
         [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
-            [ br [] []
-            , span []
-                [ h6
+            [ span []
+                [ h4
                     [ Attr.class
                         (if (model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected then
                             "indicator green"
@@ -1580,8 +1579,19 @@ isXMRWalletConnectedIndicator model =
                             "XMR Wallet Not Connected"
                         )
                     ]
-                , br [] []
-                , h5 [ Attr.id "xmrwalletaddress" ]
+                , h4
+                    [ Attr.class
+                        (if (model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected then
+                            "indicator green"
+
+                         else if model.isPopUpVisible then
+                            "indicator white"
+
+                         else
+                            "indicator red"
+                        )
+                    , Attr.id "xmrwalletaddress"
+                    ]
                     [ text
                         (if (model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected then
                             "XMR Wallet Address: " ++ model.xmrWalletAddress
@@ -1621,7 +1631,7 @@ footerContent model =
                 , text "Open source code & design"
                 , p [] [ text "Version 0.0.15" ]
                 , text "Haveno Version"
-                , h6 [ id "havenoversion" ]
+                , p [ id "havenoversion" ]
                     [ text
                         newVersion
                     ]

@@ -95,16 +95,6 @@ type Status
 init : FromMainToDashboard -> ( Model, Cmd Msg )
 init fromMainToDashboard =
     let
-        -- REVIEW: Not yet clear how/if this will be used here
-        {- devOrProdServer =
-           if String.contains Consts.localorproductionServerAutoCheck fromMainToDashboard.flagUrl.host then
-               Url fromMainToDashboard.flagUrl.protocol fromMainToDashboard.flagUrl.host Nothing Consts.productionProxyConfig Nothing Nothing
-
-           else
-               Url fromMainToDashboard.flagUrl.protocol fromMainToDashboard.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
-        -}
-        --newModel =
-        --Model Loading "Haveno-Web Dashboard" (Dashboard { name = "Loading..." }) "0.00" fromMainToDashboard.flagUrl (Just (HavenoAPKHttpRequest Consts.post [] "" Http.emptyBody Nothing Nothing)) Nothing []
         newUrl =
             Url Http "localhost" Nothing "/dashboard" Nothing Nothing
 

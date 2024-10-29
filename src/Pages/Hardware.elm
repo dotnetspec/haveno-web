@@ -1460,21 +1460,6 @@ hardwareWalletView model =
             , Element.text "\n"
             , infoBtn "Connect XMR Wallet" <| ClickedXMRWalletConnect
             , Element.text "\n"
-            , Element.el (List.append [ Element.htmlAttribute (Attr.id "hardwareWalletStatus") ] Heading.h6) <|
-                Element.text
-                    (if model.isHardwareLNSConnected then
-                        "Nano S Connected"
-
-                     else if model.isHardwareLNXConnected then
-                        "Nano X Connected"
-
-                     else if model.isXMRWalletConnected then
-                        "XMR Wallet Connected with Address: " ++ model.xmrWalletAddress
-
-                     else
-                        "No hardware device connected"
-                    )
-            , Element.text "\n"
             , infoBtn "Initiate Transaction" <| ClickedXMRInitiateTransaction "0.01"
             , case model.errors of
                 [] ->
