@@ -538,7 +538,7 @@ update msg model =
                     -- (using Nav.load) for it to work on production server
                     -- this isn't currently used and points nowhere
                     case Url.toString url of
-                        "https://haveno-web.squashpassion.com/" ->
+                        "https://haveno-web-dev.netlify.app//" ->
                             ( model, Nav.load (Url.toString url) )
 
                         -- NOTE: Nav.pushUrl only manipulates the address bar
@@ -1266,7 +1266,7 @@ each page model and match against-}
 
 showVideoOrBanner : Page -> Html msg
 showVideoOrBanner page =
-    img [ Attr.class "banner", src "resources/Banners/monero - 1918x494.png", alt "Monero", width 1918, height 494, title "Monero Banner" ]
+    img [ Attr.class "banner", src "resources/Banners/monero - 1918x494.png", alt "Haveno", width 1918, height 494, title "Haveno Banner" ]
         []
 
 
@@ -1288,20 +1288,20 @@ showVideoOrBanner page =
 
 topLinksLogo : Html msg
 topLinksLogo =
-    div [ Attr.class "topLinksLogo" ] [ a [ Attr.href "https://haveno-web.squashpassion.com" ] [ topLinksLogoImage ] ]
+    div [ Attr.class "topLinksLogo" ] [ a [ Attr.href "https://haveno-web-dev.netlify.app/" ] [ topLinksLogoImage ] ]
 
 
 topLinksLogoImage : Html msg
 topLinksLogoImage =
     img
-        [ Attr.src "resources/Logos/monero_icon.jpg"
+        [ Attr.src "resources/images/logo_splash.png"
 
         -- NOTE: always define the width and height of images. This reduces flickering,
         -- because the browser can reserve space for the image before loading.
-        , Attr.width 100
-        , Attr.height 33
-        , Attr.alt "Monero Logo"
-        , Attr.title "Monero Logo"
+        , Attr.width 343
+        , Attr.height 208
+        , Attr.alt "Haveno Logo"
+        , Attr.title "Haveno Logo"
         ]
         []
 
@@ -1309,14 +1309,14 @@ topLinksLogoImage =
 logoImage : Html msg
 logoImage =
     img
-        [ Attr.src "resources/Logos/monero_icon.jpg"
+        [ Attr.src "resources/images/logo_splash.png"
 
         -- NOTE: always define the width and height of images. This reduces flickering,
         -- because the browser can reserve space for the image before loading.
-        , Attr.width 200
-        , Attr.height 67
-        , Attr.alt "Monero Logo"
-        , Attr.title "Monero Logo"
+        , Attr.width 343
+        , Attr.height 208
+        , Attr.alt "Haveno Logo"
+        , Attr.title "Haveno Logo"
         ]
         []
 
@@ -1457,7 +1457,7 @@ navLinks page =
             ul
                 [-- NOTE: img is now managed separately so is can be shrunk etc. withouth affecting the links
                 ]
-                [ li [ class "logo" ] [ a [ Attr.href "https://haveno-web.squashpassion.com", Attr.class "logoImageShrink" ] [ logoImage ] ]
+                [ li [ class "logo" ] [ a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "logoImageShrink" ] [ logoImage ] ]
                 , navLink Blank { url = "/", caption = "" }
                 , navLink Dashboard { url = "dashboard", caption = "Dashboard" }
                 , navLink Market { url = "market", caption = "Market" }

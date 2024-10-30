@@ -11351,7 +11351,7 @@ type alias Process =
                 } else {
                     var url = urlRequest.a;
                     var _v17 = $elm$url$Url$toString(url);
-                    if (_v17 === "https://haveno-web.squashpassion.com/") return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load($elm$url$Url$toString(url)));
+                    if (_v17 === "https://haveno-web-dev.netlify.app//") return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load($elm$url$Url$toString(url)));
                     else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                 }
             case "ChangedUrl":
@@ -11742,11 +11742,11 @@ type alias Process =
         return A2(_VirtualDom_attribute, "width", $elm$core$String$fromInt(n));
     };
     var $author$project$Main$logoImage = A2($elm$html$Html$img, _List_fromArray([
-        $elm$html$Html$Attributes$src("resources/Logos/monero_icon.jpg"),
-        $elm$html$Html$Attributes$width(200),
-        $elm$html$Html$Attributes$height(67),
-        $elm$html$Html$Attributes$alt("Monero Logo"),
-        $elm$html$Html$Attributes$title("Monero Logo")
+        $elm$html$Html$Attributes$src("resources/images/logo_splash.png"),
+        $elm$html$Html$Attributes$width(343),
+        $elm$html$Html$Attributes$height(208),
+        $elm$html$Html$Attributes$alt("Haveno Logo"),
+        $elm$html$Html$Attributes$title("Haveno Logo")
     ]), _List_Nil);
     var $author$project$Main$navLinks = function(page) {
         var navLink = F2(function(route, _v0) {
@@ -11773,7 +11773,7 @@ type alias Process =
                 $elm$html$Html$Attributes$class("logo")
             ]), _List_fromArray([
                 A2($elm$html$Html$a, _List_fromArray([
-                    $elm$html$Html$Attributes$href("https://haveno-web.squashpassion.com"),
+                    $elm$html$Html$Attributes$href("https://haveno-web-dev.netlify.app/"),
                     $elm$html$Html$Attributes$class("logoImageShrink")
                 ]), _List_fromArray([
                     $author$project$Main$logoImage
@@ -11890,17 +11890,17 @@ type alias Process =
         return links;
     }();
     var $author$project$Main$topLinksLogoImage = A2($elm$html$Html$img, _List_fromArray([
-        $elm$html$Html$Attributes$src("resources/Logos/monero_icon.jpg"),
-        $elm$html$Html$Attributes$width(100),
-        $elm$html$Html$Attributes$height(33),
-        $elm$html$Html$Attributes$alt("Monero Logo"),
-        $elm$html$Html$Attributes$title("Monero Logo")
+        $elm$html$Html$Attributes$src("resources/images/logo_splash.png"),
+        $elm$html$Html$Attributes$width(343),
+        $elm$html$Html$Attributes$height(208),
+        $elm$html$Html$Attributes$alt("Haveno Logo"),
+        $elm$html$Html$Attributes$title("Haveno Logo")
     ]), _List_Nil);
     var $author$project$Main$topLinksLogo = A2($elm$html$Html$div, _List_fromArray([
         $elm$html$Html$Attributes$class("topLinksLogo")
     ]), _List_fromArray([
         A2($elm$html$Html$a, _List_fromArray([
-            $elm$html$Html$Attributes$href("https://haveno-web.squashpassion.com")
+            $elm$html$Html$Attributes$href("https://haveno-web-dev.netlify.app/")
         ]), _List_fromArray([
             $author$project$Main$topLinksLogoImage
         ]))
@@ -11941,10 +11941,10 @@ type alias Process =
         return A2($elm$html$Html$img, _List_fromArray([
             $elm$html$Html$Attributes$class("banner"),
             $elm$html$Html$Attributes$src("resources/Banners/monero - 1918x494.png"),
-            $elm$html$Html$Attributes$alt("Monero"),
+            $elm$html$Html$Attributes$alt("Haveno"),
             $elm$html$Html$Attributes$width(1918),
             $elm$html$Html$Attributes$height(494),
-            $elm$html$Html$Attributes$title("Monero Banner")
+            $elm$html$Html$Attributes$title("Haveno Banner")
         ]), _List_Nil);
     };
     var $elm$html$Html$section = _VirtualDom_node("section");
