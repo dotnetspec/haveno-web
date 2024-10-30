@@ -61,12 +61,37 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **When** the user clicks the "Connect XMR Wallet" feature
 **Then** it should display a confirmation message indicating successful XMR wallet connection
 **And** it should display the address
+ 
 
+#### **Scenario 6: Show a message that the Haveno core app is not yet connected**  
 
-#### **Scenario 5: Display the Haveno core app version number**
+**Given** the web app is opened  
 
-**Given** the app is open
-**Then** the user can view the correct Haveno version in the footer
+**When** the user clicks the 'Connect Hardware' button  
+**And** the LNS hardware wallet is detected  
+**And** the Monero wallet address is retrieved from the hardware  
+
+**Then** the popup should be hidden  
+**And** the app location should be root 
+**And** the `isHardwareLNSConnected` flag should be set to `true`  
+**And** the footer should display "No Haveno version available"  
+**And** the Dashboard page should be displayed  
+**And** the model should reflect the current page as the Dashboard page  
+  
+
+#### **Scenario 7: Show the Haveno core app version in the footer**  
+
+**Given** the web app is opened  
+**And** the app is configured to fetch version data successfully  
+
+**When** the user clicks the 'Connect Hardware' button  
+**And** the LNS hardware wallet is detected  
+**And** the Monero wallet address is retrieved from the hardware  
+
+**Then** the app location should be root 
+**And** the Dashboard page should be displayed  
+**And** the model should reflect the current page as the Dashboard page  
+**And** the footer should display the version number "1.0.7"  
 
 
 
