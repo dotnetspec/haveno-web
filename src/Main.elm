@@ -1294,12 +1294,12 @@ topLinksLogo =
 topLinksLogoImage : Html msg
 topLinksLogoImage =
     img
-        [ Attr.src "resources/images/logo_splash.png"
+        [ Attr.src "resources/images/logo_splash100X33.png"
 
         -- NOTE: always define the width and height of images. This reduces flickering,
         -- because the browser can reserve space for the image before loading.
-        , Attr.width 343
-        , Attr.height 208
+        , Attr.width 100
+        , Attr.height 33
         , Attr.alt "Haveno Logo"
         , Attr.title "Haveno Logo"
         ]
@@ -1309,12 +1309,12 @@ topLinksLogoImage =
 logoImage : Html msg
 logoImage =
     img
-        [ Attr.src "resources/images/logo_splash.png"
+        [ Attr.src "resources/images/logo_splash100X33.png"
 
         -- NOTE: always define the width and height of images. This reduces flickering,
         -- because the browser can reserve space for the image before loading.
-        , Attr.width 343
-        , Attr.height 208
+        , Attr.width 100
+        , Attr.height 33
         , Attr.alt "Haveno Logo"
         , Attr.title "Haveno Logo"
         ]
@@ -1629,7 +1629,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.15" ]
+                , p [] [ text "Version 0.0.16" ]
                 , text "Haveno Version"
                 , p [ id "havenoversion" ]
                     [ text

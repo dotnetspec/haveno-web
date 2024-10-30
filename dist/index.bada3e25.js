@@ -11595,7 +11595,7 @@ type alias Process =
                     A2($elm$html$Html$br, _List_Nil, _List_Nil),
                     $elm$html$Html$text("Open source code & design"),
                     A2($elm$html$Html$p, _List_Nil, _List_fromArray([
-                        $elm$html$Html$text("Version 0.0.15")
+                        $elm$html$Html$text("Version 0.0.16")
                     ])),
                     $elm$html$Html$text("Haveno Version"),
                     A2($elm$html$Html$p, _List_fromArray([
