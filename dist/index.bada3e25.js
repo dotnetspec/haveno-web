@@ -11218,6 +11218,7 @@ type alias Process =
                 }), $elm$core$Platform$Cmd$none);
             case "HidePopUp":
                 return _Utils_Tuple2(_Utils_update(model, {
+                    isNavMenuActive: false,
                     isPopUpVisible: false,
                     page: $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel)
                 }), $elm$core$Platform$Cmd$none);
@@ -11269,7 +11270,7 @@ type alias Process =
                                     isXMRWalletConnected: updatedIsValidXMRAddressConnected,
                                     xmrWalletAddress: updatedWalletAddress
                                 });
-                                var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage(newHardwareModel);
+                                var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : updatedIsLNSConnected || updatedIsLNXConnected ? $author$project$Main$HardwarePage(newHardwareModel) : $author$project$Main$BlankPage($author$project$Pages$Blank$initialModel);
                                 var newMainModel = _Utils_update(model, {
                                     flag: newUrlAfterCheckConnections,
                                     isHardwareLNSConnected: updatedIsLNSConnected,
@@ -11545,6 +11546,7 @@ type alias Process =
             isHardwareLNSConnected: false,
             isHardwareLNXConnected: false,
             isNavMenuActive: false,
+            isPageHeaderVisible: false,
             isPopUpVisible: true,
             isXMRWalletConnected: false,
             key: key,
@@ -11595,7 +11597,7 @@ type alias Process =
                     A2($elm$html$Html$br, _List_Nil, _List_Nil),
                     $elm$html$Html$text("Open source code & design"),
                     A2($elm$html$Html$p, _List_Nil, _List_fromArray([
-                        $elm$html$Html$text("Version 0.0.16")
+                        $elm$html$Html$text("Version 0.0.17")
                     ])),
                     $elm$html$Html$text("Haveno Version"),
                     A2($elm$html$Html$p, _List_fromArray([
@@ -11616,7 +11618,8 @@ type alias Process =
             ]), _List_fromArray([
                 A2($elm$html$Html$span, _List_Nil, _List_fromArray([
                     A2($elm$html$Html$span, _List_fromArray([
-                        $elm$html$Html$Attributes$class(isConnected ? "indicator green" : model.isPopUpVisible ? "indicator white" : "indicator red")
+                        $elm$html$Html$Attributes$class(isConnected ? "indicator green" : model.isPopUpVisible ? "indicator white" : "indicator red"),
+                        $elm$html$Html$Attributes$id("connectionIndicator")
                     ]), _List_fromArray([
                         $elm$html$Html$text(model.isPopUpVisible ? "_" : model.isHardwareLNSConnected ? "Nano S Connected" : model.isHardwareLNXConnected ? "Nano X Connected" : "No hardware device connected")
                     ]))
@@ -11647,6 +11650,30 @@ type alias Process =
             ]))
         ]));
     };
+    var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty("alt");
+    var $elm$html$Html$Attributes$height = function(n) {
+        return A2(_VirtualDom_attribute, "height", $elm$core$String$fromInt(n));
+    };
+    var $elm$html$Html$img = _VirtualDom_node("img");
+    var $elm$html$Html$Attributes$src = function(url) {
+        return A2($elm$html$Html$Attributes$stringProperty, "src", _VirtualDom_noJavaScriptOrHtmlUri(url));
+    };
+    var $elm$html$Html$Attributes$width = function(n) {
+        return A2(_VirtualDom_attribute, "width", $elm$core$String$fromInt(n));
+    };
+    var $author$project$Main$logoImage = A2($elm$html$Html$div, _List_fromArray([
+        $elm$html$Html$Attributes$class("topLinks-flex-container")
+    ]), _List_fromArray([
+        A2($elm$html$Html$img, _List_fromArray([
+            $elm$html$Html$Attributes$src("assets/resources/images/logo-splash100X33.png"),
+            $elm$html$Html$Attributes$width(100),
+            $elm$html$Html$Attributes$height(33),
+            $elm$html$Html$Attributes$alt("Haveno Logo"),
+            $elm$html$Html$Attributes$title("Haveno Logo"),
+            $elm$html$Html$Attributes$id("logoImage"),
+            $elm$html$Html$Attributes$class("topLinksLogo")
+        ]), _List_Nil)
+    ]));
     var $elm$html$Html$nav = _VirtualDom_node("nav");
     var $elm$html$Html$Attributes$classList = function(classes) {
         return $elm$html$Html$Attributes$class(A2($elm$core$String$join, " ", A2($elm$core$List$map, $elm$core$Tuple$first, A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
@@ -11730,24 +11757,6 @@ type alias Process =
                 }
         }
     };
-    var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty("alt");
-    var $elm$html$Html$Attributes$height = function(n) {
-        return A2(_VirtualDom_attribute, "height", $elm$core$String$fromInt(n));
-    };
-    var $elm$html$Html$img = _VirtualDom_node("img");
-    var $elm$html$Html$Attributes$src = function(url) {
-        return A2($elm$html$Html$Attributes$stringProperty, "src", _VirtualDom_noJavaScriptOrHtmlUri(url));
-    };
-    var $elm$html$Html$Attributes$width = function(n) {
-        return A2(_VirtualDom_attribute, "width", $elm$core$String$fromInt(n));
-    };
-    var $author$project$Main$logoImage = A2($elm$html$Html$img, _List_fromArray([
-        $elm$html$Html$Attributes$src("resources/images/logo_splash.png"),
-        $elm$html$Html$Attributes$width(343),
-        $elm$html$Html$Attributes$height(208),
-        $elm$html$Html$Attributes$alt("Haveno Logo"),
-        $elm$html$Html$Attributes$title("Haveno Logo")
-    ]), _List_Nil);
     var $author$project$Main$navLinks = function(page) {
         var navLink = F2(function(route, _v0) {
             var url = _v0.url;
@@ -11770,7 +11779,7 @@ type alias Process =
         });
         var links = A2($elm$html$Html$ul, _List_Nil, _List_fromArray([
             A2($elm$html$Html$li, _List_fromArray([
-                $elm$html$Html$Attributes$class("logo")
+                $elm$html$Html$Attributes$class("logoInNavLinks")
             ]), _List_fromArray([
                 A2($elm$html$Html$a, _List_fromArray([
                     $elm$html$Html$Attributes$href("https://haveno-web-dev.netlify.app/"),
@@ -11890,11 +11899,12 @@ type alias Process =
         return links;
     }();
     var $author$project$Main$topLinksLogoImage = A2($elm$html$Html$img, _List_fromArray([
-        $elm$html$Html$Attributes$src("resources/images/logo_splash.png"),
-        $elm$html$Html$Attributes$width(343),
-        $elm$html$Html$Attributes$height(208),
+        $elm$html$Html$Attributes$src("assets/resources/images/logo-splash100X33.png"),
+        $elm$html$Html$Attributes$width(100),
+        $elm$html$Html$Attributes$height(33),
         $elm$html$Html$Attributes$alt("Haveno Logo"),
-        $elm$html$Html$Attributes$title("Haveno Logo")
+        $elm$html$Html$Attributes$title("Haveno Logo"),
+        $elm$html$Html$Attributes$id("topLinksLogoImage")
     ]), _List_Nil);
     var $author$project$Main$topLinksLogo = A2($elm$html$Html$div, _List_fromArray([
         $elm$html$Html$Attributes$class("topLinksLogo")
@@ -11906,7 +11916,7 @@ type alias Process =
         ]))
     ]));
     var $author$project$Main$pageHeader = function(model) {
-        var pageheader = A2($elm$html$Html$header, _List_Nil, _List_fromArray([
+        var pageheader = model.isPageHeaderVisible ? A2($elm$html$Html$header, _List_Nil, _List_fromArray([
             A2($elm$html$Html$div, _List_fromArray([
                 $elm$html$Html$Attributes$class("topLinks-flex-container")
             ]), _List_fromArray([
@@ -11934,13 +11944,13 @@ type alias Process =
                     $elm$html$Html$Attributes$class("section")
                 ]), _List_Nil)
             ]))
-        ]));
+        ])) : A2($elm$html$Html$div, _List_Nil, _List_Nil);
         return pageheader;
     };
     var $author$project$Main$showVideoOrBanner = function(page) {
         return A2($elm$html$Html$img, _List_fromArray([
             $elm$html$Html$Attributes$class("banner"),
-            $elm$html$Html$Attributes$src("resources/Banners/monero - 1918x494.png"),
+            $elm$html$Html$Attributes$src("assets/resources/images/Haveno-banner1918X494.png"),
             $elm$html$Html$Attributes$alt("Haveno"),
             $elm$html$Html$Attributes$width(1918),
             $elm$html$Html$Attributes$height(494),
@@ -16244,7 +16254,7 @@ type alias Process =
             onPress: $elm$core$Maybe$Just(msg)
         });
     });
-    var $author$project$Pages$Hardware$hardwareWalletView = function(model) {
+    var $author$project$Pages$Hardware$hardwareWalletConnectionOptionsView = function(model) {
         return A2($Orasund$elm_ui_framework$Framework$responsiveLayout, _List_Nil, A2($mdgriffith$elm_ui$Element$column, $Orasund$elm_ui_framework$Framework$container, _List_fromArray([
             A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h5, $mdgriffith$elm_ui$Element$text("Welcome - Please Connect XMR Wallet")),
             $mdgriffith$elm_ui$Element$text("\n"),
@@ -16292,9 +16302,9 @@ type alias Process =
                         default:
                             return A2($elm$html$Html$div, _List_fromArray([
                                 $elm$html$Html$Attributes$class("split-col"),
-                                $elm$html$Html$Attributes$id("hardwareWalletView")
+                                $elm$html$Html$Attributes$id("hardwareWalletConnectionOptionsView")
                             ]), _List_fromArray([
-                                $author$project$Pages$Hardware$hardwareWalletView(model)
+                                $author$project$Pages$Hardware$hardwareWalletConnectionOptionsView(model)
                             ]));
                     }
                 }(),
@@ -16458,7 +16468,6 @@ type alias Process =
     var $author$project$Main$HidePopUp = {
         $: "HidePopUp"
     };
-    var $elm$html$Html$h2 = _VirtualDom_node("h2");
     var $author$project$Main$viewPopUp = function(model) {
         return A2($elm$html$Html$div, _List_Nil, _List_fromArray([
             model.isPopUpVisible ? A2($elm$html$Html$div, _List_fromArray([
@@ -16467,9 +16476,7 @@ type alias Process =
                 A2($elm$html$Html$div, _List_fromArray([
                     $elm$html$Html$Attributes$class("modal-content")
                 ]), _List_fromArray([
-                    A2($elm$html$Html$h2, _List_Nil, _List_fromArray([
-                        $elm$html$Html$text("Haveno Web App")
-                    ])),
+                    $author$project$Main$logoImage,
                     A2($elm$html$Html$p, _List_Nil, _List_fromArray([
                         $elm$html$Html$text("No Hardware Device Detected!")
                     ])),
@@ -16519,15 +16526,20 @@ type alias Process =
                     return A2($elm$html$Html$map, $author$project$Main$GotHardwareMsg, $author$project$Pages$Hardware$view(hardware));
             }
         }();
-        return {
+        return !model.isPopUpVisible ? {
             body: _List_fromArray([
                 $author$project$Main$pageHeader(model),
                 $author$project$Main$showVideoOrBanner(model.page),
-                $author$project$Main$viewPopUp(model),
+                $author$project$Main$logoImage,
                 contentByPage,
                 A2($author$project$Main$isHWConnectedIndicator, model, isConnected),
                 $author$project$Main$isXMRWalletConnectedIndicator(model),
                 $author$project$Main$footerContent(model)
+            ]),
+            title: "Haveno-Web"
+        } : {
+            body: _List_fromArray([
+                $author$project$Main$viewPopUp(model)
             ]),
             title: "Haveno-Web"
         };

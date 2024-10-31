@@ -950,9 +950,9 @@ view model =
                 Loaded ->
                     div
                         [ class "split-col"
-                        , id "hardwareWalletView"
+                        , id "hardwareWalletConnectionOptionsView"
                         ]
-                        [ hardwareWalletView model
+                        [ hardwareWalletConnectionOptionsView model
                         ]
             , div
                 [ class "split-col"
@@ -1450,8 +1450,8 @@ globalView searchterm searchResults userVal =
                     ]
 
 
-hardwareWalletView : Model -> Html Msg
-hardwareWalletView model =
+hardwareWalletConnectionOptionsView : Model -> Html Msg
+hardwareWalletConnectionOptionsView model =
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
             [ Element.el Heading.h5 <| Element.text "Welcome - Please Connect XMR Wallet"

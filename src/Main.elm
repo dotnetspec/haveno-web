@@ -103,6 +103,7 @@ init flag url key =
             , isPopUpVisible = True
             , isNavMenuActive = False
             , version = Nothing
+            , isPageHeaderVisible = False
             }
     in
     --updateUrl (updateUrlPath url "/hardware") updatedModel
@@ -139,6 +140,7 @@ type alias Model =
     , xmrWalletAddress : String
     , isPopUpVisible : Bool
     , isNavMenuActive : Bool
+    , isPageHeaderVisible : Bool
     , version : Maybe GetVersionReply
     }
 
@@ -252,7 +254,7 @@ update msg model =
             ( { model | isPopUpVisible = True }, Cmd.none )
 
         HidePopUp ->
-            ( { model | isPopUpVisible = False, page = HardwarePage Pages.Hardware.initialModel }
+            ( { model | isPopUpVisible = False, isNavMenuActive = False, page = HardwarePage Pages.Hardware.initialModel }
             , Cmd.none
             )
 
@@ -289,7 +291,7 @@ update msg model =
                         let
                             -- NOTE: You can only see the rawJsonMessage in the console if you use JE.encode 2
                             -- but you can't decode it if you use it that way
-                            --_ = Debug.log "receivedJson" (E.encode 0 receivedJson)
+                            -- <debug log> "receivedJson" (E.encode 0 receivedJson)
                             -- NOTE: We are doing the logic here so that Main's model is updated as well as hardware's
                             -- REVIEW: If we can update Main's model after updating hardware's model, we can avoid doing it here
                             decodedHardwareDeviceMsg =
@@ -362,8 +364,11 @@ update msg model =
                                 if updatedIsValidXMRAddressConnected then
                                     DashboardPage Pages.Dashboard.initialModel
 
-                                else
+                                else if updatedIsLNSConnected || updatedIsLNXConnected then
                                     HardwarePage newHardwareModel
+
+                                else
+                                    BlankPage Pages.Blank.initialModel
 
                             newUrlAfterCheckConnections =
                                 if updatedIsValidXMRAddressConnected then
@@ -751,32 +756,39 @@ view model =
                     Pages.Hardware.view hardware
                         |> Html.map GotHardwareMsg
 
+        {- else
+           div [] []
+        -}
         isConnected =
             if model.isHardwareLNSConnected || model.isHardwareLNXConnected then
                 True
 
             else
                 False
-
-        {- else
-           div [] []
-        -}
     in
     -- NAV : View Page Content
     -- TODO: Make this content's naming conventions closely match the
     -- related css.
     -- NOTE: 'pagetitle' or 'title' in pages is not the same as 'title' in the document
-    { title = "Haveno-Web"
-    , body =
-        [ pageHeader model
-        , showVideoOrBanner model.page
-        , viewPopUp model
-        , contentByPage
-        , isHWConnectedIndicator model isConnected
-        , isXMRWalletConnectedIndicator model
-        , footerContent model
-        ]
-    }
+    if not model.isPopUpVisible then
+        { title = "Haveno-Web"
+        , body =
+            [ pageHeader model
+            , showVideoOrBanner model.page
+            , logoImage
+            , contentByPage
+            , isHWConnectedIndicator model isConnected
+            , isXMRWalletConnectedIndicator model
+            , footerContent model
+            ]
+        }
+
+    else
+        { title = "Haveno-Web"
+        , body =
+            [ viewPopUp model
+            ]
+        }
 
 
 
@@ -1188,7 +1200,9 @@ viewPopUp model =
         [ if model.isPopUpVisible then
             div [ class "modal" ]
                 [ div [ class "modal-content" ]
-                    [ h2 [] [ text "Haveno Web App" ]
+                    [ {- h2 [] [ text "Haveno Web App" ]
+                    ,  -}
+                    logoImage
                     , p [] [ text "No Hardware Device Detected!" ]
                     , p [] [ text "Please connect your LNS/LNX hardware device to continue" ]
                     , button [ onClick HidePopUp ] [ text "Connect Hardware" ]
@@ -1266,7 +1280,7 @@ each page model and match against-}
 
 showVideoOrBanner : Page -> Html msg
 showVideoOrBanner page =
-    img [ Attr.class "banner", src "resources/Banners/monero - 1918x494.png", alt "Haveno", width 1918, height 494, title "Haveno Banner" ]
+    img [ Attr.class "banner", src "assets/resources/images/Haveno-banner1918X494.png", alt "Haveno", width 1918, height 494, title "Haveno Banner" ]
         []
 
 
@@ -1294,7 +1308,7 @@ topLinksLogo =
 topLinksLogoImage : Html msg
 topLinksLogoImage =
     img
-        [ Attr.src "resources/images/logo_splash100X33.png"
+        [ Attr.src "assets/resources/images/logo-splash100X33.png"
 
         -- NOTE: always define the width and height of images. This reduces flickering,
         -- because the browser can reserve space for the image before loading.
@@ -1302,23 +1316,28 @@ topLinksLogoImage =
         , Attr.height 33
         , Attr.alt "Haveno Logo"
         , Attr.title "Haveno Logo"
+        , id "topLinksLogoImage"
         ]
         []
 
 
 logoImage : Html msg
 logoImage =
-    img
-        [ Attr.src "resources/images/logo_splash100X33.png"
+    div [ class "topLinks-flex-container" ]
+        [ img
+            [ Attr.src "assets/resources/images/logo-splash100X33.png"
 
-        -- NOTE: always define the width and height of images. This reduces flickering,
-        -- because the browser can reserve space for the image before loading.
-        , Attr.width 100
-        , Attr.height 33
-        , Attr.alt "Haveno Logo"
-        , Attr.title "Haveno Logo"
+            -- NOTE: always define the width and height of images. This reduces flickering,
+            -- because the browser can reserve space for the image before loading.
+            , Attr.width 100
+            , Attr.height 33
+            , Attr.alt "Haveno Logo"
+            , Attr.title "Haveno Logo"
+            , id "logoImage"
+            , class "topLinksLogo"
+            ]
+            []
         ]
-        []
 
 
 socialsLinks : Html msg
@@ -1391,44 +1410,46 @@ pageHeader : Model -> Html msg
 pageHeader model =
     let
         pageheader =
-            header []
-                [ div [ Attr.class "topLinks-flex-container" ]
-                    {- -- NOTE: When, how and/or if burgerMenu, topLinksLogo or topLinksLeft is displayed is also determined by the .css -}
-                    [ if model.isNavMenuActive then
-                        burgerMenu model.page
+            if model.isPageHeaderVisible then
+                header []
+                    [ div [ Attr.class "topLinks-flex-container" ]
+                        {- -- NOTE: When, how and/or if burgerMenu, topLinksLogo or topLinksLeft is displayed is also determined by the .css -}
+                        [ if model.isNavMenuActive then
+                            burgerMenu model.page
 
-                      else
-                        div [] []
-                    , topLinksLogo
-                    , topLinksLeft
-                    , socialsLinks
+                          else
+                            div [] []
+                        , topLinksLogo
+                        , topLinksLeft
+                        , socialsLinks
+                        ]
+
+                    {- -- NOTE: When main-nav-flex-container is displayed is determined by the .css -}
+                    , div [ Attr.class "main-nav-flex-container" ]
+                        [ div [ class "section" ]
+                            [{- input [ type_ "checkbox", id "nav-toggle", class "nav-toggle" ] []
+                                , nav [ class "navlinks" ] [ navLinks page ]
+                                , label [ for "nav-toggle", Attr.classList [ ( "nav-toggle-label", True ), ( "header-left-element", False ) ] ]
+                                    [ div []
+                                        []
+                                    ]
+                             -}
+                             --nav [ class "navlinks" ] [ navLinks page ]
+                            ]
+
+                        --,
+                        , div [ class "nav-section-above800px" ]
+                            [ --div [ Attr.class "topLinksLogo" ] [ hrefLogoImage ]
+                              nav [ class "above800pxnavlinks" ] [ navLinks model.page ]
+                            ]
+                        , div [ class "section" ]
+                            [--socialsLinks
+                            ]
+                        ]
                     ]
 
-                {- -- NOTE: When main-nav-flex-container is displayed is determined by the .css -}
-                , div [ Attr.class "main-nav-flex-container" ]
-                    [ div [ class "section" ]
-                        [{- input [ type_ "checkbox", id "nav-toggle", class "nav-toggle" ] []
-                            , nav [ class "navlinks" ] [ navLinks page ]
-                            , label [ for "nav-toggle", Attr.classList [ ( "nav-toggle-label", True ), ( "header-left-element", False ) ] ]
-                                [ div []
-                                    []
-                                ]
-                         -}
-                         --nav [ class "navlinks" ] [ navLinks page ]
-                        ]
-
-                    --,
-                    , div [ class "nav-section-above800px" ]
-                        [ --div [ Attr.class "topLinksLogo" ] [ hrefLogoImage ]
-                          nav [ class "above800pxnavlinks" ] [ navLinks model.page ]
-                        ]
-                    , div [ class "section" ]
-                        [--socialsLinks
-                        ]
-                    ]
-                ]
-
-        --]
+            else
+                div [] []
     in
     pageheader
 
@@ -1457,7 +1478,7 @@ navLinks page =
             ul
                 [-- NOTE: img is now managed separately so is can be shrunk etc. withouth affecting the links
                 ]
-                [ li [ class "logo" ] [ a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "logoImageShrink" ] [ logoImage ] ]
+                [ li [ class "logoInNavLinks" ] [ a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "logoImageShrink" ] [ logoImage ] ]
                 , navLink Blank { url = "/", caption = "" }
                 , navLink Dashboard { url = "dashboard", caption = "Dashboard" }
                 , navLink Market { url = "market", caption = "Market" }
@@ -1530,6 +1551,7 @@ isHWConnectedIndicator model isConnected =
                          else
                             "indicator red"
                         )
+                    , id "connectionIndicator"
                     ]
                     [ text
                         (if model.isPopUpVisible then
@@ -1629,7 +1651,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.16" ]
+                , p [] [ text "Version 0.0.17" ]
                 , text "Haveno Version"
                 , p [ id "havenoversion" ]
                     [ text

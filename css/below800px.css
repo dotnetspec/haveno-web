@@ -20,15 +20,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--clr-neutral-900-with-opacity);
+  /* background-color: var(--clr-neutral-900-with-opacity); */
+  background-color: var(--clr-neutral-100);
 }
 
 .topLinksLogo {
-  width: 100%;
+  /* width: 100%; */
+  width: 20%;
   display: flex;
   /* position: absolute; */
   justify-content: center;
   align-items: center;
+  padding-bottom: 10px;
 }
 
 .socials-sub-container-whatsapp {
@@ -64,8 +67,19 @@ nav {
 
 }
 
-.logo {
+.logoInNavLinks {
   display: none;
+}
+
+.simpleLogo {
+  display: block;
+}
+
+.smallScreenLogo {
+  display: flex;
+  justify-content: center;
+  z-index: 3;
+  color: white;
 }
 
 .video-container {

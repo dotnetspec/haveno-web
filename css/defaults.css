@@ -100,7 +100,11 @@
   
   ul.availabilityList{padding-left: 0px;}
   
-  .logo {
+  .logoInNavLinks {
+    display: block;
+  }
+
+  .simpleLogo {
     display: block;
   }
   

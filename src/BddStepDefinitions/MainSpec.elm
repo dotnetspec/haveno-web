@@ -37,6 +37,7 @@ import Extras.TestData as TestData exposing (placeholderUrl)
 import Html exposing (Html, div, i)
 import Json.Encode as E
 import Main exposing (Model, Msg, Page(..), Route(..), init, navigate, subscriptions, update, view, viewPopUp)
+import Pages.Blank
 import Pages.Dashboard as Dashboard exposing (..)
 import Pages.Hardware as Hardware exposing (..)
 import Spec exposing (..)
@@ -112,23 +113,16 @@ runSpecTests =
                     , it "should NOT display the 'Connected' indicator in the background"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ tag "h4" ]
+                            << by [ Spec.Markup.Selector.id "connectionIndicator" ]
                             |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "_"
-                                )
+                                Claim.isNothing
                         )
                     , it "should NOT display the 'XMR Wallet address' indicator in the background"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ tag "h4" ]
+                            << by [ Spec.Markup.Selector.id "xmrwalletaddress" ]
                             |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        -- NOTE: Test won't work for text ""
-                                        Claim.isStringContaining 1 "_"
-                                )
+                                Claim.isNothing
                         )
 
                     -- TODO: Sort the logic around disabling the menu so it doesn't interfere with the necessary display of pages
@@ -137,12 +131,21 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isFalse
                         )
-                    , it "should NOT be possible to see the Hardware page"
+                    , it "is on the Blank page"
+                        (Observer.observeModel .page
+                            -- NOTE: This is the model's page, not the page in the browser - Dashboard.initialModel is a placeholder for the test only here
+                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.BlankPage Pages.Blank.initialModel)
+                        )
+                    , it "should find the logo image"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ Spec.Markup.Selector.id "hardwareWalletView" ]
+                            << by [ id "logoImage" ]
                             |> Spec.expect
-                                Claim.isNothing
+                                (Claim.isSomethingWhere <|
+                                    Markup.attribute "src" <|
+                                        Claim.isSomethingWhere <|
+                                            Claim.isStringContaining 1 "assets/resources/images/logo-splash100X33.png"
+                                )
                         )
                     ]
             )
@@ -195,6 +198,24 @@ runSpecTests =
                         (Observer.observeModel .isNavMenuActive
                             |> Spec.expect
                                 Claim.isFalse
+                        )
+                    , it "should NOT be possible to see any nav links"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ tag "ul" ]
+                            |> Spec.expect
+                                Claim.isNothing
+                        )
+                    , it "should find the topLinksLogoImage image"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ id "logoImage" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.attribute "src" <|
+                                        Claim.isSomethingWhere <|
+                                            Claim.isStringContaining 1 "assets/resources/images/logo-splash100X33.png"
+                                )
                         )
                     ]
             )
