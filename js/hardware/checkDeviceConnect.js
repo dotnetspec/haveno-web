@@ -1,10 +1,12 @@
-import TransportWebHID from "@ledgerhq/hw-transport-webhid";
+//import TransportWebHID from "@ledgerhq/hw-transport-webhid";
+import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 
 export async function checkDeviceConnection(app) {
     try {
         console.log("before TransportWebHID");
         // Request access to the Ledger device
-        const transport = await TransportWebHID.create();
+        //const transport = await TransportWebHID.create();
+        const transport = await TransportWebUSB.create();
         console.log("Device connected:", transport);
         console.log("Device Model:", transport.deviceModel);
         console.log("Device Model ID:", transport.deviceModel ? transport.deviceModel.id : 'Not Available');

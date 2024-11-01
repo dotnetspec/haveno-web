@@ -11597,7 +11597,7 @@ type alias Process =
                     A2($elm$html$Html$br, _List_Nil, _List_Nil),
                     $elm$html$Html$text("Open source code & design"),
                     A2($elm$html$Html$p, _List_Nil, _List_fromArray([
-                        $elm$html$Html$text("Version 0.0.17")
+                        $elm$html$Html$text("Version 0.0.18")
                     ])),
                     $elm$html$Html$text("Haveno Version"),
                     A2($elm$html$Html$p, _List_fromArray([
@@ -17915,18 +17915,20 @@ async function handleMessageFromElm(message, app) {
 }
 
 },{"./hardware/checkDeviceConnect.js":"2sLhv","./hardware/xmrHardwareInterop.js":"2JAI7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2sLhv":[function(require,module,exports) {
+//import TransportWebHID from "@ledgerhq/hw-transport-webhid";
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "checkDeviceConnection", ()=>checkDeviceConnection) //}
  //checkDeviceConnection();
 ;
-var _hwTransportWebhid = require("@ledgerhq/hw-transport-webhid");
-var _hwTransportWebhidDefault = parcelHelpers.interopDefault(_hwTransportWebhid);
+var _hwTransportWebusb = require("@ledgerhq/hw-transport-webusb");
+var _hwTransportWebusbDefault = parcelHelpers.interopDefault(_hwTransportWebusb);
 async function checkDeviceConnection(app) {
     try {
         console.log("before TransportWebHID");
         // Request access to the Ledger device
-        const transport = await (0, _hwTransportWebhidDefault.default).create();
+        //const transport = await TransportWebHID.create();
+        const transport = await (0, _hwTransportWebusbDefault.default).create();
         console.log("Device connected:", transport);
         console.log("Device Model:", transport.deviceModel);
         console.log("Device Model ID:", transport.deviceModel ? transport.deviceModel.id : "Not Available");
@@ -17957,7 +17959,37 @@ async function checkDeviceConnection(app) {
     }
 }
 
-},{"@ledgerhq/hw-transport-webhid":"8O295","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8O295":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","@ledgerhq/hw-transport-webusb":"9zmIA"}],"gkKU3":[function(require,module,exports) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, "__esModule", {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === "default" || key === "__esModule" || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"9zmIA":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _hwTransport = require("@ledgerhq/hw-transport");
@@ -17967,7 +17999,8 @@ var _hidFramingDefault = parcelHelpers.interopDefault(_hidFraming);
 var _devices = require("@ledgerhq/devices");
 var _logs = require("@ledgerhq/logs");
 var _errors = require("@ledgerhq/errors");
-var Buffer = require("3666b9e986722ce4").Buffer;
+var _webusb = require("./webusb");
+var Buffer = require("2f1c1569be106a3").Buffer;
 var __awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
     function adopt(value) {
         return value instanceof P ? value : new P(function(resolve) {
@@ -17995,138 +18028,72 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const ledgerDevices = [
-    {
-        vendorId: (0, _devices.ledgerUSBVendorId)
-    }
-];
-const isSupported = ()=>Promise.resolve(!!(window.navigator && window.navigator.hid));
-const getHID = ()=>{
-    // $FlowFixMe
-    const { hid } = navigator;
-    if (!hid) throw new (0, _errors.TransportError)("navigator.hid is not supported", "HIDNotSupported");
-    return hid;
-};
-function requestLedgerDevices() {
-    return __awaiter(this, void 0, void 0, function*() {
-        const device = yield getHID().requestDevice({
-            filters: ledgerDevices
-        });
-        if (Array.isArray(device)) return device;
-        return [
-            device
-        ];
-    });
-}
-function getLedgerDevices() {
-    return __awaiter(this, void 0, void 0, function*() {
-        const devices = yield getHID().getDevices();
-        return devices.filter((d)=>d.vendorId === (0, _devices.ledgerUSBVendorId));
-    });
-}
-function getFirstLedgerDevice() {
-    return __awaiter(this, void 0, void 0, function*() {
-        const existingDevices = yield getLedgerDevices();
-        if (existingDevices.length > 0) return existingDevices[0];
-        const devices = yield requestLedgerDevices();
-        return devices[0];
-    });
-}
+const configurationValue = 1;
+const endpointNumber = 3;
 /**
- * WebHID Transport implementation
+ * WebUSB Transport implementation
  * @example
- * import TransportWebHID from "@ledgerhq/hw-transport-webhid";
+ * import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
  * ...
- * TransportWebHID.create().then(transport => ...)
- */ class TransportWebHID extends (0, _hwTransportDefault.default) {
-    constructor(device){
+ * TransportWebUSB.create().then(transport => ...)
+ */ class TransportWebUSB extends (0, _hwTransportDefault.default) {
+    constructor(device, interfaceNumber){
         super();
         this.channel = Math.floor(Math.random() * 0xffff);
         this.packetSize = 64;
-        this.inputs = [];
-        this.read = ()=>{
-            if (this.inputs.length) return Promise.resolve(this.inputs.shift());
-            return new Promise((success)=>{
-                this.inputCallback = success;
-            });
-        };
-        this.onInputReport = (e)=>{
-            const buffer = Buffer.from(e.data.buffer);
-            if (this.inputCallback) {
-                this.inputCallback(buffer);
-                this.inputCallback = null;
-            } else this.inputs.push(buffer);
-        };
         this._disconnectEmitted = false;
         this._emitDisconnect = (e)=>{
             if (this._disconnectEmitted) return;
             this._disconnectEmitted = true;
             this.emit("disconnect", e);
         };
-        /**
-         * Exchange with the device using APDU protocol.
-         * @param apdu
-         * @returns a promise of apdu response
-         */ this.exchange = (apdu)=>__awaiter(this, void 0, void 0, function*() {
-                const b = yield this.exchangeAtomicImpl(()=>__awaiter(this, void 0, void 0, function*() {
-                        const { channel, packetSize } = this;
-                        (0, _logs.log)("apdu", "=> " + apdu.toString("hex"));
-                        const framing = (0, _hidFramingDefault.default)(channel, packetSize);
-                        // Write...
-                        const blocks = framing.makeBlocks(apdu);
-                        for(let i = 0; i < blocks.length; i++)yield this.device.sendReport(0, blocks[i]);
-                        // Read...
-                        let result;
-                        let acc;
-                        while(!(result = framing.getReducedResult(acc))){
-                            const buffer = yield this.read();
-                            acc = framing.reduceResponse(acc, buffer);
-                        }
-                        (0, _logs.log)("apdu", "<= " + result.toString("hex"));
-                        return result;
-                    })).catch((e)=>{
-                    if (e && e.message && e.message.includes("write")) {
-                        this._emitDisconnect(e);
-                        throw new (0, _errors.DisconnectedDeviceDuringOperation)(e.message);
-                    }
-                    throw e;
-                });
-                return b;
-            });
         this.device = device;
-        this.deviceModel = typeof device.productId === "number" ? (0, _devices.identifyUSBProductId)(device.productId) : undefined;
-        device.addEventListener("inputreport", this.onInputReport);
+        this.interfaceNumber = interfaceNumber;
+        this.deviceModel = (0, _devices.identifyUSBProductId)(device.productId);
     }
     /**
      * Similar to create() except it will always display the device permission (even if some devices are already accepted).
      */ static request() {
         return __awaiter(this, void 0, void 0, function*() {
-            const [device] = yield requestLedgerDevices();
-            return TransportWebHID.open(device);
+            const device = yield (0, _webusb.requestLedgerDevice)();
+            return TransportWebUSB.open(device);
         });
     }
     /**
      * Similar to create() except it will never display the device permission (it returns a Promise<?Transport>, null if it fails to find a device).
      */ static openConnected() {
         return __awaiter(this, void 0, void 0, function*() {
-            const devices = yield getLedgerDevices();
+            const devices = yield (0, _webusb.getLedgerDevices)();
             if (devices.length === 0) return null;
-            return TransportWebHID.open(devices[0]);
+            return TransportWebUSB.open(devices[0]);
         });
     }
     /**
-     * Create a Ledger transport with a HIDDevice
+     * Create a Ledger transport with a USBDevice
      */ static open(device) {
         return __awaiter(this, void 0, void 0, function*() {
             yield device.open();
-            const transport = new TransportWebHID(device);
+            if (device.configuration === null) yield device.selectConfiguration(configurationValue);
+            yield gracefullyResetDevice(device);
+            const iface = device.configurations[0].interfaces.find(({ alternates })=>alternates.some((a)=>a.interfaceClass === 255));
+            if (!iface) throw new (0, _errors.TransportInterfaceNotAvailable)("No WebUSB interface found for your Ledger device. Please upgrade firmware or contact techsupport.");
+            const interfaceNumber = iface.interfaceNumber;
+            try {
+                yield device.claimInterface(interfaceNumber);
+            } catch (e) {
+                yield device.close();
+                throw new (0, _errors.TransportInterfaceNotAvailable)(e.message);
+            }
+            const transport = new TransportWebUSB(device, interfaceNumber);
             const onDisconnect = (e)=>{
                 if (device === e.device) {
-                    getHID().removeEventListener("disconnect", onDisconnect);
+                    // $FlowFixMe
+                    navigator.usb.removeEventListener("disconnect", onDisconnect);
                     transport._emitDisconnect(new (0, _errors.DisconnectedDevice)());
                 }
             };
-            getHID().addEventListener("disconnect", onDisconnect);
+            // $FlowFixMe
+            navigator.usb.addEventListener("disconnect", onDisconnect);
             return transport;
         });
     }
@@ -18135,29 +18102,64 @@ function getFirstLedgerDevice() {
      */ close() {
         return __awaiter(this, void 0, void 0, function*() {
             yield this.exchangeBusyPromise;
-            this.device.removeEventListener("inputreport", this.onInputReport);
+            yield this.device.releaseInterface(this.interfaceNumber);
+            yield gracefullyResetDevice(this.device);
             yield this.device.close();
+        });
+    }
+    /**
+     * Exchange with the device using APDU protocol.
+     * @param apdu
+     * @returns a promise of apdu response
+     */ exchange(apdu) {
+        return __awaiter(this, void 0, void 0, function*() {
+            const b = yield this.exchangeAtomicImpl(()=>__awaiter(this, void 0, void 0, function*() {
+                    const { channel, packetSize } = this;
+                    (0, _logs.log)("apdu", "=> " + apdu.toString("hex"));
+                    const framing = (0, _hidFramingDefault.default)(channel, packetSize);
+                    // Write...
+                    const blocks = framing.makeBlocks(apdu);
+                    for(let i = 0; i < blocks.length; i++)yield this.device.transferOut(endpointNumber, blocks[i]);
+                    // Read...
+                    let result;
+                    let acc;
+                    while(!(result = framing.getReducedResult(acc))){
+                        const r = yield this.device.transferIn(endpointNumber, packetSize);
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        const buffer = Buffer.from(r.data.buffer);
+                        acc = framing.reduceResponse(acc, buffer);
+                    }
+                    (0, _logs.log)("apdu", "<= " + result.toString("hex"));
+                    return result;
+                })).catch((e)=>{
+                if (e && e.message && e.message.includes("disconnected")) {
+                    this._emitDisconnect(e);
+                    throw new (0, _errors.DisconnectedDeviceDuringOperation)(e.message);
+                }
+                throw e;
+            });
+            return b;
         });
     }
     setScrambleKey() {}
 }
 /**
  * Check if WebUSB transport is supported.
- */ TransportWebHID.isSupported = isSupported;
+ */ TransportWebUSB.isSupported = (0, _webusb.isSupported);
 /**
  * List the WebUSB devices that was previously authorized by the user.
- */ TransportWebHID.list = getLedgerDevices;
+ */ TransportWebUSB.list = (0, _webusb.getLedgerDevices);
 /**
  * Actively listen to WebUSB devices and emit ONE device
  * that was either accepted before, if not it will trigger the native permission UI.
  *
  * Important: it must be called in the context of a UI click!
- */ TransportWebHID.listen = (observer)=>{
+ */ TransportWebUSB.listen = (observer)=>{
     let unsubscribed = false;
-    getFirstLedgerDevice().then((device)=>{
-        if (!device) observer.error(new (0, _errors.TransportOpenUserCancelled)("Access denied to use Ledger device"));
-        else if (!unsubscribed) {
-            const deviceModel = typeof device.productId === "number" ? (0, _devices.identifyUSBProductId)(device.productId) : undefined;
+    (0, _webusb.getFirstLedgerDevice)().then((device)=>{
+        if (!unsubscribed) {
+            const deviceModel = (0, _devices.identifyUSBProductId)(device.productId);
             observer.next({
                 type: "add",
                 descriptor: device,
@@ -18166,7 +18168,8 @@ function getFirstLedgerDevice() {
             observer.complete();
         }
     }, (error)=>{
-        observer.error(new (0, _errors.TransportOpenUserCancelled)(error.message));
+        if (window.DOMException && error instanceof window.DOMException && error.code === 18) observer.error(new (0, _errors.TransportWebUSBGestureRequired)(error.message));
+        else observer.error(new (0, _errors.TransportOpenUserCancelled)(error.message));
     });
     function unsubscribe() {
         unsubscribed = true;
@@ -18175,9 +18178,18 @@ function getFirstLedgerDevice() {
         unsubscribe
     };
 };
-exports.default = TransportWebHID;
+exports.default = TransportWebUSB;
+function gracefullyResetDevice(device) {
+    return __awaiter(this, void 0, void 0, function*() {
+        try {
+            yield device.reset();
+        } catch (err) {
+            console.warn(err);
+        }
+    });
+}
 
-},{"3666b9e986722ce4":"fCgem","@ledgerhq/hw-transport":"59Ey9","@ledgerhq/devices/hid-framing":"3BsQA","@ledgerhq/devices":"fnHxP","@ledgerhq/logs":"i4OI0","@ledgerhq/errors":"EVZMy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fCgem":[function(require,module,exports) {
+},{"2f1c1569be106a3":"fCgem","@ledgerhq/hw-transport":"59Ey9","@ledgerhq/devices/hid-framing":"3BsQA","@ledgerhq/devices":"fnHxP","@ledgerhq/logs":"i4OI0","@ledgerhq/errors":"EVZMy","./webusb":"7NNG8","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fCgem":[function(require,module,exports) {
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -20955,37 +20967,7 @@ function destroyCircular(from, seen) {
     return to;
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, "__esModule", {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === "default" || key === "__esModule" || Object.prototype.hasOwnProperty.call(dest, key)) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}],"i4OI0":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"i4OI0":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "log", ()=>log);
@@ -23149,7 +23131,70 @@ const lowerLT = (a, b, options)=>{
 };
 module.exports = subset;
 
-},{"c141b0432e6ae71b":"iSOAN","94bed966a1054073":"gVFDT","acfaf6445a9794b":"4GGCq","d9ed82a69c119cf4":"d0byB"}],"2JAI7":[function(require,module,exports) {
+},{"c141b0432e6ae71b":"iSOAN","94bed966a1054073":"gVFDT","acfaf6445a9794b":"4GGCq","d9ed82a69c119cf4":"d0byB"}],"7NNG8":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "requestLedgerDevice", ()=>requestLedgerDevice);
+parcelHelpers.export(exports, "getLedgerDevices", ()=>getLedgerDevices);
+parcelHelpers.export(exports, "getFirstLedgerDevice", ()=>getFirstLedgerDevice);
+parcelHelpers.export(exports, "isSupported", ()=>isSupported);
+var _devices = require("@ledgerhq/devices");
+var __awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+const ledgerDevices = [
+    {
+        vendorId: (0, _devices.ledgerUSBVendorId)
+    }
+];
+function requestLedgerDevice() {
+    return __awaiter(this, void 0, void 0, function*() {
+        const device = yield navigator.usb.requestDevice({
+            filters: ledgerDevices
+        });
+        return device;
+    });
+}
+function getLedgerDevices() {
+    return __awaiter(this, void 0, void 0, function*() {
+        const devices = yield navigator.usb.getDevices();
+        return devices.filter((d)=>d.vendorId === (0, _devices.ledgerUSBVendorId));
+    });
+}
+function getFirstLedgerDevice() {
+    return __awaiter(this, void 0, void 0, function*() {
+        const existingDevices = yield getLedgerDevices();
+        if (existingDevices.length > 0) return existingDevices[0];
+        return requestLedgerDevice();
+    });
+}
+const isSupported = ()=>Promise.resolve(!!navigator && !!navigator.usb && typeof navigator.usb.getDevices === "function");
+
+},{"@ledgerhq/devices":"fnHxP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2JAI7":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 /* export async function getMoneroAddress() {
@@ -24745,7 +24790,227 @@ module.exports = function(scheduler, hasTimeArg) {
     } : scheduler;
 };
 
-},{"aa6765693e58a0fe":"9fY7y","a68ecfcbf29c46f6":"148ka","7087588d33667af2":"l3Kyn","864edee099e8affb":"888a9","3a3a5a2cfab86f21":"lApyY","cff2c830bdea4f24":"RsFXo","58a74f00cee1ac64":"b9O3D"}],"h5x5j":[function(require,module,exports) {
+},{"aa6765693e58a0fe":"9fY7y","a68ecfcbf29c46f6":"148ka","7087588d33667af2":"l3Kyn","864edee099e8affb":"888a9","3a3a5a2cfab86f21":"lApyY","cff2c830bdea4f24":"RsFXo","58a74f00cee1ac64":"b9O3D"}],"8O295":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _hwTransport = require("@ledgerhq/hw-transport");
+var _hwTransportDefault = parcelHelpers.interopDefault(_hwTransport);
+var _hidFraming = require("@ledgerhq/devices/hid-framing");
+var _hidFramingDefault = parcelHelpers.interopDefault(_hidFraming);
+var _devices = require("@ledgerhq/devices");
+var _logs = require("@ledgerhq/logs");
+var _errors = require("@ledgerhq/errors");
+var Buffer = require("3666b9e986722ce4").Buffer;
+var __awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+            resolve(value);
+        });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+            try {
+                step(generator.next(value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function rejected(value) {
+            try {
+                step(generator["throw"](value));
+            } catch (e) {
+                reject(e);
+            }
+        }
+        function step(result) {
+            result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+const ledgerDevices = [
+    {
+        vendorId: (0, _devices.ledgerUSBVendorId)
+    }
+];
+const isSupported = ()=>Promise.resolve(!!(window.navigator && window.navigator.hid));
+const getHID = ()=>{
+    // $FlowFixMe
+    const { hid } = navigator;
+    if (!hid) throw new (0, _errors.TransportError)("navigator.hid is not supported", "HIDNotSupported");
+    return hid;
+};
+function requestLedgerDevices() {
+    return __awaiter(this, void 0, void 0, function*() {
+        const device = yield getHID().requestDevice({
+            filters: ledgerDevices
+        });
+        if (Array.isArray(device)) return device;
+        return [
+            device
+        ];
+    });
+}
+function getLedgerDevices() {
+    return __awaiter(this, void 0, void 0, function*() {
+        const devices = yield getHID().getDevices();
+        return devices.filter((d)=>d.vendorId === (0, _devices.ledgerUSBVendorId));
+    });
+}
+function getFirstLedgerDevice() {
+    return __awaiter(this, void 0, void 0, function*() {
+        const existingDevices = yield getLedgerDevices();
+        if (existingDevices.length > 0) return existingDevices[0];
+        const devices = yield requestLedgerDevices();
+        return devices[0];
+    });
+}
+/**
+ * WebHID Transport implementation
+ * @example
+ * import TransportWebHID from "@ledgerhq/hw-transport-webhid";
+ * ...
+ * TransportWebHID.create().then(transport => ...)
+ */ class TransportWebHID extends (0, _hwTransportDefault.default) {
+    constructor(device){
+        super();
+        this.channel = Math.floor(Math.random() * 0xffff);
+        this.packetSize = 64;
+        this.inputs = [];
+        this.read = ()=>{
+            if (this.inputs.length) return Promise.resolve(this.inputs.shift());
+            return new Promise((success)=>{
+                this.inputCallback = success;
+            });
+        };
+        this.onInputReport = (e)=>{
+            const buffer = Buffer.from(e.data.buffer);
+            if (this.inputCallback) {
+                this.inputCallback(buffer);
+                this.inputCallback = null;
+            } else this.inputs.push(buffer);
+        };
+        this._disconnectEmitted = false;
+        this._emitDisconnect = (e)=>{
+            if (this._disconnectEmitted) return;
+            this._disconnectEmitted = true;
+            this.emit("disconnect", e);
+        };
+        /**
+         * Exchange with the device using APDU protocol.
+         * @param apdu
+         * @returns a promise of apdu response
+         */ this.exchange = (apdu)=>__awaiter(this, void 0, void 0, function*() {
+                const b = yield this.exchangeAtomicImpl(()=>__awaiter(this, void 0, void 0, function*() {
+                        const { channel, packetSize } = this;
+                        (0, _logs.log)("apdu", "=> " + apdu.toString("hex"));
+                        const framing = (0, _hidFramingDefault.default)(channel, packetSize);
+                        // Write...
+                        const blocks = framing.makeBlocks(apdu);
+                        for(let i = 0; i < blocks.length; i++)yield this.device.sendReport(0, blocks[i]);
+                        // Read...
+                        let result;
+                        let acc;
+                        while(!(result = framing.getReducedResult(acc))){
+                            const buffer = yield this.read();
+                            acc = framing.reduceResponse(acc, buffer);
+                        }
+                        (0, _logs.log)("apdu", "<= " + result.toString("hex"));
+                        return result;
+                    })).catch((e)=>{
+                    if (e && e.message && e.message.includes("write")) {
+                        this._emitDisconnect(e);
+                        throw new (0, _errors.DisconnectedDeviceDuringOperation)(e.message);
+                    }
+                    throw e;
+                });
+                return b;
+            });
+        this.device = device;
+        this.deviceModel = typeof device.productId === "number" ? (0, _devices.identifyUSBProductId)(device.productId) : undefined;
+        device.addEventListener("inputreport", this.onInputReport);
+    }
+    /**
+     * Similar to create() except it will always display the device permission (even if some devices are already accepted).
+     */ static request() {
+        return __awaiter(this, void 0, void 0, function*() {
+            const [device] = yield requestLedgerDevices();
+            return TransportWebHID.open(device);
+        });
+    }
+    /**
+     * Similar to create() except it will never display the device permission (it returns a Promise<?Transport>, null if it fails to find a device).
+     */ static openConnected() {
+        return __awaiter(this, void 0, void 0, function*() {
+            const devices = yield getLedgerDevices();
+            if (devices.length === 0) return null;
+            return TransportWebHID.open(devices[0]);
+        });
+    }
+    /**
+     * Create a Ledger transport with a HIDDevice
+     */ static open(device) {
+        return __awaiter(this, void 0, void 0, function*() {
+            yield device.open();
+            const transport = new TransportWebHID(device);
+            const onDisconnect = (e)=>{
+                if (device === e.device) {
+                    getHID().removeEventListener("disconnect", onDisconnect);
+                    transport._emitDisconnect(new (0, _errors.DisconnectedDevice)());
+                }
+            };
+            getHID().addEventListener("disconnect", onDisconnect);
+            return transport;
+        });
+    }
+    /**
+     * Release the transport device
+     */ close() {
+        return __awaiter(this, void 0, void 0, function*() {
+            yield this.exchangeBusyPromise;
+            this.device.removeEventListener("inputreport", this.onInputReport);
+            yield this.device.close();
+        });
+    }
+    setScrambleKey() {}
+}
+/**
+ * Check if WebUSB transport is supported.
+ */ TransportWebHID.isSupported = isSupported;
+/**
+ * List the WebUSB devices that was previously authorized by the user.
+ */ TransportWebHID.list = getLedgerDevices;
+/**
+ * Actively listen to WebUSB devices and emit ONE device
+ * that was either accepted before, if not it will trigger the native permission UI.
+ *
+ * Important: it must be called in the context of a UI click!
+ */ TransportWebHID.listen = (observer)=>{
+    let unsubscribed = false;
+    getFirstLedgerDevice().then((device)=>{
+        if (!device) observer.error(new (0, _errors.TransportOpenUserCancelled)("Access denied to use Ledger device"));
+        else if (!unsubscribed) {
+            const deviceModel = typeof device.productId === "number" ? (0, _devices.identifyUSBProductId)(device.productId) : undefined;
+            observer.next({
+                type: "add",
+                descriptor: device,
+                deviceModel
+            });
+            observer.complete();
+        }
+    }, (error)=>{
+        observer.error(new (0, _errors.TransportOpenUserCancelled)(error.message));
+    });
+    function unsubscribe() {
+        unsubscribed = true;
+    }
+    return {
+        unsubscribe
+    };
+};
+exports.default = TransportWebHID;
+
+},{"3666b9e986722ce4":"fCgem","@ledgerhq/hw-transport":"59Ey9","@ledgerhq/devices/hid-framing":"3BsQA","@ledgerhq/devices":"fnHxP","@ledgerhq/logs":"i4OI0","@ledgerhq/errors":"EVZMy","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"h5x5j":[function(require,module,exports) {
 // src/hardware/serializeDerivationPath.js
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);

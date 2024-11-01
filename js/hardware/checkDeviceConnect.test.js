@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { checkDeviceConnection } from "./checkDeviceConnect";
-import TransportWebHID from "@ledgerhq/hw-transport-webhid";
+import TransportWebUSB from "@ledgerhq/hw-transport-webusb";
 
 describe("checkDeviceConnection", () => {
   let mockApp;
@@ -9,12 +9,12 @@ describe("checkDeviceConnection", () => {
     // Clear all mocks before each test
     vi.clearAllMocks();
 
-    // Mock the TransportWebHID.create method
+    // Mock the TransportWebUSB.create method
     // -- NOTE: This mock ensures that the entire behavior of 
-    //TransportWebHID.create is controlled within your test, 
-    //meaning it never needs to call navigator.hid internally 
-    //so you don't need to mock navigator.hid
-    vi.spyOn(TransportWebHID, "create").mockResolvedValue({
+    //TransportWebUSB.create is controlled within your test, 
+    //meaning it never needs to call navigator.usb internally 
+    //so you don't need to mock navigator.usb
+    vi.spyOn(TransportWebUSB, "create").mockResolvedValue({
       deviceModel: { id: "nanoS" },
       send: vi.fn().mockResolvedValue("nanoS"),
     });
@@ -38,8 +38,8 @@ describe("checkDeviceConnection", () => {
 
   it("should handle errors and send an error message", async () => {
     try {
-      // Mock TransportWebHID.create to throw an error
-      vi.spyOn(TransportWebHID, "create").mockRejectedValue(
+      // Mock TransportWebUSB.create to throw an error
+      vi.spyOn(TransportWebUSB, "create").mockRejectedValue(
         new Error("Test error")
       );
 
