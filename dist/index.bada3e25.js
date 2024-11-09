@@ -8138,9 +8138,6 @@ type alias Process =
             a: a
         };
     };
-    var $author$project$Main$HardwareDeviceConnect = {
-        $: "HardwareDeviceConnect"
-    };
     var $author$project$Main$HardwarePage = function(a) {
         return {
             $: "HardwarePage",
@@ -8149,6 +8146,9 @@ type alias Process =
     };
     var $author$project$Pages$Hardware$LoggedInUser = {
         $: "LoggedInUser"
+    };
+    var $author$project$Main$OnInitHardwareDeviceConnect = {
+        $: "OnInitHardwareDeviceConnect"
     };
     var $author$project$Pages$Hardware$ResponseDataFromMain = function(a) {
         return {
@@ -8546,38 +8546,32 @@ type alias Process =
                                                             return function(mobileValidationError) {
                                                                 return function(datestamp) {
                                                                     return function(active) {
-                                                                        return function(ownedRankings) {
-                                                                            return function(memberRankings) {
-                                                                                return function(updatetext) {
-                                                                                    return function(description) {
-                                                                                        return function(credits) {
-                                                                                            return function(addInfo) {
-                                                                                                return {
-                                                                                                    active: active,
-                                                                                                    addInfo: addInfo,
-                                                                                                    age: age,
-                                                                                                    credits: credits,
-                                                                                                    datestamp: datestamp,
-                                                                                                    description: description,
-                                                                                                    email: email,
-                                                                                                    emailValidationError: emailValidationError,
-                                                                                                    gender: gender,
-                                                                                                    isEmailInputFocused: isEmailInputFocused,
-                                                                                                    isMobileInputFocused: isMobileInputFocused,
-                                                                                                    isNameInputFocused: isNameInputFocused,
-                                                                                                    memberRankings: memberRankings,
-                                                                                                    mobile: mobile,
-                                                                                                    mobileValidationError: mobileValidationError,
-                                                                                                    nameValidationError: nameValidationError,
-                                                                                                    nickname: nickname,
-                                                                                                    ownedRankings: ownedRankings,
-                                                                                                    password: password,
-                                                                                                    passwordValidationError: passwordValidationError,
-                                                                                                    token: token,
-                                                                                                    updatetext: updatetext,
-                                                                                                    userid: userid
-                                                                                                };
-                                                                                            };
+                                                                        return function(updatetext) {
+                                                                            return function(description) {
+                                                                                return function(credits) {
+                                                                                    return function(addInfo) {
+                                                                                        return {
+                                                                                            active: active,
+                                                                                            addInfo: addInfo,
+                                                                                            age: age,
+                                                                                            credits: credits,
+                                                                                            datestamp: datestamp,
+                                                                                            description: description,
+                                                                                            email: email,
+                                                                                            emailValidationError: emailValidationError,
+                                                                                            gender: gender,
+                                                                                            isEmailInputFocused: isEmailInputFocused,
+                                                                                            isMobileInputFocused: isMobileInputFocused,
+                                                                                            isNameInputFocused: isNameInputFocused,
+                                                                                            mobile: mobile,
+                                                                                            mobileValidationError: mobileValidationError,
+                                                                                            nameValidationError: nameValidationError,
+                                                                                            nickname: nickname,
+                                                                                            password: password,
+                                                                                            passwordValidationError: passwordValidationError,
+                                                                                            token: token,
+                                                                                            updatetext: updatetext,
+                                                                                            userid: userid
                                                                                         };
                                                                                     };
                                                                                 };
@@ -8604,7 +8598,7 @@ type alias Process =
         comment: "",
         level: ""
     };
-    var $author$project$Data$User$emptyUserInfo = $author$project$Data$User$UserInfo("")("")("")($elm$core$Maybe$Nothing)("")(false)("")(40)($author$project$Data$User$Male)($elm$core$Maybe$Nothing)(false)("")($elm$core$Maybe$Nothing)(false)("")(0)(false)(_List_Nil)(_List_Nil)("")($author$project$Data$User$emptyDescription)(0)("");
+    var $author$project$Data$User$emptyUserInfo = $author$project$Data$User$UserInfo("")("")("")($elm$core$Maybe$Nothing)("")(false)("")(40)($author$project$Data$User$Male)($elm$core$Maybe$Nothing)(false)("")($elm$core$Maybe$Nothing)(false)("")(0)(false)("")($author$project$Data$User$emptyDescription)(0)("");
     var $author$project$Data$User$emptySpectator = $author$project$Data$User$Spectator($author$project$Data$User$emptyUserInfo);
     var $author$project$Extras$Constants$localorproductionServerAutoCheck = "haveno-web.squashpassion";
     var $author$project$Extras$Constants$middleWarePath = "/middleware";
@@ -10399,13 +10393,6 @@ type alias Process =
     var $author$project$Pages$Hardware$OwnedSelectedView = {
         $: "OwnedSelectedView"
     };
-    var $author$project$Data$Hardware$Rank = F3(function(rank, player, challenger) {
-        return {
-            challenger: challenger,
-            player: player,
-            rank: rank
-        };
-    });
     var $author$project$Pages$Hardware$RegisterUser = function(a) {
         return {
             $: "RegisterUser",
@@ -10419,9 +10406,6 @@ type alias Process =
             b: b
         };
     });
-    var $author$project$Pages$Hardware$SpectatorSelectedView = {
-        $: "SpectatorSelectedView"
-    };
     var $author$project$Pages$Hardware$ToMongoDBMWConfig = F6(function(method, headers, url, body, timeout, tracker) {
         return {
             body: body,
@@ -10466,32 +10450,6 @@ type alias Process =
         email: "",
         password: ""
     };
-    var $author$project$Data$Hardware$emptyRank = {
-        challenger: {
-            id: "String",
-            nickname: "String"
-        },
-        player: {
-            id: "String",
-            nickname: "String"
-        },
-        rank: 0
-    };
-    var $author$project$Data$Hardware$emptyRanking = {
-        active: false,
-        baseaddress: {
-            city: "",
-            street: ""
-        },
-        id: "",
-        ladder: _List_fromArray([
-            $author$project$Data$Hardware$emptyRank
-        ]),
-        name: "",
-        owner_id: "",
-        owner_name: "",
-        player_count: 0
-    };
     var $author$project$Pages$Hardware$isValidXMRAddress = function(str) {
         var _v0 = A2($elm$parser$Parser$run, $author$project$Data$Hardware$validXMRAddressParser, str);
         if (_v0.$ === "Ok") return true;
@@ -10503,7 +10461,6 @@ type alias Process =
         };
     };
     var $author$project$Pages$Hardware$justmsgFieldFromJsonDecoder = A2($elm$json$Json$Decode$map, $author$project$Pages$Hardware$OperationEventMsg, A2($elm$json$Json$Decode$field, "operationEventMsg", $elm$json$Json$Decode$string));
-    var $author$project$Extras$Constants$noCurrentChallengerId = "6353e8b6aedf80653eb34191";
     var $author$project$Pages$Hardware$ProfileResponse = function(a) {
         return {
             $: "ProfileResponse",
@@ -10734,8 +10691,6 @@ type alias Process =
                 return _Utils_Tuple2(_Utils_update(model, {
                     queryType: $author$project$Pages$Hardware$Login($author$project$Extras$Constants$emptyEmailPassword)
                 }), $elm$core$Platform$Cmd$none);
-            case "ConfirmLeaveMemberRanking":
-                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "RegisteredUserJoin":
                 return _Utils_Tuple2(_Utils_update(model, {
                     queryType: $author$project$Pages$Hardware$LoggedInUser
@@ -10745,10 +10700,6 @@ type alias Process =
             case "DialogueConfirmLeaveView":
                 return _Utils_Tuple2(_Utils_update(model, {
                     queryType: $author$project$Pages$Hardware$ConfirmLeaveMemberView
-                }), $elm$core$Platform$Cmd$none);
-            case "ConfirmJoin":
-                return _Utils_Tuple2(_Utils_update(model, {
-                    queryType: $author$project$Pages$Hardware$SpectatorSelectedView
                 }), $elm$core$Platform$Cmd$none);
             case "SpectatorJoin":
                 var _v1 = model.user;
@@ -10764,13 +10715,6 @@ type alias Process =
                 return _Utils_Tuple2(_Utils_update(model, {
                     queryType: $author$project$Pages$Hardware$Login($author$project$Extras$Constants$emptyEmailPassword)
                 }), $elm$core$Platform$Cmd$none);
-            case "ConfirmChallenge":
-                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-            case "ConfirmResult":
-                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-            case "ViewRank":
-                var rank = msg.a;
-                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "CancelCreateNewRanking":
                 return _Utils_Tuple2(_Utils_update(model, {
                     queryType: $author$project$Pages$Hardware$LoggedInUser
@@ -10804,22 +10748,8 @@ type alias Process =
                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "CreateNewRanking":
                 var userInfo = msg.a;
-                var newRanking = $author$project$Data$Hardware$emptyRanking;
-                var newRank = A3($author$project$Data$Hardware$Rank, 1, {
-                    id: userInfo.userid,
-                    nickname: userInfo.nickname
-                }, {
-                    id: $author$project$Extras$Constants$noCurrentChallengerId,
-                    nickname: "Challenger"
-                });
                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "ViewMember":
-                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-            case "FetchMember":
-                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-            case "ListSpectator":
-                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-            case "FetchOwned":
                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "ResponseDataFromMain":
                 var receivedJson = msg.a;
@@ -10844,29 +10774,15 @@ type alias Process =
                 }), $elm$core$Platform$Cmd$none);
             case "Confirm":
                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-            case "ConfirmNewRanking":
-                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "Cancel":
                 return _Utils_Tuple2(function() {
                     var _v3 = model.queryType;
-                    switch(_v3.$){
-                        case "ConfirmDeleteOwnedRanking":
-                            return _Utils_update(model, {
-                                queryType: $author$project$Pages$Hardware$OwnedSelectedView
-                            });
-                        case "ConfirmChallengeView":
-                            return _Utils_update(model, {
-                                queryType: $author$project$Pages$Hardware$MemberSelectedView
-                            });
-                        case "CreateChallengeView":
-                            return _Utils_update(model, {
-                                queryType: $author$project$Pages$Hardware$LoggedInUser
-                            });
-                        default:
-                            return _Utils_update(model, {
-                                queryType: $author$project$Pages$Hardware$Login($author$project$Extras$Constants$emptyEmailPassword)
-                            });
-                    }
+                    if (_v3.$ === "ConfirmDeleteOwnedRanking") return _Utils_update(model, {
+                        queryType: $author$project$Pages$Hardware$OwnedSelectedView
+                    });
+                    else return _Utils_update(model, {
+                        queryType: $author$project$Pages$Hardware$Login($author$project$Extras$Constants$emptyEmailPassword)
+                    });
                 }(), $elm$core$Platform$Cmd$none);
             case "LogOut":
                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -11015,14 +10931,6 @@ type alias Process =
                         ])
                     });
                     return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
-                }
-            case "SpectatorRankingResponse":
-                if (msg.a.$ === "Ok") {
-                    var specRankingResult = msg.a.a;
-                    return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-                } else {
-                    var responseErr = msg.a.a;
-                    return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                 }
             case "UpdateNickName":
                 var value = msg.a;
@@ -11187,7 +11095,7 @@ type alias Process =
     var $author$project$Main$toBlank = F2(function(model, _v28) {
         var blank = _v28.a;
         var cmd = _v28.b;
-        var _v29 = A2($author$project$Main$update, $author$project$Main$HardwareDeviceConnect, model);
+        var _v29 = A2($author$project$Main$update, $author$project$Main$OnInitHardwareDeviceConnect, model);
         var newModel = _v29.a;
         var hwareConnectCmd = _v29.b;
         return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$batch(_List_fromArray([
@@ -11222,11 +11130,8 @@ type alias Process =
                     isPopUpVisible: false,
                     page: $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel)
                 }), $elm$core$Platform$Cmd$none);
-            case "HardwareDeviceConnect":
+            case "OnInitHardwareDeviceConnect":
                 return _Utils_Tuple2(model, $author$project$Main$sendMessageToJs("connectLNS"));
-            case "RecvText":
-                var textMessageFromJs = msg.a;
-                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case "Recv":
                 var rawJsonMessage = msg.a;
                 if (A2($elm$core$String$contains, "Problem", $author$project$Main$fromJsonToString(rawJsonMessage))) return _Utils_Tuple2(_Utils_update(model, {
@@ -11597,7 +11502,7 @@ type alias Process =
                     A2($elm$html$Html$br, _List_Nil, _List_Nil),
                     $elm$html$Html$text("Open source code & design"),
                     A2($elm$html$Html$p, _List_Nil, _List_fromArray([
-                        $elm$html$Html$text("Version 0.0.18")
+                        $elm$html$Html$text("Version 0.0.19")
                     ])),
                     $elm$html$Html$text("Haveno Version"),
                     A2($elm$html$Html$p, _List_fromArray([
@@ -16585,10 +16490,6 @@ type alias Process =
                             "args": [],
                             "type": "{ maxResults : String.String, accessToken : Maybe.Maybe String.String }"
                         },
-                        "Data.Hardware.BaseAddress": {
-                            "args": [],
-                            "type": "{ street : String.String, city : String.String }"
-                        },
                         "Data.User.Description": {
                             "args": [],
                             "type": "{ level : String.String, comment : String.String }"
@@ -16661,25 +16562,9 @@ type alias Process =
                             "args": [],
                             "type": "String.String"
                         },
-                        "Data.Hardware.Player": {
-                            "args": [],
-                            "type": "{ id : String.String, nickname : String.String }"
-                        },
                         "Pages.Hardware.ProviderData": {
                             "args": [],
                             "type": "{ email : String.String }"
-                        },
-                        "Data.Hardware.Rank": {
-                            "args": [],
-                            "type": "{ rank : Basics.Int, player : Data.Hardware.Player, challenger : Data.Hardware.Player }"
-                        },
-                        "Data.Hardware.Ranking": {
-                            "args": [],
-                            "type": "{ id : String.String, active : Basics.Bool, name : String.String, owner_id : String.String, baseaddress : Data.Hardware.BaseAddress, ladder : List.List Data.Hardware.Rank, player_count : Basics.Int, owner_name : String.String }"
-                        },
-                        "Data.Hardware.RankingSearchResult": {
-                            "args": [],
-                            "type": "{ id : String.String, name : String.String }"
                         },
                         "Pages.Hardware.RegisterUserDetails": {
                             "args": [],
@@ -16707,7 +16592,7 @@ type alias Process =
                         },
                         "Data.User.UserInfo": {
                             "args": [],
-                            "type": "{ userid : String.String, password : Data.User.Password, passwordValidationError : String.String, token : Maybe.Maybe Data.User.Token, nickname : Data.User.NickName, isNameInputFocused : Basics.Bool, nameValidationError : String.String, age : Basics.Int, gender : Data.User.Gender, email : Maybe.Maybe String.String, isEmailInputFocused : Basics.Bool, emailValidationError : String.String, mobile : Maybe.Maybe String.String, isMobileInputFocused : Basics.Bool, mobileValidationError : String.String, datestamp : Basics.Int, active : Basics.Bool, ownedRankings : List.List Data.Hardware.Ranking, memberRankings : List.List Data.Hardware.Ranking, updatetext : String.String, description : Data.User.Description, credits : Basics.Int, addInfo : String.String }"
+                            "type": "{ userid : String.String, password : Data.User.Password, passwordValidationError : String.String, token : Maybe.Maybe Data.User.Token, nickname : Data.User.NickName, isNameInputFocused : Basics.Bool, nameValidationError : String.String, age : Basics.Int, gender : Data.User.Gender, email : Maybe.Maybe String.String, isEmailInputFocused : Basics.Bool, emailValidationError : String.String, mobile : Maybe.Maybe String.String, isMobileInputFocused : Basics.Bool, mobileValidationError : String.String, datestamp : Basics.Int, active : Basics.Bool, updatetext : String.String, description : Data.User.Description, credits : Basics.Int, addInfo : String.String }"
                         },
                         "Pages.Hardware.EmailPasswordLogin": {
                             "args": [],
@@ -16764,11 +16649,8 @@ type alias Process =
                                 "Recv": [
                                     "Json.Decode.Value"
                                 ],
-                                "RecvText": [
-                                    "String.String"
-                                ],
                                 "NoOp": [],
-                                "HardwareDeviceConnect": [],
+                                "OnInitHardwareDeviceConnect": [],
                                 "ShowPopUp": [],
                                 "HidePopUp": [],
                                 "GotVersion": [
@@ -16927,15 +16809,6 @@ type alias Process =
                                 "CancelCreateNewRanking": [],
                                 "CancelRegistration": [],
                                 "Confirm": [],
-                                "FetchOwned": [
-                                    "Data.Hardware.Ranking"
-                                ],
-                                "FetchMember": [
-                                    "Data.Hardware.Ranking"
-                                ],
-                                "ListSpectator": [
-                                    "Data.Hardware.RankingSearchResult"
-                                ],
                                 "ViewMember": [
                                     "Data.User.MemberRanking"
                                 ],
@@ -16951,40 +16824,14 @@ type alias Process =
                                 "CityAddressChg": [
                                     "String.String"
                                 ],
-                                "ConfirmNewRanking": [
-                                    "Data.Hardware.Ranking",
-                                    "Data.User.User"
-                                ],
                                 "DialogDeleteOwnedRanking": [],
                                 "DeleteOwnedRanking": [],
-                                "ViewRank": [
-                                    "Data.Hardware.Rank"
-                                ],
-                                "ConfirmChallenge": [
-                                    "Data.Hardware.Ranking",
-                                    "Data.Hardware.Rank"
-                                ],
-                                "ConfirmResult": [
-                                    "Data.Hardware.ResultOfMatch"
-                                ],
                                 "CancelDialoguePrepareResultView": [],
                                 "FetchSpectatorRanking": [
                                     "String.String"
                                 ],
-                                "SpectatorRankingResponse": [
-                                    "Result.Result Http.Error Data.Hardware.Ranking"
-                                ],
                                 "SpectatorJoin": [],
                                 "RegisteredUserJoin": [],
-                                "ConfirmJoin": [
-                                    "Data.Hardware.Ranking",
-                                    "String.String",
-                                    "Basics.Int"
-                                ],
-                                "ConfirmLeaveMemberRanking": [
-                                    "Data.Hardware.Ranking",
-                                    "String.String"
-                                ],
                                 "DialogueConfirmJoinView": [],
                                 "DialogueConfirmLeaveView": [],
                                 "DialogueConfirmDeleteAccount": [],
@@ -17327,14 +17174,6 @@ type alias Process =
                                 "MemberSelectedView": [],
                                 "SpectatorSelectedView": [],
                                 "ConfirmDeleteOwnedRanking": [],
-                                "CreateChallengeView": [
-                                    "Data.Hardware.Rank",
-                                    "Data.Hardware.Ranking"
-                                ],
-                                "ConfirmChallengeView": [
-                                    "Data.Hardware.Rank",
-                                    "Data.Hardware.Ranking"
-                                ],
                                 "PrepareResult": [],
                                 "Error": [
                                     "String.String"
@@ -17342,14 +17181,6 @@ type alias Process =
                                 "ConfirmJoinMemberView": [],
                                 "ConfirmLeaveMemberView": [],
                                 "ConfirmDeleteUserView": []
-                            }
-                        },
-                        "Data.Hardware.ResultOfMatch": {
-                            "args": [],
-                            "tags": {
-                                "Won": [],
-                                "Lost": [],
-                                "Undecided": []
                             }
                         },
                         "Pages.Sell.Sell": {

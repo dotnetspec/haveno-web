@@ -12,15 +12,9 @@ module SR.Elements exposing
     , footer
     , globalHeading
     , justParasimpleUserInfoText
-    , ladderCityValidation
-    , ladderNameValidation
-    , ladderStreetValidation
     , legalUserInfoText
-    , memberSelectedRankingHeaderEl
-    , spectatorSelectedRankingHeaderEl
     , missingDataPara
     , nameValidView
-    , ownedSelectedRankingHeaderEl
     , passwordValidView
     , permanentlyDeleteWarnPara
     , placeholder
@@ -134,48 +128,8 @@ globalHeading user =
         U.Spectator _ ->
             Element.el Heading.h5 <| Element.text "Global Heading - Welcome - Please Connect XMR Wallet"
 
-        U.Registered (userInfo ) ->
+        U.Registered userInfo ->
             Element.el Heading.h5 <| Element.text <| "SportRank - Welcome Back - " ++ userInfo.nickname
-
-
-ownedSelectedRankingHeaderEl : R.Ranking -> Element msg
-ownedSelectedRankingHeaderEl r =
-    Element.el Heading.h5 <|
-        Element.text <|
-            r.owner_name ++ " this your owned ranking"
-                ++ " - "
-                ++ r.name
-                ++ " . \n Id is: "
-                ++ r.id
-
-
-memberSelectedRankingHeaderEl : U.UserInfo  -> R.Ranking -> Element msg
-memberSelectedRankingHeaderEl userInfo r =
-    Element.el Heading.h5 <|
-        Element.text <|
-            userInfo.nickname ++ " you're a member of"
-                ++ " - "
-                ++ r.name
-                ++ " Id no: "
-                ++ r.id
-                ++ " . \n Which is owned by "
-                ++ r.owner_name
-                ++ " id no: "
-                ++ r.owner_id
-
-spectatorSelectedRankingHeaderEl : U.UserInfo  -> R.Ranking -> Element msg
-spectatorSelectedRankingHeaderEl userInfo r =
-    Element.el Heading.h5 <|
-        Element.text <|
-            userInfo.nickname ++ " you're interested in joining"
-                ++ " - "
-                ++ r.name
-                ++ " Id no: "
-                ++ r.id
-                ++ " . \n Which is owned by "
-                ++ r.owner_name
-                ++ " id no: "
-                ++ r.owner_id
 
 
 
@@ -278,70 +232,9 @@ unique and 5-8 continuous chars""")
 passwordValidView : U.UserInfo -> Element msg
 passwordValidView userInfo =
     if V.isValid4to8Chars userInfo.password then
-        Element.el ([ Font.color colors.green, Font.alignLeft, Element.moveLeft 1.0 ]) (Element.text "Password OK!")
+        Element.el [ Font.color colors.green, Font.alignLeft, Element.moveLeft 1.0 ] (Element.text "Password OK!")
 
     else
         Element.el
             [ Font.color colors.red, Font.alignLeft, Element.moveLeft 0.0 ]
             (Element.text """5-8 continuous chars""")
-
-
-
--- RF: On this validation?
-
-
-ladderNameValidation : R.Ranking -> Element msg
-ladderNameValidation ranking =
-    if V.isValid4to20Chars ranking.name then
-        Element.el
-            (List.append [ Element.htmlAttribute (Html.Attributes.id "laddernameValidMsg") ]
-                [ Font.color colors.green, Font.alignLeft ]
-                ++ [ Element.moveLeft 1.0 ]
-            )
-            (Element.text "Ranking name OK!")
-
-    else
-        Element.el
-            (List.append [ Element.htmlAttribute (Html.Attributes.id "laddernameValidMsg") ]
-                [ Font.color colors.red, Font.alignLeft ]
-                ++ [ Element.moveLeft 0.0 ]
-            )
-            (Element.text """Must be unique (4-20 continuous chars)""")
-
-
-ladderStreetValidation : R.Ranking -> Element msg
-ladderStreetValidation ranking =
-    if V.isValid4to20Chars ranking.baseaddress.street then
-        Element.el
-            (List.append [ Element.htmlAttribute (Html.Attributes.id "ladderstreetValidMsg") ]
-                [ Font.color colors.green, Font.alignLeft ]
-                ++ [ Element.moveLeft 1.0 ]
-            )
-            (Element.text "Street name OK!")
-
-    else
-        Element.el
-            (List.append [ Element.htmlAttribute (Html.Attributes.id "ladderstreetValidMsg") ]
-                [ Font.color colors.blue, Font.alignLeft ]
-                ++ [ Element.moveLeft 0.0 ]
-            )
-            (Element.text """If entered, must be unique (4-20 continuous chars)""")
-
-
-ladderCityValidation : R.Ranking -> Element msg
-ladderCityValidation ranking =
-    if V.isValid4to20Chars ranking.baseaddress.city then
-        Element.el
-            (List.append [ Element.htmlAttribute (Html.Attributes.id "laddercityValidMsg") ]
-                [ Font.color colors.green, Font.alignLeft ]
-                ++ [ Element.moveLeft 1.0 ]
-            )
-            (Element.text "City name OK!")
-
-    else
-        Element.el
-            (List.append [ Element.htmlAttribute (Html.Attributes.id "laddercityValidMsg") ]
-                [ Font.color colors.blue, Font.alignLeft ]
-                ++ [ Element.moveLeft 0.0 ]
-            )
-            (Element.text """If entered, must be unique (4-20 continuous chars)""")

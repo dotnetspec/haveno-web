@@ -36,7 +36,7 @@ import Spec.Http
 -- NOTE: Local test setup
 -- NOTE: App.Model and App.Msg are type paramters for the Spec type
 -- They make Spec type more flexible as it can be used with any model and msg types
--- NOTE: placeholderURL is used to load the rankings page
+-- NOTE: placeholderURL is used to load the blank page
 -- FromMainToHardware is particular to the Hardware page
 --(gives us the current time/date and the URL to the API which responds with the timeslot data for the page)
 {- testFlags : Hardware.FromMainToHardware

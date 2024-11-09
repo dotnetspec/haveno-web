@@ -202,9 +202,8 @@ type Msg
     | Tick Time.Posix
     | AdjustTimeZone Time.Zone
     | Recv JD.Value
-    | RecvText String
     | NoOp
-    | HardwareDeviceConnect
+    | OnInitHardwareDeviceConnect
     | ShowPopUp
     | HidePopUp
     | GotVersion (Result Grpc.Error GetVersionReply)
@@ -258,15 +257,13 @@ update msg model =
             , Cmd.none
             )
 
-        HardwareDeviceConnect ->
+        OnInitHardwareDeviceConnect ->
             ( model
-            , -- NOTE: Old msg showing formatting - 'sendMessageToJs ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")'
+            , -- REF: SportRank2
               sendMessageToJs
                 "connectLNS"
             )
 
-        RecvText textMessageFromJs ->
-            ( model, Cmd.none )
 
         -- NAV: Recv rawJsonMessage
         -- NOTE: This is updated when a message from js is received
@@ -645,8 +642,8 @@ update msg model =
                                 | page =
                                     HardwarePage newHardwareModel
                               }
-                            , -- NOTE: Old msg showing formatting - 'sendMessageToJs ("fetchRanking" ++ "~^&" ++ ownedRanking.id ++ "~^&ownedranking")'
-                              sendMessageToJs
+                            , -- REF: SportRank2
+                            sendMessageToJs
                                 "connectLNS"
                             )
 
@@ -1070,7 +1067,7 @@ toBlank model ( blank, cmd ) =
     let
         -- NOTE: Immediately try and connect the hardware device
         ( newModel, hwareConnectCmd ) =
-            update HardwareDeviceConnect model
+            update OnInitHardwareDeviceConnect model
     in
     ( newModel
       --{ model | page = BlankPage blank }
@@ -1651,7 +1648,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.18" ]
+                , p [] [ text "Version 0.0.19" ]
                 , text "Haveno Version"
                 , p [ id "havenoversion" ]
                     [ text

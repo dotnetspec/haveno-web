@@ -114,10 +114,7 @@ type alias UserInfo =
     , datestamp : Int
     , active : Bool
 
-    -- NOTE: RankingOps does many ops on a ranking, but currenlty too hard
-    -- to transition to
-    , ownedRankings : List R.Ranking
-    , memberRankings : List R.Ranking
+ 
     , updatetext : String
     , description : Description
 
@@ -174,7 +171,7 @@ emptyUserInfo : UserInfo
 emptyUserInfo =
     -- NOTE: Using UserInfo as a constructor function for the alias type.
     -- REVIEW: the exposure implications. Also, random number gen in docs for Anon.
-    UserInfo "" "" "" Nothing "" False "" 40 Male Nothing False "" Nothing False "" 0 False [] [] "" emptyDescription 0 ""
+    UserInfo "" "" "" Nothing "" False "" 40 Male Nothing False "" Nothing False "" 0 False  "" emptyDescription 0 ""
 
 
 emptyDescription : Description
@@ -205,7 +202,7 @@ userInfoDecoder =
         -- but we're not expecting them from the json:
         |> P.optional "isNameInputFocused" D.bool False
         |> P.optional "nameValidationError" D.string ""
-        |> P.optional "age" numberDecoder 20
+        |> P.optional "age" D.int 20
         |> P.optional "gender" genderDecoder Male
         |> P.optional "email" (D.maybe D.string) Nothing
         |> P.optional "isEmailInputFocused" D.bool False
@@ -214,10 +211,9 @@ userInfoDecoder =
         |> P.optional "isMobileInputFocused" D.bool False
         |> P.optional "mobileValidationError" D.string ""
         -- NOTE: user number decoder?
-        |> P.required "datestamp" numberDecoder --(D.field "$numberInt" stringToIntDecoder)
+        |> P.required "datestamp" D.int --(D.field "$numberInt" stringToIntDecoder)
         |> P.required "active" D.bool
-        |> P.required "ownedRankings" (D.list R.rankingDecoder)
-        |> P.required "memberRankings" (D.list R.rankingDecoder)
+       
         |> P.optional "updatetext" D.string ""
         -- NOTE: The base type decoders are defined in the decoder
         |> P.required "description" descriptionDecoder
@@ -273,14 +269,7 @@ genderDecoder =
 -- NOTE: userRankingsDecoder is for Global data:
 
 
-userRankingsDecoder : D.Decoder OwnedRanking
-userRankingsDecoder =
-    D.succeed OwnedRanking
-        -- NOTE: Remember, P.required are field functions
-        --(they do work to figure out what the e.g. _id string is and make it match the Elm type)
-        -- D.string is not a String, it is a String Decoder (i.e. one that the field function can take as an arg)
-        |> P.required "_id" D.string
-        |> P.required "name" D.string
+
 
 
 
@@ -334,14 +323,7 @@ deactivate userInfo =
     { userInfo | active = False }
 
 
-updatedOwndedRankings : UserInfo -> List R.Ranking -> UserInfo
-updatedOwndedRankings userInfo lRanking =
-    { userInfo | ownedRankings = lRanking }
 
-
-updatedMemberRankings : UserInfo -> List R.Ranking -> UserInfo
-updatedMemberRankings userInfo lRanking =
-    { userInfo | memberRankings = lRanking }
 
 
 updatedLevel : User -> String -> User
@@ -450,94 +432,18 @@ gotUserInfo user =
             emptyUserInfo
 
 
-gotOwnedRankings : User -> List R.Ranking
-gotOwnedRankings user =
-    case user of
-        Registered usrInfo ->
-            usrInfo.ownedRankings
-
-        _ ->
-            []
-
-
-gotMemberRankings : User -> List R.Ranking
-gotMemberRankings user =
-    case user of
-        Registered usrInfo ->
-            usrInfo.memberRankings
-
-        _ ->
-            []
 
 
 
--- NOTE: These below are only deleting the ranking from the UI
--- not from the DB (handled in the middleware)
 
 
-deleteRankingFromMemberRankings : User -> String -> List R.Ranking
-deleteRankingFromMemberRankings user rankingid =
-    case user of
-        Registered usrInfo ->
-            List.filter (\ranking -> ranking.id /= rankingid) usrInfo.memberRankings
-
-        _ ->
-            []
 
 
-deleteRankingFromOwnedRankings : User -> String -> User
-deleteRankingFromOwnedRankings user rankingid =
-    case user of
-        Registered usrInfo ->
-            let
-                newRankingList =
-                    List.filter (\ranking -> ranking.id /= rankingid) usrInfo.ownedRankings
-            in
-            Registered { usrInfo | ownedRankings = newRankingList }
-
-        _ ->
-            emptyRegisteredUser
 
 
-addNewLadderToOwnedRankings : User -> R.Ranking -> User
-addNewLadderToOwnedRankings user ranking =
-    case user of
-        Registered usrInfo ->
-            let
-                rankingExists =
-                    List.any (\r -> r.id == ranking.id) usrInfo.ownedRankings
-            in
-            if rankingExists then
-                user
-
-            else
-                let
-                    newRankingList =
-                        ranking :: usrInfo.ownedRankings
-                in
-                Registered { usrInfo | ownedRankings = newRankingList }
-
-        _ ->
-            emptyRegisteredUser
 
 
-addNewLadderToMemberRankings : User -> R.Ranking -> User
-addNewLadderToMemberRankings user ranking =
-    case user of
-        Registered usrInfo ->
-            let
-                rankingExists =
-                    List.any (\r -> r.id == ranking.id) usrInfo.memberRankings
-            in
-            if rankingExists then
-                user
 
-            else
-                let
-                    newRankingList =
-                        ranking :: usrInfo.memberRankings
-                in
-                Registered { usrInfo | memberRankings = newRankingList }
 
-        _ ->
-            emptyRegisteredUser
+
+
