@@ -295,3 +295,24 @@ successfulLnsResponseStub =
     Stub.for (Route.post "http://localhost:1234/hardware")
         |> Stub.withHeader ( "Content-Type", "application/json" )
         |> Stub.withBody (Stub.withJson jsonResponse)
+
+
+successfulWalletWithBalancesFetch : Stub.HttpResponseStub
+successfulWalletWithBalancesFetch =
+    let
+        base64Response =
+            "NDAwMDAwMDAwMDAwMDAwMDAwMDA="  -- Base64 encoded binary data for the WalletBalance proto message
+
+        decodedBytes =
+            case toBytes base64Response of
+                Just bytes ->
+                    
+                    bytes
+                    
+
+                Nothing ->
+                    BE.encode (BE.unsignedInt8 0)
+    in
+    Stub.for (Route.post grpcsetHostURL)
+        |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
+        |> Stub.withBody (Stub.withBytes decodedBytes)

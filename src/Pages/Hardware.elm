@@ -831,27 +831,6 @@ view model =
 
 
 
--- NAV: View helpers
--- REVIEW: This function needs to be split into more relevant categories separating ranking btns from login
--- NOTE: Only a Registered user can do this:
-
-
-
-
-
-
--- REVIEW: Combine these views into 1?
-
-
-
-
-
-
-
-
-
-
-
 
 
 

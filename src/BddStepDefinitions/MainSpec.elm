@@ -3,30 +3,7 @@ module BddStepDefinitions.MainSpec exposing (..)
 {- -- NOTE: 'Main' here refers to settings that hold throughout the app, e.g. isLNSConnected, not just on a given page, so the tests
    might switch to particular pages and check that 'global' settings (Main's model) are correct
 -}
-{- import Extras.Constants as Consts exposing (..)
-   import Extras.TestData as TestData
-   import Html exposing (Html, div)
-   import Http
-   import Json.Decode as D
-   import Json.Encode as E
-   import Main
-   import Spec exposing (Flags, Spec, describe, expect, given, it, scenario, when)
-   import Spec.Claim as Claim exposing (Claim, Verdict)
-   import Spec.Command exposing (..)
-   import Spec.Http.Stub as Stub
-   import Spec.Markup as Markup
-   import Spec.Markup.Event as Event
-   import Spec.Markup.Selector exposing (..)
-   import Spec.Observer as Observer exposing (Observer)
 
-   import Spec.Report as Report exposing (Report)
-   import Spec.Setup as Setup
-   import Spec.Step as Step exposing (Step)
-
-   import Time exposing (..)
-
-   import Url exposing (Protocol(..), Url)
--}
 
 import BddStepDefinitions.Extra exposing (..)
 import BddStepDefinitions.Runner as Runner exposing (..)
@@ -612,21 +589,9 @@ validXMRWalletAddress =
 
 
 
--- Helper function to convert Browser.Document to Html
 
 
 documentToHtml : Browser.Document msg -> Html msg
 documentToHtml document =
     div [] document.body
 
-
-
-{- viewToHtml : Main.Model -> Html Main.Msg
-   viewToHtml model =
-       let
-
-           document =
-               Main.view model
-       in
-       Html.div [] document.body
--}

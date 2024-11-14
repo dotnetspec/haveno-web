@@ -33,7 +33,7 @@ initialModel =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { initialModel | title = "Haveno-Web Main" }
+    ( { initialModel | title = "Haveno-Web" }
     , Cmd.none
     )
 

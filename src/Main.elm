@@ -106,7 +106,6 @@ init flag url key =
             , isPageHeaderVisible = False
             }
     in
-    --updateUrl (updateUrlPath url "/hardware") updatedModel
     updateUrl url updatedModel
 
 
