@@ -73,7 +73,7 @@ runSpecTests =
                     [ it "displays the available balance correctly"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ id "balance" ]
+                            << by [ id "xmrbalance" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|

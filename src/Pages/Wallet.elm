@@ -27,18 +27,10 @@ import Types.DateType as DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 
 
-
-
-{- import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
-   import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
--}
--- Define your Model with relevant wallet data
-
-
 type alias Model =
     { status : Status
     , pagetitle : String
-    , balances : BalancesInfo
+    , balances : Maybe Protobuf.BalancesInfo
     , address : String
     , isHardwareWalletConnected : Bool
     , errors : List String
@@ -46,61 +38,16 @@ type alias Model =
     }
 
 
-
--- Define your initialModel with default values
-{- { availableBalance : Protobuf.Types.Int64.Int64
-   , reservedBalance : Protobuf.Types.Int64.Int64
-   , totalAvailableBalance : Protobuf.Types.Int64.Int64
-   , lockedBalance : Protobuf.Types.Int64.Int64
-   }
--}
-
-
-type alias BtcBalanceInfo =
-    { availableBalance : Int
-    , reservedBalance : Int
-    , totalAvailableBalance : Int
-    , lockedBalance : Int
-    }
-
-
-type alias XmrBalanceInfo =
-    { balance : Int
-    , availableBalance : Int
-    , pendingBalance : Int
-    , reservedOfferBalance : Int
-    , reservedTradeBalance : Int
-    }
-
-
-initialBtcBalanceInfo : BtcBalanceInfo
-initialBtcBalanceInfo =
-    { availableBalance = 0
-    , reservedBalance = 0
-    , totalAvailableBalance = 0
-    , lockedBalance = 0
-    }
-
-
-initialXmrBalanceInfo : XmrBalanceInfo
-initialXmrBalanceInfo =
-    { balance = 0, availableBalance = 0, pendingBalance = 0, reservedOfferBalance = 0, reservedTradeBalance = 0 }
-
-
 initialModel : Model
 initialModel =
     { status = Loaded
     , pagetitle = "Wallet"
-    , balances = Protobuf.defaultBalancesInfo --{ btc = Nothing, xmr = Nothing }
+    , balances = Just Protobuf.defaultBalancesInfo
     , address = "Not Connected"
     , isHardwareWalletConnected = False
     , errors = []
     , isPopUpVisible = True
     }
-
-
-
--- Status indicating whether the wallet is loaded, loading, or errored
 
 
 type Status
@@ -109,34 +56,18 @@ type Status
     | Errored
 
 
-
--- Init: Initializing the Wallet Page
-
-
 init : String -> ( Model, Cmd Msg )
 init _ =
-    let
-        newModel =
-            Model Loaded "Wallet" { btc = Nothing, xmr = Nothing } "Not Connected" False [] True
-    in
-    ( newModel
+    ( initialModel
     , Cmd.none
     )
-
-
-
--- Msg: Define messages for interactions on the Wallet page
 
 
 type Msg
     = GotInitialModel Model
     | ClosePopUp
     | SetAddress String
-    | GotBalances (Result Grpc.Error GetBalancesReply)
-
-
-
--- Update: Update the state based on actions
+    | GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -152,9 +83,10 @@ update msg model =
             ( { model | address = address }, Cmd.none )
 
         GotBalances (Ok response) ->
-        -- TODO: Update the model with the response
+            
+            -- TODO: Update the model with the response
             --( { model | balances = response.balances }, Cmd.none )
-            ( { model | balances = { btc = Nothing, xmr = Nothing } }, Cmd.none )
+            ( { model | balances = response.balances}, Cmd.none )
 
         GotBalances (Err error) ->
             ( { model | status = Errored }, Cmd.none )
@@ -212,22 +144,59 @@ custodialWalletView model =
             , Element.text "\n"
 
             -- WARN: Carefull with the management of the imports here:
-            , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "balance") ]
+            , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "xmrbalance") ]
                 --Heading.h4
-                (Element.text ("Available Balance: " ++ (totalAvailableBalanceAsString model.balances.btc) ++ " XMR"))
+                (Element.text ("Available Balance: " ++ xmrBalanceAsString model.balances ++ " XMR"))
             , Element.text "\n"
+            , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "btcbalance") ]
+                --Heading.h4
+                (Element.text ("Available Balance: " ++ xmrBalanceAsString model.balances ++ " BTC"))
             , Element.text "\n"
             ]
 
-totalAvailableBalanceAsString : Maybe Protobuf.BtcBalanceInfo -> String
-totalAvailableBalanceAsString btcBalanceInfo =
-    case btcBalanceInfo of
-        Nothing ->
-            "0.00"
 
-        Just btcbalinfo ->
-            let (firstInt, secondInt) = toInts btcbalinfo.totalAvailableBalance in
-                String.fromInt firstInt
+
+
+xmrBalanceAsString : Maybe Protobuf.BalancesInfo -> String
+xmrBalanceAsString balInfo =
+    case balInfo of 
+        Just blInfo ->
+            
+            case blInfo.xmr of
+                Nothing ->
+                    "0.00"
+
+                Just xmrbalinfo ->
+                    let
+                        ( firstInt, secondInt ) =
+                            toInts xmrbalinfo.availableBalance
+                    in
+                    String.fromInt firstInt ++ "." ++ String.fromInt secondInt
+
+            
+        Nothing -> 
+            ""
+
+btcBalanceAsString : Maybe Protobuf.BalancesInfo -> String
+btcBalanceAsString balInfo =
+    case balInfo of 
+        Just blInfo ->
+            
+            case blInfo.btc of
+                Nothing ->
+                    "0.00"
+
+                Just btcbalinfo ->
+                    let
+                        ( firstInt, secondInt ) =
+                            toInts btcbalinfo.availableBalance
+                    in
+                    String.fromInt firstInt ++ "." ++ String.fromInt secondInt
+
+            
+        Nothing -> 
+            ""
+    
 
 
 
