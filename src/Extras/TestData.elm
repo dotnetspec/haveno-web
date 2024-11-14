@@ -12,15 +12,14 @@ import Time exposing (Posix, millisToPosix, utc)
 import Url exposing (Protocol(..), Url)
 
 
-grpcsetHostURL : String
-grpcsetHostURL =
-    -- NOTE: Without final "/" get Err: An attempt was made to load a file from disk, but this
-    -- runner does not support that capability.
+grpcsetGetVersionURL : String
+grpcsetGetVersionURL =
     "http://localhost:8080/io.haveno.protobuffer.GetVersion/GetVersion"
 
 
-
---/io.haveno.protobuffer.GetVersion/GetVersion
+grpcsetGetBalancesURL : String
+grpcsetGetBalancesURL =
+    "http://localhost:8080/io.haveno.protobuffer.Wallets/GetBalances"
 
 
 availabilityRequestURL27_Feb_2024_14_09 : String
@@ -84,7 +83,7 @@ successfullVersionFetch =
                 Nothing ->
                     BE.encode (BE.unsignedInt8 0)
     in
-    Stub.for (Route.post grpcsetHostURL)
+    Stub.for (Route.post grpcsetGetVersionURL)
         |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
         |> Stub.withBody (Stub.withBytes decodedBytes)
 
@@ -301,7 +300,9 @@ successfulWalletWithBalancesFetch : Stub.HttpResponseStub
 successfulWalletWithBalancesFetch =
     let
         base64Response =
-            "NDAwMDAwMDAwMDAwMDAwMDAwMDA="  -- Base64 encoded binary data for the WalletBalance proto message
+            --"NDAwMDAwMDAwMDAwMDAwMDAwMDA="  -- Base64 encoded binary data for the WalletBalance proto message
+            -- NOTE: Used same string as for GetVersion. Currently other strings cause error
+            "AAAAAAcKBTEuMC43gAAAAA9ncnBjLXN0YXR1czowDQo="
 
         decodedBytes =
             case toBytes base64Response of
@@ -313,6 +314,6 @@ successfulWalletWithBalancesFetch =
                 Nothing ->
                     BE.encode (BE.unsignedInt8 0)
     in
-    Stub.for (Route.post grpcsetHostURL)
+    Stub.for (Route.post grpcsetGetBalancesURL)
         |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
         |> Stub.withBody (Stub.withBytes decodedBytes)

@@ -20,7 +20,8 @@ import Http exposing (..)
 import Json.Encode as E exposing (..)
 import Maybe exposing (withDefault)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
-import Proto.Io.Haveno.Protobuffer.Wallets exposing (..)
+import Proto.Io.Haveno.Protobuffer.Internals_
+import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import Protobuf.Types.Int64 exposing (toInts)
 import Spec.Markup exposing (log)
 import Types.DateType as DateType exposing (DateTime(..))
@@ -59,7 +60,7 @@ type Status
 init : String -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
-    , Cmd.none
+    , gotAvailableBalances
     )
 
 
@@ -68,6 +69,16 @@ type Msg
     | ClosePopUp
     | SetAddress String
     | GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
+
+
+xmrBalanceInfoInstance : Protobuf.XmrBalanceInfo
+xmrBalanceInfoInstance =
+    { balance = Protobuf.Types.Int64.fromInts 110 0
+    , availableBalance = Protobuf.Types.Int64.fromInts 100 0
+    , pendingBalance = Protobuf.Types.Int64.fromInts 0 0
+    , reservedOfferBalance = Protobuf.Types.Int64.fromInts 5 0
+    , reservedTradeBalance = Protobuf.Types.Int64.fromInts 5 0
+    }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -83,12 +94,25 @@ update msg model =
             ( { model | address = address }, Cmd.none )
 
         GotBalances (Ok response) ->
-            
-            -- TODO: Update the model with the response
-            --( { model | balances = response.balances }, Cmd.none )
-            ( { model | balances = response.balances}, Cmd.none )
+            let
+                _ =
+                    Debug.log "response " response.balances
 
+                -- HACK: Want to replace xmrBalanceInfoInstance with response
+                -- also so that real base64 test data is used.
+
+                tempBals =
+                    Just { btc = Nothing, xmr = Just xmrBalanceInfoInstance }
+            in
+            -- TODO: Update the model with the response
+            ( { model | balances = tempBals }, Cmd.none )
+
+        --( { model | balances = response.balances}, Cmd.none )
         GotBalances (Err error) ->
+            let
+                _ =
+                    Debug.log "response err:  " error
+            in
             ( { model | status = Errored }, Cmd.none )
 
 
@@ -138,6 +162,10 @@ view model =
 
 custodialWalletView : Model -> Html Msg
 custodialWalletView model =
+    let
+        _ =
+            Debug.log "balances " model.balances
+    in
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
             [ Element.el Heading.h1 <| Element.text "Wallet"
@@ -155,13 +183,10 @@ custodialWalletView model =
             ]
 
 
-
-
 xmrBalanceAsString : Maybe Protobuf.BalancesInfo -> String
 xmrBalanceAsString balInfo =
-    case balInfo of 
+    case balInfo of
         Just blInfo ->
-            
             case blInfo.xmr of
                 Nothing ->
                     "0.00"
@@ -173,15 +198,14 @@ xmrBalanceAsString balInfo =
                     in
                     String.fromInt firstInt ++ "." ++ String.fromInt secondInt
 
-            
-        Nothing -> 
-            ""
+        Nothing ->
+            "0.00"
+
 
 btcBalanceAsString : Maybe Protobuf.BalancesInfo -> String
 btcBalanceAsString balInfo =
-    case balInfo of 
+    case balInfo of
         Just blInfo ->
-            
             case blInfo.btc of
                 Nothing ->
                     "0.00"
@@ -193,10 +217,8 @@ btcBalanceAsString balInfo =
                     in
                     String.fromInt firstInt ++ "." ++ String.fromInt secondInt
 
-            
-        Nothing -> 
+        Nothing ->
             ""
-    
 
 
 
@@ -229,11 +251,11 @@ btcBalanceAsString balInfo =
 -- NAV: gRPC calls
 
 
-gotAvailableBalance : GetBalancesRequest -> Cmd Msg
-gotAvailableBalance getBalanceRequest =
+gotAvailableBalances : Cmd Msg
+gotAvailableBalances =
     let
         grpcRequest =
-            Grpc.new getBalances getBalanceRequest
+            Grpc.new Wallets.getBalances Protobuf.defaultGetBalancesRequest
                 |> Grpc.addHeader "password" "apitest"
                 -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
                 |> Grpc.setHost "http://localhost:8080"

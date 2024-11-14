@@ -35,7 +35,6 @@ runSpecTests =
         "Haveno Web App Wallet Tests"
         [ --Runner.skip <|
           --Runner.pick <|
-          
           scenario "1: Accessing the Wallet page"
             (given
                 (Spec.Setup.init (Wallet.init "http://localhost:1234")
@@ -43,7 +42,6 @@ runSpecTests =
                     |> Spec.Setup.withUpdate Wallet.update
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-                
                 |> Spec.observeThat
                     [ it "displays the Wallet page correctly"
                         (Markup.observeElement
@@ -57,41 +55,42 @@ runSpecTests =
                         )
                     ]
             )
-        , 
-        --Runner.skip <|
-        Runner.pick <|
-        scenario "2: Show available balance and reserved balance correctly in the UI"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                    |> Stub.serve [ TestData.successfulWalletWithBalancesFetch]
+        , --Runner.skip <|
+          --Runner.pick <|
+            scenario "2: Show available balance and reserved balance correctly in the UI"
+                (given
+                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                        |> Spec.Setup.withView Wallet.view
+                        |> Spec.Setup.withUpdate Wallet.update
+                        |> Spec.Setup.withLocation placeholderUrl
+                        |> Stub.serve [ TestData.successfulWalletWithBalancesFetch ]
+                    )
+                    |> Spec.when "we log the http requests"
+                        [ Spec.Http.logRequests
+                        ]
+                    |> Spec.observeThat
+                        [ it "displays the available balance correctly"
+                            (Markup.observeElement
+                                |> Markup.query
+                                << by [ id "xmrbalance" ]
+                                |> Spec.expect
+                                    (Claim.isSomethingWhere <|
+                                        Markup.text <|
+                                            Claim.isStringContaining 1 "Available Balance: 100.0 XMR"
+                                    )
+                            )
+                        , it "displays the reserved balance correctly"
+                            (Markup.observeElement
+                                |> Markup.query
+                                << by [ id "reservedBalance" ]
+                                |> Spec.expect
+                                    (Claim.isSomethingWhere <|
+                                        Markup.text <|
+                                            Claim.isStringContaining 1 "Reserved Balance: 50.0 XMR"
+                                    )
+                            )
+                        ]
                 )
-                
-                |> Spec.observeThat
-                    [ it "displays the available balance correctly"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "xmrbalance" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Available Balance: 100.00 XMR"
-                                )
-                        )
-                    , it "displays the reserved balance correctly"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "reservedBalance" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Reserved Balance: 50.0 XMR"
-                                )
-                        )
-                    ]
-            )
         , scenario "3: Generating a New Subaddress"
             (given
                 (Spec.Setup.init (Wallet.init "http://localhost:1234")
@@ -485,15 +484,14 @@ jsonRelayTransaction =
         ]
 
 
+
 {- jsonWalletWithBalances : E.Value
-jsonWalletWithBalances =
-    E.object
-        [ ( "availableBalance", E.float 100.0 )
-        , ( "reservedBalance", E.float 50.0 )
-        ] -}
-
-
-
+   jsonWalletWithBalances =
+       E.object
+           [ ( "availableBalance", E.float 100.0 )
+           , ( "reservedBalance", E.float 50.0 )
+           ]
+-}
 
 
 jsonTransactionInitiated : E.Value
@@ -527,6 +525,7 @@ jsonDepositSuccess =
         [ ( "availableBalance", E.float 200.0 )
         ]
 
+
 main : Program Flags (Spec.Model Wallet.Model Wallet.Msg) (Spec.Msg Wallet.Msg)
 main =
-   Runner.browserProgram [ runSpecTests ]
+    Runner.browserProgram [ runSpecTests ]
