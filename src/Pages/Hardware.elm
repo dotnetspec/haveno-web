@@ -148,6 +148,7 @@ initialModel =
     , isHardwareLNSConnected = False
     , isHardwareLNXConnected = False
     , isXMRWalletConnected = False
+    -- REVIEW: Is this doing anything?
     , xmrWalletAddress = ""
     , errors = []
     , isReturnUser = False
@@ -426,7 +427,7 @@ update msg model =
                   isHardwareLNSConnected = updatedIsLNSConnected
                 , isHardwareLNXConnected = updatedIsLNXConnected
                 , isXMRWalletConnected = updatedIsXMRConnected
-                , xmrWalletAddress = decodedHardwareDeviceMsg
+                --, xmrWalletAddress = --decodedHardwareDeviceMsg
 
                 --, selectedranking = newRanking
                 --, objectJSONfromJSPort = Just decodedJsObj

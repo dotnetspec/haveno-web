@@ -1,5 +1,5 @@
 # Production Website
-REF: https://haveno-web-1.squashpassion.com
+REF: https://haveno-web-dev.netlify.app/
 
 👉 Haveno-Web is the web based front end for the Haveno project
 
@@ -14,16 +14,15 @@ Start the necessary process (haveno and web server):
 'yarn dev'
 
 Production:
-Upload contents of ./dist folder and ./resources (whole) folder to your production environment (e.g. Namecheap - pubic_html)
+Upload contents of ./dist folder and ./resources (whole) folder to your production environment
 
 
 # Domain management
-REF: https://www.namecheap.com/myaccount/login
-TXT and CNAME records are in Domain List/Advanced CNS
+REF: haveno-web-dev.netlify.app
 
 # Hosting
 The site is currently hosted by:
-NameCheap
+Netlify
 
 # SEO
 robots.tx and sitemap.xml can be updated if necessary (e.g. filename changes)
@@ -42,3 +41,4 @@ This project is a combination of two previously separate projects, each with its
 # Miscellaneous
 NOTE: Vite builds starting with root index.html and resolves to the ./dist folder. Elm is handled by Vite and added to ./dist/assets/index*.js
 NOTE: Project on hold awaiting response to question re: ledgerinterop.js -- REF: https://github.com/LedgerHQ/developer-portal/issues/245
+NOTE: Update new releases of monerod in ~/haveno-web/.localnet. Official site REF: https://www.getmonero.org

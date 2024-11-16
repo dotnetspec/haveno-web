@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Open the first terminal and run the first command
+# Updated versions of monerod go in ~/Documents/Development/Monero/haveno-dex/haveno/.localnet
 gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/haveno-dex/haveno && make monerod1-local; exec bash"
 
 # Open the second terminal and run the second command

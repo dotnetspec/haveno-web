@@ -10770,8 +10770,7 @@ type alias Process =
                 return _Utils_Tuple2(_Utils_update(model, {
                     isHardwareLNSConnected: updatedIsLNSConnected,
                     isHardwareLNXConnected: updatedIsLNXConnected,
-                    isXMRWalletConnected: updatedIsXMRConnected,
-                    xmrWalletAddress: decodedHardwareDeviceMsg
+                    isXMRWalletConnected: updatedIsXMRConnected
                 }), $elm$core$Platform$Cmd$none);
             case 'Confirm':
                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -11168,24 +11167,22 @@ type alias Process =
                                 var updatedIsLNSConnected = !model.isHardwareLNSConnected && decodedHardwareDeviceMsg === 'nanoS' ? true : model.isHardwareLNSConnected ? true : false;
                                 var updatedIsLNXConnected = !model.isHardwareLNXConnected && decodedHardwareDeviceMsg === 'nanoX' ? true : model.isHardwareLNXConnected ? true : false;
                                 var updatedIsValidXMRAddressConnected = !model.isXMRWalletConnected && $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? true : model.isXMRWalletConnected ? true : false;
-                                var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/hardware', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-                                var popupVisibility = updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected ? false : true;
-                                var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
                                 var newHardwareModel = _Utils_update(hwModel, {
                                     isHardwareLNXConnected: updatedIsLNXConnected,
-                                    isXMRWalletConnected: updatedIsValidXMRAddressConnected,
-                                    xmrWalletAddress: updatedWalletAddress
+                                    isXMRWalletConnected: updatedIsValidXMRAddressConnected
                                 });
                                 var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : updatedIsLNSConnected || updatedIsLNXConnected ? $author$project$Main$HardwarePage(newHardwareModel) : $author$project$Main$BlankPage($author$project$Pages$Blank$initialModel);
+                                var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/hardware', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+                                var popupVisibility = updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected ? false : true;
                                 var newMainModel = _Utils_update(model, {
                                     flag: newUrlAfterCheckConnections,
                                     isHardwareLNSConnected: updatedIsLNSConnected,
                                     isHardwareLNXConnected: updatedIsLNXConnected,
                                     isPopUpVisible: popupVisibility,
                                     isXMRWalletConnected: updatedIsValidXMRAddressConnected,
-                                    page: newPage,
-                                    xmrWalletAddress: updatedWalletAddress
+                                    page: newPage
                                 });
+                                var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
                                 return (newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected ? _Utils_Tuple2(_Utils_update(newMainModel, {
                                     page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel)
                                 }), $elm$core$Platform$Cmd$none) : newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected ? _Utils_Tuple2(_Utils_update(newMainModel, {
@@ -11216,24 +11213,22 @@ type alias Process =
                                 var updatedIsLNSConnected = !model.isHardwareLNSConnected && decodedHardwareDeviceMsg === 'nanoS' ? true : model.isHardwareLNSConnected ? true : false;
                                 var updatedIsLNXConnected = !model.isHardwareLNXConnected && decodedHardwareDeviceMsg === 'nanoX' ? true : model.isHardwareLNXConnected ? true : false;
                                 var updatedIsValidXMRAddressConnected = !model.isXMRWalletConnected && $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? true : model.isXMRWalletConnected ? true : false;
-                                var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/hardware', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-                                var popupVisibility = updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected ? false : true;
-                                var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
                                 var newHardwareModel = _Utils_update(hwModel, {
                                     isHardwareLNXConnected: updatedIsLNXConnected,
-                                    isXMRWalletConnected: updatedIsValidXMRAddressConnected,
-                                    xmrWalletAddress: updatedWalletAddress
+                                    isXMRWalletConnected: updatedIsValidXMRAddressConnected
                                 });
                                 var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage(newHardwareModel);
+                                var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/hardware', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+                                var popupVisibility = updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected ? false : true;
                                 var newMainModel = _Utils_update(model, {
                                     flag: newUrlAfterCheckConnections,
                                     isHardwareLNSConnected: updatedIsLNSConnected,
                                     isHardwareLNXConnected: updatedIsLNXConnected,
                                     isPopUpVisible: popupVisibility,
                                     isXMRWalletConnected: updatedIsValidXMRAddressConnected,
-                                    page: newPage,
-                                    xmrWalletAddress: updatedWalletAddress
+                                    page: newPage
                                 });
+                                var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
                                 return (newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected ? _Utils_Tuple2(_Utils_update(newMainModel, {
                                     page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel)
                                 }), $elm$core$Platform$Cmd$none) : newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected ? A2($author$project$Main$toHardware, newMainModel, A2($author$project$Pages$Hardware$update, $author$project$Pages$Hardware$ResponseDataFromMain(rawJsonMessage), newHardwareModel)) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -11459,7 +11454,7 @@ type alias Process =
             page: $author$project$Main$BlankPage($author$project$Pages$Blank$initialModel),
             time: $elm$time$Time$millisToPosix(0),
             version: $elm$core$Maybe$Nothing,
-            xmrWalletAddress: '',
+            xmrWalletAddress: 'BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32',
             zone: $elm$core$Maybe$Nothing
         };
         return A2($author$project$Main$updateUrl, url, updatedModel);
@@ -11547,10 +11542,10 @@ type alias Process =
                         $elm$html$Html$text((model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected ? 'XMR Wallet Connected' : model.isPopUpVisible ? '_' : 'XMR Wallet Not Connected')
                     ])),
                     A2($elm$html$Html$h4, _List_fromArray([
-                        $elm$html$Html$Attributes$class((model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected ? 'indicator green' : model.isPopUpVisible ? 'indicator white' : 'indicator red'),
+                        $elm$html$Html$Attributes$class((model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected && $author$project$Main$isValidXMRAddress(model.xmrWalletAddress) ? 'indicator green' : model.isPopUpVisible ? 'indicator white' : 'indicator red'),
                         $elm$html$Html$Attributes$id('xmrwalletaddress')
                     ]), _List_fromArray([
-                        $elm$html$Html$text((model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected ? 'XMR Wallet Address: ' + model.xmrWalletAddress : model.isPopUpVisible ? '_' : 'No XMR Wallet Address')
+                        $elm$html$Html$text((model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected && $author$project$Main$isValidXMRAddress(model.xmrWalletAddress) ? 'XMR Wallet Address: ' + model.xmrWalletAddress : model.isPopUpVisible ? '_' : 'No XMR Wallet Address')
                     ]))
                 ]))
             ]))

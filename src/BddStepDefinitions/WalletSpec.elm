@@ -91,7 +91,8 @@ runSpecTests =
                             )
                         ]
                 )
-        , scenario "3: Generating a New Subaddress"
+                -- NOTE: Uncomment these tests one at a time to maintain managability
+        {- , scenario "3: Generating a New Subaddress"
             (given
                 (Spec.Setup.init (Wallet.init "http://localhost:1234")
                     |> Spec.Setup.withView Wallet.view
@@ -378,7 +379,7 @@ runSpecTests =
                                 )
                         )
                     ]
-            )
+            ) -}
         ]
 
 

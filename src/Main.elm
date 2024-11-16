@@ -97,9 +97,13 @@ init flag url key =
             , zone = Nothing -- Replace with the actual time zone if available
             , errors = []
             , isHardwareLNSConnected = False
-            , isHardwareLNXConnected = False
-            , isXMRWalletConnected = False
-            , xmrWalletAddress = ""
+            -- REVIEW: Should it be impossible to nav without hw device connection?
+            -- HACK: Making these next 2 True, so we can get to the wallet page, fails 10 tests:
+            , isHardwareLNXConnected = False --False
+            , isXMRWalletConnected = False -- False
+            -- HACK: Temp until we receive the address from the hw device
+            -- NOTE: This is actually the only place in the app that is currently affecting the notification mesage
+            , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" --""
             , isPopUpVisible = True
             , isNavMenuActive = False
             , version = Nothing
@@ -353,7 +357,8 @@ update msg model =
                                       --,
                                       isHardwareLNXConnected = updatedIsLNXConnected
                                     , isXMRWalletConnected = updatedIsValidXMRAddressConnected
-                                    , xmrWalletAddress = updatedWalletAddress
+                                    
+                                    --, xmrWalletAddress = updatedWalletAddress
                                 }
 
                             newPage =
@@ -381,7 +386,7 @@ update msg model =
                                     , isXMRWalletConnected = updatedIsValidXMRAddressConnected
                                     , isPopUpVisible = popupVisibility
                                     , flag = newUrlAfterCheckConnections
-                                    , xmrWalletAddress = updatedWalletAddress
+                                    --, xmrWalletAddress = updatedWalletAddress
                                 }
                         in
                         if (newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected then
@@ -478,7 +483,7 @@ update msg model =
                                       --,
                                       isHardwareLNXConnected = updatedIsLNXConnected
                                     , isXMRWalletConnected = updatedIsValidXMRAddressConnected
-                                    , xmrWalletAddress = updatedWalletAddress
+                                    --, xmrWalletAddress = updatedWalletAddress
                                 }
 
                             newPage =
@@ -503,7 +508,7 @@ update msg model =
                                     , isXMRWalletConnected = updatedIsValidXMRAddressConnected
                                     , isPopUpVisible = popupVisibility
                                     , flag = newUrlAfterCheckConnections
-                                    , xmrWalletAddress = updatedWalletAddress
+                                    --, xmrWalletAddress = updatedWalletAddress
                                 }
                         in
                         if (newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected then
@@ -1181,6 +1186,7 @@ sendVersionRequest request =
             Grpc.new getVersion request
                 |> Grpc.addHeader "password" "apitest"
                 -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
+                -- NOTE: this is referencing the user1_listener via Envoy - in dev that is haveno-ts/config/envoy.test.yaml
                 |> Grpc.setHost "http://localhost:8080"
     in
     Grpc.toCmd GotVersion grpcRequest
@@ -1599,7 +1605,7 @@ isXMRWalletConnectedIndicator model =
                     ]
                 , h4
                     [ Attr.class
-                        (if (model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected then
+                        (if (model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected && isValidXMRAddress model.xmrWalletAddress then
                             "indicator green"
 
                          else if model.isPopUpVisible then
@@ -1611,7 +1617,7 @@ isXMRWalletConnectedIndicator model =
                     , Attr.id "xmrwalletaddress"
                     ]
                     [ text
-                        (if (model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected then
+                        (if (model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected && isValidXMRAddress model.xmrWalletAddress then
                             "XMR Wallet Address: " ++ model.xmrWalletAddress
 
                          else if model.isPopUpVisible then
