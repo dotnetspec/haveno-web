@@ -4,7 +4,6 @@ module BddStepDefinitions.MainSpec exposing (..)
    might switch to particular pages and check that 'global' settings (Main's model) are correct
 -}
 
-
 import BddStepDefinitions.Extra exposing (..)
 import BddStepDefinitions.Runner as Runner exposing (..)
 import Browser
@@ -17,6 +16,7 @@ import Main exposing (Model, Msg, Page(..), Route(..), init, navigate, subscript
 import Pages.Blank
 import Pages.Dashboard as Dashboard exposing (..)
 import Pages.Hardware as Hardware exposing (..)
+--import Pages.Wallet as Wallet exposing (..)
 import Spec exposing (..)
 import Spec.Claim as Claim exposing (Claim, Verdict)
 import Spec.Command exposing (send)
@@ -128,7 +128,7 @@ runSpecTests =
             )
         , --Runner.skip <|
           --Runner.pick <|
-          scenario "2: hww NOT connected, user clicks the 'Connect Hardware' button, navs to Hardware page"
+          scenario "2: hww NOT connected, user clicks the 'Continue' button, navs to Hardware page"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -143,7 +143,7 @@ runSpecTests =
                 |> when "the LNS hww is NOT detected"
                     [ Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
                     ]
-                |> when "the user clicks the Connect Hardware button"
+                |> when "the user clicks the Continue button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
                 |> Spec.observeThat
                     [ it "hides the popup"
@@ -220,7 +220,7 @@ runSpecTests =
                     |> Spec.Setup.withLocation placeholderUrl
                 )
                 -- NOTE: Bypass the popup
-                {- |> when "the user clicks the Connect Hardware button"
+                {- |> when "the user clicks the Continue button"
                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
                 -}
                 |> when "the LNS/LNX hww is detected"
@@ -337,7 +337,7 @@ runSpecTests =
                     |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
                 )
                 -- NOTE: You need to do this to get away from 'Blank' page
-                |> when "the user clicks the Connect Hardware button"
+                |> when "the user clicks the Continue button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
                 |> when "the LNX hww is detected"
                     [ -- NOTE: 'send' here means send from js to elm
@@ -388,6 +388,7 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isFalse
                         )
+                    
                     ]
             )
         , --Runner.skip <|
@@ -408,7 +409,7 @@ runSpecTests =
                    [ Spec.Http.logRequests
                    ]
                 -}
-                |> when "the user clicks the Connect Hardware button"
+                |> when "the user clicks the Continue button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
                 |> when "the LNS hww is detected"
                     [ -- NOTE: 'send' here means send from js to elm
@@ -484,11 +485,7 @@ runSpecTests =
                     |> Spec.Setup.withLocation placeholderUrl
                     |> Stub.serve [ TestData.successfullVersionFetch ]
                 )
-                {- |> Spec.when "we log the http requests"
-                   [ Spec.Http.logRequests
-                   ]
-                -}
-                |> when "the user clicks the Connect Hardware button"
+                |> when "the user clicks the Continue button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
                 -- NOTE: These shouldn't be necessary to get the version number:
                 |> when "the LNS hww is detected"
@@ -498,6 +495,9 @@ runSpecTests =
                 |> when "the Monero wallet address is retrieved from hardware device"
                     [ -- NOTE: 'send' here means send from js to elm
                       Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
+                    ]
+                |> Spec.when "we log the http requests"
+                    [ Spec.Http.logRequests
                     ]
                 |> Spec.observeThat
                     [ it
@@ -540,6 +540,134 @@ runSpecTests =
                         )
                     ]
             )
+
+        
+        , --Runner.skip <|
+          --Runner.pick <|
+          scenario "8: User confirms hware device connection in browser"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Spec.Setup.withLocation placeholderUrl
+                )
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
+                |> when "the user clicks the Continue button"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                |> when "the LNS hww is not detected"
+                    [ -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
+                    ]
+                |> when "the user clicks the Continue button"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                |> when "the user clicks the Grant Browser Permissions button"
+                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedHardwareDeviceConnect) ]
+                |> when "the LNS hww is detected"
+                    [ -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonNanoSDetected
+                    ]
+                |> Spec.observeThat
+                    [ it "a.hides the popup"
+                        (Observer.observeModel .isPopUpVisible
+                            |> Spec.expect
+                                Claim.isFalse
+                        )
+                    , it "the LNS/LNX hardware wallet is not detected"
+                        (Observer.observeModel .isHardwareLNSConnected
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    , it "it should display a message informing the user connected"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ tag "span" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Connected"
+                                )
+                        )
+
+                    -- NOTE: It appears that we can check that the page is the Dashboard page by checking the model
+                    -- but we cannot check the text in the page, without an update e.g. from button click,
+                    -- because it's not the setup module's (Main) responsibility
+                    , it "f.is on the Hardware page"
+                        (Observer.observeModel .page
+                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.HardwarePage Hardware.initialModel)
+                        )
+                    ]
+            )
+
+      
+        , --Runner.skip <|
+          --Runner.pick <|
+          scenario "9: User unable to confirm hware device connection in browser"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Spec.Setup.withLocation placeholderUrl
+                )
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
+                |> when "the user clicks the Continue button"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                |> when "the LNS hww is not detected"
+                    [ -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
+                    ]
+                |> when "the user clicks the Continue button"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                |> when "the user clicks the Grant Browser Permissions button"
+                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedHardwareDeviceConnect) ]
+                |> when "the browser does not grant permission"
+                    [ -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" failedRequestDeviceInBrowser
+                    ]
+                |> Spec.observeThat
+                    [ it "is on the Hardware page"
+                        (Observer.observeModel .page
+                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.HardwarePage Hardware.initialModel)
+                        )
+                        
+                    ,it "a.hides the popup"
+                        (Observer.observeModel .isPopUpVisible
+                            |> Spec.expect
+                                Claim.isFalse
+                        )
+                    , it "the LNS/LNX hardware device is not detected"
+                        (Observer.observeModel .isHardwareLNSConnected
+                            |> Spec.expect
+                                Claim.isFalse
+                        )
+                    , it "it should display a message informing the user should switch to another browser type"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ tag "span" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Please connect to a Chrome based mobile browser"
+                                )
+                        )
+                    
+                    ]
+            )
         ]
 
 
@@ -577,7 +705,13 @@ jsonNanoXDetected =
 jsonNanoSNOTDetected : E.Value
 jsonNanoSNOTDetected =
     E.object
-        [ ( "operationEventMsg", E.string "" )
+        [ ( "operationEventMsg", E.string "Error connecting to device" )
+        ]
+
+failedRequestDeviceInBrowser : E.Value
+failedRequestDeviceInBrowser =
+    E.object
+        [ ( "operationEventMsg", E.string "Failed to execute 'requestDevice' on 'USB'" )
         ]
 
 
@@ -588,10 +722,6 @@ validXMRWalletAddress =
         ]
 
 
-
-
-
 documentToHtml : Browser.Document msg -> Html msg
 documentToHtml document =
     div [] document.body
-

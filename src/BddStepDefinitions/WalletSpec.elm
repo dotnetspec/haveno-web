@@ -82,11 +82,11 @@ runSpecTests =
                         , it "displays the reserved balance correctly"
                             (Markup.observeElement
                                 |> Markup.query
-                                << by [ id "reservedBalance" ]
+                                << by [ id "reservedOfferBalance" ]
                                 |> Spec.expect
                                     (Claim.isSomethingWhere <|
                                         Markup.text <|
-                                            Claim.isStringContaining 1 "Reserved Balance: 50.0 XMR"
+                                            Claim.isStringContaining 1 "Reserved Offer Balance: 50.0 XMR"
                                     )
                             )
                         ]
@@ -486,13 +486,7 @@ jsonRelayTransaction =
 
 
 
-{- jsonWalletWithBalances : E.Value
-   jsonWalletWithBalances =
-       E.object
-           [ ( "availableBalance", E.float 100.0 )
-           , ( "reservedBalance", E.float 50.0 )
-           ]
--}
+
 
 
 jsonTransactionInitiated : E.Value

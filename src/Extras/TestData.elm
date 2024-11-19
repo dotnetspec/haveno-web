@@ -67,8 +67,12 @@ toBytes : String -> Maybe Bytes
 toBytes string =
     Maybe.map BE.encode (Base64.encoder string)
 
+
+
 -- NOTE: This stub causes an error in the test runner, but the test still passes
 -- REF: https://github.com/brian-watkins/elm-spec/issues/75
+
+
 successfullVersionFetch : Stub.HttpResponseStub
 successfullVersionFetch =
     let
@@ -307,9 +311,7 @@ successfulWalletWithBalancesFetch =
         decodedBytes =
             case toBytes base64Response of
                 Just bytes ->
-                    
                     bytes
-                    
 
                 Nothing ->
                     BE.encode (BE.unsignedInt8 0)

@@ -32,6 +32,7 @@ import Pages.Market
 import Pages.Portfolio
 import Pages.Sell
 import Pages.Support
+import Pages.Wallet
 import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
@@ -108,6 +109,7 @@ init flag url key =
             , isNavMenuActive = False
             , version = Nothing
             , isPageHeaderVisible = False
+            , currentJsMessage = ""
             }
     in
     updateUrl url updatedModel
@@ -145,6 +147,7 @@ type alias Model =
     , isNavMenuActive : Bool
     , isPageHeaderVisible : Bool
     , version : Maybe GetVersionReply
+    , currentJsMessage : String
     }
 
 
@@ -201,6 +204,7 @@ type Msg
     | GotBuyMsg Pages.Buy.Msg
     | GotMarketMsg Pages.Market.Msg
     | GotHardwareMsg Pages.Hardware.Msg
+    | GotWalletMsg Pages.Wallet.Msg
     | ChangedUrl Url.Url
     | Tick Time.Posix
     | AdjustTimeZone Time.Zone
@@ -229,6 +233,9 @@ pageToUrlPath page =
 
         DashboardPage _ ->
             "/dashboard"
+
+        WalletPage _ ->
+            "/wallet"
 
         _ ->
             "/"
@@ -274,10 +281,11 @@ update msg model =
             -- NOTE: rawJsonMessage is a Json value that is ready to be decoded. It does not need to be
             -- converted to a string.
             if String.contains "Problem" (fromJsonToString rawJsonMessage) then
-                ( { model | errors = model.errors ++ [ "Problem fetching data" ] }, Cmd.none )
-
+                ( { model | errors = model.errors ++ [ "Problem fetching data" ] , currentJsMessage = "Problem fetching data"}, Cmd.none )
+            else if String.contains "Failed to execute 'requestDevice' on 'USB'" (fromJsonToString rawJsonMessage) then
+                ( { model | errors = model.errors ++ [ "User permissions gesture required" ], currentJsMessage = "User permissions gesture required" }, Cmd.none )
             else if String.contains "LOGINDENIED" (fromJsonToString rawJsonMessage) then
-                ( { model | errors = model.errors ++ [ "Login Denied - Please try again ..." ] }, Cmd.none )
+                ( { model | errors = model.errors ++ [ "Login Denied - Please try again ..." ] , currentJsMessage = "Login Denied - Please try again ..."}, Cmd.none )
 
             else
                 case model.page of
@@ -411,6 +419,9 @@ update msg model =
                         ( model, Cmd.none )
 
                     MarketPage _ ->
+                        ( model, Cmd.none )
+
+                    WalletPage _ ->
                         ( model, Cmd.none )
 
                     HardwarePage _ ->
@@ -624,6 +635,14 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        GotWalletMsg walletMsg ->
+            case model.page of
+                WalletPage wallet ->
+                    toWallet model (Pages.Wallet.update walletMsg wallet)
+
+                _ ->
+                    ( model, Cmd.none )
+
         -- NOTE: GotHardwareMsg is triggered by toHardware, which is triggered by updateUrl
         -- which is triggered by init. updateUrl is sent the url and uses the parser to parse it.
         -- The parser outputs the Hardware page so that the case in updateUrl can branch on Hardware.
@@ -757,6 +776,10 @@ view model =
                     Pages.Hardware.view hardware
                         |> Html.map GotHardwareMsg
 
+                WalletPage wallet ->
+                    Pages.Wallet.view wallet
+                        |> Html.map GotWalletMsg
+
         {- else
            div [] []
         -}
@@ -814,6 +837,7 @@ type Route
     | Buy
     | Market
     | Hardware
+    | Wallet
     | Blank
 
 
@@ -833,6 +857,7 @@ type
     | BuyPage Pages.Buy.Model
     | MarketPage Pages.Market.Model
     | HardwarePage Pages.Hardware.Model
+    | WalletPage Pages.Wallet.Model
     | BlankPage Pages.Blank.Model
 
 
@@ -1016,6 +1041,10 @@ updateUrl url model =
             Pages.Market.init ()
                 |> toMarket model
 
+        Just Wallet ->
+            Pages.Wallet.init "XMR"
+                |> toWallet model
+
         Just Hardware ->
             let
                 newHWmodel =
@@ -1116,6 +1145,12 @@ toMarket model ( market, cmd ) =
     , Cmd.map GotMarketMsg cmd
     )
 
+toWallet : Model -> ( Pages.Wallet.Model, Cmd Pages.Wallet.Msg ) -> ( Model, Cmd Msg )
+toWallet model ( wallet, cmd ) =
+    ( { model | page = WalletPage wallet }
+    , Cmd.map GotWalletMsg cmd
+    )
+
 
 
 {- Let's break down the `toHardware` function step by step in simple terms:
@@ -1144,6 +1179,7 @@ toMarket model ( market, cmd ) =
 
 toHardware : Model -> ( Pages.Hardware.Model, Cmd Pages.Hardware.Msg ) -> ( Model, Cmd Msg )
 toHardware model ( _, cmd ) =
+    let _ = Debug.log "hware read" "to go"  in
     ( {- -- NOTE: Cmd.map is applying the GotHardwareMsg constructor to the message in the command.
          In Elm, GotHardwareMsg is a type constructor for the Msg type. It's used to create a new Msg value. When you use
          GotHardwareMsg with Cmd.map, you're telling Elm to take the message that results from the command and wrap it in GotHardwareMsg.
@@ -1182,6 +1218,7 @@ type alias FromMainToSchedule =
 sendVersionRequest : GetVersionRequest -> Cmd Msg
 sendVersionRequest request =
     let
+        _ = Debug.log "send ver req" request
         grpcRequest =
             Grpc.new getVersion request
                 |> Grpc.addHeader "password" "apitest"
@@ -1207,7 +1244,7 @@ viewPopUp model =
                     logoImage
                     , p [] [ text "No Hardware Device Detected!" ]
                     , p [] [ text "Please connect your LNS/LNX hardware device to continue" ]
-                    , button [ onClick HidePopUp ] [ text "Connect Hardware" ]
+                    , button [ onClick HidePopUp ] [ text "Continue" ]
                     ]
                 ]
 
@@ -1565,7 +1602,9 @@ isHWConnectedIndicator model isConnected =
                          else if model.isHardwareLNXConnected then
                             "Nano X Connected"
 
-                         else
+                         else if model.currentJsMessage == "User permissions gesture required" then
+                            "Please connect to a Chrome based mobile browser"
+                        else 
                             "No hardware device connected"
                         )
                     ]
@@ -1653,7 +1692,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.19" ]
+                , p [] [ text "Version 0.0.20" ]
                 , text "Haveno Version"
                 , p [ id "havenoversion" ]
                     [ text
@@ -1727,6 +1766,12 @@ isActive { link, page } =
             True
 
         ( Hardware, _ ) ->
+            False
+
+        ( Wallet, WalletPage _ ) ->
+            True
+
+        ( Wallet, _ ) ->
             False
 
 

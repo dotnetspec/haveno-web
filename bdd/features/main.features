@@ -61,6 +61,7 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **When** the user clicks the "Connect XMR Wallet" feature
 **Then** it should display a confirmation message indicating successful XMR wallet connection
 **And** it should display the address
+**And** it should display the Dashboard page
  
 
 #### **Scenario 6: Show a message that the Haveno core app is not yet connected**  
@@ -70,10 +71,9 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **When** the user clicks the 'Connect Hardware' button  
 **And** the LNS hardware wallet is detected  
 **And** the Monero wallet address is retrieved from the hardware  
-
 **Then** the popup should be hidden  
 **And** the app location should be root 
-**And** the `isHardwareLNSConnected` flag should be set to `true`  
+**And** the hwd should be connected
 **And** the footer should display "No Haveno version available"  
 **And** the Dashboard page should be displayed  
 **And** the model should reflect the current page as the Dashboard page  
@@ -91,7 +91,33 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **Then** the app location should be root 
 **And** the Dashboard page should be displayed  
 **And** the model should reflect the current page as the Dashboard page  
-**And** the footer should display the version number "1.0.7"  
+**And** the footer should display the version number "1.0.7"
+
+#### **Scenario 8: User confirms hware device connection in browser**  
+
+**Given** the web app is opened  
+**And** the hwd is indicating that a user permission gesture is required
+**When** the user clicks the 'Continue' button  
+**And** the LNS/LNX hardware wallet is not detected  
+**And** the hwd is still indicating that a user permission gesture is required  
+**Then** the model should reflect the current page as the Hardware page  
+**And** the user clicks the Grant Browser Permission button
+**And** the browser grants permission
+**Then** it should display a message informing the user connected
+
+#### **Scenario 9: User unable to confirm hware device connection in browser**  
+
+**Given** the web app is opened  
+**And** the hwd is indicating that a user permission gesture is required
+**When** the user clicks the 'Continue' button  
+**When** the LNS/LNX hardware wallet is not detected  
+**And** the hwd is still indicating that a user permission gesture is required  
+**Then** the model should reflect the current page as the Hardware page  
+**And** the user clicks the Grant Browser Permission button
+**And** the browser does not grant permission
+**And** the hwd is still indicating that a user permission gesture is required
+**Then** it should display a message informing the user their mobile browser may not 
+be compatible with hwd usage and suggest working mobile browser versions
 
 
 

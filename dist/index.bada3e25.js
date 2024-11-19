@@ -3949,59 +3949,6 @@ type alias Process =
             callback(_Scheduler_succeed(name));
         });
     }
-    // STRINGS
-    var _Parser_isSubString = F5(function(smallString, offset, row, col, bigString) {
-        var smallLength = smallString.length;
-        var isGood = offset + smallLength <= bigString.length;
-        for(var i = 0; isGood && i < smallLength;){
-            var code = bigString.charCodeAt(offset);
-            isGood = smallString[i++] === bigString[offset++] && (code === 0x000A /* \n */  ? (row++, col = 1) : (col++, (code & 0xF800) === 0xD800 ? smallString[i++] === bigString[offset++] : 1));
-        }
-        return _Utils_Tuple3(isGood ? offset : -1, row, col);
-    });
-    // CHARS
-    var _Parser_isSubChar = F3(function(predicate, offset, string) {
-        return string.length <= offset ? -1 : (string.charCodeAt(offset) & 0xF800) === 0xD800 ? predicate(_Utils_chr(string.substr(offset, 2))) ? offset + 2 : -1 : predicate(_Utils_chr(string[offset])) ? string[offset] === '\n' ? -2 : offset + 1 : -1;
-    });
-    var _Parser_isAsciiCode = F3(function(code, offset, string) {
-        return string.charCodeAt(offset) === code;
-    });
-    // NUMBERS
-    var _Parser_chompBase10 = F2(function(offset, string) {
-        for(; offset < string.length; offset++){
-            var code = string.charCodeAt(offset);
-            if (code < 0x30 || 0x39 < code) return offset;
-        }
-        return offset;
-    });
-    var _Parser_consumeBase = F3(function(base, offset, string) {
-        for(var total = 0; offset < string.length; offset++){
-            var digit = string.charCodeAt(offset) - 0x30;
-            if (digit < 0 || base <= digit) break;
-            total = base * total + digit;
-        }
-        return _Utils_Tuple2(offset, total);
-    });
-    var _Parser_consumeBase16 = F2(function(offset, string) {
-        for(var total = 0; offset < string.length; offset++){
-            var code = string.charCodeAt(offset);
-            if (0x30 <= code && code <= 0x39) total = 16 * total + code - 0x30;
-            else if (0x41 <= code && code <= 0x46) total = 16 * total + code - 55;
-            else if (0x61 <= code && code <= 0x66) total = 16 * total + code - 87;
-            else break;
-        }
-        return _Utils_Tuple2(offset, total);
-    });
-    // FIND STRING
-    var _Parser_findSubString = F5(function(smallString, offset, row, col, bigString) {
-        var newOffset = bigString.indexOf(smallString, offset);
-        var target = newOffset < 0 ? bigString.length : newOffset + smallString.length;
-        while(offset < target){
-            var code = bigString.charCodeAt(offset++);
-            code === 0x000A /* \n */  ? (col = 1, row++) : (col++, (code & 0xF800) === 0xD800 && offset++);
-        }
-        return _Utils_Tuple3(newOffset, row, col);
-    });
     // BYTES
     function _Bytes_width(bytes) {
         return bytes.byteLength;
@@ -4256,6 +4203,59 @@ type alias Process =
             }))));
         });
     }
+    // STRINGS
+    var _Parser_isSubString = F5(function(smallString, offset, row, col, bigString) {
+        var smallLength = smallString.length;
+        var isGood = offset + smallLength <= bigString.length;
+        for(var i = 0; isGood && i < smallLength;){
+            var code = bigString.charCodeAt(offset);
+            isGood = smallString[i++] === bigString[offset++] && (code === 0x000A /* \n */  ? (row++, col = 1) : (col++, (code & 0xF800) === 0xD800 ? smallString[i++] === bigString[offset++] : 1));
+        }
+        return _Utils_Tuple3(isGood ? offset : -1, row, col);
+    });
+    // CHARS
+    var _Parser_isSubChar = F3(function(predicate, offset, string) {
+        return string.length <= offset ? -1 : (string.charCodeAt(offset) & 0xF800) === 0xD800 ? predicate(_Utils_chr(string.substr(offset, 2))) ? offset + 2 : -1 : predicate(_Utils_chr(string[offset])) ? string[offset] === '\n' ? -2 : offset + 1 : -1;
+    });
+    var _Parser_isAsciiCode = F3(function(code, offset, string) {
+        return string.charCodeAt(offset) === code;
+    });
+    // NUMBERS
+    var _Parser_chompBase10 = F2(function(offset, string) {
+        for(; offset < string.length; offset++){
+            var code = string.charCodeAt(offset);
+            if (code < 0x30 || 0x39 < code) return offset;
+        }
+        return offset;
+    });
+    var _Parser_consumeBase = F3(function(base, offset, string) {
+        for(var total = 0; offset < string.length; offset++){
+            var digit = string.charCodeAt(offset) - 0x30;
+            if (digit < 0 || base <= digit) break;
+            total = base * total + digit;
+        }
+        return _Utils_Tuple2(offset, total);
+    });
+    var _Parser_consumeBase16 = F2(function(offset, string) {
+        for(var total = 0; offset < string.length; offset++){
+            var code = string.charCodeAt(offset);
+            if (0x30 <= code && code <= 0x39) total = 16 * total + code - 0x30;
+            else if (0x41 <= code && code <= 0x46) total = 16 * total + code - 55;
+            else if (0x61 <= code && code <= 0x66) total = 16 * total + code - 87;
+            else break;
+        }
+        return _Utils_Tuple2(offset, total);
+    });
+    // FIND STRING
+    var _Parser_findSubString = F5(function(smallString, offset, row, col, bigString) {
+        var newOffset = bigString.indexOf(smallString, offset);
+        var target = newOffset < 0 ? bigString.length : newOffset + smallString.length;
+        while(offset < target){
+            var code = bigString.charCodeAt(offset++);
+            code === 0x000A /* \n */  ? (col = 1, row++) : (col++, (code & 0xF800) === 0xD800 && offset++);
+        }
+        return _Utils_Tuple3(newOffset, row, col);
+    });
     var $author$project$Main$ChangedUrl = function(a) {
         return {
             $: 'ChangedUrl',
@@ -8695,436 +8695,9 @@ type alias Process =
             title: 'Haveno-Web Support'
         }), $elm$core$Platform$Cmd$none);
     };
-    var $author$project$Pages$Dashboard$initialModel = {
-        balance: '0.00',
-        errors: _List_Nil,
-        flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Nothing, '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
-        havenoAPKHttpRequest: $elm$core$Maybe$Nothing,
-        pagetitle: 'Dashboard',
-        root: $author$project$Pages$Dashboard$Dashboard({
-            name: 'Loading...'
-        }),
-        status: $author$project$Pages$Dashboard$Loaded,
-        version: $elm$core$Maybe$Nothing
-    };
-    var $author$project$Pages$Hardware$initialModel = {
-        apiSpecifics: {
-            accessToken: $elm$core$Maybe$Nothing,
-            maxResults: ''
-        },
-        datetimeFromMain: $elm$core$Maybe$Nothing,
-        errors: _List_Nil,
-        flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/hardware', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
-        isHardwareLNSConnected: false,
-        isHardwareLNXConnected: false,
-        isReturnUser: false,
-        isValidNewAccessToken: false,
-        isXMRWalletConnected: false,
-        objectJSONfromJSPort: $elm$core$Maybe$Nothing,
-        queryType: $author$project$Pages$Hardware$LoggedInUser,
-        root: $author$project$Pages$Hardware$Hardware({
-            name: 'Loading...'
-        }),
-        status: $author$project$Pages$Hardware$Loaded,
-        title: 'Hardware',
-        user: $author$project$Data$User$emptySpectator,
-        xmrWalletAddress: ''
-    };
-    var $elm$parser$Parser$DeadEnd = F3(function(row, col, problem) {
+    var $author$project$Pages$Wallet$GotBalances = function(a) {
         return {
-            col: col,
-            problem: problem,
-            row: row
-        };
-    });
-    var $elm$parser$Parser$problemToDeadEnd = function(p) {
-        return A3($elm$parser$Parser$DeadEnd, p.row, p.col, p.problem);
-    };
-    var $elm$parser$Parser$Advanced$bagToList = F2(function(bag, list) {
-        bagToList: while(true)switch(bag.$){
-            case 'Empty':
-                return list;
-            case 'AddRight':
-                var bag1 = bag.a;
-                var x = bag.b;
-                var $temp$bag = bag1, $temp$list = A2($elm$core$List$cons, x, list);
-                bag = $temp$bag;
-                list = $temp$list;
-                continue bagToList;
-            default:
-                var bag1 = bag.a;
-                var bag2 = bag.b;
-                var $temp$bag = bag1, $temp$list = A2($elm$parser$Parser$Advanced$bagToList, bag2, list);
-                bag = $temp$bag;
-                list = $temp$list;
-                continue bagToList;
-        }
-    });
-    var $elm$parser$Parser$Advanced$run = F2(function(_v0, src) {
-        var parse = _v0.a;
-        var _v1 = parse({
-            col: 1,
-            context: _List_Nil,
-            indent: 1,
-            offset: 0,
-            row: 1,
-            src: src
-        });
-        if (_v1.$ === 'Good') {
-            var value = _v1.b;
-            return $elm$core$Result$Ok(value);
-        } else {
-            var bag = _v1.b;
-            return $elm$core$Result$Err(A2($elm$parser$Parser$Advanced$bagToList, bag, _List_Nil));
-        }
-    });
-    var $elm$parser$Parser$run = F2(function(parser, source) {
-        var _v0 = A2($elm$parser$Parser$Advanced$run, parser, source);
-        if (_v0.$ === 'Ok') {
-            var a = _v0.a;
-            return $elm$core$Result$Ok(a);
-        } else {
-            var problems = _v0.a;
-            return $elm$core$Result$Err(A2($elm$core$List$map, $elm$parser$Parser$problemToDeadEnd, problems));
-        }
-    });
-    var $elm$parser$Parser$Advanced$Bad = F2(function(a, b) {
-        return {
-            $: 'Bad',
-            a: a,
-            b: b
-        };
-    });
-    var $elm$parser$Parser$Advanced$Good = F3(function(a, b, c) {
-        return {
-            $: 'Good',
-            a: a,
-            b: b,
-            c: c
-        };
-    });
-    var $elm$parser$Parser$Advanced$Parser = function(a) {
-        return {
-            $: 'Parser',
-            a: a
-        };
-    };
-    var $elm$parser$Parser$Advanced$andThen = F2(function(callback, _v0) {
-        var parseA = _v0.a;
-        return $elm$parser$Parser$Advanced$Parser(function(s0) {
-            var _v1 = parseA(s0);
-            if (_v1.$ === 'Bad') {
-                var p = _v1.a;
-                var x = _v1.b;
-                return A2($elm$parser$Parser$Advanced$Bad, p, x);
-            } else {
-                var p1 = _v1.a;
-                var a = _v1.b;
-                var s1 = _v1.c;
-                var _v2 = callback(a);
-                var parseB = _v2.a;
-                var _v3 = parseB(s1);
-                if (_v3.$ === 'Bad') {
-                    var p2 = _v3.a;
-                    var x = _v3.b;
-                    return A2($elm$parser$Parser$Advanced$Bad, p1 || p2, x);
-                } else {
-                    var p2 = _v3.a;
-                    var b = _v3.b;
-                    var s2 = _v3.c;
-                    return A3($elm$parser$Parser$Advanced$Good, p1 || p2, b, s2);
-                }
-            }
-        });
-    });
-    var $elm$parser$Parser$andThen = $elm$parser$Parser$Advanced$andThen;
-    var $elm$parser$Parser$Advanced$isSubChar = _Parser_isSubChar;
-    var $elm$parser$Parser$Advanced$chompWhileHelp = F5(function(isGood, offset, row, col, s0) {
-        chompWhileHelp: while(true){
-            var newOffset = A3($elm$parser$Parser$Advanced$isSubChar, isGood, offset, s0.src);
-            if (_Utils_eq(newOffset, -1)) return A3($elm$parser$Parser$Advanced$Good, _Utils_cmp(s0.offset, offset) < 0, _Utils_Tuple0, {
-                col: col,
-                context: s0.context,
-                indent: s0.indent,
-                offset: offset,
-                row: row,
-                src: s0.src
-            });
-            else if (_Utils_eq(newOffset, -2)) {
-                var $temp$isGood = isGood, $temp$offset = offset + 1, $temp$row = row + 1, $temp$col = 1, $temp$s0 = s0;
-                isGood = $temp$isGood;
-                offset = $temp$offset;
-                row = $temp$row;
-                col = $temp$col;
-                s0 = $temp$s0;
-                continue chompWhileHelp;
-            } else {
-                var $temp$isGood = isGood, $temp$offset = newOffset, $temp$row = row, $temp$col = col + 1, $temp$s0 = s0;
-                isGood = $temp$isGood;
-                offset = $temp$offset;
-                row = $temp$row;
-                col = $temp$col;
-                s0 = $temp$s0;
-                continue chompWhileHelp;
-            }
-        }
-    });
-    var $elm$parser$Parser$Advanced$chompWhile = function(isGood) {
-        return $elm$parser$Parser$Advanced$Parser(function(s) {
-            return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.offset, s.row, s.col, s);
-        });
-    };
-    var $elm$parser$Parser$chompWhile = $elm$parser$Parser$Advanced$chompWhile;
-    var $elm$parser$Parser$ExpectingEnd = {
-        $: 'ExpectingEnd'
-    };
-    var $elm$parser$Parser$Advanced$AddRight = F2(function(a, b) {
-        return {
-            $: 'AddRight',
-            a: a,
-            b: b
-        };
-    });
-    var $elm$parser$Parser$Advanced$DeadEnd = F4(function(row, col, problem, contextStack) {
-        return {
-            col: col,
-            contextStack: contextStack,
-            problem: problem,
-            row: row
-        };
-    });
-    var $elm$parser$Parser$Advanced$Empty = {
-        $: 'Empty'
-    };
-    var $elm$parser$Parser$Advanced$fromState = F2(function(s, x) {
-        return A2($elm$parser$Parser$Advanced$AddRight, $elm$parser$Parser$Advanced$Empty, A4($elm$parser$Parser$Advanced$DeadEnd, s.row, s.col, x, s.context));
-    });
-    var $elm$parser$Parser$Advanced$end = function(x) {
-        return $elm$parser$Parser$Advanced$Parser(function(s) {
-            return _Utils_eq($elm$core$String$length(s.src), s.offset) ? A3($elm$parser$Parser$Advanced$Good, false, _Utils_Tuple0, s) : A2($elm$parser$Parser$Advanced$Bad, false, A2($elm$parser$Parser$Advanced$fromState, s, x));
-        });
-    };
-    var $elm$parser$Parser$end = $elm$parser$Parser$Advanced$end($elm$parser$Parser$ExpectingEnd);
-    var $elm$parser$Parser$Advanced$mapChompedString = F2(function(func, _v0) {
-        var parse = _v0.a;
-        return $elm$parser$Parser$Advanced$Parser(function(s0) {
-            var _v1 = parse(s0);
-            if (_v1.$ === 'Bad') {
-                var p = _v1.a;
-                var x = _v1.b;
-                return A2($elm$parser$Parser$Advanced$Bad, p, x);
-            } else {
-                var p = _v1.a;
-                var a = _v1.b;
-                var s1 = _v1.c;
-                return A3($elm$parser$Parser$Advanced$Good, p, A2(func, A3($elm$core$String$slice, s0.offset, s1.offset, s0.src), a), s1);
-            }
-        });
-    });
-    var $elm$parser$Parser$Advanced$getChompedString = function(parser) {
-        return A2($elm$parser$Parser$Advanced$mapChompedString, $elm$core$Basics$always, parser);
-    };
-    var $elm$parser$Parser$getChompedString = $elm$parser$Parser$Advanced$getChompedString;
-    var $elm$parser$Parser$Advanced$map = F2(function(func, _v0) {
-        var parse = _v0.a;
-        return $elm$parser$Parser$Advanced$Parser(function(s0) {
-            var _v1 = parse(s0);
-            if (_v1.$ === 'Good') {
-                var p = _v1.a;
-                var a = _v1.b;
-                var s1 = _v1.c;
-                return A3($elm$parser$Parser$Advanced$Good, p, func(a), s1);
-            } else {
-                var p = _v1.a;
-                var x = _v1.b;
-                return A2($elm$parser$Parser$Advanced$Bad, p, x);
-            }
-        });
-    });
-    var $elm$parser$Parser$map = $elm$parser$Parser$Advanced$map;
-    var $elm$parser$Parser$Problem = function(a) {
-        return {
-            $: 'Problem',
-            a: a
-        };
-    };
-    var $elm$parser$Parser$Advanced$problem = function(x) {
-        return $elm$parser$Parser$Advanced$Parser(function(s) {
-            return A2($elm$parser$Parser$Advanced$Bad, false, A2($elm$parser$Parser$Advanced$fromState, s, x));
-        });
-    };
-    var $elm$parser$Parser$problem = function(msg) {
-        return $elm$parser$Parser$Advanced$problem($elm$parser$Parser$Problem(msg));
-    };
-    var $elm$parser$Parser$Advanced$succeed = function(a) {
-        return $elm$parser$Parser$Advanced$Parser(function(s) {
-            return A3($elm$parser$Parser$Advanced$Good, false, a, s);
-        });
-    };
-    var $elm$parser$Parser$succeed = $elm$parser$Parser$Advanced$succeed;
-    var $author$project$Data$Hardware$validXMRAddressParser = A2($elm$parser$Parser$andThen, function(str) {
-        return A2($elm$parser$Parser$map, function(_v0) {
-            return str;
-        }, $elm$parser$Parser$end);
-    }, A2($elm$parser$Parser$andThen, function(str) {
-        return $elm$core$String$length(str) === 95 ? $elm$parser$Parser$succeed(str) : $elm$parser$Parser$problem('Invalid length');
-    }, $elm$parser$Parser$getChompedString($elm$parser$Parser$chompWhile($elm$core$Char$isAlphaNum))));
-    var $author$project$Main$isValidXMRAddress = function(str) {
-        var _v0 = A2($elm$parser$Parser$run, $author$project$Data$Hardware$validXMRAddressParser, str);
-        if (_v0.$ === 'Ok') return true;
-        else return false;
-    };
-    var $author$project$Main$OperationEventMsg = function(operationEventMsg) {
-        return {
-            operationEventMsg: operationEventMsg
-        };
-    };
-    var $author$project$Main$justmsgFieldFromJsonDecoder = A2($elm$json$Json$Decode$map, $author$project$Main$OperationEventMsg, A2($elm$json$Json$Decode$field, 'operationEventMsg', $elm$json$Json$Decode$string));
-    var $elm$browser$Browser$Navigation$load = _Browser_load;
-    var $author$project$Main$pageToUrlPath = function(page) {
-        switch(page.$){
-            case 'HardwarePage':
-                return '/hardware';
-            case 'DashboardPage':
-                return '/dashboard';
-            default:
-                return '/';
-        }
-    };
-    var $elm$url$Url$Parser$State = F5(function(visited, unvisited, params, frag, value) {
-        return {
-            frag: frag,
-            params: params,
-            unvisited: unvisited,
-            value: value,
-            visited: visited
-        };
-    });
-    var $elm$url$Url$Parser$getFirstMatch = function(states) {
-        getFirstMatch: while(true){
-            if (!states.b) return $elm$core$Maybe$Nothing;
-            else {
-                var state = states.a;
-                var rest = states.b;
-                var _v1 = state.unvisited;
-                if (!_v1.b) return $elm$core$Maybe$Just(state.value);
-                else {
-                    if (_v1.a === '' && !_v1.b.b) return $elm$core$Maybe$Just(state.value);
-                    else {
-                        var $temp$states = rest;
-                        states = $temp$states;
-                        continue getFirstMatch;
-                    }
-                }
-            }
-        }
-    };
-    var $elm$url$Url$Parser$removeFinalEmpty = function(segments) {
-        if (!segments.b) return _List_Nil;
-        else {
-            if (segments.a === '' && !segments.b.b) return _List_Nil;
-            else {
-                var segment = segments.a;
-                var rest = segments.b;
-                return A2($elm$core$List$cons, segment, $elm$url$Url$Parser$removeFinalEmpty(rest));
-            }
-        }
-    };
-    var $elm$url$Url$Parser$preparePath = function(path) {
-        var _v0 = A2($elm$core$String$split, '/', path);
-        if (_v0.b && _v0.a === '') {
-            var segments = _v0.b;
-            return $elm$url$Url$Parser$removeFinalEmpty(segments);
-        } else {
-            var segments = _v0;
-            return $elm$url$Url$Parser$removeFinalEmpty(segments);
-        }
-    };
-    var $elm$url$Url$Parser$addToParametersHelp = F2(function(value, maybeList) {
-        if (maybeList.$ === 'Nothing') return $elm$core$Maybe$Just(_List_fromArray([
-            value
-        ]));
-        else {
-            var list = maybeList.a;
-            return $elm$core$Maybe$Just(A2($elm$core$List$cons, value, list));
-        }
-    });
-    var $elm$url$Url$Parser$addParam = F2(function(segment, dict) {
-        var _v0 = A2($elm$core$String$split, '=', segment);
-        if (_v0.b && _v0.b.b && !_v0.b.b.b) {
-            var rawKey = _v0.a;
-            var _v1 = _v0.b;
-            var rawValue = _v1.a;
-            var _v2 = $elm$url$Url$percentDecode(rawKey);
-            if (_v2.$ === 'Nothing') return dict;
-            else {
-                var key = _v2.a;
-                var _v3 = $elm$url$Url$percentDecode(rawValue);
-                if (_v3.$ === 'Nothing') return dict;
-                else {
-                    var value = _v3.a;
-                    return A3($elm$core$Dict$update, key, $elm$url$Url$Parser$addToParametersHelp(value), dict);
-                }
-            }
-        } else return dict;
-    });
-    var $elm$url$Url$Parser$prepareQuery = function(maybeQuery) {
-        if (maybeQuery.$ === 'Nothing') return $elm$core$Dict$empty;
-        else {
-            var qry = maybeQuery.a;
-            return A3($elm$core$List$foldr, $elm$url$Url$Parser$addParam, $elm$core$Dict$empty, A2($elm$core$String$split, '&', qry));
-        }
-    };
-    var $elm$url$Url$Parser$parse = F2(function(_v0, url) {
-        var parser = _v0.a;
-        return $elm$url$Url$Parser$getFirstMatch(parser(A5($elm$url$Url$Parser$State, _List_Nil, $elm$url$Url$Parser$preparePath(url.path), $elm$url$Url$Parser$prepareQuery(url.query), url.fragment, $elm$core$Basics$identity)));
-    });
-    var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
-    var $author$project$Main$sendMessageToJs = _Platform_outgoingPort('sendMessageToJs', $elm$json$Json$Encode$string);
-    var $author$project$Main$GotDashboardMsg = function(a) {
-        return {
-            $: 'GotDashboardMsg',
-            a: a
-        };
-    };
-    var $author$project$Main$toDashboard = F2(function(model, _v0) {
-        var dashboard = _v0.a;
-        var cmd = _v0.b;
-        return _Utils_Tuple2(_Utils_update(model, {
-            page: $author$project$Main$DashboardPage(dashboard)
-        }), $elm$core$Platform$Cmd$batch(_List_fromArray([
-            A2($elm$core$Platform$Cmd$map, $author$project$Main$GotDashboardMsg, cmd),
-            A2($elm$core$Task$perform, $author$project$Main$AdjustTimeZone, $elm$time$Time$here)
-        ])));
-    });
-    var $author$project$Main$FundsPage = function(a) {
-        return {
-            $: 'FundsPage',
-            a: a
-        };
-    };
-    var $author$project$Main$GotFundsMsg = function(a) {
-        return {
-            $: 'GotFundsMsg',
-            a: a
-        };
-    };
-    var $author$project$Main$toFunds = F2(function(model, _v0) {
-        var funds = _v0.a;
-        var cmd = _v0.b;
-        return _Utils_Tuple2(_Utils_update(model, {
-            page: $author$project$Main$FundsPage(funds)
-        }), A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFundsMsg, cmd));
-    });
-    var $author$project$Main$GotHardwareMsg = function(a) {
-        return {
-            $: 'GotHardwareMsg',
-            a: a
-        };
-    };
-    var $author$project$Main$GotVersion = function(a) {
-        return {
-            $: 'GotVersion',
+            $: 'GotBalances',
             a: a
         };
     };
@@ -9148,14 +8721,35 @@ type alias Process =
             headers: A2($elm$core$List$cons, A2($elm$http$Http$header, key, value), req.headers)
         }));
     });
+    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetBalancesRequest = {
+        currencyCode: ''
+    };
+    var $author$project$Proto$Io$Haveno$Protobuffer$defaultGetBalancesRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetBalancesRequest;
     var $anmolitor$elm_grpc$Grpc$Internal$Rpc = function(a) {
         return {
             $: 'Rpc',
             a: a
         };
     };
-    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionReply = {
-        version: ''
+    var $eriktim$elm_protocol_buffers$Internal$Int64$Int64 = function(a) {
+        return {
+            $: 'Int64',
+            a: a
+        };
+    };
+    var $elm$core$Bitwise$or = _Bitwise_or;
+    var $eriktim$elm_protocol_buffers$Internal$Int64$fromInts = F2(function(higher, lower) {
+        return $eriktim$elm_protocol_buffers$Internal$Int64$Int64({
+            higher: 0 | higher,
+            lower: 0 | lower
+        });
+    });
+    var $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts = $eriktim$elm_protocol_buffers$Internal$Int64$fromInts;
+    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BtcBalanceInfo = {
+        availableBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+        lockedBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+        reservedBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+        totalAvailableBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0)
     };
     var $eriktim$elm_protocol_buffers$Protobuf$Decode$Decoder = function(a) {
         return {
@@ -9529,29 +9123,169 @@ type alias Process =
             _Utils_Tuple2(fieldNumber, A2($eriktim$elm_protocol_buffers$Protobuf$Decode$map, set, decoder))
         ]));
     });
-    var $elm$core$Tuple$pair = F2(function(a, b) {
-        return _Utils_Tuple2(a, b);
+    var $eriktim$elm_protocol_buffers$Internal$Int64$fromBase128 = $eriktim$elm_protocol_buffers$Internal$Int64$fromInts(0);
+    var $eriktim$elm_protocol_buffers$Internal$Int64$and = F2(function(n, _v0) {
+        var lower = _v0.a.lower;
+        return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, 0, n & lower);
     });
-    var $eriktim$elm_protocol_buffers$Protobuf$Decode$lengthDelimitedDecoder = function(decoder) {
+    var $elm$core$Bitwise$complement = _Bitwise_complement;
+    var $eriktim$elm_protocol_buffers$Internal$Int64$negate = function(_int) {
+        var higher = _int.a.higher;
+        var lower = _int.a.lower;
+        return !lower && !higher ? _int : A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, ~higher, ~lower + 1);
+    };
+    var $eriktim$elm_protocol_buffers$Internal$Int64$shiftRightZfBy = F2(function(n, _v0) {
+        var higher = _v0.a.higher;
+        var lower = _v0.a.lower;
+        if (n > 32) return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, 0, higher >>> n);
+        else {
+            var carry = higher << 32 - n;
+            var newLower = (carry | lower >>> n) >>> 0;
+            return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, higher >>> n, newLower);
+        }
+    });
+    var $eriktim$elm_protocol_buffers$Internal$Int64$xor = F2(function(_v0, _v1) {
+        var a = _v0.a;
+        var b = _v1.a;
+        return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, a.higher ^ b.higher, a.lower ^ b.lower);
+    });
+    var $eriktim$elm_protocol_buffers$Internal$Int64$fromZigZag = function(value) {
+        return A2($eriktim$elm_protocol_buffers$Internal$Int64$xor, A2($eriktim$elm_protocol_buffers$Internal$Int64$shiftRightZfBy, 1, value), $eriktim$elm_protocol_buffers$Internal$Int64$negate(A2($eriktim$elm_protocol_buffers$Internal$Int64$and, 1, value)));
+    };
+    var $eriktim$elm_protocol_buffers$Internal$Int64$popBase128 = function(_int) {
+        var lower = _int.a.lower;
+        var higherBits = A2($eriktim$elm_protocol_buffers$Internal$Int64$shiftRightZfBy, 7, _int);
+        var base128 = 127 & lower;
+        return _Utils_Tuple2(base128, higherBits);
+    };
+    var $eriktim$elm_protocol_buffers$Internal$Int64$addUnsafe = F2(function(n, _v0) {
+        var higher = _v0.a.higher;
+        var lower = _v0.a.lower;
+        return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, higher, n + lower);
+    });
+    var $eriktim$elm_protocol_buffers$Internal$Int64$shiftLeftBy = F2(function(n, _v0) {
+        var higher = _v0.a.higher;
+        var lower = _v0.a.lower;
+        if (n > 32) return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, lower << n, 0);
+        else {
+            var carry = lower >>> 32 - n;
+            var newHigher = carry | higher << n;
+            return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, newHigher, lower << n);
+        }
+    });
+    var $eriktim$elm_protocol_buffers$Internal$Int64$pushBase128 = F2(function(base128, _int) {
+        return A2($eriktim$elm_protocol_buffers$Internal$Int64$addUnsafe, base128, A2($eriktim$elm_protocol_buffers$Internal$Int64$shiftLeftBy, 7, _int));
+    });
+    var $eriktim$elm_protocol_buffers$Internal$Int64$shiftRightBy63 = function(_v0) {
+        var higher = _v0.a.higher;
+        var onlyOnesOrZeros = higher >> 31;
+        return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, onlyOnesOrZeros, onlyOnesOrZeros);
+    };
+    var $eriktim$elm_protocol_buffers$Internal$Int64$toZigZag = function(value) {
+        return A2($eriktim$elm_protocol_buffers$Internal$Int64$xor, $eriktim$elm_protocol_buffers$Internal$Int64$shiftRightBy63(value), A2($eriktim$elm_protocol_buffers$Internal$Int64$shiftLeftBy, 1, value));
+    };
+    var $eriktim$elm_protocol_buffers$Internal$Int64$operations = {
+        fromBase128: $eriktim$elm_protocol_buffers$Internal$Int64$fromBase128,
+        fromSigned: $elm$core$Basics$identity,
+        fromZigZag: $eriktim$elm_protocol_buffers$Internal$Int64$fromZigZag,
+        popBase128: $eriktim$elm_protocol_buffers$Internal$Int64$popBase128,
+        pushBase128: $eriktim$elm_protocol_buffers$Internal$Int64$pushBase128,
+        toSigned: $elm$core$Basics$identity,
+        toZigZag: $eriktim$elm_protocol_buffers$Internal$Int64$toZigZag
+    };
+    var $eriktim$elm_protocol_buffers$Protobuf$Decode$packedDecoder = F2(function(decoderWireType, decoder) {
         return $eriktim$elm_protocol_buffers$Protobuf$Decode$Decoder(function(wireType) {
-            if (wireType.$ === 'LengthDelimited') {
-                var width = wireType.a;
-                return A2($elm$bytes$Bytes$Decode$map, $elm$core$Tuple$pair(width), decoder(width));
-            } else return $elm$bytes$Bytes$Decode$fail;
+            if (wireType.$ === 'LengthDelimited') return decoder;
+            else return _Utils_eq(wireType, decoderWireType) ? decoder : $elm$bytes$Bytes$Decode$fail;
         });
+    });
+    var $eriktim$elm_protocol_buffers$Protobuf$Decode$uintDecoder = function(config) {
+        return A2($eriktim$elm_protocol_buffers$Protobuf$Decode$packedDecoder, $eriktim$elm_protocol_buffers$Internal$Protobuf$VarInt, A2($elm$bytes$Bytes$Decode$map, $elm$core$Tuple$mapSecond(config.fromSigned), $eriktim$elm_protocol_buffers$Protobuf$Decode$varIntDecoder(config)));
     };
-    var $elm$bytes$Bytes$Decode$string = function(n) {
-        return $elm$bytes$Bytes$Decode$Decoder(_Bytes_read_string(n));
-    };
-    var $eriktim$elm_protocol_buffers$Protobuf$Decode$string = $eriktim$elm_protocol_buffers$Protobuf$Decode$lengthDelimitedDecoder($elm$bytes$Bytes$Decode$string);
-    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetVersionReply = A2($eriktim$elm_protocol_buffers$Protobuf$Decode$message, $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionReply, _List_fromArray([
-        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 1, $eriktim$elm_protocol_buffers$Protobuf$Decode$string, F2(function(a, r) {
+    var $eriktim$elm_protocol_buffers$Protobuf$Decode$uint64 = $eriktim$elm_protocol_buffers$Protobuf$Decode$uintDecoder($eriktim$elm_protocol_buffers$Internal$Int64$operations);
+    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__BtcBalanceInfo = A2($eriktim$elm_protocol_buffers$Protobuf$Decode$message, $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BtcBalanceInfo, _List_fromArray([
+        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 1, $eriktim$elm_protocol_buffers$Protobuf$Decode$uint64, F2(function(a, r) {
             return _Utils_update(r, {
-                version: a
+                availableBalance: a
+            });
+        })),
+        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 2, $eriktim$elm_protocol_buffers$Protobuf$Decode$uint64, F2(function(a, r) {
+            return _Utils_update(r, {
+                reservedBalance: a
+            });
+        })),
+        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 3, $eriktim$elm_protocol_buffers$Protobuf$Decode$uint64, F2(function(a, r) {
+            return _Utils_update(r, {
+                totalAvailableBalance: a
+            });
+        })),
+        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 4, $eriktim$elm_protocol_buffers$Protobuf$Decode$uint64, F2(function(a, r) {
+            return _Utils_update(r, {
+                lockedBalance: a
             });
         }))
     ]));
-    var $author$project$Proto$Io$Haveno$Protobuffer$decodeGetVersionReply = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetVersionReply;
+    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__XmrBalanceInfo = {
+        availableBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+        balance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+        pendingBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+        reservedOfferBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+        reservedTradeBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0)
+    };
+    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__XmrBalanceInfo = A2($eriktim$elm_protocol_buffers$Protobuf$Decode$message, $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__XmrBalanceInfo, _List_fromArray([
+        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 1, $eriktim$elm_protocol_buffers$Protobuf$Decode$uint64, F2(function(a, r) {
+            return _Utils_update(r, {
+                balance: a
+            });
+        })),
+        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 2, $eriktim$elm_protocol_buffers$Protobuf$Decode$uint64, F2(function(a, r) {
+            return _Utils_update(r, {
+                availableBalance: a
+            });
+        })),
+        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 3, $eriktim$elm_protocol_buffers$Protobuf$Decode$uint64, F2(function(a, r) {
+            return _Utils_update(r, {
+                pendingBalance: a
+            });
+        })),
+        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 4, $eriktim$elm_protocol_buffers$Protobuf$Decode$uint64, F2(function(a, r) {
+            return _Utils_update(r, {
+                reservedOfferBalance: a
+            });
+        })),
+        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 5, $eriktim$elm_protocol_buffers$Protobuf$Decode$uint64, F2(function(a, r) {
+            return _Utils_update(r, {
+                reservedTradeBalance: a
+            });
+        }))
+    ]));
+    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo = {
+        btc: $elm$core$Maybe$Nothing,
+        xmr: $elm$core$Maybe$Nothing
+    };
+    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__BalancesInfo = A2($eriktim$elm_protocol_buffers$Protobuf$Decode$message, $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo, _List_fromArray([
+        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 1, A2($eriktim$elm_protocol_buffers$Protobuf$Decode$map, $elm$core$Maybe$Just, $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__BtcBalanceInfo), F2(function(a, r) {
+            return _Utils_update(r, {
+                btc: a
+            });
+        })),
+        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 2, A2($eriktim$elm_protocol_buffers$Protobuf$Decode$map, $elm$core$Maybe$Just, $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__XmrBalanceInfo), F2(function(a, r) {
+            return _Utils_update(r, {
+                xmr: a
+            });
+        }))
+    ]));
+    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetBalancesReply = {
+        balances: $elm$core$Maybe$Nothing
+    };
+    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetBalancesReply = A2($eriktim$elm_protocol_buffers$Protobuf$Decode$message, $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetBalancesReply, _List_fromArray([
+        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 1, A2($eriktim$elm_protocol_buffers$Protobuf$Decode$map, $elm$core$Maybe$Just, $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__BalancesInfo), F2(function(a, r) {
+            return _Utils_update(r, {
+                balances: a
+            });
+        }))
+    ]));
+    var $author$project$Proto$Io$Haveno$Protobuffer$decodeGetBalancesReply = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetBalancesReply;
     var $eriktim$elm_protocol_buffers$Protobuf$Encode$Encoder = F2(function(a, b) {
         return {
             $: 'Encoder',
@@ -9590,7 +9324,9 @@ type alias Process =
         return _Utils_Tuple2(width, $elm$bytes$Bytes$Encode$sequence(A2($elm$core$List$map, $elm$core$Tuple$second, items)));
     };
     var $elm$core$List$sortBy = _List_sortBy;
-    var $elm$core$Bitwise$or = _Bitwise_or;
+    var $elm$core$Tuple$pair = F2(function(a, b) {
+        return _Utils_Tuple2(a, b);
+    });
     var $elm$bytes$Bytes$Encode$U8 = function(a) {
         return {
             $: 'U8',
@@ -9680,16 +9416,33 @@ type alias Process =
             return A2($eriktim$elm_protocol_buffers$Protobuf$Encode$Encoder, $eriktim$elm_protocol_buffers$Internal$Protobuf$LengthDelimited(e.a), e);
         }($eriktim$elm_protocol_buffers$Protobuf$Encode$sequence(A2($elm$core$List$map, $eriktim$elm_protocol_buffers$Protobuf$Encode$toKeyValuePairEncoder, A2($elm$core$List$sortBy, $elm$core$Tuple$first, items))));
     };
-    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetVersionRequest = function(_v0) {
-        return $eriktim$elm_protocol_buffers$Protobuf$Encode$message(_List_Nil);
+    var $elm$bytes$Bytes$Encode$getStringWidth = _Bytes_getStringWidth;
+    var $elm$bytes$Bytes$Encode$Utf8 = F2(function(a, b) {
+        return {
+            $: 'Utf8',
+            a: a,
+            b: b
+        };
+    });
+    var $elm$bytes$Bytes$Encode$string = function(str) {
+        return A2($elm$bytes$Bytes$Encode$Utf8, _Bytes_getStringWidth(str), str);
     };
-    var $author$project$Proto$Io$Haveno$Protobuffer$encodeGetVersionRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetVersionRequest;
-    var $author$project$Proto$Io$Haveno$Protobuffer$GetVersion$getVersion = $anmolitor$elm_grpc$Grpc$Internal$Rpc({
-        decoder: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetVersionReply,
-        encoder: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetVersionRequest,
+    var $eriktim$elm_protocol_buffers$Protobuf$Encode$string = function(v) {
+        var width = $elm$bytes$Bytes$Encode$getStringWidth(v);
+        return A2($eriktim$elm_protocol_buffers$Protobuf$Encode$Encoder, $eriktim$elm_protocol_buffers$Internal$Protobuf$LengthDelimited(width), _Utils_Tuple2(width, $elm$bytes$Bytes$Encode$string(v)));
+    };
+    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetBalancesRequest = function(value) {
+        return $eriktim$elm_protocol_buffers$Protobuf$Encode$message(_List_fromArray([
+            _Utils_Tuple2(1, $eriktim$elm_protocol_buffers$Protobuf$Encode$string(value.currencyCode))
+        ]));
+    };
+    var $author$project$Proto$Io$Haveno$Protobuffer$encodeGetBalancesRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetBalancesRequest;
+    var $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getBalances = $anmolitor$elm_grpc$Grpc$Internal$Rpc({
+        decoder: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetBalancesReply,
+        encoder: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetBalancesRequest,
         _package: 'io.haveno.protobuffer',
-        rpcName: 'GetVersion',
-        service: 'GetVersion'
+        rpcName: 'GetBalances',
+        service: 'Wallets'
     });
     var $anmolitor$elm_grpc$Grpc$grpcContentType = 'application/grpc-web+proto';
     var $anmolitor$elm_grpc$Grpc$new = F2(function(rpc, req) {
@@ -10171,12 +9924,504 @@ type alias Process =
             url: _Utils_ap(req.host, $anmolitor$elm_grpc$Grpc$rpcPath(req.rpc))
         });
     });
+    var $author$project$Pages$Wallet$gotAvailableBalances = function() {
+        var grpcRequest = A2($anmolitor$elm_grpc$Grpc$setHost, 'http://localhost:8080', A3($anmolitor$elm_grpc$Grpc$addHeader, 'password', 'apitest', A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getBalances, $author$project$Proto$Io$Haveno$Protobuffer$defaultGetBalancesRequest)));
+        return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Wallet$GotBalances, grpcRequest);
+    }();
+    var $author$project$Pages$Wallet$Loaded = {
+        $: 'Loaded'
+    };
+    var $author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo;
+    var $author$project$Pages$Wallet$initialModel = {
+        address: 'Not Connected',
+        balances: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
+        errors: _List_Nil,
+        isHardwareWalletConnected: false,
+        isPopUpVisible: true,
+        pagetitle: 'Wallet',
+        status: $author$project$Pages$Wallet$Loaded
+    };
+    var $author$project$Pages$Wallet$init = function(_v0) {
+        return _Utils_Tuple2($author$project$Pages$Wallet$initialModel, $author$project$Pages$Wallet$gotAvailableBalances);
+    };
+    var $author$project$Pages$Dashboard$initialModel = {
+        balance: '0.00',
+        errors: _List_Nil,
+        flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Nothing, '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
+        havenoAPKHttpRequest: $elm$core$Maybe$Nothing,
+        pagetitle: 'Dashboard',
+        root: $author$project$Pages$Dashboard$Dashboard({
+            name: 'Loading...'
+        }),
+        status: $author$project$Pages$Dashboard$Loaded,
+        version: $elm$core$Maybe$Nothing
+    };
+    var $author$project$Pages$Hardware$initialModel = {
+        apiSpecifics: {
+            accessToken: $elm$core$Maybe$Nothing,
+            maxResults: ''
+        },
+        datetimeFromMain: $elm$core$Maybe$Nothing,
+        errors: _List_Nil,
+        flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/hardware', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
+        isHardwareLNSConnected: false,
+        isHardwareLNXConnected: false,
+        isReturnUser: false,
+        isValidNewAccessToken: false,
+        isXMRWalletConnected: false,
+        objectJSONfromJSPort: $elm$core$Maybe$Nothing,
+        queryType: $author$project$Pages$Hardware$Spectator,
+        root: $author$project$Pages$Hardware$Hardware({
+            name: 'Loading...'
+        }),
+        status: $author$project$Pages$Hardware$Loaded,
+        title: 'Hardware',
+        user: $author$project$Data$User$emptySpectator,
+        xmrWalletAddress: ''
+    };
+    var $elm$parser$Parser$DeadEnd = F3(function(row, col, problem) {
+        return {
+            col: col,
+            problem: problem,
+            row: row
+        };
+    });
+    var $elm$parser$Parser$problemToDeadEnd = function(p) {
+        return A3($elm$parser$Parser$DeadEnd, p.row, p.col, p.problem);
+    };
+    var $elm$parser$Parser$Advanced$bagToList = F2(function(bag, list) {
+        bagToList: while(true)switch(bag.$){
+            case 'Empty':
+                return list;
+            case 'AddRight':
+                var bag1 = bag.a;
+                var x = bag.b;
+                var $temp$bag = bag1, $temp$list = A2($elm$core$List$cons, x, list);
+                bag = $temp$bag;
+                list = $temp$list;
+                continue bagToList;
+            default:
+                var bag1 = bag.a;
+                var bag2 = bag.b;
+                var $temp$bag = bag1, $temp$list = A2($elm$parser$Parser$Advanced$bagToList, bag2, list);
+                bag = $temp$bag;
+                list = $temp$list;
+                continue bagToList;
+        }
+    });
+    var $elm$parser$Parser$Advanced$run = F2(function(_v0, src) {
+        var parse = _v0.a;
+        var _v1 = parse({
+            col: 1,
+            context: _List_Nil,
+            indent: 1,
+            offset: 0,
+            row: 1,
+            src: src
+        });
+        if (_v1.$ === 'Good') {
+            var value = _v1.b;
+            return $elm$core$Result$Ok(value);
+        } else {
+            var bag = _v1.b;
+            return $elm$core$Result$Err(A2($elm$parser$Parser$Advanced$bagToList, bag, _List_Nil));
+        }
+    });
+    var $elm$parser$Parser$run = F2(function(parser, source) {
+        var _v0 = A2($elm$parser$Parser$Advanced$run, parser, source);
+        if (_v0.$ === 'Ok') {
+            var a = _v0.a;
+            return $elm$core$Result$Ok(a);
+        } else {
+            var problems = _v0.a;
+            return $elm$core$Result$Err(A2($elm$core$List$map, $elm$parser$Parser$problemToDeadEnd, problems));
+        }
+    });
+    var $elm$parser$Parser$Advanced$Bad = F2(function(a, b) {
+        return {
+            $: 'Bad',
+            a: a,
+            b: b
+        };
+    });
+    var $elm$parser$Parser$Advanced$Good = F3(function(a, b, c) {
+        return {
+            $: 'Good',
+            a: a,
+            b: b,
+            c: c
+        };
+    });
+    var $elm$parser$Parser$Advanced$Parser = function(a) {
+        return {
+            $: 'Parser',
+            a: a
+        };
+    };
+    var $elm$parser$Parser$Advanced$andThen = F2(function(callback, _v0) {
+        var parseA = _v0.a;
+        return $elm$parser$Parser$Advanced$Parser(function(s0) {
+            var _v1 = parseA(s0);
+            if (_v1.$ === 'Bad') {
+                var p = _v1.a;
+                var x = _v1.b;
+                return A2($elm$parser$Parser$Advanced$Bad, p, x);
+            } else {
+                var p1 = _v1.a;
+                var a = _v1.b;
+                var s1 = _v1.c;
+                var _v2 = callback(a);
+                var parseB = _v2.a;
+                var _v3 = parseB(s1);
+                if (_v3.$ === 'Bad') {
+                    var p2 = _v3.a;
+                    var x = _v3.b;
+                    return A2($elm$parser$Parser$Advanced$Bad, p1 || p2, x);
+                } else {
+                    var p2 = _v3.a;
+                    var b = _v3.b;
+                    var s2 = _v3.c;
+                    return A3($elm$parser$Parser$Advanced$Good, p1 || p2, b, s2);
+                }
+            }
+        });
+    });
+    var $elm$parser$Parser$andThen = $elm$parser$Parser$Advanced$andThen;
+    var $elm$parser$Parser$Advanced$isSubChar = _Parser_isSubChar;
+    var $elm$parser$Parser$Advanced$chompWhileHelp = F5(function(isGood, offset, row, col, s0) {
+        chompWhileHelp: while(true){
+            var newOffset = A3($elm$parser$Parser$Advanced$isSubChar, isGood, offset, s0.src);
+            if (_Utils_eq(newOffset, -1)) return A3($elm$parser$Parser$Advanced$Good, _Utils_cmp(s0.offset, offset) < 0, _Utils_Tuple0, {
+                col: col,
+                context: s0.context,
+                indent: s0.indent,
+                offset: offset,
+                row: row,
+                src: s0.src
+            });
+            else if (_Utils_eq(newOffset, -2)) {
+                var $temp$isGood = isGood, $temp$offset = offset + 1, $temp$row = row + 1, $temp$col = 1, $temp$s0 = s0;
+                isGood = $temp$isGood;
+                offset = $temp$offset;
+                row = $temp$row;
+                col = $temp$col;
+                s0 = $temp$s0;
+                continue chompWhileHelp;
+            } else {
+                var $temp$isGood = isGood, $temp$offset = newOffset, $temp$row = row, $temp$col = col + 1, $temp$s0 = s0;
+                isGood = $temp$isGood;
+                offset = $temp$offset;
+                row = $temp$row;
+                col = $temp$col;
+                s0 = $temp$s0;
+                continue chompWhileHelp;
+            }
+        }
+    });
+    var $elm$parser$Parser$Advanced$chompWhile = function(isGood) {
+        return $elm$parser$Parser$Advanced$Parser(function(s) {
+            return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.offset, s.row, s.col, s);
+        });
+    };
+    var $elm$parser$Parser$chompWhile = $elm$parser$Parser$Advanced$chompWhile;
+    var $elm$parser$Parser$ExpectingEnd = {
+        $: 'ExpectingEnd'
+    };
+    var $elm$parser$Parser$Advanced$AddRight = F2(function(a, b) {
+        return {
+            $: 'AddRight',
+            a: a,
+            b: b
+        };
+    });
+    var $elm$parser$Parser$Advanced$DeadEnd = F4(function(row, col, problem, contextStack) {
+        return {
+            col: col,
+            contextStack: contextStack,
+            problem: problem,
+            row: row
+        };
+    });
+    var $elm$parser$Parser$Advanced$Empty = {
+        $: 'Empty'
+    };
+    var $elm$parser$Parser$Advanced$fromState = F2(function(s, x) {
+        return A2($elm$parser$Parser$Advanced$AddRight, $elm$parser$Parser$Advanced$Empty, A4($elm$parser$Parser$Advanced$DeadEnd, s.row, s.col, x, s.context));
+    });
+    var $elm$parser$Parser$Advanced$end = function(x) {
+        return $elm$parser$Parser$Advanced$Parser(function(s) {
+            return _Utils_eq($elm$core$String$length(s.src), s.offset) ? A3($elm$parser$Parser$Advanced$Good, false, _Utils_Tuple0, s) : A2($elm$parser$Parser$Advanced$Bad, false, A2($elm$parser$Parser$Advanced$fromState, s, x));
+        });
+    };
+    var $elm$parser$Parser$end = $elm$parser$Parser$Advanced$end($elm$parser$Parser$ExpectingEnd);
+    var $elm$parser$Parser$Advanced$mapChompedString = F2(function(func, _v0) {
+        var parse = _v0.a;
+        return $elm$parser$Parser$Advanced$Parser(function(s0) {
+            var _v1 = parse(s0);
+            if (_v1.$ === 'Bad') {
+                var p = _v1.a;
+                var x = _v1.b;
+                return A2($elm$parser$Parser$Advanced$Bad, p, x);
+            } else {
+                var p = _v1.a;
+                var a = _v1.b;
+                var s1 = _v1.c;
+                return A3($elm$parser$Parser$Advanced$Good, p, A2(func, A3($elm$core$String$slice, s0.offset, s1.offset, s0.src), a), s1);
+            }
+        });
+    });
+    var $elm$parser$Parser$Advanced$getChompedString = function(parser) {
+        return A2($elm$parser$Parser$Advanced$mapChompedString, $elm$core$Basics$always, parser);
+    };
+    var $elm$parser$Parser$getChompedString = $elm$parser$Parser$Advanced$getChompedString;
+    var $elm$parser$Parser$Advanced$map = F2(function(func, _v0) {
+        var parse = _v0.a;
+        return $elm$parser$Parser$Advanced$Parser(function(s0) {
+            var _v1 = parse(s0);
+            if (_v1.$ === 'Good') {
+                var p = _v1.a;
+                var a = _v1.b;
+                var s1 = _v1.c;
+                return A3($elm$parser$Parser$Advanced$Good, p, func(a), s1);
+            } else {
+                var p = _v1.a;
+                var x = _v1.b;
+                return A2($elm$parser$Parser$Advanced$Bad, p, x);
+            }
+        });
+    });
+    var $elm$parser$Parser$map = $elm$parser$Parser$Advanced$map;
+    var $elm$parser$Parser$Problem = function(a) {
+        return {
+            $: 'Problem',
+            a: a
+        };
+    };
+    var $elm$parser$Parser$Advanced$problem = function(x) {
+        return $elm$parser$Parser$Advanced$Parser(function(s) {
+            return A2($elm$parser$Parser$Advanced$Bad, false, A2($elm$parser$Parser$Advanced$fromState, s, x));
+        });
+    };
+    var $elm$parser$Parser$problem = function(msg) {
+        return $elm$parser$Parser$Advanced$problem($elm$parser$Parser$Problem(msg));
+    };
+    var $elm$parser$Parser$Advanced$succeed = function(a) {
+        return $elm$parser$Parser$Advanced$Parser(function(s) {
+            return A3($elm$parser$Parser$Advanced$Good, false, a, s);
+        });
+    };
+    var $elm$parser$Parser$succeed = $elm$parser$Parser$Advanced$succeed;
+    var $author$project$Data$Hardware$validXMRAddressParser = A2($elm$parser$Parser$andThen, function(str) {
+        return A2($elm$parser$Parser$map, function(_v0) {
+            return str;
+        }, $elm$parser$Parser$end);
+    }, A2($elm$parser$Parser$andThen, function(str) {
+        return $elm$core$String$length(str) === 95 ? $elm$parser$Parser$succeed(str) : $elm$parser$Parser$problem('Invalid length');
+    }, $elm$parser$Parser$getChompedString($elm$parser$Parser$chompWhile($elm$core$Char$isAlphaNum))));
+    var $author$project$Main$isValidXMRAddress = function(str) {
+        var _v0 = A2($elm$parser$Parser$run, $author$project$Data$Hardware$validXMRAddressParser, str);
+        if (_v0.$ === 'Ok') return true;
+        else return false;
+    };
+    var $author$project$Main$OperationEventMsg = function(operationEventMsg) {
+        return {
+            operationEventMsg: operationEventMsg
+        };
+    };
+    var $author$project$Main$justmsgFieldFromJsonDecoder = A2($elm$json$Json$Decode$map, $author$project$Main$OperationEventMsg, A2($elm$json$Json$Decode$field, 'operationEventMsg', $elm$json$Json$Decode$string));
+    var $elm$browser$Browser$Navigation$load = _Browser_load;
+    var $author$project$Main$pageToUrlPath = function(page) {
+        switch(page.$){
+            case 'HardwarePage':
+                return '/hardware';
+            case 'DashboardPage':
+                return '/dashboard';
+            case 'WalletPage':
+                return '/wallet';
+            default:
+                return '/';
+        }
+    };
+    var $elm$url$Url$Parser$State = F5(function(visited, unvisited, params, frag, value) {
+        return {
+            frag: frag,
+            params: params,
+            unvisited: unvisited,
+            value: value,
+            visited: visited
+        };
+    });
+    var $elm$url$Url$Parser$getFirstMatch = function(states) {
+        getFirstMatch: while(true){
+            if (!states.b) return $elm$core$Maybe$Nothing;
+            else {
+                var state = states.a;
+                var rest = states.b;
+                var _v1 = state.unvisited;
+                if (!_v1.b) return $elm$core$Maybe$Just(state.value);
+                else {
+                    if (_v1.a === '' && !_v1.b.b) return $elm$core$Maybe$Just(state.value);
+                    else {
+                        var $temp$states = rest;
+                        states = $temp$states;
+                        continue getFirstMatch;
+                    }
+                }
+            }
+        }
+    };
+    var $elm$url$Url$Parser$removeFinalEmpty = function(segments) {
+        if (!segments.b) return _List_Nil;
+        else {
+            if (segments.a === '' && !segments.b.b) return _List_Nil;
+            else {
+                var segment = segments.a;
+                var rest = segments.b;
+                return A2($elm$core$List$cons, segment, $elm$url$Url$Parser$removeFinalEmpty(rest));
+            }
+        }
+    };
+    var $elm$url$Url$Parser$preparePath = function(path) {
+        var _v0 = A2($elm$core$String$split, '/', path);
+        if (_v0.b && _v0.a === '') {
+            var segments = _v0.b;
+            return $elm$url$Url$Parser$removeFinalEmpty(segments);
+        } else {
+            var segments = _v0;
+            return $elm$url$Url$Parser$removeFinalEmpty(segments);
+        }
+    };
+    var $elm$url$Url$Parser$addToParametersHelp = F2(function(value, maybeList) {
+        if (maybeList.$ === 'Nothing') return $elm$core$Maybe$Just(_List_fromArray([
+            value
+        ]));
+        else {
+            var list = maybeList.a;
+            return $elm$core$Maybe$Just(A2($elm$core$List$cons, value, list));
+        }
+    });
+    var $elm$url$Url$Parser$addParam = F2(function(segment, dict) {
+        var _v0 = A2($elm$core$String$split, '=', segment);
+        if (_v0.b && _v0.b.b && !_v0.b.b.b) {
+            var rawKey = _v0.a;
+            var _v1 = _v0.b;
+            var rawValue = _v1.a;
+            var _v2 = $elm$url$Url$percentDecode(rawKey);
+            if (_v2.$ === 'Nothing') return dict;
+            else {
+                var key = _v2.a;
+                var _v3 = $elm$url$Url$percentDecode(rawValue);
+                if (_v3.$ === 'Nothing') return dict;
+                else {
+                    var value = _v3.a;
+                    return A3($elm$core$Dict$update, key, $elm$url$Url$Parser$addToParametersHelp(value), dict);
+                }
+            }
+        } else return dict;
+    });
+    var $elm$url$Url$Parser$prepareQuery = function(maybeQuery) {
+        if (maybeQuery.$ === 'Nothing') return $elm$core$Dict$empty;
+        else {
+            var qry = maybeQuery.a;
+            return A3($elm$core$List$foldr, $elm$url$Url$Parser$addParam, $elm$core$Dict$empty, A2($elm$core$String$split, '&', qry));
+        }
+    };
+    var $elm$url$Url$Parser$parse = F2(function(_v0, url) {
+        var parser = _v0.a;
+        return $elm$url$Url$Parser$getFirstMatch(parser(A5($elm$url$Url$Parser$State, _List_Nil, $elm$url$Url$Parser$preparePath(url.path), $elm$url$Url$Parser$prepareQuery(url.query), url.fragment, $elm$core$Basics$identity)));
+    });
+    var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+    var $author$project$Main$sendMessageToJs = _Platform_outgoingPort('sendMessageToJs', $elm$json$Json$Encode$string);
+    var $author$project$Main$GotDashboardMsg = function(a) {
+        return {
+            $: 'GotDashboardMsg',
+            a: a
+        };
+    };
+    var $author$project$Main$toDashboard = F2(function(model, _v0) {
+        var dashboard = _v0.a;
+        var cmd = _v0.b;
+        return _Utils_Tuple2(_Utils_update(model, {
+            page: $author$project$Main$DashboardPage(dashboard)
+        }), $elm$core$Platform$Cmd$batch(_List_fromArray([
+            A2($elm$core$Platform$Cmd$map, $author$project$Main$GotDashboardMsg, cmd),
+            A2($elm$core$Task$perform, $author$project$Main$AdjustTimeZone, $elm$time$Time$here)
+        ])));
+    });
+    var $author$project$Main$FundsPage = function(a) {
+        return {
+            $: 'FundsPage',
+            a: a
+        };
+    };
+    var $author$project$Main$GotFundsMsg = function(a) {
+        return {
+            $: 'GotFundsMsg',
+            a: a
+        };
+    };
+    var $author$project$Main$toFunds = F2(function(model, _v0) {
+        var funds = _v0.a;
+        var cmd = _v0.b;
+        return _Utils_Tuple2(_Utils_update(model, {
+            page: $author$project$Main$FundsPage(funds)
+        }), A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFundsMsg, cmd));
+    });
+    var $author$project$Main$GotHardwareMsg = function(a) {
+        return {
+            $: 'GotHardwareMsg',
+            a: a
+        };
+    };
+    var $elm$core$Debug$log = _Debug_log;
+    var $author$project$Main$GotVersion = function(a) {
+        return {
+            $: 'GotVersion',
+            a: a
+        };
+    };
+    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionReply = {
+        version: ''
+    };
+    var $eriktim$elm_protocol_buffers$Protobuf$Decode$lengthDelimitedDecoder = function(decoder) {
+        return $eriktim$elm_protocol_buffers$Protobuf$Decode$Decoder(function(wireType) {
+            if (wireType.$ === 'LengthDelimited') {
+                var width = wireType.a;
+                return A2($elm$bytes$Bytes$Decode$map, $elm$core$Tuple$pair(width), decoder(width));
+            } else return $elm$bytes$Bytes$Decode$fail;
+        });
+    };
+    var $elm$bytes$Bytes$Decode$string = function(n) {
+        return $elm$bytes$Bytes$Decode$Decoder(_Bytes_read_string(n));
+    };
+    var $eriktim$elm_protocol_buffers$Protobuf$Decode$string = $eriktim$elm_protocol_buffers$Protobuf$Decode$lengthDelimitedDecoder($elm$bytes$Bytes$Decode$string);
+    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetVersionReply = A2($eriktim$elm_protocol_buffers$Protobuf$Decode$message, $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionReply, _List_fromArray([
+        A3($eriktim$elm_protocol_buffers$Protobuf$Decode$optional, 1, $eriktim$elm_protocol_buffers$Protobuf$Decode$string, F2(function(a, r) {
+            return _Utils_update(r, {
+                version: a
+            });
+        }))
+    ]));
+    var $author$project$Proto$Io$Haveno$Protobuffer$decodeGetVersionReply = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetVersionReply;
+    var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetVersionRequest = function(_v0) {
+        return $eriktim$elm_protocol_buffers$Protobuf$Encode$message(_List_Nil);
+    };
+    var $author$project$Proto$Io$Haveno$Protobuffer$encodeGetVersionRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetVersionRequest;
+    var $author$project$Proto$Io$Haveno$Protobuffer$GetVersion$getVersion = $anmolitor$elm_grpc$Grpc$Internal$Rpc({
+        decoder: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetVersionReply,
+        encoder: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetVersionRequest,
+        _package: 'io.haveno.protobuffer',
+        rpcName: 'GetVersion',
+        service: 'GetVersion'
+    });
     var $author$project$Main$sendVersionRequest = function(request) {
         var grpcRequest = A2($anmolitor$elm_grpc$Grpc$setHost, 'http://localhost:8080', A3($anmolitor$elm_grpc$Grpc$addHeader, 'password', 'apitest', A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$GetVersion$getVersion, request)));
+        var _v0 = A2($elm$core$Debug$log, 'send ver req', request);
         return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Main$GotVersion, grpcRequest);
     };
     var $author$project$Main$toHardware = F2(function(model, _v0) {
         var cmd = _v0.b;
+        var _v1 = A2($elm$core$Debug$log, 'hware read', 'to go');
         return _Utils_Tuple2(model, $elm$core$Platform$Cmd$batch(_List_fromArray([
             A2($elm$core$Platform$Cmd$map, $author$project$Main$GotHardwareMsg, cmd),
             $author$project$Main$sendVersionRequest({})
@@ -10276,6 +10521,25 @@ type alias Process =
         return _Utils_Tuple2(_Utils_update(model, {
             page: $author$project$Main$SupportPage(support)
         }), A2($elm$core$Platform$Cmd$map, $author$project$Main$GotSupportMsg, cmd));
+    });
+    var $author$project$Main$GotWalletMsg = function(a) {
+        return {
+            $: 'GotWalletMsg',
+            a: a
+        };
+    };
+    var $author$project$Main$WalletPage = function(a) {
+        return {
+            $: 'WalletPage',
+            a: a
+        };
+    };
+    var $author$project$Main$toWallet = F2(function(model, _v0) {
+        var wallet = _v0.a;
+        var cmd = _v0.b;
+        return _Utils_Tuple2(_Utils_update(model, {
+            page: $author$project$Main$WalletPage(wallet)
+        }), A2($elm$core$Platform$Cmd$map, $author$project$Main$GotWalletMsg, cmd));
     });
     var $author$project$Pages$Blank$update = F2(function(msg, model) {
         var newModel = msg.a;
@@ -10998,6 +11262,53 @@ type alias Process =
             title: model.title
         }), $elm$core$Platform$Cmd$none);
     });
+    var $author$project$Pages$Wallet$Errored = {
+        $: 'Errored'
+    };
+    var $author$project$Pages$Wallet$xmrBalanceInfoInstance = {
+        availableBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 100, 0),
+        balance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 110, 0),
+        pendingBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+        reservedOfferBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 50, 0),
+        reservedTradeBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 5, 0)
+    };
+    var $author$project$Pages$Wallet$update = F2(function(msg, model) {
+        switch(msg.$){
+            case 'GotInitialModel':
+                var newModel = msg.a;
+                return _Utils_Tuple2(_Utils_update(model, {
+                    address: newModel.address,
+                    balances: newModel.balances
+                }), $elm$core$Platform$Cmd$none);
+            case 'ClosePopUp':
+                return _Utils_Tuple2(_Utils_update(model, {
+                    isPopUpVisible: false
+                }), $elm$core$Platform$Cmd$none);
+            case 'SetAddress':
+                var address = msg.a;
+                return _Utils_Tuple2(_Utils_update(model, {
+                    address: address
+                }), $elm$core$Platform$Cmd$none);
+            default:
+                if (msg.a.$ === 'Ok') {
+                    var response = msg.a.a;
+                    var tempBals = $elm$core$Maybe$Just({
+                        btc: $elm$core$Maybe$Nothing,
+                        xmr: $elm$core$Maybe$Just($author$project$Pages$Wallet$xmrBalanceInfoInstance)
+                    });
+                    var _v1 = A2($elm$core$Debug$log, 'response ', response.balances);
+                    return _Utils_Tuple2(_Utils_update(model, {
+                        balances: tempBals
+                    }), $elm$core$Platform$Cmd$none);
+                } else {
+                    var error = msg.a.a;
+                    var _v2 = A2($elm$core$Debug$log, 'response err:  ', error);
+                    return _Utils_Tuple2(_Utils_update(model, {
+                        status: $author$project$Pages$Wallet$Errored
+                    }), $elm$core$Platform$Cmd$none);
+                }
+        }
+    });
     var $author$project$Main$Blank = {
         $: 'Blank'
     };
@@ -11092,12 +11403,12 @@ type alias Process =
         A2($elm$url$Url$Parser$map, $author$project$Main$Market, $elm$url$Url$Parser$s('market')),
         A2($elm$url$Url$Parser$map, $author$project$Main$Hardware, $elm$url$Url$Parser$s('hardware'))
     ]));
-    var $author$project$Main$toBlank = F2(function(model, _v28) {
-        var blank = _v28.a;
-        var cmd = _v28.b;
-        var _v29 = A2($author$project$Main$update, $author$project$Main$OnInitHardwareDeviceConnect, model);
-        var newModel = _v29.a;
-        var hwareConnectCmd = _v29.b;
+    var $author$project$Main$toBlank = F2(function(model, _v30) {
+        var blank = _v30.a;
+        var cmd = _v30.b;
+        var _v31 = A2($author$project$Main$update, $author$project$Main$OnInitHardwareDeviceConnect, model);
+        var newModel = _v31.a;
+        var hwareConnectCmd = _v31.b;
         return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$batch(_List_fromArray([
             A2($elm$core$Platform$Cmd$map, $author$project$Main$GotBlankMsg, cmd),
             hwareConnectCmd
@@ -11135,103 +11446,115 @@ type alias Process =
             case 'Recv':
                 var rawJsonMessage = msg.a;
                 if (A2($elm$core$String$contains, 'Problem', $author$project$Main$fromJsonToString(rawJsonMessage))) return _Utils_Tuple2(_Utils_update(model, {
+                    currentJsMessage: 'Problem fetching data',
                     errors: _Utils_ap(model.errors, _List_fromArray([
                         'Problem fetching data'
                     ]))
                 }), $elm$core$Platform$Cmd$none);
                 else {
-                    if (A2($elm$core$String$contains, 'LOGINDENIED', $author$project$Main$fromJsonToString(rawJsonMessage))) return _Utils_Tuple2(_Utils_update(model, {
+                    if (A2($elm$core$String$contains, 'Failed to execute \'requestDevice\' on \'USB\'', $author$project$Main$fromJsonToString(rawJsonMessage))) return _Utils_Tuple2(_Utils_update(model, {
+                        currentJsMessage: 'User permissions gesture required',
                         errors: _Utils_ap(model.errors, _List_fromArray([
-                            'Login Denied - Please try again ...'
+                            'User permissions gesture required'
                         ]))
                     }), $elm$core$Platform$Cmd$none);
                     else {
-                        var _v13 = model.page;
-                        switch(_v13.$){
-                            case 'DashboardPage':
-                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-                            case 'SellPage':
-                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-                            case 'BlankPage':
-                                var hwModel = $author$project$Pages$Hardware$initialModel;
-                                var decodedHardwareDeviceMsg = function() {
-                                    var _v14 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
-                                    if (_v14.$ === 'Ok') {
-                                        var message = _v14.a;
-                                        return message.operationEventMsg;
-                                    } else {
-                                        var err = _v14.a;
-                                        return 'error';
-                                    }
-                                }();
-                                var updatedIsLNSConnected = !model.isHardwareLNSConnected && decodedHardwareDeviceMsg === 'nanoS' ? true : model.isHardwareLNSConnected ? true : false;
-                                var updatedIsLNXConnected = !model.isHardwareLNXConnected && decodedHardwareDeviceMsg === 'nanoX' ? true : model.isHardwareLNXConnected ? true : false;
-                                var updatedIsValidXMRAddressConnected = !model.isXMRWalletConnected && $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? true : model.isXMRWalletConnected ? true : false;
-                                var newHardwareModel = _Utils_update(hwModel, {
-                                    isHardwareLNXConnected: updatedIsLNXConnected,
-                                    isXMRWalletConnected: updatedIsValidXMRAddressConnected
-                                });
-                                var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : updatedIsLNSConnected || updatedIsLNXConnected ? $author$project$Main$HardwarePage(newHardwareModel) : $author$project$Main$BlankPage($author$project$Pages$Blank$initialModel);
-                                var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/hardware', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-                                var popupVisibility = updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected ? false : true;
-                                var newMainModel = _Utils_update(model, {
-                                    flag: newUrlAfterCheckConnections,
-                                    isHardwareLNSConnected: updatedIsLNSConnected,
-                                    isHardwareLNXConnected: updatedIsLNXConnected,
-                                    isPopUpVisible: popupVisibility,
-                                    isXMRWalletConnected: updatedIsValidXMRAddressConnected,
-                                    page: newPage
-                                });
-                                var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
-                                return (newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected ? _Utils_Tuple2(_Utils_update(newMainModel, {
-                                    page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel)
-                                }), $elm$core$Platform$Cmd$none) : newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected ? _Utils_Tuple2(_Utils_update(newMainModel, {
-                                    page: $author$project$Main$HardwarePage(newHardwareModel)
-                                }), $elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-                            case 'PortfolioPage':
-                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-                            case 'FundsPage':
-                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-                            case 'SupportPage':
-                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-                            case 'BuyPage':
-                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-                            case 'MarketPage':
-                                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-                            default:
-                                var hwModel = $author$project$Pages$Hardware$initialModel;
-                                var decodedHardwareDeviceMsg = function() {
-                                    var _v15 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
-                                    if (_v15.$ === 'Ok') {
-                                        var message = _v15.a;
-                                        return message.operationEventMsg;
-                                    } else {
-                                        var err = _v15.a;
-                                        return 'error';
-                                    }
-                                }();
-                                var updatedIsLNSConnected = !model.isHardwareLNSConnected && decodedHardwareDeviceMsg === 'nanoS' ? true : model.isHardwareLNSConnected ? true : false;
-                                var updatedIsLNXConnected = !model.isHardwareLNXConnected && decodedHardwareDeviceMsg === 'nanoX' ? true : model.isHardwareLNXConnected ? true : false;
-                                var updatedIsValidXMRAddressConnected = !model.isXMRWalletConnected && $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? true : model.isXMRWalletConnected ? true : false;
-                                var newHardwareModel = _Utils_update(hwModel, {
-                                    isHardwareLNXConnected: updatedIsLNXConnected,
-                                    isXMRWalletConnected: updatedIsValidXMRAddressConnected
-                                });
-                                var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage(newHardwareModel);
-                                var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/hardware', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-                                var popupVisibility = updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected ? false : true;
-                                var newMainModel = _Utils_update(model, {
-                                    flag: newUrlAfterCheckConnections,
-                                    isHardwareLNSConnected: updatedIsLNSConnected,
-                                    isHardwareLNXConnected: updatedIsLNXConnected,
-                                    isPopUpVisible: popupVisibility,
-                                    isXMRWalletConnected: updatedIsValidXMRAddressConnected,
-                                    page: newPage
-                                });
-                                var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
-                                return (newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected ? _Utils_Tuple2(_Utils_update(newMainModel, {
-                                    page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel)
-                                }), $elm$core$Platform$Cmd$none) : newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected ? A2($author$project$Main$toHardware, newMainModel, A2($author$project$Pages$Hardware$update, $author$project$Pages$Hardware$ResponseDataFromMain(rawJsonMessage), newHardwareModel)) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                        if (A2($elm$core$String$contains, 'LOGINDENIED', $author$project$Main$fromJsonToString(rawJsonMessage))) return _Utils_Tuple2(_Utils_update(model, {
+                            currentJsMessage: 'Login Denied - Please try again ...',
+                            errors: _Utils_ap(model.errors, _List_fromArray([
+                                'Login Denied - Please try again ...'
+                            ]))
+                        }), $elm$core$Platform$Cmd$none);
+                        else {
+                            var _v14 = model.page;
+                            switch(_v14.$){
+                                case 'DashboardPage':
+                                    return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                                case 'SellPage':
+                                    return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                                case 'BlankPage':
+                                    var hwModel = $author$project$Pages$Hardware$initialModel;
+                                    var decodedHardwareDeviceMsg = function() {
+                                        var _v15 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
+                                        if (_v15.$ === 'Ok') {
+                                            var message = _v15.a;
+                                            return message.operationEventMsg;
+                                        } else {
+                                            var err = _v15.a;
+                                            return 'error';
+                                        }
+                                    }();
+                                    var updatedIsLNSConnected = !model.isHardwareLNSConnected && decodedHardwareDeviceMsg === 'nanoS' ? true : model.isHardwareLNSConnected ? true : false;
+                                    var updatedIsLNXConnected = !model.isHardwareLNXConnected && decodedHardwareDeviceMsg === 'nanoX' ? true : model.isHardwareLNXConnected ? true : false;
+                                    var updatedIsValidXMRAddressConnected = !model.isXMRWalletConnected && $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? true : model.isXMRWalletConnected ? true : false;
+                                    var newHardwareModel = _Utils_update(hwModel, {
+                                        isHardwareLNXConnected: updatedIsLNXConnected,
+                                        isXMRWalletConnected: updatedIsValidXMRAddressConnected
+                                    });
+                                    var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : updatedIsLNSConnected || updatedIsLNXConnected ? $author$project$Main$HardwarePage(newHardwareModel) : $author$project$Main$BlankPage($author$project$Pages$Blank$initialModel);
+                                    var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/hardware', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+                                    var popupVisibility = updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected ? false : true;
+                                    var newMainModel = _Utils_update(model, {
+                                        flag: newUrlAfterCheckConnections,
+                                        isHardwareLNSConnected: updatedIsLNSConnected,
+                                        isHardwareLNXConnected: updatedIsLNXConnected,
+                                        isPopUpVisible: popupVisibility,
+                                        isXMRWalletConnected: updatedIsValidXMRAddressConnected,
+                                        page: newPage
+                                    });
+                                    var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
+                                    return (newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected ? _Utils_Tuple2(_Utils_update(newMainModel, {
+                                        page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel)
+                                    }), $elm$core$Platform$Cmd$none) : newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected ? _Utils_Tuple2(_Utils_update(newMainModel, {
+                                        page: $author$project$Main$HardwarePage(newHardwareModel)
+                                    }), $elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                                case 'PortfolioPage':
+                                    return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                                case 'FundsPage':
+                                    return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                                case 'SupportPage':
+                                    return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                                case 'BuyPage':
+                                    return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                                case 'MarketPage':
+                                    return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                                case 'WalletPage':
+                                    return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                                default:
+                                    var hwModel = $author$project$Pages$Hardware$initialModel;
+                                    var decodedHardwareDeviceMsg = function() {
+                                        var _v16 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
+                                        if (_v16.$ === 'Ok') {
+                                            var message = _v16.a;
+                                            return message.operationEventMsg;
+                                        } else {
+                                            var err = _v16.a;
+                                            return 'error';
+                                        }
+                                    }();
+                                    var updatedIsLNSConnected = !model.isHardwareLNSConnected && decodedHardwareDeviceMsg === 'nanoS' ? true : model.isHardwareLNSConnected ? true : false;
+                                    var updatedIsLNXConnected = !model.isHardwareLNXConnected && decodedHardwareDeviceMsg === 'nanoX' ? true : model.isHardwareLNXConnected ? true : false;
+                                    var updatedIsValidXMRAddressConnected = !model.isXMRWalletConnected && $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? true : model.isXMRWalletConnected ? true : false;
+                                    var newHardwareModel = _Utils_update(hwModel, {
+                                        isHardwareLNXConnected: updatedIsLNXConnected,
+                                        isXMRWalletConnected: updatedIsValidXMRAddressConnected
+                                    });
+                                    var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage(newHardwareModel);
+                                    var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/hardware', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+                                    var popupVisibility = updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected ? false : true;
+                                    var newMainModel = _Utils_update(model, {
+                                        flag: newUrlAfterCheckConnections,
+                                        isHardwareLNSConnected: updatedIsLNSConnected,
+                                        isHardwareLNXConnected: updatedIsLNXConnected,
+                                        isPopUpVisible: popupVisibility,
+                                        isXMRWalletConnected: updatedIsValidXMRAddressConnected,
+                                        page: newPage
+                                    });
+                                    var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
+                                    return (newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected ? _Utils_Tuple2(_Utils_update(newMainModel, {
+                                        page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel)
+                                    }), $elm$core$Platform$Cmd$none) : newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected ? A2($author$project$Main$toHardware, newMainModel, A2($author$project$Pages$Hardware$update, $author$project$Pages$Hardware$ResponseDataFromMain(rawJsonMessage), newHardwareModel)) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+                            }
                         }
                     }
                 }
@@ -11252,8 +11575,8 @@ type alias Process =
                     return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load(href));
                 } else {
                     var url = urlRequest.a;
-                    var _v17 = $elm$url$Url$toString(url);
-                    if (_v17 === 'https://haveno-web-dev.netlify.app//') return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load($elm$url$Url$toString(url)));
+                    var _v18 = $elm$url$Url$toString(url);
+                    if (_v18 === 'https://haveno-web-dev.netlify.app//') return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load($elm$url$Url$toString(url)));
                     else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                 }
             case 'ChangedUrl':
@@ -11261,65 +11584,72 @@ type alias Process =
                 return A2($author$project$Main$updateUrl, url, model);
             case 'GotDashboardMsg':
                 var dashboardMsg = msg.a;
-                var _v18 = model.page;
-                if (_v18.$ === 'DashboardPage') {
-                    var dashboard = _v18.a;
+                var _v19 = model.page;
+                if (_v19.$ === 'DashboardPage') {
+                    var dashboard = _v19.a;
                     return A2($author$project$Main$toDashboard, model, A2($author$project$Pages$Dashboard$update, dashboardMsg, dashboard));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotSellMsg':
                 var sellMsg = msg.a;
-                var _v19 = model.page;
-                if (_v19.$ === 'SellPage') {
-                    var sell = _v19.a;
+                var _v20 = model.page;
+                if (_v20.$ === 'SellPage') {
+                    var sell = _v20.a;
                     return A2($author$project$Main$toSell, model, A2($author$project$Pages$Sell$update, sellMsg, sell));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotBlankMsg':
                 var blankMsg = msg.a;
-                var _v20 = model.page;
-                if (_v20.$ === 'BlankPage') {
-                    var blank = _v20.a;
+                var _v21 = model.page;
+                if (_v21.$ === 'BlankPage') {
+                    var blank = _v21.a;
                     return A2($author$project$Main$toBlank, model, A2($author$project$Pages$Blank$update, blankMsg, blank));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotPortfolioMsg':
                 var termsMsg = msg.a;
-                var _v21 = model.page;
-                if (_v21.$ === 'PortfolioPage') {
-                    var terms = _v21.a;
+                var _v22 = model.page;
+                if (_v22.$ === 'PortfolioPage') {
+                    var terms = _v22.a;
                     return A2($author$project$Main$toPortfolio, model, A2($author$project$Pages$Portfolio$update, termsMsg, terms));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotFundsMsg':
                 var privacyMsg = msg.a;
-                var _v22 = model.page;
-                if (_v22.$ === 'FundsPage') {
-                    var privacy = _v22.a;
+                var _v23 = model.page;
+                if (_v23.$ === 'FundsPage') {
+                    var privacy = _v23.a;
                     return A2($author$project$Main$toFunds, model, A2($author$project$Pages$Funds$update, privacyMsg, privacy));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotSupportMsg':
                 var supportMsg = msg.a;
-                var _v23 = model.page;
-                if (_v23.$ === 'SupportPage') {
-                    var support = _v23.a;
+                var _v24 = model.page;
+                if (_v24.$ === 'SupportPage') {
+                    var support = _v24.a;
                     return A2($author$project$Main$toSupport, model, A2($author$project$Pages$Support$update, supportMsg, support));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotBuyMsg':
                 var pricingMsg = msg.a;
-                var _v24 = model.page;
-                if (_v24.$ === 'BuyPage') {
-                    var pricing = _v24.a;
+                var _v25 = model.page;
+                if (_v25.$ === 'BuyPage') {
+                    var pricing = _v25.a;
                     return A2($author$project$Main$toPricing, model, A2($author$project$Pages$Buy$update, pricingMsg, pricing));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotMarketMsg':
                 var aboutMsg = msg.a;
-                var _v25 = model.page;
-                if (_v25.$ === 'MarketPage') {
-                    var about = _v25.a;
+                var _v26 = model.page;
+                if (_v26.$ === 'MarketPage') {
+                    var about = _v26.a;
                     return A2($author$project$Main$toMarket, model, A2($author$project$Pages$Market$update, aboutMsg, about));
+                } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+            case 'GotWalletMsg':
+                var walletMsg = msg.a;
+                var _v27 = model.page;
+                if (_v27.$ === 'WalletPage') {
+                    var wallet = _v27.a;
+                    return A2($author$project$Main$toWallet, model, A2($author$project$Pages$Wallet$update, walletMsg, wallet));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotHardwareMsg':
                 var hardwareMsg = msg.a;
-                var _v26 = model.page;
-                if (_v26.$ === 'HardwarePage') {
-                    var hardwareModel = _v26.a;
+                var _v28 = model.page;
+                if (_v28.$ === 'HardwarePage') {
+                    var hardwareModel = _v28.a;
                     switch(hardwareMsg.$){
                         case 'ClickedHardwareDeviceConnect':
                             var newHardwareModel = _Utils_update(hardwareModel, {
@@ -11399,12 +11729,15 @@ type alias Process =
             case 'Market':
                 var _v9 = _v0.a;
                 return A2($author$project$Main$toMarket, model, $author$project$Pages$Market$init(_Utils_Tuple0));
-            default:
+            case 'Wallet':
                 var _v10 = _v0.a;
+                return A2($author$project$Main$toWallet, model, $author$project$Pages$Wallet$init('XMR'));
+            default:
+                var _v11 = _v0.a;
                 var newHWmodel = function() {
-                    var _v11 = model.page;
-                    if (_v11.$ === 'HardwarePage') {
-                        var hardwareModel = _v11.a;
+                    var _v12 = model.page;
+                    if (_v12.$ === 'HardwarePage') {
+                        var hardwareModel = _v12.a;
                         return _Utils_update(hardwareModel, {
                             isHardwareLNXConnected: model.isHardwareLNXConnected,
                             isXMRWalletConnected: model.isXMRWalletConnected
@@ -11442,6 +11775,7 @@ type alias Process =
             } else return A6($elm$url$Url$Url, $elm$url$Url$Https, 'haveno-web.squashpassion.com', $elm$core$Maybe$Nothing, '', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
         }();
         var updatedModel = {
+            currentJsMessage: '',
             errors: _List_Nil,
             flag: decodedJsonFromSetupElmmjs,
             isHardwareLNSConnected: false,
@@ -11498,7 +11832,7 @@ type alias Process =
                     A2($elm$html$Html$br, _List_Nil, _List_Nil),
                     $elm$html$Html$text('Open source code & design'),
                     A2($elm$html$Html$p, _List_Nil, _List_fromArray([
-                        $elm$html$Html$text('Version 0.0.19')
+                        $elm$html$Html$text('Version 0.0.20')
                     ])),
                     $elm$html$Html$text('Haveno Version'),
                     A2($elm$html$Html$p, _List_fromArray([
@@ -11522,7 +11856,7 @@ type alias Process =
                         $elm$html$Html$Attributes$class(isConnected ? 'indicator green' : model.isPopUpVisible ? 'indicator white' : 'indicator red'),
                         $elm$html$Html$Attributes$id('connectionIndicator')
                     ]), _List_fromArray([
-                        $elm$html$Html$text(model.isPopUpVisible ? '_' : model.isHardwareLNSConnected ? 'Nano S Connected' : model.isHardwareLNXConnected ? 'Nano X Connected' : 'No hardware device connected')
+                        $elm$html$Html$text(model.isPopUpVisible ? '_' : model.isHardwareLNSConnected ? 'Nano S Connected' : model.isHardwareLNXConnected ? 'Nano X Connected' : model.currentJsMessage === 'User permissions gesture required' ? 'Please connect to a Chrome based mobile browser' : 'No hardware device connected')
                     ]))
                 ]))
             ]))
@@ -11648,12 +11982,20 @@ type alias Process =
                     var _v17 = _v1.a;
                     return false;
                 }
-            default:
+            case 'Hardware':
                 if (_v1.b.$ === 'HardwarePage') {
                     var _v18 = _v1.a;
                     return true;
                 } else {
                     var _v19 = _v1.a;
+                    return false;
+                }
+            default:
+                if (_v1.b.$ === 'WalletPage') {
+                    var _v20 = _v1.a;
+                    return true;
+                } else {
+                    var _v21 = _v1.a;
                     return false;
                 }
         }
@@ -16159,7 +16501,7 @@ type alias Process =
         return A2($Orasund$elm_ui_framework$Framework$responsiveLayout, _List_Nil, A2($mdgriffith$elm_ui$Element$column, $Orasund$elm_ui_framework$Framework$container, _List_fromArray([
             A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h5, $mdgriffith$elm_ui$Element$text('Welcome - Please Connect XMR Wallet')),
             $mdgriffith$elm_ui$Element$text('\n'),
-            A2($author$project$Pages$Hardware$infoBtn, 'Connect Hardware Device', $author$project$Pages$Hardware$ClickedHardwareDeviceConnect),
+            A2($author$project$Pages$Hardware$infoBtn, 'Grant Browser Permissions To Device', $author$project$Pages$Hardware$ClickedHardwareDeviceConnect),
             $mdgriffith$elm_ui$Element$text('\n'),
             A2($author$project$Pages$Hardware$infoBtn, 'Connect XMR Wallet', $author$project$Pages$Hardware$ClickedXMRWalletConnect),
             $mdgriffith$elm_ui$Element$text('\n'),
@@ -16366,6 +16708,119 @@ type alias Process =
     var $author$project$Pages$Support$view = function(_v0) {
         return $author$project$Pages$Support$content;
     };
+    var $eriktim$elm_protocol_buffers$Internal$Int64$toInts = function(_v0) {
+        var higher = _v0.a.higher;
+        var lower = _v0.a.lower;
+        return _Utils_Tuple2(higher, lower);
+    };
+    var $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts = $eriktim$elm_protocol_buffers$Internal$Int64$toInts;
+    var $author$project$Pages$Wallet$btcBalanceAsString = function(balInfo) {
+        if (balInfo.$ === 'Just') {
+            var blInfo = balInfo.a;
+            var _v1 = blInfo.btc;
+            if (_v1.$ === 'Nothing') return '0.00';
+            else {
+                var btcbalinfo = _v1.a;
+                var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(btcbalinfo.availableBalance);
+                var firstInt = _v2.a;
+                var secondInt = _v2.b;
+                return $elm$core$String$fromInt(firstInt) + ('.' + $elm$core$String$fromInt(secondInt));
+            }
+        } else return '';
+    };
+    var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
+    var $author$project$Pages$Wallet$reservedOfferBalanceAsString = function(balInfo) {
+        if (balInfo.$ === 'Just') {
+            var blInfo = balInfo.a;
+            var _v1 = blInfo.xmr;
+            if (_v1.$ === 'Nothing') return '0.00';
+            else {
+                var xmrbalinfo = _v1.a;
+                var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(xmrbalinfo.reservedOfferBalance);
+                var firstInt = _v2.a;
+                var secondInt = _v2.b;
+                return $elm$core$String$fromInt(firstInt) + ('.' + $elm$core$String$fromInt(secondInt));
+            }
+        } else return '';
+    };
+    var $author$project$Pages$Wallet$xmrBalanceAsString = function(balInfo) {
+        if (balInfo.$ === 'Just') {
+            var blInfo = balInfo.a;
+            var _v1 = blInfo.xmr;
+            if (_v1.$ === 'Nothing') return '0.00';
+            else {
+                var xmrbalinfo = _v1.a;
+                var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(xmrbalinfo.availableBalance);
+                var firstInt = _v2.a;
+                var secondInt = _v2.b;
+                return $elm$core$String$fromInt(firstInt) + ('.' + $elm$core$String$fromInt(secondInt));
+            }
+        } else return '0.00';
+    };
+    var $author$project$Pages$Wallet$custodialWalletView = function(model) {
+        var _v0 = A2($elm$core$Debug$log, 'balances ', model.balances);
+        return A2($Orasund$elm_ui_framework$Framework$responsiveLayout, _List_Nil, A2($mdgriffith$elm_ui$Element$column, $Orasund$elm_ui_framework$Framework$container, _List_fromArray([
+            A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h1, $mdgriffith$elm_ui$Element$text('Wallet')),
+            $mdgriffith$elm_ui$Element$text('\n'),
+            A2($mdgriffith$elm_ui$Element$el, _List_fromArray([
+                $mdgriffith$elm_ui$Element$Region$heading(4),
+                $mdgriffith$elm_ui$Element$htmlAttribute($elm$html$Html$Attributes$id('xmrbalance'))
+            ]), $mdgriffith$elm_ui$Element$text('Available Balance: ' + ($author$project$Pages$Wallet$xmrBalanceAsString(model.balances) + ' XMR'))),
+            $mdgriffith$elm_ui$Element$text('\n'),
+            A2($mdgriffith$elm_ui$Element$el, _List_fromArray([
+                $mdgriffith$elm_ui$Element$Region$heading(4),
+                $mdgriffith$elm_ui$Element$htmlAttribute($elm$html$Html$Attributes$id('btcbalance'))
+            ]), $mdgriffith$elm_ui$Element$text('Available BTC Balance: ' + ($author$project$Pages$Wallet$btcBalanceAsString(model.balances) + ' BTC'))),
+            $mdgriffith$elm_ui$Element$text('\n'),
+            A2($mdgriffith$elm_ui$Element$el, _List_fromArray([
+                $mdgriffith$elm_ui$Element$Region$heading(4),
+                $mdgriffith$elm_ui$Element$htmlAttribute($elm$html$Html$Attributes$id('reservedOfferBalance'))
+            ]), $mdgriffith$elm_ui$Element$text('Reserved Offer Balance: ' + ($author$project$Pages$Wallet$reservedOfferBalanceAsString(model.balances) + ' XMR'))),
+            $mdgriffith$elm_ui$Element$text('\n')
+        ])));
+    };
+    var $author$project$Pages$Wallet$view = function(model) {
+        return A2($elm$html$Html$section, _List_fromArray([
+            $elm$html$Html$Attributes$id('page'),
+            $elm$html$Html$Attributes$class('section-background'),
+            $elm$html$Html$Attributes$class('text-center')
+        ]), _List_fromArray([
+            A2($elm$html$Html$div, _List_fromArray([
+                $elm$html$Html$Attributes$class('split')
+            ]), _List_fromArray([
+                A2($elm$html$Html$div, _List_fromArray([
+                    $elm$html$Html$Attributes$class('split-col')
+                ]), _List_Nil),
+                function() {
+                    var _v0 = model.status;
+                    switch(_v0.$){
+                        case 'Loading':
+                            return A2($elm$html$Html$div, _List_Nil, _List_fromArray([
+                                A2($elm$html$Html$div, _List_fromArray([
+                                    $elm$html$Html$Attributes$class('spinner')
+                                ]), _List_fromArray([
+                                    $elm$html$Html$text('Loading ...')
+                                ]))
+                            ]));
+                        case 'Errored':
+                            return A2($elm$html$Html$div, _List_Nil, _List_fromArray([
+                                $elm$html$Html$text('error')
+                            ]));
+                        default:
+                            return A2($elm$html$Html$div, _List_fromArray([
+                                $elm$html$Html$Attributes$class('split-col'),
+                                $elm$html$Html$Attributes$id('custodialWalletView')
+                            ]), _List_fromArray([
+                                $author$project$Pages$Wallet$custodialWalletView(model)
+                            ]));
+                    }
+                }(),
+                A2($elm$html$Html$div, _List_fromArray([
+                    $elm$html$Html$Attributes$class('split-col')
+                ]), _List_Nil)
+            ]))
+        ]));
+    };
     var $author$project$Main$HidePopUp = {
         $: 'HidePopUp'
     };
@@ -16387,7 +16842,7 @@ type alias Process =
                     A2($elm$html$Html$button, _List_fromArray([
                         $elm$html$Html$Events$onClick($author$project$Main$HidePopUp)
                     ]), _List_fromArray([
-                        $elm$html$Html$text('Connect Hardware')
+                        $elm$html$Html$text('Continue')
                     ]))
                 ]))
             ])) : A2($elm$html$Html$div, _List_Nil, _List_Nil)
@@ -16422,9 +16877,12 @@ type alias Process =
                 case 'MarketPage':
                     var market = _v0.a;
                     return A2($elm$html$Html$map, $author$project$Main$GotMarketMsg, $author$project$Pages$Market$view(market));
-                default:
+                case 'HardwarePage':
                     var hardware = _v0.a;
                     return A2($elm$html$Html$map, $author$project$Main$GotHardwareMsg, $author$project$Pages$Hardware$view(hardware));
+                default:
+                    var wallet = _v0.a;
+                    return A2($elm$html$Html$map, $author$project$Main$GotWalletMsg, $author$project$Pages$Wallet$view(wallet));
             }
         }();
         return !model.isPopUpVisible ? {
@@ -16486,6 +16944,10 @@ type alias Process =
                             "args": [],
                             "type": "{ maxResults : String.String, accessToken : Maybe.Maybe String.String }"
                         },
+                        "Proto.Io.Haveno.Protobuffer.BalancesInfo": {
+                            "args": [],
+                            "type": "Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BalancesInfo"
+                        },
                         "Data.User.Description": {
                             "args": [],
                             "type": "{ level : String.String, comment : String.String }"
@@ -16494,6 +16956,10 @@ type alias Process =
                             "args": [],
                             "type": "{ start : Basics.Int, offset : Basics.Int }"
                         },
+                        "Proto.Io.Haveno.Protobuffer.GetBalancesReply": {
+                            "args": [],
+                            "type": "Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetBalancesReply"
+                        },
                         "Pages.Dashboard.HavenoAPKHttpRequest": {
                             "args": [],
                             "type": "{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"
@@ -16501,6 +16967,10 @@ type alias Process =
                         "Pages.Hardware.Identities": {
                             "args": [],
                             "type": "{ id : String.String, provider_type : String.String, provider_id : String.String, provider_data : Pages.Hardware.ProviderData }"
+                        },
+                        "Protobuf.Types.Int64.Int64": {
+                            "args": [],
+                            "type": "Internal.Int64.Int64"
                         },
                         "Pages.Hardware.JsonMsgFromJs": {
                             "args": [],
@@ -16550,6 +17020,10 @@ type alias Process =
                             "args": [],
                             "type": "{ status : Pages.Support.Status, title : String.String, root : Pages.Support.Support }"
                         },
+                        "Pages.Wallet.Model": {
+                            "args": [],
+                            "type": "{ status : Pages.Wallet.Status, pagetitle : String.String, balances : Maybe.Maybe Proto.Io.Haveno.Protobuffer.BalancesInfo, address : String.String, isHardwareWalletConnected : Basics.Bool, errors : List.List String.String, isPopUpVisible : Basics.Bool }"
+                        },
                         "Data.User.NickName": {
                             "args": [],
                             "type": "String.String"
@@ -16557,6 +17031,22 @@ type alias Process =
                         "Data.User.Password": {
                             "args": [],
                             "type": "String.String"
+                        },
+                        "Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BalancesInfo": {
+                            "args": [],
+                            "type": "{ btc : Maybe.Maybe Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BtcBalanceInfo, xmr : Maybe.Maybe Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__XmrBalanceInfo }"
+                        },
+                        "Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BtcBalanceInfo": {
+                            "args": [],
+                            "type": "{ availableBalance : Protobuf.Types.Int64.Int64, reservedBalance : Protobuf.Types.Int64.Int64, totalAvailableBalance : Protobuf.Types.Int64.Int64, lockedBalance : Protobuf.Types.Int64.Int64 }"
+                        },
+                        "Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetBalancesReply": {
+                            "args": [],
+                            "type": "{ balances : Maybe.Maybe Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BalancesInfo }"
+                        },
+                        "Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__XmrBalanceInfo": {
+                            "args": [],
+                            "type": "{ balance : Protobuf.Types.Int64.Int64, availableBalance : Protobuf.Types.Int64.Int64, pendingBalance : Protobuf.Types.Int64.Int64, reservedOfferBalance : Protobuf.Types.Int64.Int64, reservedTradeBalance : Protobuf.Types.Int64.Int64 }"
                         },
                         "Pages.Hardware.ProviderData": {
                             "args": [],
@@ -16593,6 +17083,10 @@ type alias Process =
                         "Pages.Hardware.EmailPasswordLogin": {
                             "args": [],
                             "type": "{ email : String.String, password : String.String }"
+                        },
+                        "Internal.Int64.Ints": {
+                            "args": [],
+                            "type": "{ higher : Basics.Int, lower : Basics.Int }"
                         },
                         "Pages.Hardware.RefreshTokenQueryParams": {
                             "args": [],
@@ -16632,6 +17126,9 @@ type alias Process =
                                 ],
                                 "GotHardwareMsg": [
                                     "Pages.Hardware.Msg"
+                                ],
+                                "GotWalletMsg": [
+                                    "Pages.Wallet.Msg"
                                 ],
                                 "ChangedUrl": [
                                     "Url.Url"
@@ -16875,6 +17372,21 @@ type alias Process =
                                 ]
                             }
                         },
+                        "Pages.Wallet.Msg": {
+                            "args": [],
+                            "tags": {
+                                "GotInitialModel": [
+                                    "Pages.Wallet.Model"
+                                ],
+                                "ClosePopUp": [],
+                                "SetAddress": [
+                                    "String.String"
+                                ],
+                                "GotBalances": [
+                                    "Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetBalancesReply"
+                                ]
+                            }
+                        },
                         "Main.Page": {
                             "args": [],
                             "tags": {
@@ -16901,6 +17413,9 @@ type alias Process =
                                 ],
                                 "HardwarePage": [
                                     "Pages.Hardware.Model"
+                                ],
+                                "WalletPage": [
+                                    "Pages.Wallet.Model"
                                 ],
                                 "BlankPage": [
                                     "Pages.Blank.Model"
@@ -17127,6 +17642,14 @@ type alias Process =
                                 ]
                             }
                         },
+                        "Internal.Int64.Int64": {
+                            "args": [],
+                            "tags": {
+                                "Int64": [
+                                    "Internal.Int64.Ints"
+                                ]
+                            }
+                        },
                         "List.List": {
                             "args": [
                                 "a"
@@ -17245,6 +17768,14 @@ type alias Process =
                             "args": [],
                             "tags": {
                                 "Loading": []
+                            }
+                        },
+                        "Pages.Wallet.Status": {
+                            "args": [],
+                            "tags": {
+                                "Loading": [],
+                                "Loaded": [],
+                                "Errored": []
                             }
                         },
                         "Pages.Support.Support": {

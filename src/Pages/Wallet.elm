@@ -56,7 +56,7 @@ type Status
     | Loaded
     | Errored
 
-
+-- NAV: Init
 init : String -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
@@ -70,13 +70,13 @@ type Msg
     | SetAddress String
     | GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
 
-
+-- HACK: Currently hard coding the response to test the UI
 xmrBalanceInfoInstance : Protobuf.XmrBalanceInfo
 xmrBalanceInfoInstance =
     { balance = Protobuf.Types.Int64.fromInts 110 0
     , availableBalance = Protobuf.Types.Int64.fromInts 100 0
     , pendingBalance = Protobuf.Types.Int64.fromInts 0 0
-    , reservedOfferBalance = Protobuf.Types.Int64.fromInts 5 0
+    , reservedOfferBalance = Protobuf.Types.Int64.fromInts 50 0
     , reservedTradeBalance = Protobuf.Types.Int64.fromInts 5 0
     }
 
@@ -178,7 +178,11 @@ custodialWalletView model =
             , Element.text "\n"
             , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "btcbalance") ]
                 --Heading.h4
-                (Element.text ("Available Balance: " ++ xmrBalanceAsString model.balances ++ " BTC"))
+                (Element.text ("Available BTC Balance: " ++ btcBalanceAsString model.balances ++ " BTC"))
+            , Element.text "\n"
+            , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "reservedOfferBalance") ]
+                --Heading.h4
+                (Element.text ("Reserved Offer Balance: " ++ reservedOfferBalanceAsString model.balances ++ " XMR"))
             , Element.text "\n"
             ]
 
@@ -220,34 +224,25 @@ btcBalanceAsString balInfo =
         Nothing ->
             ""
 
+reservedOfferBalanceAsString : Maybe Protobuf.BalancesInfo -> String
+reservedOfferBalanceAsString balInfo =
+    case balInfo of
+        Just blInfo ->
+            case blInfo.xmr of
+                Nothing ->
+                    "0.00"
+
+                Just xmrbalinfo ->
+                    let
+                        ( firstInt, secondInt ) =
+                            toInts xmrbalinfo.reservedOfferBalance
+                    in
+                    String.fromInt firstInt ++ "." ++ String.fromInt secondInt
+
+        Nothing ->
+            ""
 
 
-{- custodialWalletView : Model -> Html Msg
-   custodialWalletView model =
-       Framework.responsiveLayout []
-           Element.column []
-               [ Element.el Heading.h1
-                   <| Element.text "Wallet"
-
-               , Element.text "\n"
-               {- , Element.el (Heading.h4 ++ [ Element.htmlAttribute (Attr.id "balance") ])
-                   [ Element.text ("Balance: " ++ model.balance)
-                   ] -}
-               , Element.text "\n"
-               , Element.el Heading.h4
-                   <| Element.text ("Pending Balance: " ++ model.pendingBalance)
-
-               , Element.text "\n"
-               , Element.el Heading.h4
-                   <| Element.text ("Reserved Balance: " ++ model.reservedBalance)
-
-               , Element.text "\n"
-               , Element.el Heading.h4
-                   <| Element.text ("Address: " ++ model.address)
-
-               , Element.text "\n"
-               ]
--}
 -- NAV: gRPC calls
 
 

@@ -143,7 +143,7 @@ initialModel =
     , flagUrl = Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
     , datetimeFromMain = Nothing
     , apiSpecifics = { maxResults = "", accessToken = Nothing }
-    , queryType = LoggedInUser
+    , queryType = Spectator
     , isValidNewAccessToken = False
     , isHardwareLNSConnected = False
     , isHardwareLNXConnected = False
@@ -884,7 +884,7 @@ hardwareWalletConnectionOptionsView model =
         Element.column Framework.container <|
             [ Element.el Heading.h5 <| Element.text "Welcome - Please Connect XMR Wallet"
             , Element.text "\n"
-            , infoBtn "Connect Hardware Device" <| ClickedHardwareDeviceConnect
+            , infoBtn "Grant Browser Permissions To Device" <| ClickedHardwareDeviceConnect
             , Element.text "\n"
             , infoBtn "Connect XMR Wallet" <| ClickedXMRWalletConnect
             , Element.text "\n"
