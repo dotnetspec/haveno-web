@@ -98,16 +98,18 @@ init flag url key =
             , zone = Nothing -- Replace with the actual time zone if available
             , errors = []
             , isHardwareLNSConnected = False
+
             -- REVIEW: Should it be impossible to nav without hw device connection?
             -- HACK: Making these next 2 True, so we can get to the wallet page, fails 10 tests:
             , isHardwareLNXConnected = False --False
             , isXMRWalletConnected = False -- False
+
             -- HACK: Temp until we receive the address from the hw device
             -- NOTE: This is actually the only place in the app that is currently affecting the notification mesage
             , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" --""
             , isPopUpVisible = True
             , isNavMenuActive = False
-            , version = Nothing
+            , version = "No Haveno version available"
             , isPageHeaderVisible = False
             , currentJsMessage = ""
             }
@@ -146,7 +148,7 @@ type alias Model =
     , isPopUpVisible : Bool
     , isNavMenuActive : Bool
     , isPageHeaderVisible : Bool
-    , version : Maybe GetVersionReply
+    , version : String
     , currentJsMessage : String
     }
 
@@ -254,10 +256,18 @@ update msg model =
             )
 
         GotVersion (Ok versionResp) ->
-            ( { model | version = Just versionResp }, Cmd.none )
+            let
+                verResp =
+                    case versionResp of
+                        { version } ->
+                            version
+
+                        
+            in
+            ( { model | version = verResp}, Cmd.none )
 
         GotVersion (Err _) ->
-            ( { model | version = model.version }, Cmd.none )
+            ( { model | version = "Error obtaining version"}, Cmd.none )
 
         ShowPopUp ->
             ( { model | isPopUpVisible = True }, Cmd.none )
@@ -274,18 +284,19 @@ update msg model =
                 "connectLNS"
             )
 
-
         -- NAV: Recv rawJsonMessage
         -- NOTE: This is updated when a message from js is received
         Recv rawJsonMessage ->
             -- NOTE: rawJsonMessage is a Json value that is ready to be decoded. It does not need to be
             -- converted to a string.
             if String.contains "Problem" (fromJsonToString rawJsonMessage) then
-                ( { model | errors = model.errors ++ [ "Problem fetching data" ] , currentJsMessage = "Problem fetching data"}, Cmd.none )
+                ( { model | errors = model.errors ++ [ "Problem fetching data" ], currentJsMessage = "Problem fetching data" }, Cmd.none )
+
             else if String.contains "Failed to execute 'requestDevice' on 'USB'" (fromJsonToString rawJsonMessage) then
                 ( { model | errors = model.errors ++ [ "User permissions gesture required" ], currentJsMessage = "User permissions gesture required" }, Cmd.none )
+
             else if String.contains "LOGINDENIED" (fromJsonToString rawJsonMessage) then
-                ( { model | errors = model.errors ++ [ "Login Denied - Please try again ..." ] , currentJsMessage = "Login Denied - Please try again ..."}, Cmd.none )
+                ( { model | errors = model.errors ++ [ "Login Denied - Please try again ..." ], currentJsMessage = "Login Denied - Please try again ..." }, Cmd.none )
 
             else
                 case model.page of
@@ -365,7 +376,7 @@ update msg model =
                                       --,
                                       isHardwareLNXConnected = updatedIsLNXConnected
                                     , isXMRWalletConnected = updatedIsValidXMRAddressConnected
-                                    
+
                                     --, xmrWalletAddress = updatedWalletAddress
                                 }
 
@@ -394,6 +405,7 @@ update msg model =
                                     , isXMRWalletConnected = updatedIsValidXMRAddressConnected
                                     , isPopUpVisible = popupVisibility
                                     , flag = newUrlAfterCheckConnections
+
                                     --, xmrWalletAddress = updatedWalletAddress
                                 }
                         in
@@ -494,6 +506,7 @@ update msg model =
                                       --,
                                       isHardwareLNXConnected = updatedIsLNXConnected
                                     , isXMRWalletConnected = updatedIsValidXMRAddressConnected
+
                                     --, xmrWalletAddress = updatedWalletAddress
                                 }
 
@@ -519,6 +532,7 @@ update msg model =
                                     , isXMRWalletConnected = updatedIsValidXMRAddressConnected
                                     , isPopUpVisible = popupVisibility
                                     , flag = newUrlAfterCheckConnections
+
                                     --, xmrWalletAddress = updatedWalletAddress
                                 }
                         in
@@ -574,6 +588,9 @@ update msg model =
         GotDashboardMsg dashboardMsg ->
             case model.page of
                 DashboardPage dashboard ->
+                    let
+                        updatedDashboardModel = {dashboard | version = "1.0.0"}
+                    in
                     toDashboard model (Pages.Dashboard.update dashboardMsg dashboard)
 
                 _ ->
@@ -666,7 +683,7 @@ update msg model =
                                     HardwarePage newHardwareModel
                               }
                             , -- REF: SportRank2
-                            sendMessageToJs
+                              sendMessageToJs
                                 "connectLNS"
                             )
 
@@ -680,16 +697,9 @@ update msg model =
                                 "getMoneroAddress"
                             )
 
-                        Pages.Hardware.ClickedXMRInitiateTransaction amt ->
-                            let
-                                newHardwareModel =
-                                    { hardwareModel | queryType = Pages.Hardware.LoggedInUser }
-                            in
-                            ( { model | page = HardwarePage newHardwareModel }
-                            , sendMessageToJs <|
-                                "initiateXMRToBTCTrans "
-                                    ++ "~^&"
-                                    ++ amt
+                        Pages.Hardware.ClickedTempXMRAddr ->
+                            ( { model | page = DashboardPage Pages.Dashboard.initialModel, isNavMenuActive = True, isXMRWalletConnected = True }
+                            , Cmd.none
                             )
 
                         _ ->
@@ -1001,16 +1011,17 @@ updateUrl url model =
                     -- NOTE: Unlike in book, we're not sending filenames etc. to init. Just ().
                     -- If you wanted info in this page to e.g. be based on an Http.get then
                     -- follow book to setup here:
-                    Pages.Dashboard.init { time = Nothing, flagUrl = newFlagUrl }
+                    -- REVIEW: We're not using oauth code - probably remove
+                    Pages.Dashboard.init { time = Nothing, havenoVersion = "" }
                         |> toDashboard newModel
 
                 Just "" ->
-                    Pages.Dashboard.init { time = Nothing, flagUrl = newFlagUrl }
+                    Pages.Dashboard.init { time = Nothing, havenoVersion = "" }
                         |> toDashboard newModel
 
                 -- HACK: -- FIX?
                 Just _ ->
-                    Pages.Dashboard.init { time = Nothing, flagUrl = newFlagUrl }
+                    Pages.Dashboard.init { time = Nothing, havenoVersion = "" }
                         |> toDashboard newModel
 
         Just Sell ->
@@ -1073,7 +1084,7 @@ updateUrl url model =
                 |> toHardware newModel
 
         Nothing ->
-            Pages.Dashboard.init { time = Nothing, flagUrl = model.flag }
+            Pages.Dashboard.init { time = Nothing, havenoVersion = "" }
                 |> toDashboard model
 
 
@@ -1145,6 +1156,7 @@ toMarket model ( market, cmd ) =
     , Cmd.map GotMarketMsg cmd
     )
 
+
 toWallet : Model -> ( Pages.Wallet.Model, Cmd Pages.Wallet.Msg ) -> ( Model, Cmd Msg )
 toWallet model ( wallet, cmd ) =
     ( { model | page = WalletPage wallet }
@@ -1179,7 +1191,6 @@ toWallet model ( wallet, cmd ) =
 
 toHardware : Model -> ( Pages.Hardware.Model, Cmd Pages.Hardware.Msg ) -> ( Model, Cmd Msg )
 toHardware model ( _, cmd ) =
-    let _ = Debug.log "hware read" "to go"  in
     ( {- -- NOTE: Cmd.map is applying the GotHardwareMsg constructor to the message in the command.
          In Elm, GotHardwareMsg is a type constructor for the Msg type. It's used to create a new Msg value. When you use
          GotHardwareMsg with Cmd.map, you're telling Elm to take the message that results from the command and wrap it in GotHardwareMsg.
@@ -1218,7 +1229,6 @@ type alias FromMainToSchedule =
 sendVersionRequest : GetVersionRequest -> Cmd Msg
 sendVersionRequest request =
     let
-        _ = Debug.log "send ver req" request
         grpcRequest =
             Grpc.new getVersion request
                 |> Grpc.addHeader "password" "apitest"
@@ -1240,8 +1250,9 @@ viewPopUp model =
             div [ class "modal" ]
                 [ div [ class "modal-content" ]
                     [ {- h2 [] [ text "Haveno Web App" ]
-                    ,  -}
-                    logoImage
+                         ,
+                      -}
+                      logoImage
                     , p [] [ text "No Hardware Device Detected!" ]
                     , p [] [ text "Please connect your LNS/LNX hardware device to continue" ]
                     , button [ onClick HidePopUp ] [ text "Continue" ]
@@ -1604,7 +1615,8 @@ isHWConnectedIndicator model isConnected =
 
                          else if model.currentJsMessage == "User permissions gesture required" then
                             "Please connect to a Chrome based mobile browser"
-                        else 
+
+                         else
                             "No hardware device connected"
                         )
                     ]
@@ -1673,7 +1685,7 @@ isXMRWalletConnectedIndicator model =
 
 footerContent : Model -> Html msg
 footerContent model =
-    let
+    {- let
         newVersion =
             case model.version of
                 Just { version } ->
@@ -1681,7 +1693,7 @@ footerContent model =
 
                 Nothing ->
                     "No Haveno version available"
-    in
+    in -}
     footer []
         [ div [ Attr.class "footer", Attr.style "text-align" "center" ]
             [ br []
@@ -1696,7 +1708,7 @@ footerContent model =
                 , text "Haveno Version"
                 , p [ id "havenoversion" ]
                     [ text
-                        newVersion
+                        model.version
                     ]
                 ]
             ]

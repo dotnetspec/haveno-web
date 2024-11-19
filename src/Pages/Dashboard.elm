@@ -3,11 +3,15 @@ module Pages.Dashboard exposing (Model, Msg, init, initialModel, update, view)
 {-| The Dashboardpage. You can get here via either the / or /#/ routes.
 -}
 
+--import Html exposing (..)
+--import Html.Attributes as Attr exposing (..)
+
 import Buttons.Default exposing (defaultButton)
 import Debug exposing (log)
 import Element exposing (Element, el)
 import Element.Font as Font
 import Element.Input as Input
+import Element.Region as Region
 import Extras.Constants as Consts
 import Framework
 import Framework.Button as Button
@@ -17,8 +21,8 @@ import Framework.Grid as Grid
 import Framework.Heading as Heading
 import Framework.Input as Input
 import Grpc exposing (..)
-import Html exposing (..)
-import Html.Attributes as Attr exposing (..)
+import Html exposing (Html, div, section, text)
+import Html.Attributes as Attr exposing (class, id)
 import Http exposing (..)
 import Json.Decode as D exposing (..)
 import Json.Decode.Pipeline exposing (optional, required)
@@ -48,7 +52,7 @@ type alias Model =
     , balance : String
     , flagUrl : Url
     , havenoAPKHttpRequest : Maybe HavenoAPKHttpRequest
-    , version : Maybe GetVersionReply
+    , version : String
     , errors : List String
     }
 
@@ -65,7 +69,7 @@ initialModel =
     , balance = "0.00"
     , flagUrl = Url Http "localhost" Nothing "/dashboard" Nothing Nothing
     , havenoAPKHttpRequest = Nothing
-    , version = Nothing
+    , version = "No Haveno version available"
     , errors = []
     }
 
@@ -99,7 +103,7 @@ init fromMainToDashboard =
             Url Http "localhost" Nothing "/dashboard" Nothing Nothing
 
         newModel =
-            Model Loaded "Dashboard" (Dashboard { name = "Loading..." }) "0.00" newUrl Nothing Nothing []
+            Model Loaded "Dashboard" (Dashboard { name = "Loading..." }) "0.00" newUrl Nothing fromMainToDashboard.havenoVersion []
     in
     ( newModel
     , Cmd.none
@@ -109,7 +113,7 @@ init fromMainToDashboard =
 type Msg
     = GotInitialModel Model
     | BalanceResponse (Result Http.Error SuccessfullBalanceResult)
-    | GotVersion (Result Grpc.Error GetVersionReply)
+
 
 
 
@@ -122,11 +126,7 @@ update msg model =
         {- -- NOTE: This was originally setup to work with an Http Result (branch on OK and Err)
            but we're just handling the initialModel - not really doing much
         -}
-        GotVersion (Ok versionResp) ->
-            ( { model | version = Just versionResp }, Cmd.none )
-
-        GotVersion (Err _) ->
-            ( { model | version = model.version }, Cmd.none )
+        
 
         GotInitialModel newModel ->
             ( { newModel | pagetitle = model.pagetitle }, Cmd.none )
@@ -189,13 +189,23 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
+    {- let
+        newVersion =
+            case model.version of
+                Just { version } ->
+                    version
+
+                Nothing ->
+                    "No Haveno version available"
+    in -}
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
             [ Element.el Heading.h1 <|
                 Element.text "Haveno Web - Dashboard"
             , Element.text "\n"
-            , Element.text "Your version is:"
-            , Element.el Heading.h4 <| Element.text (Maybe.withDefault "" (model.version |> Maybe.map .version))
+           
+            , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "versiondisplay") ]
+                (Element.text ("Your version is: " ++ model.version))
             , Element.text "\n"
             , case model.errors of
                 [] ->
@@ -221,7 +231,7 @@ type alias SuccessfullBalanceResult =
 
 type alias FromMainToDashboard =
     { time : Maybe DateTime
-    , flagUrl : Url.Url
+    , havenoVersion : String
     }
 
 

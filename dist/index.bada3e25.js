@@ -8431,7 +8431,7 @@ type alias Process =
         var newUrl = A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Nothing, '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
         var newModel = A8($author$project$Pages$Dashboard$Model, $author$project$Pages$Dashboard$Loaded, 'Dashboard', $author$project$Pages$Dashboard$Dashboard({
             name: 'Loading...'
-        }), '0.00', newUrl, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing, _List_Nil);
+        }), '0.00', newUrl, $elm$core$Maybe$Nothing, fromMainToDashboard.havenoVersion, _List_Nil);
         return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
     };
     var $author$project$Pages$Funds$Funds = function(a) {
@@ -9954,7 +9954,7 @@ type alias Process =
             name: 'Loading...'
         }),
         status: $author$project$Pages$Dashboard$Loaded,
-        version: $elm$core$Maybe$Nothing
+        version: 'No Haveno version available'
     };
     var $author$project$Pages$Hardware$initialModel = {
         apiSpecifics: {
@@ -10373,7 +10373,6 @@ type alias Process =
             a: a
         };
     };
-    var $elm$core$Debug$log = _Debug_log;
     var $author$project$Main$GotVersion = function(a) {
         return {
             $: 'GotVersion',
@@ -10416,12 +10415,10 @@ type alias Process =
     });
     var $author$project$Main$sendVersionRequest = function(request) {
         var grpcRequest = A2($anmolitor$elm_grpc$Grpc$setHost, 'http://localhost:8080', A3($anmolitor$elm_grpc$Grpc$addHeader, 'password', 'apitest', A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$GetVersion$getVersion, request)));
-        var _v0 = A2($elm$core$Debug$log, 'send ver req', request);
         return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Main$GotVersion, grpcRequest);
     };
     var $author$project$Main$toHardware = F2(function(model, _v0) {
         var cmd = _v0.b;
-        var _v1 = A2($elm$core$Debug$log, 'hware read', 'to go');
         return _Utils_Tuple2(model, $elm$core$Platform$Cmd$batch(_List_fromArray([
             A2($elm$core$Platform$Cmd$map, $author$project$Main$GotHardwareMsg, cmd),
             $author$project$Main$sendVersionRequest({})
@@ -10583,42 +10580,30 @@ type alias Process =
         }
     };
     var $author$project$Pages$Dashboard$update = F2(function(msg, model) {
-        switch(msg.$){
-            case 'GotVersion':
-                if (msg.a.$ === 'Ok') {
-                    var versionResp = msg.a.a;
-                    return _Utils_Tuple2(_Utils_update(model, {
-                        version: $elm$core$Maybe$Just(versionResp)
-                    }), $elm$core$Platform$Cmd$none);
-                } else return _Utils_Tuple2(_Utils_update(model, {
-                    version: model.version
-                }), $elm$core$Platform$Cmd$none);
-            case 'GotInitialModel':
-                var newModel = msg.a;
-                return _Utils_Tuple2(_Utils_update(newModel, {
-                    pagetitle: model.pagetitle
-                }), $elm$core$Platform$Cmd$none);
-            default:
-                if (msg.a.$ === 'Ok') {
-                    var auth = msg.a.a;
-                    var headers = _List_fromArray([
-                        A2($elm$http$Http$header, 'Authorization', 'Bearer ' + A2($elm$core$Maybe$withDefault, 'No access token 2', $elm$core$Maybe$Just(auth.deployment_model)))
-                    ]);
-                    var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.flagUrl.host) ? $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Just(3000), $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing));
-                    var newHttpParams = A6($author$project$Pages$Dashboard$HavenoAPKHttpRequest, $author$project$Extras$Constants$get, headers, flagUrlWithMongoDBMWAndPortUpdate, $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-                    var newModel = _Utils_update(model, {
-                        havenoAPKHttpRequest: $elm$core$Maybe$Just(newHttpParams)
-                    });
-                    return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
-                } else {
-                    var responseErr = msg.a.a;
-                    var respErr = $author$project$Extras$Constants$httpErrorToString(responseErr);
-                    return _Utils_Tuple2(_Utils_update(model, {
-                        errors: _Utils_ap(model.errors, _List_fromArray([
-                            respErr
-                        ]))
-                    }), $elm$core$Platform$Cmd$none);
-                }
+        if (msg.$ === 'GotInitialModel') {
+            var newModel = msg.a;
+            return _Utils_Tuple2(_Utils_update(newModel, {
+                pagetitle: model.pagetitle
+            }), $elm$core$Platform$Cmd$none);
+        } else if (msg.a.$ === 'Ok') {
+            var auth = msg.a.a;
+            var headers = _List_fromArray([
+                A2($elm$http$Http$header, 'Authorization', 'Bearer ' + A2($elm$core$Maybe$withDefault, 'No access token 2', $elm$core$Maybe$Just(auth.deployment_model)))
+            ]);
+            var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.flagUrl.host) ? $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Just(3000), $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing));
+            var newHttpParams = A6($author$project$Pages$Dashboard$HavenoAPKHttpRequest, $author$project$Extras$Constants$get, headers, flagUrlWithMongoDBMWAndPortUpdate, $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+            var newModel = _Utils_update(model, {
+                havenoAPKHttpRequest: $elm$core$Maybe$Just(newHttpParams)
+            });
+            return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
+        } else {
+            var responseErr = msg.a.a;
+            var respErr = $author$project$Extras$Constants$httpErrorToString(responseErr);
+            return _Utils_Tuple2(_Utils_update(model, {
+                errors: _Utils_ap(model.errors, _List_fromArray([
+                    respErr
+                ]))
+            }), $elm$core$Platform$Cmd$none);
         }
     });
     var $author$project$Pages$Funds$update = F2(function(msg, model) {
@@ -11054,8 +11039,10 @@ type alias Process =
                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'ClickedXMRWalletConnect':
                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-            case 'ClickedXMRInitiateTransaction':
-                return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+            case 'ClickedTempXMRAddr':
+                return _Utils_Tuple2(_Utils_update(model, {
+                    isXMRWalletConnected: true
+                }), $elm$core$Platform$Cmd$none);
             case 'RegisUser':
                 return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'Create':
@@ -11265,6 +11252,7 @@ type alias Process =
     var $author$project$Pages$Wallet$Errored = {
         $: 'Errored'
     };
+    var $elm$core$Debug$log = _Debug_log;
     var $author$project$Pages$Wallet$xmrBalanceInfoInstance = {
         availableBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 100, 0),
         balance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 110, 0),
@@ -11403,12 +11391,12 @@ type alias Process =
         A2($elm$url$Url$Parser$map, $author$project$Main$Market, $elm$url$Url$Parser$s('market')),
         A2($elm$url$Url$Parser$map, $author$project$Main$Hardware, $elm$url$Url$Parser$s('hardware'))
     ]));
-    var $author$project$Main$toBlank = F2(function(model, _v30) {
-        var blank = _v30.a;
-        var cmd = _v30.b;
-        var _v31 = A2($author$project$Main$update, $author$project$Main$OnInitHardwareDeviceConnect, model);
-        var newModel = _v31.a;
-        var hwareConnectCmd = _v31.b;
+    var $author$project$Main$toBlank = F2(function(model, _v31) {
+        var blank = _v31.a;
+        var cmd = _v31.b;
+        var _v32 = A2($author$project$Main$update, $author$project$Main$OnInitHardwareDeviceConnect, model);
+        var newModel = _v32.a;
+        var hwareConnectCmd = _v32.b;
         return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$batch(_List_fromArray([
             A2($elm$core$Platform$Cmd$map, $author$project$Main$GotBlankMsg, cmd),
             hwareConnectCmd
@@ -11425,11 +11413,15 @@ type alias Process =
             case 'GotVersion':
                 if (msg.a.$ === 'Ok') {
                     var versionResp = msg.a.a;
+                    var verResp = function() {
+                        var version = versionResp.version;
+                        return version;
+                    }();
                     return _Utils_Tuple2(_Utils_update(model, {
-                        version: $elm$core$Maybe$Just(versionResp)
+                        version: verResp
                     }), $elm$core$Platform$Cmd$none);
                 } else return _Utils_Tuple2(_Utils_update(model, {
-                    version: model.version
+                    version: 'Error obtaining version'
                 }), $elm$core$Platform$Cmd$none);
             case 'ShowPopUp':
                 return _Utils_Tuple2(_Utils_update(model, {
@@ -11466,8 +11458,8 @@ type alias Process =
                             ]))
                         }), $elm$core$Platform$Cmd$none);
                         else {
-                            var _v14 = model.page;
-                            switch(_v14.$){
+                            var _v15 = model.page;
+                            switch(_v15.$){
                                 case 'DashboardPage':
                                     return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                                 case 'SellPage':
@@ -11475,12 +11467,12 @@ type alias Process =
                                 case 'BlankPage':
                                     var hwModel = $author$project$Pages$Hardware$initialModel;
                                     var decodedHardwareDeviceMsg = function() {
-                                        var _v15 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
-                                        if (_v15.$ === 'Ok') {
-                                            var message = _v15.a;
+                                        var _v16 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
+                                        if (_v16.$ === 'Ok') {
+                                            var message = _v16.a;
                                             return message.operationEventMsg;
                                         } else {
-                                            var err = _v15.a;
+                                            var err = _v16.a;
                                             return 'error';
                                         }
                                     }();
@@ -11523,12 +11515,12 @@ type alias Process =
                                 default:
                                     var hwModel = $author$project$Pages$Hardware$initialModel;
                                     var decodedHardwareDeviceMsg = function() {
-                                        var _v16 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
-                                        if (_v16.$ === 'Ok') {
-                                            var message = _v16.a;
+                                        var _v17 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
+                                        if (_v17.$ === 'Ok') {
+                                            var message = _v17.a;
                                             return message.operationEventMsg;
                                         } else {
-                                            var err = _v16.a;
+                                            var err = _v17.a;
                                             return 'error';
                                         }
                                     }();
@@ -11575,8 +11567,8 @@ type alias Process =
                     return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load(href));
                 } else {
                     var url = urlRequest.a;
-                    var _v18 = $elm$url$Url$toString(url);
-                    if (_v18 === 'https://haveno-web-dev.netlify.app//') return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load($elm$url$Url$toString(url)));
+                    var _v19 = $elm$url$Url$toString(url);
+                    if (_v19 === 'https://haveno-web-dev.netlify.app//') return _Utils_Tuple2(model, $elm$browser$Browser$Navigation$load($elm$url$Url$toString(url)));
                     else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                 }
             case 'ChangedUrl':
@@ -11584,72 +11576,75 @@ type alias Process =
                 return A2($author$project$Main$updateUrl, url, model);
             case 'GotDashboardMsg':
                 var dashboardMsg = msg.a;
-                var _v19 = model.page;
-                if (_v19.$ === 'DashboardPage') {
-                    var dashboard = _v19.a;
+                var _v20 = model.page;
+                if (_v20.$ === 'DashboardPage') {
+                    var dashboard = _v20.a;
+                    var updatedDashboardModel = _Utils_update(dashboard, {
+                        version: '1.0.0'
+                    });
                     return A2($author$project$Main$toDashboard, model, A2($author$project$Pages$Dashboard$update, dashboardMsg, dashboard));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotSellMsg':
                 var sellMsg = msg.a;
-                var _v20 = model.page;
-                if (_v20.$ === 'SellPage') {
-                    var sell = _v20.a;
+                var _v21 = model.page;
+                if (_v21.$ === 'SellPage') {
+                    var sell = _v21.a;
                     return A2($author$project$Main$toSell, model, A2($author$project$Pages$Sell$update, sellMsg, sell));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotBlankMsg':
                 var blankMsg = msg.a;
-                var _v21 = model.page;
-                if (_v21.$ === 'BlankPage') {
-                    var blank = _v21.a;
+                var _v22 = model.page;
+                if (_v22.$ === 'BlankPage') {
+                    var blank = _v22.a;
                     return A2($author$project$Main$toBlank, model, A2($author$project$Pages$Blank$update, blankMsg, blank));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotPortfolioMsg':
                 var termsMsg = msg.a;
-                var _v22 = model.page;
-                if (_v22.$ === 'PortfolioPage') {
-                    var terms = _v22.a;
+                var _v23 = model.page;
+                if (_v23.$ === 'PortfolioPage') {
+                    var terms = _v23.a;
                     return A2($author$project$Main$toPortfolio, model, A2($author$project$Pages$Portfolio$update, termsMsg, terms));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotFundsMsg':
                 var privacyMsg = msg.a;
-                var _v23 = model.page;
-                if (_v23.$ === 'FundsPage') {
-                    var privacy = _v23.a;
+                var _v24 = model.page;
+                if (_v24.$ === 'FundsPage') {
+                    var privacy = _v24.a;
                     return A2($author$project$Main$toFunds, model, A2($author$project$Pages$Funds$update, privacyMsg, privacy));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotSupportMsg':
                 var supportMsg = msg.a;
-                var _v24 = model.page;
-                if (_v24.$ === 'SupportPage') {
-                    var support = _v24.a;
+                var _v25 = model.page;
+                if (_v25.$ === 'SupportPage') {
+                    var support = _v25.a;
                     return A2($author$project$Main$toSupport, model, A2($author$project$Pages$Support$update, supportMsg, support));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotBuyMsg':
                 var pricingMsg = msg.a;
-                var _v25 = model.page;
-                if (_v25.$ === 'BuyPage') {
-                    var pricing = _v25.a;
+                var _v26 = model.page;
+                if (_v26.$ === 'BuyPage') {
+                    var pricing = _v26.a;
                     return A2($author$project$Main$toPricing, model, A2($author$project$Pages$Buy$update, pricingMsg, pricing));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotMarketMsg':
                 var aboutMsg = msg.a;
-                var _v26 = model.page;
-                if (_v26.$ === 'MarketPage') {
-                    var about = _v26.a;
+                var _v27 = model.page;
+                if (_v27.$ === 'MarketPage') {
+                    var about = _v27.a;
                     return A2($author$project$Main$toMarket, model, A2($author$project$Pages$Market$update, aboutMsg, about));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotWalletMsg':
                 var walletMsg = msg.a;
-                var _v27 = model.page;
-                if (_v27.$ === 'WalletPage') {
-                    var wallet = _v27.a;
+                var _v28 = model.page;
+                if (_v28.$ === 'WalletPage') {
+                    var wallet = _v28.a;
                     return A2($author$project$Main$toWallet, model, A2($author$project$Pages$Wallet$update, walletMsg, wallet));
                 } else return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
             case 'GotHardwareMsg':
                 var hardwareMsg = msg.a;
-                var _v28 = model.page;
-                if (_v28.$ === 'HardwarePage') {
-                    var hardwareModel = _v28.a;
+                var _v29 = model.page;
+                if (_v29.$ === 'HardwarePage') {
+                    var hardwareModel = _v29.a;
                     switch(hardwareMsg.$){
                         case 'ClickedHardwareDeviceConnect':
                             var newHardwareModel = _Utils_update(hardwareModel, {
@@ -11665,14 +11660,12 @@ type alias Process =
                             return _Utils_Tuple2(_Utils_update(model, {
                                 page: $author$project$Main$HardwarePage(newHardwareModel)
                             }), $author$project$Main$sendMessageToJs('getMoneroAddress'));
-                        case 'ClickedXMRInitiateTransaction':
-                            var amt = hardwareMsg.a;
-                            var newHardwareModel = _Utils_update(hardwareModel, {
-                                queryType: $author$project$Pages$Hardware$LoggedInUser
-                            });
+                        case 'ClickedTempXMRAddr':
                             return _Utils_Tuple2(_Utils_update(model, {
-                                page: $author$project$Main$HardwarePage(newHardwareModel)
-                            }), $author$project$Main$sendMessageToJs('initiateXMRToBTCTrans ' + ('~^&' + amt)));
+                                isNavMenuActive: true,
+                                isXMRWalletConnected: true,
+                                page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel)
+                            }), $elm$core$Platform$Cmd$none);
                         default:
                             return A2($author$project$Main$toHardware, model, A2($author$project$Pages$Hardware$update, hardwareMsg, hardwareModel));
                     }
@@ -11695,16 +11688,16 @@ type alias Process =
                     flag: newFlagUrl
                 });
                 if (oauthCode.$ === 'Nothing') return A2($author$project$Main$toDashboard, newModel, $author$project$Pages$Dashboard$init({
-                    flagUrl: newFlagUrl,
+                    havenoVersion: '',
                     time: $elm$core$Maybe$Nothing
                 }));
                 else {
                     if (oauthCode.a === '') return A2($author$project$Main$toDashboard, newModel, $author$project$Pages$Dashboard$init({
-                        flagUrl: newFlagUrl,
+                        havenoVersion: '',
                         time: $elm$core$Maybe$Nothing
                     }));
                     else return A2($author$project$Main$toDashboard, newModel, $author$project$Pages$Dashboard$init({
-                        flagUrl: newFlagUrl,
+                        havenoVersion: '',
                         time: $elm$core$Maybe$Nothing
                     }));
                 }
@@ -11753,7 +11746,7 @@ type alias Process =
                 }));
         }
         else return A2($author$project$Main$toDashboard, model, $author$project$Pages$Dashboard$init({
-            flagUrl: model.flag,
+            havenoVersion: '',
             time: $elm$core$Maybe$Nothing
         }));
     });
@@ -11787,7 +11780,7 @@ type alias Process =
             key: key,
             page: $author$project$Main$BlankPage($author$project$Pages$Blank$initialModel),
             time: $elm$time$Time$millisToPosix(0),
-            version: $elm$core$Maybe$Nothing,
+            version: 'No Haveno version available',
             xmrWalletAddress: 'BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32',
             zone: $elm$core$Maybe$Nothing
         };
@@ -11809,13 +11802,6 @@ type alias Process =
     var $elm$html$Html$br = _VirtualDom_node('br');
     var $elm$html$Html$footer = _VirtualDom_node('footer');
     var $author$project$Main$footerContent = function(model) {
-        var newVersion = function() {
-            var _v0 = model.version;
-            if (_v0.$ === 'Just') {
-                var version = _v0.a.version;
-                return version;
-            } else return 'No Haveno version available';
-        }();
         return A2($elm$html$Html$footer, _List_Nil, _List_fromArray([
             A2($elm$html$Html$div, _List_fromArray([
                 $elm$html$Html$Attributes$class('footer'),
@@ -11838,7 +11824,7 @@ type alias Process =
                     A2($elm$html$Html$p, _List_fromArray([
                         $elm$html$Html$Attributes$id('havenoversion')
                     ]), _List_fromArray([
-                        $elm$html$Html$text(newVersion)
+                        $elm$html$Html$text(model.version)
                     ]))
                 ]))
             ]))
@@ -15849,8 +15835,8 @@ type alias Process =
         ]);
     };
     var $Orasund$elm_ui_framework$Framework$Heading$h1 = $Orasund$elm_ui_framework$Framework$Heading$h(1);
-    var $Orasund$elm_ui_framework$Framework$Heading$h4 = $Orasund$elm_ui_framework$Framework$Heading$h(4);
     var $Orasund$elm_ui_framework$Framework$Heading$h6 = $Orasund$elm_ui_framework$Framework$Heading$h(6);
+    var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
     var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
     var $mdgriffith$elm_ui$Internal$Flag$fontColor = $mdgriffith$elm_ui$Internal$Flag$flag(14);
     var $mdgriffith$elm_ui$Element$Font$color = function(fontColor) {
@@ -16163,10 +16149,10 @@ type alias Process =
         return A2($Orasund$elm_ui_framework$Framework$responsiveLayout, _List_Nil, A2($mdgriffith$elm_ui$Element$column, $Orasund$elm_ui_framework$Framework$container, _List_fromArray([
             A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h1, $mdgriffith$elm_ui$Element$text('Haveno Web - Dashboard')),
             $mdgriffith$elm_ui$Element$text('\n'),
-            $mdgriffith$elm_ui$Element$text('Your version is:'),
-            A2($mdgriffith$elm_ui$Element$el, $Orasund$elm_ui_framework$Framework$Heading$h4, $mdgriffith$elm_ui$Element$text(A2($elm$core$Maybe$withDefault, '', A2($elm$core$Maybe$map, function($) {
-                return $.version;
-            }, model.version)))),
+            A2($mdgriffith$elm_ui$Element$el, _List_fromArray([
+                $mdgriffith$elm_ui$Element$Region$heading(4),
+                $mdgriffith$elm_ui$Element$htmlAttribute($elm$html$Html$Attributes$id('versiondisplay'))
+            ]), $mdgriffith$elm_ui$Element$text('Your version is: ' + model.version)),
             $mdgriffith$elm_ui$Element$text('\n'),
             function() {
                 var _v0 = model.errors;
@@ -16222,11 +16208,8 @@ type alias Process =
     var $author$project$Pages$Hardware$ClickedHardwareDeviceConnect = {
         $: 'ClickedHardwareDeviceConnect'
     };
-    var $author$project$Pages$Hardware$ClickedXMRInitiateTransaction = function(a) {
-        return {
-            $: 'ClickedXMRInitiateTransaction',
-            a: a
-        };
+    var $author$project$Pages$Hardware$ClickedTempXMRAddr = {
+        $: 'ClickedTempXMRAddr'
     };
     var $author$project$Pages$Hardware$ClickedXMRWalletConnect = {
         $: 'ClickedXMRWalletConnect'
@@ -16505,7 +16488,7 @@ type alias Process =
             $mdgriffith$elm_ui$Element$text('\n'),
             A2($author$project$Pages$Hardware$infoBtn, 'Connect XMR Wallet', $author$project$Pages$Hardware$ClickedXMRWalletConnect),
             $mdgriffith$elm_ui$Element$text('\n'),
-            A2($author$project$Pages$Hardware$infoBtn, 'Initiate Transaction', $author$project$Pages$Hardware$ClickedXMRInitiateTransaction('0.01')),
+            A2($author$project$Pages$Hardware$infoBtn, 'Temp Got XMR Addr', $author$project$Pages$Hardware$ClickedTempXMRAddr),
             function() {
                 var _v0 = model.errors;
                 if (!_v0.b) return $mdgriffith$elm_ui$Element$text('');
@@ -16728,7 +16711,6 @@ type alias Process =
             }
         } else return '';
     };
-    var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
     var $author$project$Pages$Wallet$reservedOfferBalanceAsString = function(balInfo) {
         if (balInfo.$ === 'Just') {
             var blInfo = balInfo.a;
@@ -16994,7 +16976,7 @@ type alias Process =
                         },
                         "Pages.Dashboard.Model": {
                             "args": [],
-                            "type": "{ status : Pages.Dashboard.Status, pagetitle : String.String, root : Pages.Dashboard.Dashboard, balance : String.String, flagUrl : Url.Url, havenoAPKHttpRequest : Maybe.Maybe Pages.Dashboard.HavenoAPKHttpRequest, version : Maybe.Maybe Proto.Io.Haveno.Protobuffer.GetVersionReply, errors : List.List String.String }"
+                            "type": "{ status : Pages.Dashboard.Status, pagetitle : String.String, root : Pages.Dashboard.Dashboard, balance : String.String, flagUrl : Url.Url, havenoAPKHttpRequest : Maybe.Maybe Pages.Dashboard.HavenoAPKHttpRequest, version : String.String, errors : List.List String.String }"
                         },
                         "Pages.Funds.Model": {
                             "args": [],
@@ -17214,9 +17196,6 @@ type alias Process =
                                 ],
                                 "BalanceResponse": [
                                     "Result.Result Http.Error Pages.Dashboard.SuccessfullBalanceResult"
-                                ],
-                                "GotVersion": [
-                                    "Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"
                                 ]
                             }
                         },
@@ -17282,9 +17261,7 @@ type alias Process =
                                 "ToggleReturnUser": [],
                                 "ClickedHardwareDeviceConnect": [],
                                 "ClickedXMRWalletConnect": [],
-                                "ClickedXMRInitiateTransaction": [
-                                    "String.String"
-                                ],
+                                "ClickedTempXMRAddr": [],
                                 "ResponseDataFromMain": [
                                     "Json.Decode.Value"
                                 ],

@@ -11,9 +11,11 @@ As per main.features:
 #### **Scenario 1: Accessing the Dashboard page**
 
 **Given** the page is initialized
-**And** the hww is connected
+**And** the hwd is connected
+**And** the xmrwallet is connected with a valid address
 **When** the user navigates to the Dashboard page
 **Then** the Dashboard page is visible to the user
+**And** the Haveno version is visible to the user
 
 
 ---

@@ -38,6 +38,7 @@ import Tuple
 import Types.DateType as DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 import Utils.Validation.Validate as V
+--import Main exposing (isXMRWalletConnectedIndicator)
 
 
 
@@ -190,7 +191,7 @@ type Msg
     | ToggleReturnUser
     | ClickedHardwareDeviceConnect
     | ClickedXMRWalletConnect
-    | ClickedXMRInitiateTransaction String
+    | ClickedTempXMRAddr
       -- NOTE: ResponseDataFromMain is a Msg from the port
     | ResponseDataFromMain D.Value
     | LogOut
@@ -475,8 +476,8 @@ update msg model =
             , Cmd.none
             )
 
-        ClickedXMRInitiateTransaction _ ->
-            ( model
+        ClickedTempXMRAddr ->
+            ( {model | isXMRWalletConnected = True}
             , Cmd.none
             )
 
@@ -888,7 +889,7 @@ hardwareWalletConnectionOptionsView model =
             , Element.text "\n"
             , infoBtn "Connect XMR Wallet" <| ClickedXMRWalletConnect
             , Element.text "\n"
-            , infoBtn "Initiate Transaction" <| ClickedXMRInitiateTransaction "0.01"
+            , infoBtn "Temp Got XMR Addr" <| ClickedTempXMRAddr
             , case model.errors of
                 [] ->
                     Element.text ""

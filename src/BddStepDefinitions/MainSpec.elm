@@ -37,15 +37,7 @@ import Url exposing (Protocol(..), Url)
 
 -- NOTE: App.Model and App.Msg are type paramters for the Spec type
 -- They make Spec type more flexible as it can be used with any model and msg types
-{- #### **Scenario 1: Popup warning that the hardware wallet is NOT connected on application start**
-
-   **Given** the web app is opened
-   **And** the LNS hww is NOT detected
-   **And** it should ensure the navigation menu is disabled
-   **Then** it should display a message informing the user not connected
-   **And** it should not display the 'Connected' indicator in the background
--}
-
+-- NOTE: Any test involving subscriptions will need to be specified here using withSubscriptions
 
 runSpecTests : Spec Main.Model Main.Msg
 runSpecTests =
