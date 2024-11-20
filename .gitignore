@@ -8,6 +8,7 @@ proxy/node_modules
 node_modules
 pwa/android/*
 Docs/*
+dist/*
 
 package-lock.json
 .parcel-cache
