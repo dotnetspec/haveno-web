@@ -808,7 +808,6 @@ view model =
         { title = "Haveno-Web"
         , body =
             [ pageHeader model
-            , showVideoOrBanner model.page
             , logoImage
             , contentByPage
             , isHWConnectedIndicator model isConnected
