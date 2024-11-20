@@ -95,8 +95,8 @@ update msg model =
 
         GotBalances (Ok response) ->
             let
-                _ =
-                    Debug.log "response " response.balances
+                {- _ =
+                    Debug.log "response " response.balances -}
 
                 -- HACK: Want to replace xmrBalanceInfoInstance with response
                 -- also so that real base64 test data is used.
@@ -109,10 +109,10 @@ update msg model =
 
         --( { model | balances = response.balances}, Cmd.none )
         GotBalances (Err error) ->
-            let
+            {- let
                 _ =
                     Debug.log "response err:  " error
-            in
+            in -}
             ( { model | status = Errored }, Cmd.none )
 
 
@@ -162,10 +162,10 @@ view model =
 
 custodialWalletView : Model -> Html Msg
 custodialWalletView model =
-    let
+    {- let
         _ =
             Debug.log "balances " model.balances
-    in
+    in -}
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
             [ Element.el Heading.h1 <| Element.text "Wallet"
