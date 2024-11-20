@@ -10332,6 +10332,11 @@ type alias Process =
     });
     var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
     var $author$project$Main$sendMessageToJs = _Platform_outgoingPort('sendMessageToJs', $elm$json$Json$Encode$string);
+    var $author$project$Main$setDashboardHavenoVersion = F2(function(dashboardModel, model) {
+        return _Utils_update(dashboardModel, {
+            version: model.version
+        });
+    });
     var $author$project$Main$GotDashboardMsg = function(a) {
         return {
             $: 'GotDashboardMsg',
@@ -11483,7 +11488,7 @@ type alias Process =
                                         isHardwareLNXConnected: updatedIsLNXConnected,
                                         isXMRWalletConnected: updatedIsValidXMRAddressConnected
                                     });
-                                    var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : updatedIsLNSConnected || updatedIsLNXConnected ? $author$project$Main$HardwarePage(newHardwareModel) : $author$project$Main$BlankPage($author$project$Pages$Blank$initialModel);
+                                    var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage(A2($author$project$Main$setDashboardHavenoVersion, $author$project$Pages$Dashboard$initialModel, model)) : updatedIsLNSConnected || updatedIsLNXConnected ? $author$project$Main$HardwarePage(newHardwareModel) : $author$project$Main$BlankPage($author$project$Pages$Blank$initialModel);
                                     var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/hardware', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
                                     var popupVisibility = updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected ? false : true;
                                     var newMainModel = _Utils_update(model, {
@@ -11496,7 +11501,7 @@ type alias Process =
                                     });
                                     var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
                                     return (newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected ? _Utils_Tuple2(_Utils_update(newMainModel, {
-                                        page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel)
+                                        page: $author$project$Main$DashboardPage(A2($author$project$Main$setDashboardHavenoVersion, $author$project$Pages$Dashboard$initialModel, model))
                                     }), $elm$core$Platform$Cmd$none) : newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected ? _Utils_Tuple2(_Utils_update(newMainModel, {
                                         page: $author$project$Main$HardwarePage(newHardwareModel)
                                     }), $elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -11531,7 +11536,7 @@ type alias Process =
                                         isHardwareLNXConnected: updatedIsLNXConnected,
                                         isXMRWalletConnected: updatedIsValidXMRAddressConnected
                                     });
-                                    var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage(newHardwareModel);
+                                    var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage(A2($author$project$Main$setDashboardHavenoVersion, $author$project$Pages$Dashboard$initialModel, model)) : $author$project$Main$HardwarePage(newHardwareModel);
                                     var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing) : A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Just(1234), '/hardware', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
                                     var popupVisibility = updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected ? false : true;
                                     var newMainModel = _Utils_update(model, {
@@ -11544,7 +11549,7 @@ type alias Process =
                                     });
                                     var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
                                     return (newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected ? _Utils_Tuple2(_Utils_update(newMainModel, {
-                                        page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel)
+                                        page: $author$project$Main$DashboardPage(A2($author$project$Main$setDashboardHavenoVersion, $author$project$Pages$Dashboard$initialModel, model))
                                     }), $elm$core$Platform$Cmd$none) : newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected ? A2($author$project$Main$toHardware, newMainModel, A2($author$project$Pages$Hardware$update, $author$project$Pages$Hardware$ResponseDataFromMain(rawJsonMessage), newHardwareModel)) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
                             }
                         }
@@ -11664,7 +11669,7 @@ type alias Process =
                             return _Utils_Tuple2(_Utils_update(model, {
                                 isNavMenuActive: true,
                                 isXMRWalletConnected: true,
-                                page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel)
+                                page: $author$project$Main$DashboardPage(A2($author$project$Main$setDashboardHavenoVersion, $author$project$Pages$Dashboard$initialModel, model))
                             }), $elm$core$Platform$Cmd$none);
                         default:
                             return A2($author$project$Main$toHardware, model, A2($author$project$Pages$Hardware$update, hardwareMsg, hardwareModel));
@@ -11688,16 +11693,16 @@ type alias Process =
                     flag: newFlagUrl
                 });
                 if (oauthCode.$ === 'Nothing') return A2($author$project$Main$toDashboard, newModel, $author$project$Pages$Dashboard$init({
-                    havenoVersion: '',
+                    havenoVersion: model.version,
                     time: $elm$core$Maybe$Nothing
                 }));
                 else {
                     if (oauthCode.a === '') return A2($author$project$Main$toDashboard, newModel, $author$project$Pages$Dashboard$init({
-                        havenoVersion: '',
+                        havenoVersion: model.version,
                         time: $elm$core$Maybe$Nothing
                     }));
                     else return A2($author$project$Main$toDashboard, newModel, $author$project$Pages$Dashboard$init({
-                        havenoVersion: '',
+                        havenoVersion: model.version,
                         time: $elm$core$Maybe$Nothing
                     }));
                 }
@@ -11746,7 +11751,7 @@ type alias Process =
                 }));
         }
         else return A2($author$project$Main$toDashboard, model, $author$project$Pages$Dashboard$init({
-            havenoVersion: '',
+            havenoVersion: model.version,
             time: $elm$core$Maybe$Nothing
         }));
     });
@@ -11822,7 +11827,7 @@ type alias Process =
                     ])),
                     $elm$html$Html$text('Haveno Version'),
                     A2($elm$html$Html$p, _List_fromArray([
-                        $elm$html$Html$Attributes$id('havenoversion')
+                        $elm$html$Html$Attributes$id('havenofooterver')
                     ]), _List_fromArray([
                         $elm$html$Html$text(model.version)
                     ]))

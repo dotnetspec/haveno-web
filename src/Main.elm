@@ -382,7 +382,7 @@ update msg model =
 
                             newPage =
                                 if updatedIsValidXMRAddressConnected then
-                                    DashboardPage Pages.Dashboard.initialModel
+                                    DashboardPage <| setDashboardHavenoVersion  Pages.Dashboard.initialModel model
 
                                 else if updatedIsLNSConnected || updatedIsLNXConnected then
                                     HardwarePage newHardwareModel
@@ -410,7 +410,7 @@ update msg model =
                                 }
                         in
                         if (newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected then
-                            ( { newMainModel | page = DashboardPage Pages.Dashboard.initialModel }, Cmd.none )
+                            ( { newMainModel | page = DashboardPage <| setDashboardHavenoVersion  Pages.Dashboard.initialModel model }, Cmd.none )
 
                         else if newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected then
                             ( { newMainModel | page = HardwarePage newHardwareModel }, Cmd.none )
@@ -512,7 +512,7 @@ update msg model =
 
                             newPage =
                                 if updatedIsValidXMRAddressConnected then
-                                    DashboardPage Pages.Dashboard.initialModel
+                                    DashboardPage <| setDashboardHavenoVersion  Pages.Dashboard.initialModel model
 
                                 else
                                     HardwarePage newHardwareModel
@@ -537,7 +537,7 @@ update msg model =
                                 }
                         in
                         if (newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected then
-                            ( { newMainModel | page = DashboardPage Pages.Dashboard.initialModel }, Cmd.none )
+                            ( { newMainModel | page = DashboardPage <| setDashboardHavenoVersion  Pages.Dashboard.initialModel model }, Cmd.none )
 
                         else if newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected then
                             toHardware newMainModel (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) newHardwareModel)
@@ -698,7 +698,7 @@ update msg model =
                             )
 
                         Pages.Hardware.ClickedTempXMRAddr ->
-                            ( { model | page = DashboardPage Pages.Dashboard.initialModel, isNavMenuActive = True, isXMRWalletConnected = True }
+                            ( { model | page = DashboardPage <| setDashboardHavenoVersion  Pages.Dashboard.initialModel model, isNavMenuActive = True, isXMRWalletConnected = True }
                             , Cmd.none
                             )
 
@@ -1012,16 +1012,16 @@ updateUrl url model =
                     -- If you wanted info in this page to e.g. be based on an Http.get then
                     -- follow book to setup here:
                     -- REVIEW: We're not using oauth code - probably remove
-                    Pages.Dashboard.init { time = Nothing, havenoVersion = "" }
+                    Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
                         |> toDashboard newModel
 
                 Just "" ->
-                    Pages.Dashboard.init { time = Nothing, havenoVersion = "" }
+                    Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
                         |> toDashboard newModel
 
                 -- HACK: -- FIX?
                 Just _ ->
-                    Pages.Dashboard.init { time = Nothing, havenoVersion = "" }
+                    Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
                         |> toDashboard newModel
 
         Just Sell ->
@@ -1084,7 +1084,7 @@ updateUrl url model =
                 |> toHardware newModel
 
         Nothing ->
-            Pages.Dashboard.init { time = Nothing, havenoVersion = "" }
+            Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
                 |> toDashboard model
 
 
@@ -1241,6 +1241,10 @@ sendVersionRequest request =
 
 
 -- NAV: Helper functions
+
+setDashboardHavenoVersion : Pages.Dashboard.Model -> Model -> Pages.Dashboard.Model
+setDashboardHavenoVersion dashboardModel model = 
+    { dashboardModel | version = model.version }
 
 
 viewPopUp : Model -> Html Msg
@@ -1706,7 +1710,7 @@ footerContent model =
                 , text "Open source code & design"
                 , p [] [ text "Version 0.0.20" ]
                 , text "Haveno Version"
-                , p [ id "havenoversion" ]
+                , p [ id "havenofooterver" ]
                     [ text
                         model.version
                     ]

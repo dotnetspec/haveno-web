@@ -3,6 +3,7 @@ module BddStepDefinitions.MainSpec exposing (..)
 {- -- NOTE: 'Main' here refers to settings that hold throughout the app, e.g. isLNSConnected, not just on a given page, so the tests
    might switch to particular pages and check that 'global' settings (Main's model) are correct
 -}
+--import Pages.Wallet as Wallet exposing (..)
 
 import BddStepDefinitions.Extra exposing (..)
 import BddStepDefinitions.Runner as Runner exposing (..)
@@ -16,7 +17,6 @@ import Main exposing (Model, Msg, Page(..), Route(..), init, navigate, subscript
 import Pages.Blank
 import Pages.Dashboard as Dashboard exposing (..)
 import Pages.Hardware as Hardware exposing (..)
---import Pages.Wallet as Wallet exposing (..)
 import Spec exposing (..)
 import Spec.Claim as Claim exposing (Claim, Verdict)
 import Spec.Command exposing (send)
@@ -38,6 +38,7 @@ import Url exposing (Protocol(..), Url)
 -- NOTE: App.Model and App.Msg are type paramters for the Spec type
 -- They make Spec type more flexible as it can be used with any model and msg types
 -- NOTE: Any test involving subscriptions will need to be specified here using withSubscriptions
+
 
 runSpecTests : Spec Main.Model Main.Msg
 runSpecTests =
@@ -380,7 +381,6 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isFalse
                         )
-                    
                     ]
             )
         , --Runner.skip <|
@@ -435,7 +435,7 @@ runSpecTests =
                     , it "d. displays Haveno version number in the footer"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ Spec.Markup.Selector.id "havenoversion" ]
+                            << by [ Spec.Markup.Selector.id "havenofooterver" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
@@ -512,18 +512,20 @@ runSpecTests =
                                         Claim.isStringContaining 1 "Haveno Web - Dashboard"
                                 )
                         )
-
-                    -- NOTE: It appears that we can check that the page is the Dashboard page by checking the model
-                    -- but we cannot check the text in the page, without an update e.g. from button click,
-                    -- because it's not the setup module's (Main) responsibility
-                    , it "c.is on the Dashboard page"
-                        (Observer.observeModel .page
-                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.DashboardPage Dashboard.initialModel)
+                    , it "d. makes the Haveno version visible to the user on the Dashboard page"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "versiondisplay" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "1.0.7"
+                                )
                         )
                     , it "d. displays Haveno version number in the footer"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ Spec.Markup.Selector.id "havenoversion" ]
+                            << by [ Spec.Markup.Selector.id "havenofooterver" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
@@ -532,8 +534,6 @@ runSpecTests =
                         )
                     ]
             )
-
-        
         , --Runner.skip <|
           --Runner.pick <|
           scenario "8: User confirms hware device connection in browser"
@@ -597,8 +597,6 @@ runSpecTests =
                         )
                     ]
             )
-
-      
         , --Runner.skip <|
           --Runner.pick <|
           scenario "9: User unable to confirm hware device connection in browser"
@@ -636,8 +634,7 @@ runSpecTests =
                         (Observer.observeModel .page
                             |> Spec.expect (Claim.isEqual Debug.toString <| Main.HardwarePage Hardware.initialModel)
                         )
-                        
-                    ,it "a.hides the popup"
+                    , it "a.hides the popup"
                         (Observer.observeModel .isPopUpVisible
                             |> Spec.expect
                                 Claim.isFalse
@@ -657,7 +654,6 @@ runSpecTests =
                                         Claim.isStringContaining 1 "Please connect to a Chrome based mobile browser"
                                 )
                         )
-                    
                     ]
             )
         ]
@@ -699,6 +695,7 @@ jsonNanoSNOTDetected =
     E.object
         [ ( "operationEventMsg", E.string "Error connecting to device" )
         ]
+
 
 failedRequestDeviceInBrowser : E.Value
 failedRequestDeviceInBrowser =
