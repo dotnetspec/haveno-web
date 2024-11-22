@@ -820,7 +820,7 @@ hardwareWalletConnectionOptionsView model =
             , Element.text "\n"
             , infoBtn "Grant Browser Permissions To Device" <| ClickedHardwareDeviceConnect
             , Element.text "\n"
-            , infoBtn "Connect Hardware Device" <| ClickedXMRWalletConnect
+            , infoBtn "Get Monero Address" <| ClickedXMRWalletConnect
             , Element.text "\n"
             , infoBtn "Temp Got XMR Addr" <| ClickedTempXMRAddr
             , case model.errors of

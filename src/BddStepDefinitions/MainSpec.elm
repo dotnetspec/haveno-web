@@ -632,7 +632,7 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isFalse
                         )
-                    , it "the LNS/LNX hardware wallet is not detected"
+                    , it "the hardware wallet is not detected"
                         (Observer.observeModel .isHardwareDeviceConnected
                             |> Spec.expect
                                 Claim.isTrue
@@ -640,7 +640,7 @@ runSpecTests =
                     , it "it should display a message informing the user connected"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ tag "span" ]
+                            << by [ Spec.Markup.Selector.id  "connectionIndicator" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
@@ -708,7 +708,7 @@ runSpecTests =
                     , it "should display a message informing the user should switch to another browser type"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ tag "span" ]
+                            << by [ Spec.Markup.Selector.id "connectionIndicator" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|

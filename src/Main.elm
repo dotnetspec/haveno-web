@@ -287,7 +287,7 @@ update msg model =
         Recv rawJsonMessage ->
             let
                 connectionErr =
-                    getXmrHardwareWalletAddressError <| fromJsonToString rawJsonMessage
+                    getDeviceResponseMsg <| fromJsonToString rawJsonMessage
 
                 -- NOTE: rawJsonMessage is a Json value that is ready to be decoded. It does not need to be
                 -- converted to a string.
@@ -345,7 +345,6 @@ update msg model =
 
                         BlankPage _ ->
                             let
-                                
                                 updatedWalletAddress =
                                     if isValidXMRAddress decodedHardwareDeviceMsg then
                                         decodedHardwareDeviceMsg
@@ -353,20 +352,16 @@ update msg model =
                                     else
                                         ""
 
-                             
                                 newUrl =
                                     Url.Url Http "localhost" (Just 1234) "/dashboard" Nothing Nothing
 
                                 newMainModel =
                                     { model
                                         | page = DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model
-
-                                        
                                         , flag = newUrl
                                         , xmrWalletAddress = updatedWalletAddress
                                     }
                             in
-                            
                             ( newMainModel, Cmd.none )
 
                         PortfolioPage _ ->
@@ -403,7 +398,7 @@ update msg model =
                                            --JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
                                            "error"
                                 -}
-                                updatedIsLNSConnected =
+                                {- updatedIsLNSConnected =
                                     if model.isHardwareDeviceConnected == False && decodedHardwareDeviceMsg == "nanoS" then
                                         True
 
@@ -421,7 +416,9 @@ update msg model =
                                         True
 
                                     else
-                                        False
+                                        False -}
+
+                                devMod = if decodedHardwareDeviceMsg == "nanoS" then Just NanoS else Just NanoX
 
                                 updatedIsValidXMRAddressConnected =
                                     if model.isXMRWalletConnected == False && isValidXMRAddress decodedHardwareDeviceMsg then
@@ -441,21 +438,21 @@ update msg model =
                                         ""
 
                                 -- HACK: You will probably want to change this to a more sophisticated logic
-                                popupVisibility =
+                                {- popupVisibility =
                                     if updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected then
                                         False
 
                                     else
-                                        True
+                                        True -}
 
                                 hwModel =
                                     Pages.Hardware.initialModel
 
                                 newHardwareModel =
                                     { hwModel
-                                        | 
-                                          isHardwareDeviceConnected = updatedIsLNXConnected
-                                        , isXMRWalletConnected = updatedIsValidXMRAddressConnected
+                                        | --isHardwareDeviceConnected = updatedIsLNXConnected
+                                        --, 
+                                        isXMRWalletConnected = updatedIsValidXMRAddressConnected
                                         , xmrWalletAddress = updatedWalletAddress
                                     }
 
@@ -481,6 +478,7 @@ update msg model =
                                         , isPopUpVisible = False
                                         , flag = newUrlAfterCheckConnections
                                         , xmrWalletAddress = updatedWalletAddress
+                                        , deviceModel = devMod
                                     }
                             in
                             if (newMainModel.isHardwareDeviceConnected || newMainModel.isHardwareDeviceConnected) && newMainModel.isXMRWalletConnected then
@@ -1206,19 +1204,19 @@ sendVersionRequest request =
 -- NAV: Helper functions
 
 
-getXmrHardwareWalletAddressError : String -> Maybe XmrHardwareWalletAddressError
-getXmrHardwareWalletAddressError errorString =
+getDeviceResponseMsg : String -> Maybe XmrHardwareWalletAddressError
+getDeviceResponseMsg errorString =
     let
         _ =
             Debug.log "errorString is " errorString
     in
-    {- 
-    -- NOTE: If need this it clashes with "No device selected" and we need to sort out the order of the checks
-    if String.contains "No device" errorString then
-        Just NoDevice
+    {-
+       -- NOTE: If need this it clashes with "No device selected" and we need to sort out the order of the checks
+       if String.contains "No device" errorString then
+           Just NoDevice
 
-    else  -}
-    
+       else
+    -}
     if String.contains "navigator.usb is undefined" errorString then
         Just NoDevice
 
@@ -1520,12 +1518,17 @@ isHWConnectedIndicator model isConnected =
                             "_"
 
                          else if model.isHardwareDeviceConnected then
-                            "Nano S Connected"
+                            case model.deviceModel of
+                                Just NanoS ->
+                                    "Nano S Connected"
 
-                         else if model.isHardwareDeviceConnected then
-                            "Nano X Connected"
+                                Just NanoX ->
+                                    "Nano X Connected"
 
-                         else if model.currentJsMessage == "User permissions gesture required" then
+                                Nothing ->
+                                    "Unable to detect device model"
+
+                         else if model.xmrHardwareWalletAddressError == Just DeviceNeedsPermission then
                             "Please connect to a Chrome based mobile browser"
 
                          else
@@ -1617,7 +1620,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.20" ]
+                , p [] [ text "Version 0.0.21" ]
                 , text "Haveno Version"
                 , p [ id "havenofooterver" ]
                     [ text
