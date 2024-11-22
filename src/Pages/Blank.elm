@@ -19,13 +19,13 @@ type Blank
 
 type Status
     = Loading
-    -- | Loaded
-    -- | Errored
+    | Loaded
+    | Errored
 
 
 initialModel : Model
 initialModel =
-    { status = Loading
+    { status = Loaded
     , title = "Blank"
     , root = Blank { name = "Loading..." }
     }

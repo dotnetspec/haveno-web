@@ -38,10 +38,10 @@ import Tuple
 import Types.DateType as DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 import Utils.Validation.Validate as V
+
+
+
 --import Main exposing (isXMRWalletConnectedIndicator)
-
-
-
 -- NOTE: To determine. What is the relationship between this model and the one in Main?
 {- Generally, the Model should include data that:
 
@@ -96,7 +96,6 @@ init fromMainToHardware =
         False
         False
         False
-        False
         ""
         []
         False
@@ -121,8 +120,7 @@ type alias Model =
     , apiSpecifics : ApiSpecifics
     , queryType : QueryType
     , isValidNewAccessToken : Bool
-    , isHardwareLNSConnected : Bool
-    , isHardwareLNXConnected : Bool
+    , isHardwareDeviceConnected : Bool
     , isXMRWalletConnected : Bool
     , xmrWalletAddress : String
     , errors : List String
@@ -146,9 +144,9 @@ initialModel =
     , apiSpecifics = { maxResults = "", accessToken = Nothing }
     , queryType = Spectator
     , isValidNewAccessToken = False
-    , isHardwareLNSConnected = False
-    , isHardwareLNXConnected = False
+    , isHardwareDeviceConnected = False
     , isXMRWalletConnected = False
+
     -- REVIEW: Is this doing anything?
     , xmrWalletAddress = ""
     , errors = []
@@ -264,8 +262,6 @@ update msg model =
             , Cmd.none
             )
 
-        
-
         RegisteredUserJoin ->
             -- TODO: Code the user join
             ( { model
@@ -285,8 +281,6 @@ update msg model =
               }
             , Cmd.none
             )
-
-      
 
         SpectatorJoin ->
             case model.user of
@@ -310,10 +304,6 @@ update msg model =
               }
             , Cmd.none
             )
-
-     
-
-        
 
         -- REVIEW: Cancel code repitition
         CancelCreateNewRanking ->
@@ -369,18 +359,13 @@ update msg model =
 
         --( { model | selectedranking = R.Owned (R.updatedCity (R.gotRanking model.selectedranking) value) }, Cmd.none )
         CreateNewRanking userInfo ->
-           
-            ( 
-              model
+            ( model
             , Cmd.none
             )
 
         -- TODO: This will probably be rm
         ViewMember _ ->
             ( model, Cmd.none )
-
-     
-
 
         -- NAV: ResponseDataFromMain - key function
         -- NOTE: All the branching here is configuring the model according to
@@ -422,25 +407,14 @@ update msg model =
                         False
             in
             ( { model
-                | --user = newUser
-                  --, queryType = updatedquerytype
-                  --,
-                  isHardwareLNSConnected = updatedIsLNSConnected
-                , isHardwareLNXConnected = updatedIsLNXConnected
+                | isHardwareDeviceConnected = updatedIsLNXConnected
                 , isXMRWalletConnected = updatedIsXMRConnected
-                --, xmrWalletAddress = --decodedHardwareDeviceMsg
-
-                --, selectedranking = newRanking
-                --, objectJSONfromJSPort = Just decodedJsObj
-                --, errors = errors
               }
             , Cmd.none
             )
 
         Confirm ->
             ( model, Cmd.none )
-
-     
 
         Cancel ->
             -- RF: You can make the cancel context specific to the query type
@@ -449,8 +423,6 @@ update msg model =
                     { model
                         | queryType = OwnedSelectedView
                     }
-
-                
 
                 _ ->
                     { model
@@ -477,7 +449,7 @@ update msg model =
             )
 
         ClickedTempXMRAddr ->
-            ( {model | isXMRWalletConnected = True}
+            ( { model | isXMRWalletConnected = True }
             , Cmd.none
             )
 
@@ -602,25 +574,6 @@ update msg model =
 
         LNSConnectResponse (Ok auth) ->
             let
-                headers =
-                    []
-
-                -- NOTE: the 'Zoho-oauthtoken' sent at this point is the access token received after refresh
-                --[ Http.header "Authorization" ("Bearer " ++ withDefault "No access token 2" (Just auth.deployment_model)) ]
-                -- incorporate new header with access token and update middleware port
-                flagUrlWithMongoDBMWAndPortUpdate =
-                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
-                        Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.middleWarePath Nothing Nothing
-
-                    else
-                        Url.toString <| Url.Url model.flagUrl.protocol model.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
-
-                newHttpParams =
-                    ToMongoDBMWConfig Consts.get headers flagUrlWithMongoDBMWAndPortUpdate Http.emptyBody Nothing Nothing
-
-                apiSpecs =
-                    model.apiSpecifics
-
                 -- HACK:
                 newModel =
                     { model
@@ -628,10 +581,7 @@ update msg model =
                     }
             in
             ( newModel
-            , -- NOTE: if you want to run a function based on the response can here:
-              Cmd.none
-              --loginRequest newModel
-              --sendPostDataToMongoDBMW newModel
+            , Cmd.none
             )
 
         LNSConnectResponse (Err responseErr) ->
@@ -710,8 +660,6 @@ update msg model =
             ( newModel
             , Cmd.none
             )
-
-       
 
         -- NAV: Update - User registration form fields
         UpdateNickName value ->
@@ -832,10 +780,6 @@ view model =
         ]
 
 
-
-
-
-
 confirmDeleteUserView : U.UserInfo -> Html Msg
 confirmDeleteUserView userInfo =
     Framework.responsiveLayout [] <|
@@ -849,14 +793,6 @@ confirmDeleteUserView userInfo =
                 , infoBtn "Cancel" <| CancelFetchedMember
                 ]
             ]
-
-
-
-
-
-
-
-
 
 
 
@@ -876,18 +812,15 @@ spectatorView =
             ]
 
 
-
-
-
 hardwareWalletConnectionOptionsView : Model -> Html Msg
 hardwareWalletConnectionOptionsView model =
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
-            [ Element.el Heading.h5 <| Element.text "Welcome - Please Connect XMR Wallet"
+            [ Element.el Heading.h5 <| Element.text "Welcome - Please Connect Your Hardware Device"
             , Element.text "\n"
             , infoBtn "Grant Browser Permissions To Device" <| ClickedHardwareDeviceConnect
             , Element.text "\n"
-            , infoBtn "Connect XMR Wallet" <| ClickedXMRWalletConnect
+            , infoBtn "Connect Hardware Device" <| ClickedXMRWalletConnect
             , Element.text "\n"
             , infoBtn "Temp Got XMR Addr" <| ClickedTempXMRAddr
             , case model.errors of
@@ -1064,7 +997,6 @@ type QueryType
     | MemberSelectedView
     | SpectatorSelectedView
     | ConfirmDeleteOwnedRanking
-   
     | PrepareResult
     | Error String
     | ConfirmJoinMemberView
@@ -1306,9 +1238,6 @@ additonalDataFromJsDecoder =
         (field "nickname" D.string)
 
 
-
-
-
 successfullLoginResultDecoder : Decoder SuccessfulLoginResult
 successfullLoginResultDecoder =
     D.map4 SuccessfulLoginResult
@@ -1446,9 +1375,6 @@ playerDecoder =
         (D.field "playerId" D.string)
         (D.field "challengerId" D.string)
         (D.field "rank" D.int)
-
-
-
 
 
 fullDocumentDecoder : Decoder FullDocument
@@ -1610,13 +1536,8 @@ prepareEmailPwordLogin emailPword =
 
 -- NAV: Helper functions:
 -- NOTE: tested function
-
-
-
 -- NOTE: Will probably be nec. to receive the selected ranking, unless,
 -- we manage to get all the necessary from the the change (unlikely)
-
-
 
 
 ensureDataIsJsonObj : DataFromMongo -> D.Value
@@ -1659,10 +1580,6 @@ isValidXMRAddress str =
             False
 
 
-
-
-
-
 handleDecodeUser : D.Value -> U.UserInfo
 handleDecodeUser rawJsonMessage =
     let
@@ -1680,9 +1597,6 @@ handleDecodeUser rawJsonMessage =
         Err err ->
             -- HACK:
             U.emptyUserInfo
-
-
-
 
 
 getIdFromValue : D.Value -> Result D.Error String
@@ -1722,9 +1636,6 @@ convertJsonStringToJsonValue jsonString =
             -- There was an error decoding the JSON.
             -- The error message will give you some information about what went wrong.
             Err (D.errorToString err)
-
-
-
 
 
 isValidatedForAllUserDetailsInput : U.UserInfo -> Bool
@@ -2182,5 +2093,3 @@ gotLastUpdatedBy json =
 
 
 -- NAV: Html Snippets
-
-

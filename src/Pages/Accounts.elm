@@ -122,7 +122,7 @@ type alias Model =
     , queryType : QueryType
     , isValidNewAccessToken : Bool
     , isHardwareLNSConnected : Bool
-    , isHardwareLNXConnected : Bool
+    , isHardwareDeviceConnected : Bool
     , isXMRWalletConnected : Bool
     , xmrWalletAddress : String
     , errors : List String
@@ -150,7 +150,7 @@ initialModel =
     , queryType = LoggedInUser
     , isValidNewAccessToken = False
     , isHardwareLNSConnected = False
-    , isHardwareLNXConnected = False
+    , isHardwareDeviceConnected = False
     , isXMRWalletConnected = False
     , xmrWalletAddress = ""
     , errors = []
@@ -427,7 +427,7 @@ update msg model =
                   --, queryType = updatedquerytype
                   --,
                   isHardwareLNSConnected = updatedIsLNSConnected
-                , isHardwareLNXConnected = updatedIsLNXConnected
+                , isHardwareDeviceConnected = updatedIsLNXConnected
                 , isXMRWalletConnected = updatedIsXMRConnected
                 , xmrWalletAddress = decodedHardwareDeviceMsg
 

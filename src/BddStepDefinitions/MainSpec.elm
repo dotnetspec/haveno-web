@@ -59,18 +59,26 @@ runSpecTests =
                         }
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-                |> when "the LNS hww is NOT detected"
+                -- NOTE: problem is that the Edge browser error for 
+                -- no device at all is same as error for device connected but no user permission.
+                |> when "the hwd is NOT detected"
                     [ -- NOTE: 'send' here means send from js to elm
-                      Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
+                      Spec.Port.send "receiveMessageFromJs" jsonDeviceNeedsPermission
                     ]
                 -- NOTE: Each 'it' block resolves to an Elm-spec Plan type and receives a Script from 'given' and 'when' blocks
                 |> Spec.observeThat
-                    [ it "should display a message informing the user not connected"
+                    [ Spec.observeThat
+                        [ it "a. should register that no device is detected"
+                            (Observer.observeModel .xmrHardwareWalletAddressError
+                                |> Spec.expect (equals (Just Main.DeviceNeedsPermission))
+                            )
+                        ]
+                    , it "b. should show the popup"
                         (Observer.observeModel .isPopUpVisible
                             |> Spec.expect
                                 Claim.isTrue
                         )
-                    , it "displays a message indicating the LNS hardware device is NOT connected"
+                    , it "displays a message indicating the hardware device is NOT connected"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ tag "p" ]
@@ -121,7 +129,7 @@ runSpecTests =
             )
         , --Runner.skip <|
           --Runner.pick <|
-          scenario "2: hww NOT connected, user clicks the 'Continue' button, navs to Hardware page"
+          scenario "2: hwd NOT connected, user clicks the 'Continue' button, navs to Hardware page"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -133,8 +141,8 @@ runSpecTests =
                         }
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-                |> when "the LNS hww is NOT detected"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
+                |> when "the hwd is NOT detected"
+                    [ Spec.Port.send "receiveMessageFromJs" jsonDeviceNeedsPermission
                     ]
                 |> when "the user clicks the Continue button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
@@ -151,7 +159,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Welcome - Please Connect XMR Wallet"
+                                        Claim.isStringContaining 1 "Welcome - Please Connect Your Hardware Device"
                                 )
                         )
                     , it "should display the 'Connected' indicator as Disconnected (red)"
@@ -187,20 +195,17 @@ runSpecTests =
                                             Claim.isStringContaining 1 "assets/resources/images/logo-splash100X33.png"
                                 )
                         )
+                    , it "should NOT be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isFalse
+                        )
                     ]
             )
-
-        {- #### **Scenario 3: Confirming that the LNS hardware wallet is connected**
-           **Given** the web app is opened
-           **When** the LNS hww is detected
-           **Then** the popup should not be visible
-           **And** it should determine the LNS hww type
-           **And** it should display a constant (no matter which page on) text indicator that the LNS is connected
-           **Then** it should display the dashboard
-        -}
         , --Runner.skip <|
           --Runner.pick <|
-          scenario "3: If the the LNS/LNX hardware wallet is already connected, indicate this and nav to Hardware page"
+          scenario """3: If the hardware device IS connected but needs user permission,
+           indicate this and nav to Hardware page"""
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -212,31 +217,30 @@ runSpecTests =
                         }
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-                -- NOTE: Bypass the popup
-                {- |> when "the user clicks the Continue button"
-                   [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
-                -}
-                |> when "the LNS/LNX hww is detected"
+                |> when "the hardware device indicates it needs user permission"
+                    [ 
+                      Spec.Port.send "receiveMessageFromJs" jsonDeviceNeedsPermission
+                    ]
+                |> when "the user clicks the Continue button"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                |> when "the user clicks the Grant Browser Permissions button"
+                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedHardwareDeviceConnect) ]
+                |> when "the LNS hww is detected"
                     [ -- NOTE: 'send' here means send from js to elm
                       Spec.Port.send "receiveMessageFromJs" jsonNanoSDetected
                     ]
-                {- |> when "the Monero wallet address is retrieved from hardware device"
-                   [ -- NOTE: 'send' here means send from js to elm
-                     Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
-                   ]
-                -}
                 |> Spec.observeThat
                     [ it "a.hides the popup"
                         (Observer.observeModel .isPopUpVisible
                             |> Spec.expect
                                 Claim.isFalse
                         )
-                    , it "c. sets isHardwareLNSConnected to true"
-                        (Observer.observeModel .isHardwareLNSConnected
+                    , it "c. sets isHardwareDeviceConnected to true"
+                        (Observer.observeModel .isHardwareDeviceConnected
                             |> Spec.expect
                                 Claim.isTrue
                         )
-                    , it "d. should display a constant (no matter which page on) text indicator that the LNS/LNX is connected"
+                    , it "d. should display a constant (no matter which page on) text indicator that the device is connected"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ tag "span" ]
@@ -253,7 +257,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Welcome - Please Connect XMR Wallet"
+                                        Claim.isStringContaining 1 "Welcome - Please Connect Your Hardware Device"
                                 )
                         )
                     , it "should NOT be possible to use the Menu"
@@ -277,9 +281,9 @@ runSpecTests =
                         }
                     |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
                 )
-                |> when "the LNX hww is detected"
-                    [ -- NOTE: 'send' here means send from js to elm
-                      Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
+                |> when "the device is detected, but the XMR wallet is NOT connected"
+                    [ 
+                      Spec.Port.send "receiveMessageFromJs" jsonXMRWalletClosed
                     ]
                 |> Spec.observeThat
                     [ it "a.hides the popup"
@@ -294,7 +298,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Welcome - Please Connect XMR Wallet"
+                                        Claim.isStringContaining 1 "Welcome - Please Connect Your Hardware Device"
                                 )
                         )
                     , it "displays a message indicating the XMR wallet is NOT connected"
@@ -316,7 +320,7 @@ runSpecTests =
             )
         , --Runner.skip <|
           --Runner.pick <|
-          scenario "5: Display the XMR wallet address"
+          scenario "5a: Fetching an XMR address from the Hardware Wallet - success"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -345,14 +349,8 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isFalse
                         )
-                    , it "b.is on the Dashboard page"
-                        -- NOTE: Cos connected with valid XMR address
-                        (Observer.observeModel .page
-                            -- NOTE: This is the model's page, not the page in the browser - Dashboard.initialModel is a placeholder for the test only here
-                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.DashboardPage Dashboard.initialModel)
-                        )
                     , it "c. confirms the hardware LNX is connected"
-                        (Observer.observeModel .isHardwareLNXConnected
+                        (Observer.observeModel .isHardwareDeviceConnected
                             |> Spec.expect
                                 Claim.isTrue
                         )
@@ -376,7 +374,69 @@ runSpecTests =
                                         Claim.isStringContaining 1 "XMR Wallet Address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
                                 )
                         )
-                    , it "should NOT be possible to use the Menu"
+                    , it "b.is on the Dashboard page"
+                        -- NOTE: Cos connected with valid XMR address
+                        (Observer.observeModel .page
+                            -- NOTE: This is the model's page, not the page in the browser - Dashboard.initialModel is a placeholder for the test only here
+                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.DashboardPage Dashboard.initialModel)
+                        )
+                    , it "should be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    ]
+            )
+        , --Runner.skip <|
+          --Runner.pick <|
+          scenario "5b: Fetching an XMR address from the Hardware Wallet - failure"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    -- NOTE: Currently believe this is equivalent to the user clicking a link
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                )
+                -- NOTE: You need to do this to get away from 'Blank' page
+                |> when "the user clicks the Continue button"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                
+                |> when "the hardware XMR wallet returns an error attempting to get XMR address"
+                    [ Spec.Port.send "receiveMessageFromJs" errorGettingXMRWalletAddress
+                    ]
+                |> Spec.observeThat
+                    [ it "a.hides the popup"
+                        (Observer.observeModel .isPopUpVisible
+                            |> Spec.expect
+                                Claim.isFalse
+                        )
+                    , it "c. confirms the hardware LNX is connected"
+                        (Observer.observeModel .isHardwareDeviceConnected
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    , it "d. displays a message indicating the XMR wallet is NOT connected"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "xmrwalletconnection" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "XMR Wallet Not Connected"
+                                )
+                        )
+                    , it "b.is on the Hardware page"
+                        -- NOTE: Cos connected with valid XMR address
+                        (Observer.observeModel .page
+                            -- NOTE: This is the model's page, not the page in the browser - Hardware.initialModel is a placeholder for the test only here
+                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.HardwarePage Hardware.initialModel)
+                        )
+                    , it "should be possible to use the Menu"
                         (Observer.observeModel .isNavMenuActive
                             |> Spec.expect
                                 Claim.isFalse
@@ -427,8 +487,8 @@ runSpecTests =
                                         "http://localhost:1234/"
                                 )
                         )
-                    , it "c. sets isHardwareLNSConnected to true"
-                        (Observer.observeModel .isHardwareLNSConnected
+                    , it "c. sets isHardwareDeviceConnected to true"
+                        (Observer.observeModel .isHardwareDeviceConnected
                             |> Spec.expect
                                 Claim.isTrue
                         )
@@ -556,7 +616,7 @@ runSpecTests =
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
                 |> when "the LNS hww is not detected"
                     [ -- NOTE: 'send' here means send from js to elm
-                      Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
+                      Spec.Port.send "receiveMessageFromJs" jsonDeviceNeedsPermission
                     ]
                 |> when "the user clicks the Continue button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
@@ -573,7 +633,7 @@ runSpecTests =
                                 Claim.isFalse
                         )
                     , it "the LNS/LNX hardware wallet is not detected"
-                        (Observer.observeModel .isHardwareLNSConnected
+                        (Observer.observeModel .isHardwareDeviceConnected
                             |> Spec.expect
                                 Claim.isTrue
                         )
@@ -617,9 +677,9 @@ runSpecTests =
                 -}
                 |> when "the user clicks the Continue button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
-                |> when "the LNS hww is not detected"
+                |> when "the hwd is not detected"
                     [ -- NOTE: 'send' here means send from js to elm
-                      Spec.Port.send "receiveMessageFromJs" jsonNanoSNOTDetected
+                      Spec.Port.send "receiveMessageFromJs" jsonDeviceNeedsPermission
                     ]
                 |> when "the user clicks the Continue button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
@@ -627,24 +687,25 @@ runSpecTests =
                     [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedHardwareDeviceConnect) ]
                 |> when "the browser does not grant permission"
                     [ -- NOTE: 'send' here means send from js to elm
-                      Spec.Port.send "receiveMessageFromJs" failedRequestDeviceInBrowser
+                      Spec.Port.send "receiveMessageFromJs" noDeviceSelectedInBrowser
                     ]
                 |> Spec.observeThat
                     [ it "is on the Hardware page"
                         (Observer.observeModel .page
                             |> Spec.expect (Claim.isEqual Debug.toString <| Main.HardwarePage Hardware.initialModel)
                         )
+                    
                     , it "a.hides the popup"
                         (Observer.observeModel .isPopUpVisible
                             |> Spec.expect
                                 Claim.isFalse
                         )
-                    , it "the LNS/LNX hardware device is not detected"
-                        (Observer.observeModel .isHardwareLNSConnected
+                    , it "displays the hardware device as NOT detected"
+                        (Observer.observeModel .isHardwareDeviceConnected
                             |> Spec.expect
                                 Claim.isFalse
                         )
-                    , it "it should display a message informing the user should switch to another browser type"
+                    , it "should display a message informing the user should switch to another browser type"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ tag "span" ]
@@ -682,6 +743,19 @@ jsonNanoSDetected =
         [ ( "operationEventMsg", E.string "nanoS" )
         ]
 
+jsonDeviceNeedsPermission : E.Value
+jsonDeviceNeedsPermission =
+    E.object
+        [ ( "operationEventMsg", E.string "Must be handling a user gesture to show a permission request" )
+        ]
+
+        
+jsonXMRWalletClosed : E.Value
+jsonXMRWalletClosed =
+    E.object
+        [ ( "operationEventMsg", E.string "UNKNOWN_APDU" )
+        ]
+
 
 jsonNanoXDetected : E.Value
 jsonNanoXDetected =
@@ -690,17 +764,17 @@ jsonNanoXDetected =
         ]
 
 
-jsonNanoSNOTDetected : E.Value
-jsonNanoSNOTDetected =
+jsonNoDeviceDetectedInFirefox : E.Value
+jsonNoDeviceDetectedInFirefox =
     E.object
-        [ ( "operationEventMsg", E.string "Error connecting to device" )
+        [ ( "operationEventMsg", E.string "navigator.usb is undefined" )
         ]
 
 
-failedRequestDeviceInBrowser : E.Value
-failedRequestDeviceInBrowser =
+noDeviceSelectedInBrowser : E.Value
+noDeviceSelectedInBrowser =
     E.object
-        [ ( "operationEventMsg", E.string "Failed to execute 'requestDevice' on 'USB'" )
+        [ ( "operationEventMsg", E.string "No device selected" )
         ]
 
 
@@ -708,6 +782,13 @@ validXMRWalletAddress : E.Value
 validXMRWalletAddress =
     E.object
         [ ( "operationEventMsg", E.string "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" )
+        ]
+
+
+errorGettingXMRWalletAddress : E.Value
+errorGettingXMRWalletAddress =
+    E.object
+        [ ( "operationEventMsg", E.string "Error getting Monero address" )
         ]
 
 

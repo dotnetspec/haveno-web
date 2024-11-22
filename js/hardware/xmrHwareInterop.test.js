@@ -58,7 +58,7 @@ describe('getMoneroAddress', () => {
     await expect(getMoneroAddress()).rejects.toThrow('Failed to connect');
 
     // Verify that console.error was called with the error
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error getting Monero address:', new Error('Failed to connect'));
+    expect(consoleErrorSpy).toHaveBeenCalledWith( new Error('Failed to connect'));
 
     // Restore the original console.error implementation
     consoleErrorSpy.mockRestore();

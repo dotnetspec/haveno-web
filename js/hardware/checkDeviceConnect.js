@@ -33,7 +33,7 @@ export async function checkDeviceConnection(app) {
         }
         catch(error) {
             
-                console.error('Error connecting to device:', error);
+                console.error(error.message);
                 app.ports.receiveMessageFromJs.send({ Err: error.message });
             }
         }

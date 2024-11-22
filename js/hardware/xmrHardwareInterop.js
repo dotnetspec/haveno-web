@@ -58,7 +58,7 @@ import { serializeDerivationPath } from "./serializeDerivationPath";
       const address = new TextDecoder().decode(response.subarray(0, response.length - 2)); // Remove status bytes
       return address;
     } catch (error) {
-      console.error("Error getting Monero address:", error);
+      console.error( error);
       throw error;
     }
   }

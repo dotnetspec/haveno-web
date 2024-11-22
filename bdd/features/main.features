@@ -19,7 +19,7 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **Then** it should display a message informing the user not connected
 **And** it should not display the 'Connected' indicator in the background
 **And** it should NOT display the 'XMR Wallet address' indicator in the background
-**And** it should NOT be possible to use the Menu
+**And** it should ensure the navigation menu is disabled
 **And** it should NOT be possible to see the Hardware page
 
 
@@ -31,7 +31,7 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **Then** it hides the popup
 **And** it should display the Hardware page
 **And** it should display the 'Connected' indicator as Disconnected (red)
-**And** it should NOT be possible to use the Menu
+**And** it should ensure the navigation menu is disabled
 
 
 #### **Scenario 3: If the the LNS/LNX device is already connected, indicate this and nav to Hardware page**
@@ -51,23 +51,39 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **Then** it hides the popup
 **And** it should display the Hardware page
 **And** it should display the 'XMR Wallet Not Connected' indicator in red
-**And** it should NOT be possible to use the Menu
+**And** it should ensure the navigation menu is disabled
 
-#### **Scenario 5: Connecting the XMR Hardware Wallet**
+type XmrWalletAddressErrors = 
+    NoDeviceORDeviceLocked String -- Must be handling a user gesture to show a permission request
+    | DeviceUnlocked_XMRWalletClosed String -- UNKNOWN_APDU
+    | DeviceUnlocked_XMRWalletOpen String -- CLA_NOT_SUPPORTED
+
+#### **Scenario 5a: Fetching an XMR address from the Hardware Wallet - success**
 
 **Given** the user accesses the Hardware page
 **And** the user has the hardware device connected to their mobile device 
 **And** the user has opened the XMR wallet on the device
 **When** the user clicks the "Connect XMR Wallet" feature
+**And** the device returns a connection success message
 **Then** it should display a confirmation message indicating successful XMR wallet connection
 **And** it should display the address
 **And** it should display the Dashboard page
+**And** it should ensure the navigation menu is enabled
+
+#### **Scenario 5b: Fetching an XMR address from the Hardware Wallet - failure**
+
+**Given** the user accesses the Hardware page
+**And** the user has the hardware device connected to their mobile device 
+**And** the user has opened the XMR wallet on the device
+**When** the user clicks the "Connect XMR Wallet" feature
+**And** the device returns an error
+**Then** it should display the 'XMR Wallet Not Connected' indicator in red
+**And** it should ensure the navigation menu is disabled
  
 
 #### **Scenario 6: Show a message that the Haveno core app is not yet connected**  
 
-**Given** the web app is opened  
-
+**Given** the web app is opened
 **When** the user clicks the 'Connect Hardware' button  
 **And** the LNS hardware wallet is detected  
 **And** the Monero wallet address is retrieved from the hardware  
@@ -76,7 +92,8 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **And** the hwd should be connected
 **And** the footer should display "No Haveno version available"  
 **And** the Dashboard page should be displayed  
-**And** the model should reflect the current page as the Dashboard page  
+**And** the model should reflect the current page as the Dashboard page
+**And** it should ensure the navigation menu is disabled
   
 
 #### **Scenario 7: Show the Haveno core app version in the footer**  
@@ -92,6 +109,7 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **And** the Dashboard page should be displayed  
 **And** the model should reflect the current page as the Dashboard page  
 **And** the footer should display the version number "1.0.7"
+**And** it should ensure the navigation menu is enabled
 
 #### **Scenario 8: User confirms hware device connection in browser**  
 
