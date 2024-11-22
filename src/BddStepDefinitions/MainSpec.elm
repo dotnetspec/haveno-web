@@ -141,8 +141,8 @@ runSpecTests =
                         }
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-                |> when "the hwd is NOT detected"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonDeviceNeedsPermission
+                |> when "the hwd is NOT detected by the browser"
+                    [ Spec.Port.send "receiveMessageFromJs" noDeviceSelectedInBrowser
                     ]
                 |> when "the user clicks the Continue button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
@@ -169,7 +169,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "No hardware device connected"
+                                        Claim.isStringContaining 1 "Please connect to a Chrome based mobile browser"
                                 )
                         )
                     , it "should NOT be possible to use the Menu"
