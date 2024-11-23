@@ -1207,10 +1207,7 @@ sendVersionRequest request =
 
 getDeviceResponseMsg : String -> Maybe XmrHardwareWalletAddressError
 getDeviceResponseMsg errorString =
-    let
-        _ =
-            Debug.log "errorString is " errorString
-    in
+    
     {-
        -- NOTE: If need this it clashes with "No device selected" and we need to sort out the order of the checks
        if String.contains "No device" errorString then
