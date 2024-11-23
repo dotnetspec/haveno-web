@@ -146,8 +146,6 @@ initialModel =
     , isValidNewAccessToken = False
     , isHardwareDeviceConnected = False
     , isXMRWalletConnected = False
-
-    -- REVIEW: Is this doing anything?
     , xmrWalletAddress = ""
     , errors = []
     , isReturnUser = False
@@ -449,7 +447,7 @@ update msg model =
             )
 
         ClickedTempXMRAddr ->
-            ( { model | isXMRWalletConnected = True }
+            ( model
             , Cmd.none
             )
 

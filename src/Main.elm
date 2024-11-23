@@ -103,7 +103,7 @@ init flag url key =
 
             -- HACK: Temp until we receive the address from the hw device
             -- NOTE: This is actually the only place in the app that is currently affecting the notification mesage
-            , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" --""
+            , xmrWalletAddress = "" --""
             , isPopUpVisible = True
             , isNavMenuActive = False
             , version = "No Haveno version available"
@@ -644,7 +644,8 @@ update msg model =
                             )
 
                         Pages.Hardware.ClickedTempXMRAddr ->
-                            ( { model | page = DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model, isNavMenuActive = True, isXMRWalletConnected = True }
+                            ( { model | page = DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model, isNavMenuActive = True, isXMRWalletConnected = True 
+                            , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"}
                             , Cmd.none
                             )
 
@@ -1583,7 +1584,7 @@ isXMRWalletConnectedIndicator model =
                     , Attr.id "xmrwalletaddress"
                     ]
                     [ text
-                        (if (model.isHardwareDeviceConnected || model.isHardwareDeviceConnected) && model.isXMRWalletConnected && isValidXMRAddress model.xmrWalletAddress then
+                        (if model.isHardwareDeviceConnected && model.isXMRWalletConnected && isValidXMRAddress model.xmrWalletAddress then
                             "XMR Wallet Address: " ++ model.xmrWalletAddress
 
                          else if model.isPopUpVisible then

@@ -59,7 +59,7 @@ runSpecTests =
                         }
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-                -- NOTE: problem is that the Edge browser error for 
+                -- NOTE: problem is that the Edge browser error for
                 -- no device at all is same as error for device connected but no user permission.
                 |> when "the hwd is NOT detected"
                     [ -- NOTE: 'send' here means send from js to elm
@@ -218,8 +218,7 @@ runSpecTests =
                     |> Spec.Setup.withLocation placeholderUrl
                 )
                 |> when "the hardware device indicates it needs user permission"
-                    [ 
-                      Spec.Port.send "receiveMessageFromJs" jsonDeviceNeedsPermission
+                    [ Spec.Port.send "receiveMessageFromJs" jsonDeviceNeedsPermission
                     ]
                 |> when "the user clicks the Continue button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
@@ -282,8 +281,7 @@ runSpecTests =
                     |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
                 )
                 |> when "the device is detected, but the XMR wallet is NOT connected"
-                    [ 
-                      Spec.Port.send "receiveMessageFromJs" jsonXMRWalletClosed
+                    [ Spec.Port.send "receiveMessageFromJs" jsonXMRWalletClosed
                     ]
                 |> Spec.observeThat
                     [ it "a.hides the popup"
@@ -405,7 +403,6 @@ runSpecTests =
                 -- NOTE: You need to do this to get away from 'Blank' page
                 |> when "the user clicks the Continue button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
-                
                 |> when "the hardware XMR wallet returns an error attempting to get XMR address"
                     [ Spec.Port.send "receiveMessageFromJs" errorGettingXMRWalletAddress
                     ]
@@ -640,7 +637,7 @@ runSpecTests =
                     , it "it should display a message informing the user connected"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ Spec.Markup.Selector.id  "connectionIndicator" ]
+                            << by [ Spec.Markup.Selector.id "connectionIndicator" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
@@ -694,7 +691,6 @@ runSpecTests =
                         (Observer.observeModel .page
                             |> Spec.expect (Claim.isEqual Debug.toString <| Main.HardwarePage Hardware.initialModel)
                         )
-                    
                     , it "a.hides the popup"
                         (Observer.observeModel .isPopUpVisible
                             |> Spec.expect
@@ -714,6 +710,78 @@ runSpecTests =
                                     Markup.text <|
                                         Claim.isStringContaining 1 "Please connect to a Chrome based mobile browser"
                                 )
+                        )
+                    ]
+            )
+        , --Runner.skip <|
+          --Runner.pick <|
+          scenario "10: Fetching an XMR address from the Hardware Wallet - success"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    -- NOTE: Currently believe this is equivalent to the user clicking a link
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                )
+                -- NOTE: You need to do this to get away from 'Blank' page
+                |> when "the user clicks the Continue button"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                |> when "the LNX hww is detected"
+                    [ -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
+                    ]
+                {- |> when "the hardware XMR wallet returns a valid XMR address"
+                   [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
+                   ]
+                -}
+                |> when "the user clicks the Grant Browser Permissions button"
+                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
+                |> Spec.observeThat
+                    [ it "a.hides the popup"
+                        (Observer.observeModel .isPopUpVisible
+                            |> Spec.expect
+                                Claim.isFalse
+                        )
+                    , it "c. confirms the hardware LNX is connected"
+                        (Observer.observeModel .isHardwareDeviceConnected
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    , it "d. displays a message indicating the XMR wallet is connected"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "xmrwalletconnection" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "XMR Wallet Connected"
+                                )
+                        )
+                    , it "e. should display a confirmation message indicating successful discovery of XMR wallet address"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "xmrwalletaddress" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "XMR Wallet Address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                )
+                        )
+                    , it "b.is on the Dashboard page"
+                        -- NOTE: Cos connected with valid XMR address
+                        (Observer.observeModel .page
+                            -- NOTE: This is the model's page, not the page in the browser - Dashboard.initialModel is a placeholder for the test only here
+                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.DashboardPage Dashboard.initialModel)
+                        )
+                    , it "should be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isTrue
                         )
                     ]
             )
@@ -743,13 +811,14 @@ jsonNanoSDetected =
         [ ( "operationEventMsg", E.string "nanoS" )
         ]
 
+
 jsonDeviceNeedsPermission : E.Value
 jsonDeviceNeedsPermission =
     E.object
         [ ( "operationEventMsg", E.string "Must be handling a user gesture to show a permission request" )
         ]
 
-        
+
 jsonXMRWalletClosed : E.Value
 jsonXMRWalletClosed =
     E.object
