@@ -839,7 +839,7 @@ runSpecTests =
                     ]
             )
         , --Runner.skip <|
-          Runner.pick <|
+          --Runner.pick <|
             scenario "12. sendMessageToJs sends 'ElmReady' on init"
                 (given
                     (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
