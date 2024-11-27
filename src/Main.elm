@@ -17,7 +17,7 @@ import Extras.Constants as Constants exposing (yck_id)
 import Extras.TestData as TestData exposing (placeholderUrl)
 import Framework.Heading as Heading
 import Grpc exposing (..)
-import Html exposing (Html, a, br, button, div, footer, h2, h3, h4, h5, h6, header, i, img, li, nav, node, p, source, span, text, ul, input, label)
+import Html exposing (Html, a, br, button, div, footer, h2, h3, h4, h5, h6, header, i, img, input, label, li, nav, node, p, source, span, text, ul)
 import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick)
 import Json.Decode as JD
@@ -44,6 +44,10 @@ import Types.DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 import Url.Parser exposing ((</>), (<?>), oneOf, s)
 import Url.Parser.Query as Query exposing (..)
+
+
+placeholderUrl =
+    Url.Url Http "localhost" (Just 1234) "/" Nothing Nothing
 
 
 
@@ -113,6 +117,7 @@ init flag url key =
             , xmrHardwareWalletAddressError = Nothing
             , deviceModel = Nothing
             , initialized = False
+            
             }
     in
     updateUrl url updatedModel
@@ -144,6 +149,7 @@ type alias Model =
     , errors : List String
     , isHardwareDeviceConnected : Bool
     , isXMRWalletConnected : Bool
+    , xmrHardwareWalletAddressError : Maybe XmrHardwareWalletAddressError
     , xmrWalletAddress : String
     , isPopUpVisible : Bool
     , isNavMenuActive : Bool
@@ -151,7 +157,6 @@ type alias Model =
     --, isPageHeaderVisible : Bool
     , version : String
     , currentJsMessage : String
-    , xmrHardwareWalletAddressError : Maybe XmrHardwareWalletAddressError
     , deviceModel : Maybe DeviceModel
     , initialized : Bool
     }
@@ -398,13 +403,27 @@ update msg model =
                             --updateUrl newUrlAfterCheckConnections newMainModel
                             let
                                 {- decodedHardwareDeviceMsg =
-                                   case JD.decodeValue justmsgFieldFromJsonDecoder rawJsonMessage of
-                                       Ok message ->
-                                           message.operationEventMsg
+                                                  case JD.decodeValue justmsgFieldFromJsonDecoder rawJsonMessage of
+                                                      Ok message ->
+                                                          message.operationEventMsg
+                                   WalletPage _ ->
+                                       ( model, Cmd.none )
 
-                                       Err err ->
-                                           --JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
-                                           "error"
+                                   HardwarePage _ ->
+                                           -- NOTE: unless we figure out how to update Main's model after updating hardware's model, we will not
+                                           -- be using ResponseDataFromMain to manage the logic here.
+                                           --toHardware newMainModel (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) newHardwareModel)
+                                           --updateUrl (Url.Url Http "localhost" Nothing "/hardware" Nothing Nothing) newMainModel
+                                           --updateUrl newUrlAfterCheckConnections newMainModel
+                                           let
+                                               decodedHardwareDeviceMsg =
+                                                  case JD.decodeValue justmsgFieldFromJsonDecoder rawJsonMessage of
+                                                      Ok message ->
+                                                          message.operationEventMsg
+
+                                                      Err err ->
+                                                          --JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
+                                                          "error"
                                 -}
                                 {- updatedIsLNSConnected =
                                        if model.isHardwareDeviceConnected == False && decodedHardwareDeviceMsg == "nanoS" then
@@ -471,6 +490,7 @@ update msg model =
 
                                 newPage =
                                     if updatedIsValidXMRAddressConnected then
+                                        --DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model
                                         DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model
 
                                     else
@@ -763,11 +783,10 @@ view model =
                     Pages.Wallet.view wallet
                         |> Html.map GotWalletMsg
 
-        {- else
-           div [] []
-        -}
+              
+
         isConnected =
-            if model.isHardwareDeviceConnected || model.isHardwareDeviceConnected then
+            if model.isHardwareDeviceConnected then
                 True
 
             else
@@ -781,8 +800,8 @@ view model =
         { title = "Haveno-Web"
         , body =
             [ --div [ Attr.class "topLinks-flex-container" ] [burgerMenu model.page]
-                pageHeader model.page
-                , viewPopUp model
+              pageHeader model.page
+            , viewPopUp model
             ]
         }
 
@@ -843,6 +862,7 @@ type
     | HardwarePage Pages.Hardware.Model
     | WalletPage Pages.Wallet.Model
     | BlankPage Pages.Blank.Model
+    
 
 
 
@@ -916,6 +936,7 @@ urlAsPageParser =
         , Url.Parser.map Buy (Url.Parser.s "buy")
         , Url.Parser.map Market (Url.Parser.s "market")
         , Url.Parser.map Hardware (Url.Parser.s "hardware")
+        , Url.Parser.map Wallet (Url.Parser.s "wallet")
         ]
 
 
@@ -1286,6 +1307,12 @@ viewPopUp model =
                     ]
                 ]
 
+          else if model.isHardwareDeviceConnected then
+            div [] [ text "Nano S Connected" ]
+            {- else if model.isHardwareLNXConnected then
+               div [] [ text "Nano X Connected" ]
+            -}
+
           else
             div [] []
         ]
@@ -1335,7 +1362,17 @@ subscriptions _ =
 port sendMessageToJs : String -> Cmd msg
 
 
+port receiveMessageFromJs : (JD.Value -> msg) -> Sub msg
 
+
+
+{- port initializeLedger : (Int -> msg) -> Sub msg
+   port getAccountInfoFromLNS : (Int -> msg) -> Sub msg
+
+   -- Handle the responses from the ports
+   port ledgerInitialized : (JD.Value -> msg) -> Sub msg
+   port accountInfoReceived : (JD.Value -> msg) -> Sub msg
+-}
 {- -- NOTE: messageReceiver: You could have just recieved a string here (String -> msg),
    but now we're getting a JSON object from js, created like this in the js:
 
@@ -1345,12 +1382,6 @@ port sendMessageToJs : String -> Cmd msg
      msg has a handle function that extracts it using a decoder
 
 -}
-
-
-port receiveMessageFromJs : (JD.Value -> msg) -> Sub msg
-
-
-
 {--HACK: Since only Dashboard page no banner, use below. But with more page etc. can add bool banner property to 
 each page model and match against-}
 -- REF: Zoho-Responsive
@@ -1395,7 +1426,9 @@ logoImage =
 pageHeader : Page -> Html msg
 pageHeader page =
     let
-        _ = Debug.log "pageHeader " "is ready" 
+        _ =
+            Debug.log "pageHeader " "is ready"
+
         pageheader =
             header []
                 [ div [ Attr.class "topLinks-flex-container" ]
@@ -1409,13 +1442,11 @@ pageHeader page =
                 {- -- NOTE: When main-nav-flex-container is displayed is determined by the .css -}
                 , div [ Attr.class "main-nav-flex-container" ]
                     [ div [ class "section" ]
-                        [input [ type_ "checkbox", id "nav-toggle", class "nav-toggle" ] []
-                            , nav [ class "navlinks" ] [ navLinks page ]
-                            , label [ for "nav-toggle", Attr.classList [ ( "nav-toggle-label", True ), ( "header-left-element", False ) ] ]
-                                [ 
-                                ]
-                        ,
-                         nav [ class "navlinks" ] [ navLinks page ]
+                        [ input [ type_ "checkbox", id "nav-toggle", class "nav-toggle" ] []
+                        , nav [ class "navlinks" ] [ navLinks page ]
+                        , label [ for "nav-toggle", Attr.classList [ ( "nav-toggle-label", True ), ( "header-left-element", False ) ] ]
+                            []
+                        , nav [ class "navlinks" ] [ navLinks page ]
                         ]
 
                     --,
@@ -1655,9 +1686,7 @@ isXMRWalletConnectedIndicator model =
             [ span []
                 [ h4
                     [ Attr.class
-                        (if (model.isHardwareDeviceConnected || model.isHardwareDeviceConnected) 
-                        --&& model.isXMRWalletConnected 
-                        then
+                        (if model.isHardwareDeviceConnected then
                             "indicator green"
 
                          else if model.isPopUpVisible then
@@ -1669,7 +1698,7 @@ isXMRWalletConnectedIndicator model =
                     , Attr.id "xmrwalletconnection"
                     ]
                     [ text
-                        (if (model.isHardwareDeviceConnected || model.isHardwareDeviceConnected) && model.isXMRWalletConnected then
+                        (if model.isHardwareDeviceConnected then
                             "XMR Wallet Connected"
 
                          else if model.isPopUpVisible then
@@ -1693,7 +1722,7 @@ isXMRWalletConnectedIndicator model =
                     , Attr.id "xmrwalletaddress"
                     ]
                     [ text
-                        (if model.isHardwareDeviceConnected && model.isXMRWalletConnected && isValidXMRAddress model.xmrWalletAddress then
+                        (if model.isHardwareDeviceConnected then
                             "XMR Wallet Address: " ++ model.xmrWalletAddress
 
                          else if model.isPopUpVisible then

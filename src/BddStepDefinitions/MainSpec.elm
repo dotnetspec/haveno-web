@@ -4,6 +4,7 @@ module BddStepDefinitions.MainSpec exposing (..)
    might switch to particular pages and check that 'global' settings (Main's model) are correct
 -}
 --import Pages.Wallet as Wallet exposing (..)
+--import Pages.Wallet as Wallet exposing (..)
 
 import BddStepDefinitions.Extra exposing (..)
 import BddStepDefinitions.Runner as Runner exposing (..)
@@ -40,6 +41,8 @@ import Url exposing (Protocol(..), Url)
 -- NOTE: App.Model and App.Msg are type paramters for the Spec type
 -- They make Spec type more flexible as it can be used with any model and msg types
 -- NOTE: Any test involving subscriptions will need to be specified here using withSubscriptions
+
+placeholderUrl = Url Http "localhost" (Just 1234) "/" Nothing Nothing
 
 
 runSpecTests : Spec Main.Model Main.Msg
@@ -168,12 +171,43 @@ runSpecTests =
                         (Markup.observeElement
                             |> Markup.query
                             << by [ tag "h4" ]
+                           
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
                                         Claim.isStringContaining 1 "Please connect to a Chrome based mobile browser"
+                                        
                                 )
                         )
+                    , it "should NOT be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isFalse
+                        )
+                    , it "should NOT be possible to see any nav links"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ tag "ul" ]
+                            |> Spec.expect
+                                Claim.isNothing
+                        )
+                    , it "should find the topLinksLogoImage image"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ id "logoImage" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.attribute "src" <|
+                                        Claim.isSomethingWhere <|
+                                            Claim.isStringContaining 1 "assets/resources/images/logo-splash100X33.png"
+                                )
+                        )
+                    , it "should NOT be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isFalse
+                        )
+              
                     , it "should NOT be possible to use the Menu"
                         (Observer.observeModel .isNavMenuActive
                             |> Spec.expect
@@ -834,7 +868,7 @@ runSpecTests =
                     ]
             )
         , --Runner.skip <|
-          Runner.pick <|
+          --Runner.pick <|
             scenario "12. sendMessageToJs sends 'ElmReady' on init"
                 (given
                     (Spec.Setup.initForApplication (Main.init "http://localhost:1234")

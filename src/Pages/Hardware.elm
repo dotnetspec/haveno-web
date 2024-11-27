@@ -6,6 +6,7 @@ module Pages.Hardware exposing (..)
 import Array exposing (empty)
 import Buttons.Default
 import Data.Hardware as R exposing (validXMRAddressParser)
+import Data.Hardware as R exposing (validXMRAddressParser)
 import Data.User as U
 import Derberos.Date.Core as DD
 import Dict exposing (Dict)
@@ -1537,6 +1538,23 @@ prepareEmailPwordLogin emailPword =
 -- NOTE: Will probably be nec. to receive the selected ranking, unless,
 -- we manage to get all the necessary from the the change (unlikely)
 
+
+validXMRAddressParser : Parser String
+validXMRAddressParser =
+    getChompedString (chompWhile Char.isAlphaNum)
+        |> Parser.andThen
+            (\str ->
+                if String.length str == 95 then
+                    Parser.succeed str
+
+                else
+                    Parser.problem "Invalid length"
+            )
+        |> Parser.andThen
+            (\str ->
+                end
+                    |> Parser.map (\_ -> str)
+            )
 
 ensureDataIsJsonObj : DataFromMongo -> D.Value
 ensureDataIsJsonObj dataFromMongo =
