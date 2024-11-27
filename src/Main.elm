@@ -383,8 +383,7 @@ update msg model =
 
                             newHardwareModel =
                                 { hwModel
-                                    | isHardwareLNSConnected = updatedIsLNSConnected
-                                    , isHardwareLNXConnected = updatedIsLNXConnected
+                                    | isHardwareDeviceConnected = updatedIsLNXConnected
                                     , isXMRWalletConnected = updatedIsValidXMRAddressConnected
                                     , xmrWalletAddress = updatedWalletAddress
                                 }
@@ -944,8 +943,7 @@ updateUrl url model =
                         HardwarePage hardwareModel ->
                             -- NOTE: Update Hardware page with relevant parts of Main's model
                             { hardwareModel
-                                | isHardwareLNSConnected = model.isHardwareLNSConnected
-                                , isHardwareLNXConnected = model.isHardwareLNXConnected
+                                | isHardwareDeviceConnected = model.isHardwareLNXConnected
                                 , isXMRWalletConnected = model.isXMRWalletConnected
                             }
 
