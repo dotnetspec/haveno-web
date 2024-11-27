@@ -22,7 +22,6 @@ import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick)
 import Json.Decode as JD
 import Json.Encode as JE
-import Pages.Accounts exposing (hardwareSubscriptions)
 import Pages.Blank
 import Pages.Buy
 import Pages.Dashboard

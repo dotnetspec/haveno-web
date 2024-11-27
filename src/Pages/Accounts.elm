@@ -1462,13 +1462,10 @@ profileDecoder =
 
 
 
--- NAV: Subscriptions
--- Define the subscription function
 
 
-hardwareSubscriptions : Model -> Sub Msg
-hardwareSubscriptions _ =
-    Sub.none
+
+
 
 
 
