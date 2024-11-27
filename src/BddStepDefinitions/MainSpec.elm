@@ -741,7 +741,8 @@ runSpecTests =
                    ]
                 -}
                 |> when "the user clicks the Grant Browser Permissions button"
-                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
+                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedXMRWalletConnect --Hardware.ClickedTempXMRAddr
+                    ) ]
                 |> Spec.observeThat
                     [ it "a.hides the popup"
                         (Observer.observeModel .isPopUpVisible
@@ -813,7 +814,9 @@ runSpecTests =
                    ]
                 -}
                 |> when "the user uses the burger menu to nav to the Wallet page"
-                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
+                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedXMRWalletConnect --Hardware.ClickedTempXMRAddr
+                    
+                    ) ]
                 -- Simulate user clicking the Wallet navLink in the burger menu
                 |> when "the user clicks the Wallet navLink in the burger menu"
                     [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
