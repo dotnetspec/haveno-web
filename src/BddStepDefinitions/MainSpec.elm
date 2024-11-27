@@ -41,6 +41,8 @@ import Url exposing (Protocol(..), Url)
 -- They make Spec type more flexible as it can be used with any model and msg types
 -- NOTE: Any test involving subscriptions will need to be specified here using withSubscriptions
 
+placeholderUrl = Url Http "localhost" (Just 1234) "/" Nothing Nothing
+
 
 runSpecTests : Spec Main.Model Main.Msg
 runSpecTests =

@@ -46,6 +46,7 @@ import Url.Parser exposing ((</>), (<?>), oneOf, s)
 import Url.Parser.Query as Query exposing (..)
 
 
+placeholderUrl = Url.Url Http "localhost" (Just 1234) "/" Nothing Nothing
 
 {- -- NOTE: String here is coming from the flag in index.html. Change String to
    whatever type the flag is if necessary
