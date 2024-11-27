@@ -5,7 +5,7 @@ module Pages.Hardware exposing (..)
 
 import Array exposing (empty)
 import Buttons.Default
-import Data.Hardware as R exposing (rankingDecoder, rankingSearchResultDecoder, validXMRAddressParser)
+import Data.Hardware as R exposing (validXMRAddressParser)
 import Data.User as U
 import Derberos.Date.Core as DD
 import Dict exposing (Dict)
@@ -41,6 +41,7 @@ import Utils.Validation.Validate as V
 
 
 
+--import Main exposing (isXMRWalletConnectedIndicator)
 -- NOTE: To determine. What is the relationship between this model and the one in Main?
 {- Generally, the Model should include data that:
 
@@ -95,7 +96,6 @@ init fromMainToHardware =
         False
         False
         False
-        False
         ""
         []
         False
@@ -120,8 +120,7 @@ type alias Model =
     , apiSpecifics : ApiSpecifics
     , queryType : QueryType
     , isValidNewAccessToken : Bool
-    , isHardwareLNSConnected : Bool
-    , isHardwareLNXConnected : Bool
+    , isHardwareDeviceConnected : Bool
     , isXMRWalletConnected : Bool
     , xmrWalletAddress : String
     , errors : List String
@@ -143,10 +142,9 @@ initialModel =
     , flagUrl = Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
     , datetimeFromMain = Nothing
     , apiSpecifics = { maxResults = "", accessToken = Nothing }
-    , queryType = LoggedInUser
+    , queryType = Spectator
     , isValidNewAccessToken = False
-    , isHardwareLNSConnected = False
-    , isHardwareLNXConnected = False
+    , isHardwareDeviceConnected = False
     , isXMRWalletConnected = False
     , xmrWalletAddress = ""
     , errors = []
@@ -189,7 +187,7 @@ type Msg
     | ToggleReturnUser
     | ClickedHardwareDeviceConnect
     | ClickedXMRWalletConnect
-    | ClickedXMRInitiateTransaction String
+    | ClickedTempXMRAddr
       -- NOTE: ResponseDataFromMain is a Msg from the port
     | ResponseDataFromMain D.Value
     | LogOut
@@ -202,9 +200,6 @@ type Msg
     | CancelCreateNewRanking
     | CancelRegistration
     | Confirm
-    | FetchOwned R.Ranking
-    | FetchMember R.Ranking
-    | ListSpectator R.RankingSearchResult
     | ViewMember U.MemberRanking
       -- REVIEW: Why do you have QueryType and Msg type if they
       -- do the same thing? Should you just adjust view to handle
@@ -214,19 +209,12 @@ type Msg
     | StreetAddressChg String
     | CityAddressChg String
       -- REVIEW: Complex variant assoc data not good design -> model?
-    | ConfirmNewRanking R.Ranking U.User
     | DialogDeleteOwnedRanking
     | DeleteOwnedRanking
-    | ViewRank R.Rank
-    | ConfirmChallenge R.Ranking R.Rank
-    | ConfirmResult R.ResultOfMatch
     | CancelDialoguePrepareResultView
     | FetchSpectatorRanking String
-    | SpectatorRankingResponse (Result Http.Error R.Ranking)
     | SpectatorJoin
     | RegisteredUserJoin
-    | ConfirmJoin R.Ranking String Int
-    | ConfirmLeaveMemberRanking R.Ranking String
     | DialogueConfirmJoinView
     | DialogueConfirmLeaveView
     | DialogueConfirmDeleteAccount
@@ -272,33 +260,6 @@ update msg model =
             , Cmd.none
             )
 
-        ConfirmLeaveMemberRanking _ _ ->
-            -- NOTE: Remove the ranking from the user's memberRankings in the UI
-            {- let
-                   newUser =
-                       U.gotUserInfo model.user
-
-                   newMemberRankings =
-                       case model.selectedranking of
-                           R.Member ranking ->
-                               U.deleteRankingFromMemberRankings model.user ranking.id
-
-                           _ ->
-                               [ R.emptyRanking ]
-
-                   newUserInfo =
-                       { newUser | memberRankings = newMemberRankings }
-               in
-            -}
-            ( {- { model
-                   | queryType = LoggedInUser
-                   , user = U.Registered newUserInfo
-                 }
-              -}
-              model
-            , Cmd.none
-            )
-
         RegisteredUserJoin ->
             -- TODO: Code the user join
             ( { model
@@ -315,13 +276,6 @@ update msg model =
         DialogueConfirmLeaveView ->
             ( { model
                 | queryType = ConfirmLeaveMemberView
-              }
-            , Cmd.none
-            )
-
-        ConfirmJoin _ _ _ ->
-            ( { model
-                | queryType = SpectatorSelectedView
               }
             , Cmd.none
             )
@@ -346,54 +300,6 @@ update msg model =
             ( { model
                 | queryType = Login Consts.emptyEmailPassword
               }
-            , Cmd.none
-            )
-
-        ConfirmChallenge _ _ ->
-            ( model
-            , Cmd.none
-            )
-
-        -- NOTE: Logic here controlled in Main - no point in making assignments here
-        ConfirmResult _ ->
-            ( model
-            , Cmd.none
-            )
-
-        ViewRank rank ->
-            {- let
-               ranking =
-                   case model.selectedranking of
-                       R.Owned rankng ->
-                           rankng
-
-                       R.Member rankng ->
-                           rankng
-
-                       R.Spectator rankng ->
-                           rankng
-
-                       R.None ->
-                           R.emptyRanking
-
-               qType =
-                   if R.isCurrentlyInAChallenge rank then
-                       PrepareResult
-
-                   else
-                       CreateChallengeView rank ranking
-            -}
-            -- NOTE: update the selected rank with this user's player details
-            {- newRank =
-               R.Rank rank.rank rank.player { id = U.gotId model.user, nickname = U.gotNickName model.user } True
-            -}
-            --in
-            ( {- { model
-                   | selectedSingleRank = rank
-                   , queryType = qType
-                 }
-              -}
-              model
             , Cmd.none
             )
 
@@ -451,46 +357,12 @@ update msg model =
 
         --( { model | selectedranking = R.Owned (R.updatedCity (R.gotRanking model.selectedranking) value) }, Cmd.none )
         CreateNewRanking userInfo ->
-            let
-                newRanking =
-                    R.emptyRanking
-
-                --R.gotRanking <| model.selectedranking
-                -- REVIEW: Most these values are also set in createRanking.js
-                -- at some point we may become more Elm centric
-                newRank =
-                    R.Rank 1 { id = userInfo.userid, nickname = userInfo.nickname } { id = Consts.noCurrentChallengerId, nickname = "Challenger" }
-            in
-            ( {- { model
-                   | queryType = CreatingNewLadder userInfo
-
-                   -- NOTE: the ranking id will be created by mongodb, so not added here
-                   , selectedranking = R.Owned { newRanking | owner_id = userInfo.userid, active = True, player_count = 1, owner_name = userInfo.nickname, ladder = [ newRank ] }
-                 }
-              -}
-              model
+            ( model
             , Cmd.none
             )
 
         -- TODO: This will probably be rm
         ViewMember _ ->
-            ( model, Cmd.none )
-
-        -- NOTE: Will be handled in Main/GotRankingsMsg
-        -- because needs data from the port
-        FetchMember _ ->
-            ( model, Cmd.none )
-
-        ListSpectator _ ->
-            ( model, Cmd.none )
-
-        -- NOTE: arg is a U.OwnedRanking, so use emptyRanking for now in model, fetchedOwnedRanking will fill
-        {- ( ViewOwned ownedranking, AppOps (Fetched user (Global _)) ) ->
-           ( AppOps (Fetched user (Selected (R.Ladder (R.Owned R.emptyRanking) R.View))), fetchedOwnedRanking ownedranking )
-        -}
-        -- NOTE: Will be handled in Main/GotRankingsMsg
-        -- because needs data from the port
-        FetchOwned _ ->
             ( model, Cmd.none )
 
         -- NAV: ResponseDataFromMain - key function
@@ -533,27 +405,13 @@ update msg model =
                         False
             in
             ( { model
-                | --user = newUser
-                  --, queryType = updatedquerytype
-                  --,
-                  isHardwareLNSConnected = updatedIsLNSConnected
-                , isHardwareLNXConnected = updatedIsLNXConnected
+                | isHardwareDeviceConnected = updatedIsLNXConnected
                 , isXMRWalletConnected = updatedIsXMRConnected
-                , xmrWalletAddress = decodedHardwareDeviceMsg
-
-                --, selectedranking = newRanking
-                --, objectJSONfromJSPort = Just decodedJsObj
-                --, errors = errors
               }
             , Cmd.none
             )
 
         Confirm ->
-            ( model, Cmd.none )
-
-        -- NOTE: Will be handled in Main/GotRankingsMsg
-        -- because needs data from the port
-        ConfirmNewRanking _ _ ->
             ( model, Cmd.none )
 
         Cancel ->
@@ -562,16 +420,6 @@ update msg model =
                 ConfirmDeleteOwnedRanking ->
                     { model
                         | queryType = OwnedSelectedView
-                    }
-
-                ConfirmChallengeView _ _ ->
-                    { model
-                        | queryType = MemberSelectedView
-                    }
-
-                CreateChallengeView _ _ ->
-                    { model
-                        | queryType = LoggedInUser
                     }
 
                 _ ->
@@ -598,7 +446,7 @@ update msg model =
             , Cmd.none
             )
 
-        ClickedXMRInitiateTransaction _ ->
+        ClickedTempXMRAddr ->
             ( model
             , Cmd.none
             )
@@ -724,25 +572,6 @@ update msg model =
 
         LNSConnectResponse (Ok auth) ->
             let
-                headers =
-                    []
-
-                -- NOTE: the 'Zoho-oauthtoken' sent at this point is the access token received after refresh
-                --[ Http.header "Authorization" ("Bearer " ++ withDefault "No access token 2" (Just auth.deployment_model)) ]
-                -- incorporate new header with access token and update middleware port
-                flagUrlWithMongoDBMWAndPortUpdate =
-                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
-                        Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.middleWarePath Nothing Nothing
-
-                    else
-                        Url.toString <| Url.Url model.flagUrl.protocol model.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
-
-                newHttpParams =
-                    ToMongoDBMWConfig Consts.get headers flagUrlWithMongoDBMWAndPortUpdate Http.emptyBody Nothing Nothing
-
-                apiSpecs =
-                    model.apiSpecifics
-
                 -- HACK:
                 newModel =
                     { model
@@ -750,10 +579,7 @@ update msg model =
                     }
             in
             ( newModel
-            , -- NOTE: if you want to run a function based on the response can here:
-              Cmd.none
-              --loginRequest newModel
-              --sendPostDataToMongoDBMW newModel
+            , Cmd.none
             )
 
         LNSConnectResponse (Err responseErr) ->
@@ -830,16 +656,6 @@ update msg model =
                     { model | errors = [ newFailedErr ] }
             in
             ( newModel
-            , Cmd.none
-            )
-
-        SpectatorRankingResponse (Ok specRankingResult) ->
-            ( model
-            , Cmd.none
-            )
-
-        SpectatorRankingResponse (Err responseErr) ->
-            ( model
             , Cmd.none
             )
 
@@ -950,8 +766,9 @@ view model =
                 Loaded ->
                     div
                         [ class "split-col"
+                        , id "hardwareWalletConnectionOptionsView"
                         ]
-                        [ hardwareWalletView model
+                        [ hardwareWalletConnectionOptionsView model
                         ]
             , div
                 [ class "split-col"
@@ -959,174 +776,6 @@ view model =
                 []
             ]
         ]
-
-
-
--- NAV: View helpers
--- REVIEW: This function needs to be split into more relevant categories separating ranking btns from login
--- NOTE: Only a Registered user can do this:
-
-
-createChallengeView : U.UserInfo -> R.Rank -> R.Ranking -> Html Msg
-createChallengeView uinfo rank ranking =
-    -- NOTE: Can't challenge yourself
-    if rank.player.id /= uinfo.userid then
-        -- REVIEW: Can't challenge below yourself. This is an application constraint currently. For UI and DB reasons
-        -- If player is no.1 then, unfortunately, nothing can do currently
-        if not (isUserRankedHigher uinfo ranking) then
-            Framework.responsiveLayout [] <|
-                Element.column Grid.section <|
-                    [ Element.el Heading.h6 <| Element.text <| " Your opponent's details: "
-                    , Element.paragraph (Card.fill ++ Color.info) <|
-                        [ Element.el [] <| Element.text <| uinfo.nickname ++ " you are challenging " ++ rank.player.nickname
-                        ]
-                    , Element.el [] <| Element.text <| "Email: "
-                    , Element.paragraph (Card.fill ++ Color.info) <|
-                        [ Element.el [] <| Element.text <| "challenger@c.com"
-                        ]
-                    , Element.el [] <| Element.text <| "Mobile: "
-                    , Element.paragraph (Card.fill ++ Color.info) <|
-                        [ Element.el [] <| Element.text <| "challenger mobile"
-                        ]
-                    , Element.column (Card.simple ++ Grid.simple) <|
-                        [ Element.wrappedRow Grid.simple <|
-                            [ Input.button (Button.simple ++ Color.simple) <|
-                                { onPress = Just <| Cancel
-                                , label = Element.text "Cancel"
-                                }
-                            , Input.button (Button.simple ++ Color.info) <|
-                                { onPress = Just <| ConfirmChallenge ranking rank
-                                , label = Element.text "Confirm"
-                                }
-                            ]
-                        ]
-                    ]
-
-        else
-            Framework.responsiveLayout [] <|
-                Element.column Grid.section <|
-                    [ Element.paragraph (Card.fill ++ Color.info) <|
-                        [ Element.el [] <| Element.text <| uinfo.nickname ++ " aim high! Challenge up "
-                        ]
-                    , Element.column (Card.simple ++ Grid.simple) <|
-                        [ Element.wrappedRow Grid.simple <|
-                            [ Input.button (Button.simple ++ Color.simple) <|
-                                { onPress = Just <| Cancel
-                                , label = Element.text "Cancel"
-                                }
-                            ]
-                        ]
-                    ]
-
-    else
-        Framework.responsiveLayout [] <|
-            Element.column Grid.section <|
-                [ Element.paragraph (Card.fill ++ Color.info) <|
-                    [ Element.el [] <| Element.text <| rank.player.nickname ++ " you can't challenge yourself! "
-                    ]
-                , Element.column (Card.simple ++ Grid.simple) <|
-                    [ Element.wrappedRow Grid.simple <|
-                        [ Input.button (Button.simple ++ Color.simple) <|
-                            { onPress = Just <| Cancel
-                            , label = Element.text "Cancel"
-                            }
-                        ]
-                    ]
-                ]
-
-
-
--- REVIEW: Combine these views into 1?
-
-
-ownedSelectedView : U.UserInfo -> R.Ranking -> Html Msg
-ownedSelectedView u r =
-    Framework.responsiveLayout [] <|
-        Element.column
-            Framework.container
-            -- HACK:
-            [ Element.wrappedRow [] <| [ El.ownedSelectedRankingHeaderEl r ]
-
-            -- NOTE: Put the Element.width attribute into the list (using cons ::)
-            -- Card.simple is a LIST!
-            , Element.column (Element.width Element.fill :: Card.simple ++ Grid.simple)
-                [ infoBtn "Delete" <| DialogDeleteOwnedRanking
-                , infoBtn "Cancel" <| CancelFetchedOwned u
-                , playerbuttons r u
-                ]
-            ]
-
-
-memberSelectedView : U.UserInfo -> R.Ranking -> Html Msg
-memberSelectedView u r =
-    Framework.responsiveLayout [] <|
-        Element.column
-            Framework.container
-            [ Element.wrappedRow [] <| [ El.memberSelectedRankingHeaderEl u r ]
-
-            -- NOTE: Put the Element.width attribute into the list (using cons ::)
-            -- Card.simple is a LIST!
-            , Element.column (Element.width Element.fill :: Card.simple ++ Grid.simple)
-                [ infoBtn "Leave" DialogueConfirmLeaveView
-                , infoBtn "Cancel" <| CancelFetchedMember
-                , playerbuttons r u
-                ]
-            ]
-
-
-spectatorSelectedView : U.UserInfo -> R.Ranking -> Html Msg
-spectatorSelectedView u r =
-    Framework.responsiveLayout [] <|
-        Element.column
-            Framework.container
-            [ Element.wrappedRow [] <| [ El.spectatorSelectedRankingHeaderEl u r ]
-
-            -- NOTE: Put the Element.width attribute into the list (using cons ::)
-            -- Card.simple is a LIST!
-            , Element.column (Element.width Element.fill :: Card.simple ++ Grid.simple)
-                [ infoBtn "Join This Ladder?" SpectatorJoin
-                , infoBtn "Cancel" <| CancelFetchedSpectator
-                , playerbuttons r u
-                ]
-            ]
-
-
-
--- NOTE: You're always a spectator until you actually join a ranking
-
-
-confirmJoinView : U.UserInfo -> R.Ranking -> Html Msg
-confirmJoinView userInfo ranking =
-    Framework.responsiveLayout [] <|
-        Element.column
-            Framework.container
-            [ Element.wrappedRow [] <| [ El.spectatorSelectedRankingHeaderEl userInfo ranking ]
-            , Element.el Heading.h5 <| Element.text <| userInfo.nickname ++ " - Are you sure you want to join" ++ ranking.owner_name ++ "'s  ranking?"
-
-            -- NOTE: Put the Element.width attribute into the list (using cons ::)
-            -- Card.simple is a LIST!
-            , Element.column (Element.width Element.fill :: Card.simple ++ Grid.simple)
-                [ infoBtn "Join" <| ConfirmJoin ranking userInfo.userid (Maybe.withDefault R.emptyRank (R.gotLowestRank ranking.ladder)).rank
-                , infoBtn "Cancel" <| CancelFetchedSpectator
-                ]
-            ]
-
-
-confirmLeaveView : U.UserInfo -> R.Ranking -> Html Msg
-confirmLeaveView userInfo ranking =
-    Framework.responsiveLayout [] <|
-        Element.column
-            Framework.container
-            [ Element.wrappedRow [] <| [ El.memberSelectedRankingHeaderEl userInfo ranking ]
-            , Element.el Heading.h5 <| Element.text <| userInfo.nickname ++ " - Are you sure you want to leave " ++ ranking.owner_name ++ "'s  ranking?"
-
-            -- NOTE: Put the Element.width attribute into the list (using cons ::)
-            -- Card.simple is a LIST!
-            , Element.column (Element.width Element.fill :: Card.simple ++ Grid.simple)
-                [ infoBtn "Leave" <| ConfirmLeaveMemberRanking ranking userInfo.userid
-                , infoBtn "Cancel" <| CancelFetchedMember
-                ]
-            ]
 
 
 confirmDeleteUserView : U.UserInfo -> Html Msg
@@ -1144,275 +793,8 @@ confirmDeleteUserView userInfo =
             ]
 
 
-dialogueDeleteOwnedView : U.UserInfo -> R.Ranking -> Html Msg
-dialogueDeleteOwnedView uinfo ranking =
-    Framework.responsiveLayout [] <|
-        Element.column
-            Framework.container
-            -- HACK:
-            [ Element.el Heading.h6 <|
-                Element.text <|
-                    ranking.owner_name
-                        ++ """ - Are you sure you want to delete this ranking?
-            Please note that this will delete all your AND THE 
-            RANKING MEMBER'S rankings and is IRREVERSIBLE!
-            (You may wish to inform them before deleting)"""
-            , Element.wrappedRow [] <| [ El.ownedSelectedRankingHeaderEl ranking ]
-
-            -- NOTE: Put the Element.width attribute into the list (using cons ::)
-            -- Card.simple is a LIST!
-            , Element.column (Element.width Element.fill :: Card.simple ++ Grid.simple)
-                [ infoBtn "Delete" <| DeleteOwnedRanking
-                , infoBtn "Cancel" <| Cancel
-
-                --, playerbuttons ranking
-                ]
-            ]
-
-
-dialogueConfirmChallengeView : U.UserInfo -> R.Rank -> R.Ranking -> Html Msg
-dialogueConfirmChallengeView uinfo rank ranking =
-    Framework.responsiveLayout [] <|
-        Element.column
-            Framework.container
-            -- HACK:
-            [ Element.el Heading.h5 <| Element.text <| ranking.owner_name ++ " - Are you sure you want to challenge " ++ rank.player.nickname ++ "?"
-            , Element.wrappedRow [] <| [ El.ownedSelectedRankingHeaderEl ranking ]
-
-            -- NOTE: Put the Element.width attribute into the list (using cons ::)
-            -- Card.simple is a LIST!
-            , Element.column (Element.width Element.fill :: Card.simple ++ Grid.simple)
-                [ infoBtn "Confirm" <| ConfirmChallenge ranking rank
-                , infoBtn "Cancel" <| Cancel
-                ]
-            ]
-
-
-dialoguePrepareResultView : U.UserInfo -> R.Rank -> R.Ranking -> Html Msg
-dialoguePrepareResultView uinfo rank ranking =
-    Framework.responsiveLayout [] <|
-        Element.column
-            Framework.container
-            -- HACK:
-            [ Element.el Heading.h5 <| Element.text <| uinfo.nickname ++ " - Are you ready to enter your result vs " ++ rank.challenger.nickname ++ "?"
-
-            -- REVIEW: This depends on ranking type
-            , if R.isUserOwnerOfRankning uinfo.userid ranking then
-                Element.wrappedRow [] <| [ El.memberSelectedRankingHeaderEl uinfo ranking ]
-
-              else
-                Element.wrappedRow [] <| [ El.memberSelectedRankingHeaderEl uinfo ranking ]
-
-            -- NOTE: Put the Element.width attribute into the list (using cons ::)
-            -- Card.simple is a LIST!
-            , Element.column (Element.width Element.fill :: Card.simple ++ Grid.simple)
-                [ infoBtn "Win" <| ConfirmResult R.Won
-                , infoBtn "Lose" <| ConfirmResult R.Lost
-                , infoBtn "Abandon Challenge" <| ConfirmResult R.Undecided
-                , infoBtn "Cancel" <| CancelDialoguePrepareResultView
-                ]
-            ]
-
-
 
 -- NAV: Buttons
-
-
-playerbuttons : R.Ranking -> U.UserInfo -> Element Msg
-playerbuttons r u =
-    let
-        currentUserRank =
-            Maybe.withDefault R.emptyRank <| findUserRank u.userid r.ladder
-    in
-    Element.column Grid.section <|
-        [ Element.column (Card.simple ++ Grid.simple) <|
-            List.map (configureThenAddPlayerRankingBtns currentUserRank)
-                r.ladder
-        ]
-
-
-findUserRank : String -> List R.Rank -> Maybe R.Rank
-findUserRank userid ladder =
-    List.filter (\r -> r.player.id == userid) ladder
-        |> List.head
-
-
-singlePlayerBtnEnabled : R.Rank -> Element Msg
-singlePlayerBtnEnabled r =
-    Element.column Grid.simple <|
-        [ Input.button (Button.fill ++ Color.primary) <|
-            { onPress = Just <| ViewRank r
-            , label = Element.text <| String.fromInt r.rank ++ ". " ++ r.player.nickname
-            }
-        ]
-
-
-singlePlayerBtnDisabled : R.Rank -> Element Msg
-singlePlayerBtnDisabled r =
-    Element.column Grid.simple <|
-        [ Input.button (Button.fill ++ enableButton False) <|
-            { onPress = Just <| ViewRank r
-            , label = Element.text <| String.fromInt r.rank ++ ". " ++ r.player.nickname
-            }
-        ]
-
-
-challengeInProgressBtnEnabled : R.Rank -> Element Msg
-challengeInProgressBtnEnabled r =
-    Element.column Grid.simple <|
-        [ Input.button (Button.fill ++ Color.primary) <|
-            { onPress = Just <| ViewRank r
-            , label = Element.text <| String.fromInt r.rank ++ ". " ++ r.player.nickname ++ " vs " ++ r.challenger.nickname
-            }
-        ]
-
-
-challengeInProgressBtnDisabled : R.Rank -> Element Msg
-challengeInProgressBtnDisabled r =
-    Element.column Grid.simple <|
-        [ Input.button (Button.fill ++ enableButton False) <|
-            { onPress = Just <| ViewRank r
-            , label = Element.text <| String.fromInt r.rank ++ ". " ++ r.player.nickname ++ " vs " ++ r.challenger.nickname
-            }
-        ]
-
-
-configureThenAddPlayerRankingBtns : R.Rank -> R.Rank -> Element Msg
-configureThenAddPlayerRankingBtns currentUserRank rank =
-    let
-        elementMsg =
-            if determineButtonType currentUserRank rank == 1 then
-                challengeInProgressBtnEnabled rank
-
-            else if determineButtonType currentUserRank rank == 2 then
-                challengeInProgressBtnDisabled rank
-
-            else if determineButtonType currentUserRank rank == 3 then
-                singlePlayerBtnEnabled rank
-
-            else
-                -- determineButtonType u rank == 4
-                singlePlayerBtnDisabled rank
-    in
-    elementMsg
-
-
-
--- NOTE: This is a key function for determining the type of button to display
--- and is tested
-
-
-determineButtonType : R.Rank -> R.Rank -> Int
-determineButtonType loggedInUsersRank rankBeingIterated =
-    let
-        loggedInUserIsInAChallenge =
-            loggedInUsersRank.challenger.id /= Consts.noCurrentChallengerId
-
-        rankBeingIteratedIsInAChallenge =
-            rankBeingIterated.challenger.id /= Consts.noCurrentChallengerId
-    in
-    if loggedInUserIsInAChallenge then
-        if loggedInUsersRank.player.id == rankBeingIterated.player.id then
-            1
-
-        else if loggedInUsersRank.player.id == rankBeingIterated.challenger.id then
-            2
-
-        else
-            4
-
-    else if rankBeingIteratedIsInAChallenge then
-        if loggedInUsersRank.player.id == rankBeingIterated.player.id then
-            1
-
-        else
-            2
-
-    else if loggedInUsersRank.rank - 1 == rankBeingIterated.rank then
-        3
-
-    else
-        4
-
-
-createLadderView : U.UserInfo -> R.Ranking -> Html Msg
-createLadderView userInfo ranking =
-    Framework.responsiveLayout [] <|
-        Element.column Grid.section <|
-            [ Element.el Heading.h5 <| Element.text <| userInfo.nickname ++ " - Please Enter Your Ladder \nDetails And Click 'Create' below:"
-            , Element.wrappedRow (Card.fill ++ Grid.simple)
-                [ Element.column
-                    Grid.simple
-                    -- NOTE: The onChanges are changing the model
-                    -- so that e.g. the changes will be ready to
-                    -- submit to the db:
-                    [ Input.text (Input.simple ++ [ Element.htmlAttribute (Attr.id "RankingName") ])
-                        { onChange = RankingNameChg
-                        , text = ranking.name
-                        , placeholder = Just <| Input.placeholder [] (Element.text "Ranking name*")
-                        , label = Input.labelLeft (Input.label ++ [ Element.moveLeft 11.0 ]) (Element.text "Ranking name*")
-                        }
-
-                    --, nameValidView userInfo
-                    , El.ladderNameValidation ranking
-                    , Input.text (Input.simple ++ [ Element.htmlAttribute (Attr.id "Street") ])
-                        { onChange = StreetAddressChg
-                        , text = ranking.baseaddress.street
-                        , placeholder = Just <| Input.placeholder [] (Element.text "Street")
-                        , label = Input.labelLeft (Input.label ++ [ Element.moveLeft 11.0 ]) (Element.text "Street")
-                        }
-                    , El.ladderStreetValidation ranking
-
-                    -- HACK: Commented for now:
-                    --, userDescValidationErr userInfo.description
-                    , Input.text (Input.simple ++ [ Element.htmlAttribute (Attr.id "City") ])
-                        { onChange = CityAddressChg
-                        , text = ranking.baseaddress.city
-                        , placeholder = Just <| Input.placeholder [] (Element.text "City")
-                        , label = Input.labelLeft (Input.label ++ [ Element.moveLeft 11.0 ]) (Element.text "City")
-                        }
-                    , El.ladderCityValidation ranking
-                    ]
-                ]
-            , Element.text "* required"
-            , rankingDetailsConfirmPanel ranking userInfo
-            ]
-
-
-spectatorRankingBtn : R.RankingSearchResult -> Element Msg
-spectatorRankingBtn ranking =
-    Element.column Grid.simple <|
-        [ Input.button (Button.fill ++ Color.info) <|
-            { -- HACK: Avoiding issue of what type ClickedSelectedRanking is expecting
-              -- and how a ranking will be processed in update (i.e. will a ranking need to 'know' if it's owned or member?)
-              onPress = Just <| FetchSpectatorRanking ranking.id
-            , label = Element.text ranking.name
-            }
-        ]
-
-
-memberRankingBtn : R.Ranking -> Element Msg
-memberRankingBtn ranking =
-    Element.column Grid.simple <|
-        [ Input.button (Button.fill ++ Color.info) <|
-            { -- HACK: Avoiding issue of what type ClickedSelectedRanking is expecting
-              -- and how a ranking will be processed in update (i.e. will a ranking need to 'know' if it's owned or member?)
-              onPress = Just <| FetchMember ranking
-            , label = Element.text ranking.name
-            }
-        ]
-
-
-ownedRankingBtn : R.Ranking -> Element Msg
-ownedRankingBtn ranking =
-    Element.column Grid.simple <|
-        [ Input.button (Button.fill ++ Color.primary) <|
-            { -- HACK: Avoiding issue of what type ClickedSelectedRanking is expecting
-              -- and how a ranking will be processed in update (i.e. will a ranking need to 'know' if it's owned or member?)
-              onPress = Just <| FetchOwned ranking
-            , label = Element.text ranking.name
-            }
-        ]
 
 
 spectatorView : Html Msg
@@ -1428,53 +810,17 @@ spectatorView =
             ]
 
 
-globalView : String -> List R.RankingSearchResult -> U.User -> Html Msg
-globalView searchterm searchResults userVal =
-    case userVal of
-        U.Spectator _ ->
-            Framework.responsiveLayout [] <|
-                Element.column Framework.container <|
-                    [ El.globalHeading userVal
-                    , Element.text "\n"
-                    ]
-
-        U.Registered _ ->
-            Framework.responsiveLayout [] <|
-                Element.column Framework.container <|
-                    [ El.globalHeading userVal
-                    , Element.text "\n"
-                    , infoBtn "Log Out" LogOut
-                    , Element.text "\n"
-                    , infoBtn "Delete Account" DialogueConfirmDeleteAccount
-                    ]
-
-
-hardwareWalletView : Model -> Html Msg
-hardwareWalletView model =
+hardwareWalletConnectionOptionsView : Model -> Html Msg
+hardwareWalletConnectionOptionsView model =
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
-            [ Element.el Heading.h5 <| Element.text "Welcome - Unconnected User"
+            [ Element.el Heading.h5 <| Element.text "Welcome - Please Connect Your Hardware Device"
             , Element.text "\n"
-            , infoBtn "Connect Hardware Device" <| ClickedHardwareDeviceConnect
-            , Element.text "Connect XMR Wallet\n"
-            , infoBtn "Connect XMR Wallet" <| ClickedXMRWalletConnect
+            , infoBtn "Grant Browser Permissions To Device" <| ClickedHardwareDeviceConnect
             , Element.text "\n"
-            , Element.el Heading.h6 <|
-                Element.text
-                    (if model.isHardwareLNSConnected then
-                        "Nano S Connected"
-
-                     else if model.isHardwareLNXConnected then
-                        "Nano X Connected"
-
-                     else if model.isXMRWalletConnected then
-                        "XMR Wallet Connected with Address: " ++ model.xmrWalletAddress
-
-                     else
-                        "No hardware device connected"
-                    )
+            , infoBtn "Get Monero Address" <| ClickedXMRWalletConnect
             , Element.text "\n"
-            , infoBtn "Initiate Transaction" <| ClickedXMRInitiateTransaction "0.01"
+            , infoBtn "Temp Got XMR Addr" <| ClickedTempXMRAddr
             , case model.errors of
                 [] ->
                     Element.text ""
@@ -1649,8 +995,6 @@ type QueryType
     | MemberSelectedView
     | SpectatorSelectedView
     | ConfirmDeleteOwnedRanking
-    | CreateChallengeView R.Rank R.Ranking
-    | ConfirmChallengeView R.Rank R.Ranking
     | PrepareResult
     | Error String
     | ConfirmJoinMemberView
@@ -1748,11 +1092,6 @@ apiSpecsPlaceHolder =
 -- NAV: Json type definitions
 -- NOTE: Make the order of the types match the json.
 -- Use these with the decoders
-
-
-type alias SearchResults =
-    { searchresponse : List R.RankingSearchResult
-    }
 
 
 type alias SuccessfulLoginResult =
@@ -1897,12 +1236,6 @@ additonalDataFromJsDecoder =
         (field "nickname" D.string)
 
 
-searchResultsDecoder : Decoder SearchResults
-searchResultsDecoder =
-    D.map SearchResults
-        (field "results" (D.list R.rankingSearchResultDecoder))
-
-
 successfullLoginResultDecoder : Decoder SuccessfulLoginResult
 successfullLoginResultDecoder =
     D.map4 SuccessfulLoginResult
@@ -1963,8 +1296,6 @@ profileDecoder =
 
 hardwareSubscriptions : Model -> Sub Msg
 hardwareSubscriptions _ =
-    -- Replace with your actual subscription logic
-    --Sub.batch [ receiveMessageFromJs ResponseDataFromMain ]
     Sub.none
 
 
@@ -1984,7 +1315,7 @@ type alias FullDocument =
     -- NOTE: AI suggested way to handle "players.4" etc.
     , players : Maybe (List PlayerFromChangeEvent)
     , ownerId : String
-    , baseAddress : R.BaseAddress
+    , baseAddress : String
     , lastUpdatedBy : String
     }
 
@@ -2044,13 +1375,6 @@ playerDecoder =
         (D.field "rank" D.int)
 
 
-baseAddressDecoder : Decoder R.BaseAddress
-baseAddressDecoder =
-    D.map2 R.BaseAddress
-        (D.field "street" D.string)
-        (D.field "city" D.string)
-
-
 fullDocumentDecoder : Decoder FullDocument
 fullDocumentDecoder =
     D.succeed FullDocument
@@ -2059,7 +1383,7 @@ fullDocumentDecoder =
         |> required "name" D.string
         |> optional "players" (D.maybe (D.list playerFromChangeEventDecoder)) Nothing
         |> required "owner_id" D.string
-        |> required "baseaddress" baseAddressDecoder
+        |> required "baseaddress" D.string
         |> required "lastUpdatedBy" D.string
 
 
@@ -2208,95 +1532,10 @@ prepareEmailPwordLogin emailPword =
 
 
 
--- REVIEW: This and sendRankingId have identical functionality (cos the data difference is in the POST data)
---Cmd.none
--- NOTE: This will be run against all 5 possible venue types
---Cmd.none
 -- NAV: Helper functions:
 -- NOTE: tested function
-
-
-filterAndSortRankingsOnLeaving : String -> List R.Rank -> List ( String, List PlayerFromChangeEvent ) -> List R.Rank
-filterAndSortRankingsOnLeaving userid rankings changes =
-    let
-        nochallengersRankings =
-            R.abandonSingleUserChallenge userid rankings
-
-        changePlayerIds =
-            changes
-                |> List.concatMap Tuple.second
-                |> List.map .playerId
-    in
-    nochallengersRankings
-        |> List.filter (\ranking -> List.member ranking.player.id changePlayerIds)
-        |> List.sortBy .rank
-        |> List.indexedMap (\index rank -> { rank | rank = index + 1 })
-
-
-filterAndSortRankingsOnJoining : String -> List R.Rank -> List ( String, List PlayerFromChangeEvent ) -> List R.Rank
-filterAndSortRankingsOnJoining newPlayerId rankings changes =
-    let
-        nochallengersRankings =
-            R.abandonSingleUserChallenge newPlayerId rankings
-
-        changePlayerIds =
-            changes
-                |> List.concatMap Tuple.second
-                |> List.map .playerId
-
-        newPlayerRank =
-            { challenger = { id = "6353e8b6aedf80653eb34191", nickname = "No Challenger" }
-
-            -- NOTE: We have no way of determining the new player's nickname at this point
-            , player = { id = newPlayerId, nickname = "New Player" }
-            , rank = List.length rankings + 1
-            }
-
-        updatedRankings =
-            nochallengersRankings ++ [ newPlayerRank ]
-    in
-    updatedRankings
-        |> List.filter (\ranking -> List.member ranking.player.id changePlayerIds || ranking.player.id == newPlayerId)
-        |> List.sortBy .rank
-        |> List.indexedMap (\index rank -> { rank | rank = index + 1 })
-
-
-
 -- NOTE: Will probably be nec. to receive the selected ranking, unless,
 -- we manage to get all the necessary from the the change (unlikely)
-
-
-updateNewRankingOnChangeEvent : Change -> R.Ranking -> R.Ranking
-updateNewRankingOnChangeEvent change ranking =
-    let
-        -- NOTE: This is the new ranking that has been created
-        updatedRanking =
-            case change.operationType of
-                -- REVIEW: Consider if you are even concerned with joining a ranking currently
-                -- as it makes no difference cos the new user will be at the bottom of the ranking
-                -- although they will likely challenge the bottom player immediately
-                "insert" ->
-                    {- let
-                           -- updatedFields is a dictionary of lists of PlayerFromChangeEvent
-                           -- we're going to take the relevant data from it and remove it from the ranking
-
-                       in
-                    -}
-                    R.emptyRanking
-
-                "update" ->
-                    {- let
-                           -- updatedFields is a dictionary of lists of PlayerFromChangeEvent
-                           -- we're going to take the relevant data from it and remove it from the ranking
-                           "change.updateDescription.updatedFields " change.updateDescription.updatedFields
-                       in
-                    -}
-                    ranking
-
-                _ ->
-                    R.emptyRanking
-    in
-    updatedRanking
 
 
 ensureDataIsJsonObj : DataFromMongo -> D.Value
@@ -2339,66 +1578,6 @@ isValidXMRAddress str =
             False
 
 
-
--- NOTE: Unable to create a fuzz test for isUserRankedHigher
-
-
-isUserRankedHigher : U.UserInfo -> R.Ranking -> Bool
-isUserRankedHigher userInfo ranking =
-    let
-        userRank =
-            List.filter (\r -> r.player.id == userInfo.userid) ranking.ladder
-                |> List.head
-                |> Maybe.map .rank
-
-        otherRank =
-            List.filter (\r -> r.player.id /= userInfo.userid) ranking.ladder
-                |> List.head
-                |> Maybe.map .rank
-    in
-    case ( userRank, otherRank ) of
-        ( Just ur, Just or ) ->
-            ur < or
-
-        _ ->
-            False
-
-
-isValidatedForAllLadderDetailsInput : R.Ranking -> Bool
-isValidatedForAllLadderDetailsInput ranking =
-    -- NOTE: Required:
-    V.isValid4to20Chars ranking.name
-        -- NOTE: Optional:
-        && (ranking.baseaddress.street == "" || V.isValid4to20Chars ranking.baseaddress.street)
-        && (ranking.baseaddress.city == "" || V.isValid4to20Chars ranking.baseaddress.city)
-
-
-
--- NOTE: This handles different data types e.g. users or rankings
-{- gotJsonDataType : String -> String
-   gotJsonDataType rawJsonMessage =
-       let
-           decodedJsonMsg : Result D.Error DataTypeFromResponse
-           decodedJsonMsg =
-               D.decodeString dataTypeDecoder rawJsonMessage
-       in
-       case decodedJsonMsg of
-           Ok decodedDataType ->
-
-               decodedDataType.datatype
-
-           Err err ->
-               -- HACK:
-
-               "error - see log"
--}
--- NOTE: A user may be a spectator, in which case the registration is creating a new user
--- or, if already a registered user, this input data will be used to update the user
--- REVIEW: this may be an rf to simplify. Confusing have new registration and update in the same function?
--- also, can probably just send userInfo for Spect and Regis users.
--- NOTE: Checks if any of the required values are empty or not valid
-
-
 handleDecodeUser : D.Value -> U.UserInfo
 handleDecodeUser rawJsonMessage =
     let
@@ -2416,11 +1595,6 @@ handleDecodeUser rawJsonMessage =
         Err err ->
             -- HACK:
             U.emptyUserInfo
-
-
-handleNewlyJoinedDecodeRanking : D.Value -> Result D.Error R.NewlyJoinedRanking
-handleNewlyJoinedDecodeRanking jsonObj =
-    D.decodeValue R.newlyJoinedRankingDecoder jsonObj
 
 
 getIdFromValue : D.Value -> Result D.Error String
@@ -2460,11 +1634,6 @@ convertJsonStringToJsonValue jsonString =
             -- There was an error decoding the JSON.
             -- The error message will give you some information about what went wrong.
             Err (D.errorToString err)
-
-
-handleDecodeRanking : D.Value -> Result D.Error R.Ranking
-handleDecodeRanking rawJsonMessage =
-    D.decodeValue R.rankingDecoder rawJsonMessage
 
 
 isValidatedForAllUserDetailsInput : U.UserInfo -> Bool
@@ -2922,51 +2091,3 @@ gotLastUpdatedBy json =
 
 
 -- NAV: Html Snippets
-
-
-rankingDetailsConfirmPanel : R.Ranking -> U.UserInfo -> Element Msg
-rankingDetailsConfirmPanel ranking userInfo =
-    if
-        -- WARN: Logic a bit tricky here:
-        isValidatedForAllLadderDetailsInput ranking
-    then
-        Element.column Grid.section <|
-            [ if ranking.baseaddress.street == "" && ranking.baseaddress.city == "" then
-                El.warningParagraph
-
-              else
-                Element.text "Click to continue ..."
-            , Element.column (Card.simple ++ Grid.simple) <|
-                [ Element.wrappedRow Grid.simple <|
-                    [ Input.button (Button.simple ++ Color.info) <|
-                        { onPress = Just CancelCreateNewRanking
-                        , label = Element.text "Cancel"
-                        }
-                    , Input.button
-                        (Button.simple
-                            ++ enableButton
-                                (isValidatedForAllLadderDetailsInput
-                                    ranking
-                                )
-                        )
-                      <|
-                        { onPress = Just <| ConfirmNewRanking ranking (U.Registered userInfo)
-                        , label = Element.text "Confirm"
-                        }
-                    ]
-                ]
-            ]
-
-    else
-        Element.column Grid.section <|
-            [ El.missingDataPara
-            , Element.el Heading.h6 <| Element.text "Click to continue ..."
-            , Element.column (Card.simple ++ Grid.simple) <|
-                [ Element.wrappedRow Grid.simple <|
-                    [ Input.button (Button.simple ++ Color.info) <|
-                        { onPress = Just CancelCreateNewRanking
-                        , label = Element.text "Cancel"
-                        }
-                    ]
-                ]
-            ]
