@@ -35,7 +35,8 @@
     "@ledgerhq/logs": "^6.12.0",
     "buffer": "^5.5.0||^6.0.0",
     "core-js": "^3.39.0",
-    "elm-json": "^0.2.13"
+    "elm-json": "^0.2.13",
+    "jsdom": "^25.0.1"
   },
   "devDependencies": {
     "@parcel/transformer-elm": "2.13.0",

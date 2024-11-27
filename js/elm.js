@@ -5119,136 +5119,6 @@ function _Time_getZoneName()
 }
 
 
-
-
-// STRINGS
-
-
-var _Parser_isSubString = F5(function(smallString, offset, row, col, bigString)
-{
-	var smallLength = smallString.length;
-	var isGood = offset + smallLength <= bigString.length;
-
-	for (var i = 0; isGood && i < smallLength; )
-	{
-		var code = bigString.charCodeAt(offset);
-		isGood =
-			smallString[i++] === bigString[offset++]
-			&& (
-				code === 0x000A /* \n */
-					? ( row++, col=1 )
-					: ( col++, (code & 0xF800) === 0xD800 ? smallString[i++] === bigString[offset++] : 1 )
-			)
-	}
-
-	return _Utils_Tuple3(isGood ? offset : -1, row, col);
-});
-
-
-
-// CHARS
-
-
-var _Parser_isSubChar = F3(function(predicate, offset, string)
-{
-	return (
-		string.length <= offset
-			? -1
-			:
-		(string.charCodeAt(offset) & 0xF800) === 0xD800
-			? (predicate(_Utils_chr(string.substr(offset, 2))) ? offset + 2 : -1)
-			:
-		(predicate(_Utils_chr(string[offset]))
-			? ((string[offset] === '\n') ? -2 : (offset + 1))
-			: -1
-		)
-	);
-});
-
-
-var _Parser_isAsciiCode = F3(function(code, offset, string)
-{
-	return string.charCodeAt(offset) === code;
-});
-
-
-
-// NUMBERS
-
-
-var _Parser_chompBase10 = F2(function(offset, string)
-{
-	for (; offset < string.length; offset++)
-	{
-		var code = string.charCodeAt(offset);
-		if (code < 0x30 || 0x39 < code)
-		{
-			return offset;
-		}
-	}
-	return offset;
-});
-
-
-var _Parser_consumeBase = F3(function(base, offset, string)
-{
-	for (var total = 0; offset < string.length; offset++)
-	{
-		var digit = string.charCodeAt(offset) - 0x30;
-		if (digit < 0 || base <= digit) break;
-		total = base * total + digit;
-	}
-	return _Utils_Tuple2(offset, total);
-});
-
-
-var _Parser_consumeBase16 = F2(function(offset, string)
-{
-	for (var total = 0; offset < string.length; offset++)
-	{
-		var code = string.charCodeAt(offset);
-		if (0x30 <= code && code <= 0x39)
-		{
-			total = 16 * total + code - 0x30;
-		}
-		else if (0x41 <= code && code <= 0x46)
-		{
-			total = 16 * total + code - 55;
-		}
-		else if (0x61 <= code && code <= 0x66)
-		{
-			total = 16 * total + code - 87;
-		}
-		else
-		{
-			break;
-		}
-	}
-	return _Utils_Tuple2(offset, total);
-});
-
-
-
-// FIND STRING
-
-
-var _Parser_findSubString = F5(function(smallString, offset, row, col, bigString)
-{
-	var newOffset = bigString.indexOf(smallString, offset);
-	var target = newOffset < 0 ? bigString.length : newOffset + smallString.length;
-
-	while (offset < target)
-	{
-		var code = bigString.charCodeAt(offset++);
-		code === 0x000A /* \n */
-			? ( col=1, row++ )
-			: ( col++, (code & 0xF800) === 0xD800 && offset++ )
-	}
-
-	return _Utils_Tuple3(newOffset, row, col);
-});
-
-
 // BYTES
 
 function _Bytes_width(bytes)
@@ -5600,7 +5470,137 @@ function _Http_track(router, xhr, tracker)
 			size: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
 		}))));
 	});
-}var $author$project$Main$ChangedUrl = function (a) {
+}
+
+
+
+// STRINGS
+
+
+var _Parser_isSubString = F5(function(smallString, offset, row, col, bigString)
+{
+	var smallLength = smallString.length;
+	var isGood = offset + smallLength <= bigString.length;
+
+	for (var i = 0; isGood && i < smallLength; )
+	{
+		var code = bigString.charCodeAt(offset);
+		isGood =
+			smallString[i++] === bigString[offset++]
+			&& (
+				code === 0x000A /* \n */
+					? ( row++, col=1 )
+					: ( col++, (code & 0xF800) === 0xD800 ? smallString[i++] === bigString[offset++] : 1 )
+			)
+	}
+
+	return _Utils_Tuple3(isGood ? offset : -1, row, col);
+});
+
+
+
+// CHARS
+
+
+var _Parser_isSubChar = F3(function(predicate, offset, string)
+{
+	return (
+		string.length <= offset
+			? -1
+			:
+		(string.charCodeAt(offset) & 0xF800) === 0xD800
+			? (predicate(_Utils_chr(string.substr(offset, 2))) ? offset + 2 : -1)
+			:
+		(predicate(_Utils_chr(string[offset]))
+			? ((string[offset] === '\n') ? -2 : (offset + 1))
+			: -1
+		)
+	);
+});
+
+
+var _Parser_isAsciiCode = F3(function(code, offset, string)
+{
+	return string.charCodeAt(offset) === code;
+});
+
+
+
+// NUMBERS
+
+
+var _Parser_chompBase10 = F2(function(offset, string)
+{
+	for (; offset < string.length; offset++)
+	{
+		var code = string.charCodeAt(offset);
+		if (code < 0x30 || 0x39 < code)
+		{
+			return offset;
+		}
+	}
+	return offset;
+});
+
+
+var _Parser_consumeBase = F3(function(base, offset, string)
+{
+	for (var total = 0; offset < string.length; offset++)
+	{
+		var digit = string.charCodeAt(offset) - 0x30;
+		if (digit < 0 || base <= digit) break;
+		total = base * total + digit;
+	}
+	return _Utils_Tuple2(offset, total);
+});
+
+
+var _Parser_consumeBase16 = F2(function(offset, string)
+{
+	for (var total = 0; offset < string.length; offset++)
+	{
+		var code = string.charCodeAt(offset);
+		if (0x30 <= code && code <= 0x39)
+		{
+			total = 16 * total + code - 0x30;
+		}
+		else if (0x41 <= code && code <= 0x46)
+		{
+			total = 16 * total + code - 55;
+		}
+		else if (0x61 <= code && code <= 0x66)
+		{
+			total = 16 * total + code - 87;
+		}
+		else
+		{
+			break;
+		}
+	}
+	return _Utils_Tuple2(offset, total);
+});
+
+
+
+// FIND STRING
+
+
+var _Parser_findSubString = F5(function(smallString, offset, row, col, bigString)
+{
+	var newOffset = bigString.indexOf(smallString, offset);
+	var target = newOffset < 0 ? bigString.length : newOffset + smallString.length;
+
+	while (offset < target)
+	{
+		var code = bigString.charCodeAt(offset++);
+		code === 0x000A /* \n */
+			? ( col=1, row++ )
+			: ( col++, (code & 0xF800) === 0xD800 && offset++ )
+	}
+
+	return _Utils_Tuple3(newOffset, row, col);
+});
+var $author$project$Main$ChangedUrl = function (a) {
 	return {$: 'ChangedUrl', a: a};
 };
 var $author$project$Main$ClickedLink = function (a) {
@@ -11213,11 +11213,11 @@ var $author$project$Main$BlankPage = function (a) {
 var $author$project$Pages$Blank$Blank = function (a) {
 	return {$: 'Blank', a: a};
 };
-var $author$project$Pages$Blank$Loading = {$: 'Loading'};
+var $author$project$Pages$Blank$Loaded = {$: 'Loaded'};
 var $author$project$Pages$Blank$initialModel = {
 	root: $author$project$Pages$Blank$Blank(
 		{name: 'Loading...'}),
-	status: $author$project$Pages$Blank$Loading,
+	status: $author$project$Pages$Blank$Loaded,
 	title: 'Blank'
 };
 var $elm$time$Time$Posix = function (a) {
@@ -11230,20 +11230,30 @@ var $author$project$Main$AdjustTimeZone = function (a) {
 var $author$project$Main$DashboardPage = function (a) {
 	return {$: 'DashboardPage', a: a};
 };
+var $author$project$Main$DeviceLocked = {$: 'DeviceLocked'};
+var $author$project$Main$DeviceNeedsPermission = {$: 'DeviceNeedsPermission'};
+var $author$project$Main$DeviceUnlocked_XMRWalletClosed = {$: 'DeviceUnlocked_XMRWalletClosed'};
+var $author$project$Main$DeviceUnlocked_XMRWalletOpen = {$: 'DeviceUnlocked_XMRWalletOpen'};
 var $author$project$Main$GotBlankMsg = function (a) {
 	return {$: 'GotBlankMsg', a: a};
 };
-var $author$project$Main$HardwareDeviceConnect = {$: 'HardwareDeviceConnect'};
 var $author$project$Main$HardwarePage = function (a) {
 	return {$: 'HardwarePage', a: a};
 };
 var $author$project$Pages$Hardware$LoggedInUser = {$: 'LoggedInUser'};
+var $author$project$Main$NanoS = {$: 'NanoS'};
+var $author$project$Main$NanoX = {$: 'NanoX'};
+var $author$project$Main$NoDevice = {$: 'NoDevice'};
+var $author$project$Main$OnInitHardwareDeviceConnect = {$: 'OnInitHardwareDeviceConnect'};
 var $author$project$Pages$Hardware$ResponseDataFromMain = function (a) {
 	return {$: 'ResponseDataFromMain', a: a};
 };
 var $author$project$Pages$Hardware$Spectator = {$: 'Spectator'};
 var $author$project$Main$fromJsonToString = function (value) {
 	return A2($elm$json$Json$Encode$encode, 0, value);
+};
+var $author$project$Main$getDeviceResponseMsg = function (errorString) {
+	return A2($elm$core$String$contains, 'navigator.usb is undefined', errorString) ? $elm$core$Maybe$Just($author$project$Main$NoDevice) : (A2($elm$core$String$contains, 'No device selected', errorString) ? $elm$core$Maybe$Just($author$project$Main$DeviceNeedsPermission) : (A2($elm$core$String$contains, 'Must be handling a user gesture to show a permission request', errorString) ? $elm$core$Maybe$Just($author$project$Main$DeviceNeedsPermission) : (A2($elm$core$String$contains, 'Access denied to use Ledger device', errorString) ? $elm$core$Maybe$Just($author$project$Main$DeviceLocked) : (A2($elm$core$String$contains, 'UNKNOWN_APDU', errorString) ? $elm$core$Maybe$Just($author$project$Main$DeviceUnlocked_XMRWalletClosed) : (A2($elm$core$String$contains, 'CLA_NOT_SUPPORTED', errorString) ? $elm$core$Maybe$Just($author$project$Main$DeviceUnlocked_XMRWalletOpen) : $elm$core$Maybe$Nothing)))));
 };
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -11647,7 +11657,7 @@ var $author$project$Pages$Blank$init = function (_v0) {
 	return _Utils_Tuple2(
 		_Utils_update(
 			$author$project$Pages$Blank$initialModel,
-			{title: 'Haveno-Web Main'}),
+			{title: 'Haveno-Web'}),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Pages$Buy$Buy = function (a) {
@@ -11686,7 +11696,7 @@ var $author$project$Pages$Dashboard$init = function (fromMainToDashboard) {
 		'0.00',
 		newUrl,
 		$elm$core$Maybe$Nothing,
-		$elm$core$Maybe$Nothing,
+		fromMainToDashboard.havenoVersion,
 		_List_Nil);
 	return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
 };
@@ -11719,16 +11729,14 @@ var $author$project$Pages$Hardware$Model = function (status) {
 					return function (apiSpecifics) {
 						return function (queryType) {
 							return function (isValidNewAccessToken) {
-								return function (isHardwareLNSConnected) {
-									return function (isHardwareLNXConnected) {
-										return function (isXMRWalletConnected) {
-											return function (xmrWalletAddress) {
-												return function (errors) {
-													return function (isReturnUser) {
-														return function (user) {
-															return function (objectJSONfromJSPort) {
-																return {apiSpecifics: apiSpecifics, datetimeFromMain: datetimeFromMain, errors: errors, flagUrl: flagUrl, isHardwareLNSConnected: isHardwareLNSConnected, isHardwareLNXConnected: isHardwareLNXConnected, isReturnUser: isReturnUser, isValidNewAccessToken: isValidNewAccessToken, isXMRWalletConnected: isXMRWalletConnected, objectJSONfromJSPort: objectJSONfromJSPort, queryType: queryType, root: root, status: status, title: title, user: user, xmrWalletAddress: xmrWalletAddress};
-															};
+								return function (isHardwareDeviceConnected) {
+									return function (isXMRWalletConnected) {
+										return function (xmrWalletAddress) {
+											return function (errors) {
+												return function (isReturnUser) {
+													return function (user) {
+														return function (objectJSONfromJSPort) {
+															return {apiSpecifics: apiSpecifics, datetimeFromMain: datetimeFromMain, errors: errors, flagUrl: flagUrl, isHardwareDeviceConnected: isHardwareDeviceConnected, isReturnUser: isReturnUser, isValidNewAccessToken: isValidNewAccessToken, isXMRWalletConnected: isXMRWalletConnected, objectJSONfromJSPort: objectJSONfromJSPort, queryType: queryType, root: root, status: status, title: title, user: user, xmrWalletAddress: xmrWalletAddress};
 														};
 													};
 												};
@@ -11770,15 +11778,11 @@ var $author$project$Data$User$UserInfo = function (userid) {
 														return function (mobileValidationError) {
 															return function (datestamp) {
 																return function (active) {
-																	return function (ownedRankings) {
-																		return function (memberRankings) {
-																			return function (updatetext) {
-																				return function (description) {
-																					return function (credits) {
-																						return function (addInfo) {
-																							return {active: active, addInfo: addInfo, age: age, credits: credits, datestamp: datestamp, description: description, email: email, emailValidationError: emailValidationError, gender: gender, isEmailInputFocused: isEmailInputFocused, isMobileInputFocused: isMobileInputFocused, isNameInputFocused: isNameInputFocused, memberRankings: memberRankings, mobile: mobile, mobileValidationError: mobileValidationError, nameValidationError: nameValidationError, nickname: nickname, ownedRankings: ownedRankings, password: password, passwordValidationError: passwordValidationError, token: token, updatetext: updatetext, userid: userid};
-																						};
-																					};
+																	return function (updatetext) {
+																		return function (description) {
+																			return function (credits) {
+																				return function (addInfo) {
+																					return {active: active, addInfo: addInfo, age: age, credits: credits, datestamp: datestamp, description: description, email: email, emailValidationError: emailValidationError, gender: gender, isEmailInputFocused: isEmailInputFocused, isMobileInputFocused: isMobileInputFocused, isNameInputFocused: isNameInputFocused, mobile: mobile, mobileValidationError: mobileValidationError, nameValidationError: nameValidationError, nickname: nickname, password: password, passwordValidationError: passwordValidationError, token: token, updatetext: updatetext, userid: userid};
 																				};
 																			};
 																		};
@@ -11801,7 +11805,7 @@ var $author$project$Data$User$UserInfo = function (userid) {
 	};
 };
 var $author$project$Data$User$emptyDescription = {comment: '', level: ''};
-var $author$project$Data$User$emptyUserInfo = $author$project$Data$User$UserInfo('')('')('')($elm$core$Maybe$Nothing)('')(false)('')(40)($author$project$Data$User$Male)($elm$core$Maybe$Nothing)(false)('')($elm$core$Maybe$Nothing)(false)('')(0)(false)(_List_Nil)(_List_Nil)('')($author$project$Data$User$emptyDescription)(0)('');
+var $author$project$Data$User$emptyUserInfo = $author$project$Data$User$UserInfo('')('')('')($elm$core$Maybe$Nothing)('')(false)('')(40)($author$project$Data$User$Male)($elm$core$Maybe$Nothing)(false)('')($elm$core$Maybe$Nothing)(false)('')(0)(false)('')($author$project$Data$User$emptyDescription)(0)('');
 var $author$project$Data$User$emptySpectator = $author$project$Data$User$Spectator($author$project$Data$User$emptyUserInfo);
 var $author$project$Extras$Constants$localorproductionServerAutoCheck = 'haveno-web.squashpassion';
 var $author$project$Extras$Constants$middleWarePath = '/middleware';
@@ -11830,7 +11834,7 @@ var $author$project$Pages$Hardware$init = function (fromMainToHardware) {
 			A2(
 				$elm$core$Maybe$withDefault,
 				$elm$core$Maybe$Nothing,
-				$elm$core$Maybe$Just(fromMainToHardware.time)))($author$project$Pages$Hardware$apiSpecsPlaceHolder)($author$project$Pages$Hardware$LoggedInUser)(false)(false)(false)(false)('')(_List_Nil)(false)($author$project$Data$User$emptySpectator)($elm$core$Maybe$Nothing),
+				$elm$core$Maybe$Just(fromMainToHardware.time)))($author$project$Pages$Hardware$apiSpecsPlaceHolder)($author$project$Pages$Hardware$LoggedInUser)(false)(false)(false)('')(_List_Nil)(false)($author$project$Data$User$emptySpectator)($elm$core$Maybe$Nothing),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Pages$Market$Loading = {$: 'Loading'};
@@ -11901,502 +11905,8 @@ var $author$project$Pages$Support$init = function (_v0) {
 			{title: 'Haveno-Web Support'}),
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Pages$Dashboard$initialModel = {
-	balance: '0.00',
-	errors: _List_Nil,
-	flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Nothing, '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
-	havenoAPKHttpRequest: $elm$core$Maybe$Nothing,
-	pagetitle: 'Dashboard',
-	root: $author$project$Pages$Dashboard$Dashboard(
-		{name: 'Loading...'}),
-	status: $author$project$Pages$Dashboard$Loaded,
-	version: $elm$core$Maybe$Nothing
-};
-var $author$project$Pages$Hardware$initialModel = {
-	apiSpecifics: {accessToken: $elm$core$Maybe$Nothing, maxResults: ''},
-	datetimeFromMain: $elm$core$Maybe$Nothing,
-	errors: _List_Nil,
-	flagUrl: A6(
-		$elm$url$Url$Url,
-		$elm$url$Url$Http,
-		'localhost',
-		$elm$core$Maybe$Just(1234),
-		'/hardware',
-		$elm$core$Maybe$Nothing,
-		$elm$core$Maybe$Nothing),
-	isHardwareLNSConnected: false,
-	isHardwareLNXConnected: false,
-	isReturnUser: false,
-	isValidNewAccessToken: false,
-	isXMRWalletConnected: false,
-	objectJSONfromJSPort: $elm$core$Maybe$Nothing,
-	queryType: $author$project$Pages$Hardware$LoggedInUser,
-	root: $author$project$Pages$Hardware$Hardware(
-		{name: 'Loading...'}),
-	status: $author$project$Pages$Hardware$Loaded,
-	title: 'Hardware',
-	user: $author$project$Data$User$emptySpectator,
-	xmrWalletAddress: ''
-};
-var $elm$parser$Parser$DeadEnd = F3(
-	function (row, col, problem) {
-		return {col: col, problem: problem, row: row};
-	});
-var $elm$parser$Parser$problemToDeadEnd = function (p) {
-	return A3($elm$parser$Parser$DeadEnd, p.row, p.col, p.problem);
-};
-var $elm$parser$Parser$Advanced$bagToList = F2(
-	function (bag, list) {
-		bagToList:
-		while (true) {
-			switch (bag.$) {
-				case 'Empty':
-					return list;
-				case 'AddRight':
-					var bag1 = bag.a;
-					var x = bag.b;
-					var $temp$bag = bag1,
-						$temp$list = A2($elm$core$List$cons, x, list);
-					bag = $temp$bag;
-					list = $temp$list;
-					continue bagToList;
-				default:
-					var bag1 = bag.a;
-					var bag2 = bag.b;
-					var $temp$bag = bag1,
-						$temp$list = A2($elm$parser$Parser$Advanced$bagToList, bag2, list);
-					bag = $temp$bag;
-					list = $temp$list;
-					continue bagToList;
-			}
-		}
-	});
-var $elm$parser$Parser$Advanced$run = F2(
-	function (_v0, src) {
-		var parse = _v0.a;
-		var _v1 = parse(
-			{col: 1, context: _List_Nil, indent: 1, offset: 0, row: 1, src: src});
-		if (_v1.$ === 'Good') {
-			var value = _v1.b;
-			return $elm$core$Result$Ok(value);
-		} else {
-			var bag = _v1.b;
-			return $elm$core$Result$Err(
-				A2($elm$parser$Parser$Advanced$bagToList, bag, _List_Nil));
-		}
-	});
-var $elm$parser$Parser$run = F2(
-	function (parser, source) {
-		var _v0 = A2($elm$parser$Parser$Advanced$run, parser, source);
-		if (_v0.$ === 'Ok') {
-			var a = _v0.a;
-			return $elm$core$Result$Ok(a);
-		} else {
-			var problems = _v0.a;
-			return $elm$core$Result$Err(
-				A2($elm$core$List$map, $elm$parser$Parser$problemToDeadEnd, problems));
-		}
-	});
-var $elm$parser$Parser$Advanced$Bad = F2(
-	function (a, b) {
-		return {$: 'Bad', a: a, b: b};
-	});
-var $elm$parser$Parser$Advanced$Good = F3(
-	function (a, b, c) {
-		return {$: 'Good', a: a, b: b, c: c};
-	});
-var $elm$parser$Parser$Advanced$Parser = function (a) {
-	return {$: 'Parser', a: a};
-};
-var $elm$parser$Parser$Advanced$andThen = F2(
-	function (callback, _v0) {
-		var parseA = _v0.a;
-		return $elm$parser$Parser$Advanced$Parser(
-			function (s0) {
-				var _v1 = parseA(s0);
-				if (_v1.$ === 'Bad') {
-					var p = _v1.a;
-					var x = _v1.b;
-					return A2($elm$parser$Parser$Advanced$Bad, p, x);
-				} else {
-					var p1 = _v1.a;
-					var a = _v1.b;
-					var s1 = _v1.c;
-					var _v2 = callback(a);
-					var parseB = _v2.a;
-					var _v3 = parseB(s1);
-					if (_v3.$ === 'Bad') {
-						var p2 = _v3.a;
-						var x = _v3.b;
-						return A2($elm$parser$Parser$Advanced$Bad, p1 || p2, x);
-					} else {
-						var p2 = _v3.a;
-						var b = _v3.b;
-						var s2 = _v3.c;
-						return A3($elm$parser$Parser$Advanced$Good, p1 || p2, b, s2);
-					}
-				}
-			});
-	});
-var $elm$parser$Parser$andThen = $elm$parser$Parser$Advanced$andThen;
-var $elm$parser$Parser$Advanced$isSubChar = _Parser_isSubChar;
-var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
-	function (isGood, offset, row, col, s0) {
-		chompWhileHelp:
-		while (true) {
-			var newOffset = A3($elm$parser$Parser$Advanced$isSubChar, isGood, offset, s0.src);
-			if (_Utils_eq(newOffset, -1)) {
-				return A3(
-					$elm$parser$Parser$Advanced$Good,
-					_Utils_cmp(s0.offset, offset) < 0,
-					_Utils_Tuple0,
-					{col: col, context: s0.context, indent: s0.indent, offset: offset, row: row, src: s0.src});
-			} else {
-				if (_Utils_eq(newOffset, -2)) {
-					var $temp$isGood = isGood,
-						$temp$offset = offset + 1,
-						$temp$row = row + 1,
-						$temp$col = 1,
-						$temp$s0 = s0;
-					isGood = $temp$isGood;
-					offset = $temp$offset;
-					row = $temp$row;
-					col = $temp$col;
-					s0 = $temp$s0;
-					continue chompWhileHelp;
-				} else {
-					var $temp$isGood = isGood,
-						$temp$offset = newOffset,
-						$temp$row = row,
-						$temp$col = col + 1,
-						$temp$s0 = s0;
-					isGood = $temp$isGood;
-					offset = $temp$offset;
-					row = $temp$row;
-					col = $temp$col;
-					s0 = $temp$s0;
-					continue chompWhileHelp;
-				}
-			}
-		}
-	});
-var $elm$parser$Parser$Advanced$chompWhile = function (isGood) {
-	return $elm$parser$Parser$Advanced$Parser(
-		function (s) {
-			return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.offset, s.row, s.col, s);
-		});
-};
-var $elm$parser$Parser$chompWhile = $elm$parser$Parser$Advanced$chompWhile;
-var $elm$parser$Parser$ExpectingEnd = {$: 'ExpectingEnd'};
-var $elm$parser$Parser$Advanced$AddRight = F2(
-	function (a, b) {
-		return {$: 'AddRight', a: a, b: b};
-	});
-var $elm$parser$Parser$Advanced$DeadEnd = F4(
-	function (row, col, problem, contextStack) {
-		return {col: col, contextStack: contextStack, problem: problem, row: row};
-	});
-var $elm$parser$Parser$Advanced$Empty = {$: 'Empty'};
-var $elm$parser$Parser$Advanced$fromState = F2(
-	function (s, x) {
-		return A2(
-			$elm$parser$Parser$Advanced$AddRight,
-			$elm$parser$Parser$Advanced$Empty,
-			A4($elm$parser$Parser$Advanced$DeadEnd, s.row, s.col, x, s.context));
-	});
-var $elm$parser$Parser$Advanced$end = function (x) {
-	return $elm$parser$Parser$Advanced$Parser(
-		function (s) {
-			return _Utils_eq(
-				$elm$core$String$length(s.src),
-				s.offset) ? A3($elm$parser$Parser$Advanced$Good, false, _Utils_Tuple0, s) : A2(
-				$elm$parser$Parser$Advanced$Bad,
-				false,
-				A2($elm$parser$Parser$Advanced$fromState, s, x));
-		});
-};
-var $elm$parser$Parser$end = $elm$parser$Parser$Advanced$end($elm$parser$Parser$ExpectingEnd);
-var $elm$parser$Parser$Advanced$mapChompedString = F2(
-	function (func, _v0) {
-		var parse = _v0.a;
-		return $elm$parser$Parser$Advanced$Parser(
-			function (s0) {
-				var _v1 = parse(s0);
-				if (_v1.$ === 'Bad') {
-					var p = _v1.a;
-					var x = _v1.b;
-					return A2($elm$parser$Parser$Advanced$Bad, p, x);
-				} else {
-					var p = _v1.a;
-					var a = _v1.b;
-					var s1 = _v1.c;
-					return A3(
-						$elm$parser$Parser$Advanced$Good,
-						p,
-						A2(
-							func,
-							A3($elm$core$String$slice, s0.offset, s1.offset, s0.src),
-							a),
-						s1);
-				}
-			});
-	});
-var $elm$parser$Parser$Advanced$getChompedString = function (parser) {
-	return A2($elm$parser$Parser$Advanced$mapChompedString, $elm$core$Basics$always, parser);
-};
-var $elm$parser$Parser$getChompedString = $elm$parser$Parser$Advanced$getChompedString;
-var $elm$parser$Parser$Advanced$map = F2(
-	function (func, _v0) {
-		var parse = _v0.a;
-		return $elm$parser$Parser$Advanced$Parser(
-			function (s0) {
-				var _v1 = parse(s0);
-				if (_v1.$ === 'Good') {
-					var p = _v1.a;
-					var a = _v1.b;
-					var s1 = _v1.c;
-					return A3(
-						$elm$parser$Parser$Advanced$Good,
-						p,
-						func(a),
-						s1);
-				} else {
-					var p = _v1.a;
-					var x = _v1.b;
-					return A2($elm$parser$Parser$Advanced$Bad, p, x);
-				}
-			});
-	});
-var $elm$parser$Parser$map = $elm$parser$Parser$Advanced$map;
-var $elm$parser$Parser$Problem = function (a) {
-	return {$: 'Problem', a: a};
-};
-var $elm$parser$Parser$Advanced$problem = function (x) {
-	return $elm$parser$Parser$Advanced$Parser(
-		function (s) {
-			return A2(
-				$elm$parser$Parser$Advanced$Bad,
-				false,
-				A2($elm$parser$Parser$Advanced$fromState, s, x));
-		});
-};
-var $elm$parser$Parser$problem = function (msg) {
-	return $elm$parser$Parser$Advanced$problem(
-		$elm$parser$Parser$Problem(msg));
-};
-var $elm$parser$Parser$Advanced$succeed = function (a) {
-	return $elm$parser$Parser$Advanced$Parser(
-		function (s) {
-			return A3($elm$parser$Parser$Advanced$Good, false, a, s);
-		});
-};
-var $elm$parser$Parser$succeed = $elm$parser$Parser$Advanced$succeed;
-var $author$project$Data$Hardware$validXMRAddressParser = A2(
-	$elm$parser$Parser$andThen,
-	function (str) {
-		return A2(
-			$elm$parser$Parser$map,
-			function (_v0) {
-				return str;
-			},
-			$elm$parser$Parser$end);
-	},
-	A2(
-		$elm$parser$Parser$andThen,
-		function (str) {
-			return ($elm$core$String$length(str) === 95) ? $elm$parser$Parser$succeed(str) : $elm$parser$Parser$problem('Invalid length');
-		},
-		$elm$parser$Parser$getChompedString(
-			$elm$parser$Parser$chompWhile($elm$core$Char$isAlphaNum))));
-var $author$project$Main$isValidXMRAddress = function (str) {
-	var _v0 = A2($elm$parser$Parser$run, $author$project$Data$Hardware$validXMRAddressParser, str);
-	if (_v0.$ === 'Ok') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var $author$project$Main$OperationEventMsg = function (operationEventMsg) {
-	return {operationEventMsg: operationEventMsg};
-};
-var $author$project$Main$justmsgFieldFromJsonDecoder = A2(
-	$elm$json$Json$Decode$map,
-	$author$project$Main$OperationEventMsg,
-	A2($elm$json$Json$Decode$field, 'operationEventMsg', $elm$json$Json$Decode$string));
-var $elm$browser$Browser$Navigation$load = _Browser_load;
-var $author$project$Main$pageToUrlPath = function (page) {
-	switch (page.$) {
-		case 'HardwarePage':
-			return '/hardware';
-		case 'DashboardPage':
-			return '/dashboard';
-		default:
-			return '/';
-	}
-};
-var $elm$url$Url$Parser$State = F5(
-	function (visited, unvisited, params, frag, value) {
-		return {frag: frag, params: params, unvisited: unvisited, value: value, visited: visited};
-	});
-var $elm$url$Url$Parser$getFirstMatch = function (states) {
-	getFirstMatch:
-	while (true) {
-		if (!states.b) {
-			return $elm$core$Maybe$Nothing;
-		} else {
-			var state = states.a;
-			var rest = states.b;
-			var _v1 = state.unvisited;
-			if (!_v1.b) {
-				return $elm$core$Maybe$Just(state.value);
-			} else {
-				if ((_v1.a === '') && (!_v1.b.b)) {
-					return $elm$core$Maybe$Just(state.value);
-				} else {
-					var $temp$states = rest;
-					states = $temp$states;
-					continue getFirstMatch;
-				}
-			}
-		}
-	}
-};
-var $elm$url$Url$Parser$removeFinalEmpty = function (segments) {
-	if (!segments.b) {
-		return _List_Nil;
-	} else {
-		if ((segments.a === '') && (!segments.b.b)) {
-			return _List_Nil;
-		} else {
-			var segment = segments.a;
-			var rest = segments.b;
-			return A2(
-				$elm$core$List$cons,
-				segment,
-				$elm$url$Url$Parser$removeFinalEmpty(rest));
-		}
-	}
-};
-var $elm$url$Url$Parser$preparePath = function (path) {
-	var _v0 = A2($elm$core$String$split, '/', path);
-	if (_v0.b && (_v0.a === '')) {
-		var segments = _v0.b;
-		return $elm$url$Url$Parser$removeFinalEmpty(segments);
-	} else {
-		var segments = _v0;
-		return $elm$url$Url$Parser$removeFinalEmpty(segments);
-	}
-};
-var $elm$url$Url$Parser$addToParametersHelp = F2(
-	function (value, maybeList) {
-		if (maybeList.$ === 'Nothing') {
-			return $elm$core$Maybe$Just(
-				_List_fromArray(
-					[value]));
-		} else {
-			var list = maybeList.a;
-			return $elm$core$Maybe$Just(
-				A2($elm$core$List$cons, value, list));
-		}
-	});
-var $elm$url$Url$Parser$addParam = F2(
-	function (segment, dict) {
-		var _v0 = A2($elm$core$String$split, '=', segment);
-		if ((_v0.b && _v0.b.b) && (!_v0.b.b.b)) {
-			var rawKey = _v0.a;
-			var _v1 = _v0.b;
-			var rawValue = _v1.a;
-			var _v2 = $elm$url$Url$percentDecode(rawKey);
-			if (_v2.$ === 'Nothing') {
-				return dict;
-			} else {
-				var key = _v2.a;
-				var _v3 = $elm$url$Url$percentDecode(rawValue);
-				if (_v3.$ === 'Nothing') {
-					return dict;
-				} else {
-					var value = _v3.a;
-					return A3(
-						$elm$core$Dict$update,
-						key,
-						$elm$url$Url$Parser$addToParametersHelp(value),
-						dict);
-				}
-			}
-		} else {
-			return dict;
-		}
-	});
-var $elm$url$Url$Parser$prepareQuery = function (maybeQuery) {
-	if (maybeQuery.$ === 'Nothing') {
-		return $elm$core$Dict$empty;
-	} else {
-		var qry = maybeQuery.a;
-		return A3(
-			$elm$core$List$foldr,
-			$elm$url$Url$Parser$addParam,
-			$elm$core$Dict$empty,
-			A2($elm$core$String$split, '&', qry));
-	}
-};
-var $elm$url$Url$Parser$parse = F2(
-	function (_v0, url) {
-		var parser = _v0.a;
-		return $elm$url$Url$Parser$getFirstMatch(
-			parser(
-				A5(
-					$elm$url$Url$Parser$State,
-					_List_Nil,
-					$elm$url$Url$Parser$preparePath(url.path),
-					$elm$url$Url$Parser$prepareQuery(url.query),
-					url.fragment,
-					$elm$core$Basics$identity)));
-	});
-var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
-var $author$project$Main$sendMessageToJs = _Platform_outgoingPort('sendMessageToJs', $elm$json$Json$Encode$string);
-var $author$project$Main$GotDashboardMsg = function (a) {
-	return {$: 'GotDashboardMsg', a: a};
-};
-var $author$project$Main$toDashboard = F2(
-	function (model, _v0) {
-		var dashboard = _v0.a;
-		var cmd = _v0.b;
-		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{
-					page: $author$project$Main$DashboardPage(dashboard)
-				}),
-			$elm$core$Platform$Cmd$batch(
-				_List_fromArray(
-					[
-						A2($elm$core$Platform$Cmd$map, $author$project$Main$GotDashboardMsg, cmd),
-						A2($elm$core$Task$perform, $author$project$Main$AdjustTimeZone, $elm$time$Time$here)
-					])));
-	});
-var $author$project$Main$FundsPage = function (a) {
-	return {$: 'FundsPage', a: a};
-};
-var $author$project$Main$GotFundsMsg = function (a) {
-	return {$: 'GotFundsMsg', a: a};
-};
-var $author$project$Main$toFunds = F2(
-	function (model, _v0) {
-		var funds = _v0.a;
-		var cmd = _v0.b;
-		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{
-					page: $author$project$Main$FundsPage(funds)
-				}),
-			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFundsMsg, cmd));
-	});
-var $author$project$Main$GotHardwareMsg = function (a) {
-	return {$: 'GotHardwareMsg', a: a};
-};
-var $author$project$Main$GotVersion = function (a) {
-	return {$: 'GotVersion', a: a};
+var $author$project$Pages$Wallet$GotBalances = function (a) {
+	return {$: 'GotBalances', a: a};
 };
 var $anmolitor$elm_grpc$Grpc$InternalRpcRequest = function (a) {
 	return {$: 'InternalRpcRequest', a: a};
@@ -12419,10 +11929,27 @@ var $anmolitor$elm_grpc$Grpc$addHeader = F3(
 						req.headers)
 				}));
 	});
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetBalancesRequest = {currencyCode: ''};
+var $author$project$Proto$Io$Haveno$Protobuffer$defaultGetBalancesRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetBalancesRequest;
 var $anmolitor$elm_grpc$Grpc$Internal$Rpc = function (a) {
 	return {$: 'Rpc', a: a};
 };
-var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionReply = {version: ''};
+var $eriktim$elm_protocol_buffers$Internal$Int64$Int64 = function (a) {
+	return {$: 'Int64', a: a};
+};
+var $elm$core$Bitwise$or = _Bitwise_or;
+var $eriktim$elm_protocol_buffers$Internal$Int64$fromInts = F2(
+	function (higher, lower) {
+		return $eriktim$elm_protocol_buffers$Internal$Int64$Int64(
+			{higher: 0 | higher, lower: 0 | lower});
+	});
+var $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts = $eriktim$elm_protocol_buffers$Internal$Int64$fromInts;
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BtcBalanceInfo = {
+	availableBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	lockedBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	reservedBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	totalAvailableBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0)
+};
 var $eriktim$elm_protocol_buffers$Protobuf$Decode$Decoder = function (a) {
 	return {$: 'Decoder', a: a};
 };
@@ -12907,46 +12434,261 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$optional = F3(
 					A2($eriktim$elm_protocol_buffers$Protobuf$Decode$map, set, decoder))
 				]));
 	});
-var $elm$core$Tuple$pair = F2(
-	function (a, b) {
-		return _Utils_Tuple2(a, b);
+var $eriktim$elm_protocol_buffers$Internal$Int64$fromBase128 = $eriktim$elm_protocol_buffers$Internal$Int64$fromInts(0);
+var $eriktim$elm_protocol_buffers$Internal$Int64$and = F2(
+	function (n, _v0) {
+		var lower = _v0.a.lower;
+		return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, 0, n & lower);
 	});
-var $eriktim$elm_protocol_buffers$Protobuf$Decode$lengthDelimitedDecoder = function (decoder) {
-	return $eriktim$elm_protocol_buffers$Protobuf$Decode$Decoder(
-		function (wireType) {
-			if (wireType.$ === 'LengthDelimited') {
-				var width = wireType.a;
-				return A2(
-					$elm$bytes$Bytes$Decode$map,
-					$elm$core$Tuple$pair(width),
-					decoder(width));
-			} else {
-				return $elm$bytes$Bytes$Decode$fail;
-			}
-		});
+var $elm$core$Bitwise$complement = _Bitwise_complement;
+var $eriktim$elm_protocol_buffers$Internal$Int64$negate = function (_int) {
+	var higher = _int.a.higher;
+	var lower = _int.a.lower;
+	return ((!lower) && (!higher)) ? _int : A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, ~higher, (~lower) + 1);
 };
-var $elm$bytes$Bytes$Decode$string = function (n) {
-	return $elm$bytes$Bytes$Decode$Decoder(
-		_Bytes_read_string(n));
+var $eriktim$elm_protocol_buffers$Internal$Int64$shiftRightZfBy = F2(
+	function (n, _v0) {
+		var higher = _v0.a.higher;
+		var lower = _v0.a.lower;
+		if (n > 32) {
+			return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, 0, higher >>> n);
+		} else {
+			var carry = higher << (32 - n);
+			var newLower = (carry | (lower >>> n)) >>> 0;
+			return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, higher >>> n, newLower);
+		}
+	});
+var $eriktim$elm_protocol_buffers$Internal$Int64$xor = F2(
+	function (_v0, _v1) {
+		var a = _v0.a;
+		var b = _v1.a;
+		return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, a.higher ^ b.higher, a.lower ^ b.lower);
+	});
+var $eriktim$elm_protocol_buffers$Internal$Int64$fromZigZag = function (value) {
+	return A2(
+		$eriktim$elm_protocol_buffers$Internal$Int64$xor,
+		A2($eriktim$elm_protocol_buffers$Internal$Int64$shiftRightZfBy, 1, value),
+		$eriktim$elm_protocol_buffers$Internal$Int64$negate(
+			A2($eriktim$elm_protocol_buffers$Internal$Int64$and, 1, value)));
 };
-var $eriktim$elm_protocol_buffers$Protobuf$Decode$string = $eriktim$elm_protocol_buffers$Protobuf$Decode$lengthDelimitedDecoder($elm$bytes$Bytes$Decode$string);
-var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetVersionReply = A2(
+var $eriktim$elm_protocol_buffers$Internal$Int64$popBase128 = function (_int) {
+	var lower = _int.a.lower;
+	var higherBits = A2($eriktim$elm_protocol_buffers$Internal$Int64$shiftRightZfBy, 7, _int);
+	var base128 = 127 & lower;
+	return _Utils_Tuple2(base128, higherBits);
+};
+var $eriktim$elm_protocol_buffers$Internal$Int64$addUnsafe = F2(
+	function (n, _v0) {
+		var higher = _v0.a.higher;
+		var lower = _v0.a.lower;
+		return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, higher, n + lower);
+	});
+var $eriktim$elm_protocol_buffers$Internal$Int64$shiftLeftBy = F2(
+	function (n, _v0) {
+		var higher = _v0.a.higher;
+		var lower = _v0.a.lower;
+		if (n > 32) {
+			return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, lower << n, 0);
+		} else {
+			var carry = lower >>> (32 - n);
+			var newHigher = carry | (higher << n);
+			return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, newHigher, lower << n);
+		}
+	});
+var $eriktim$elm_protocol_buffers$Internal$Int64$pushBase128 = F2(
+	function (base128, _int) {
+		return A2(
+			$eriktim$elm_protocol_buffers$Internal$Int64$addUnsafe,
+			base128,
+			A2($eriktim$elm_protocol_buffers$Internal$Int64$shiftLeftBy, 7, _int));
+	});
+var $eriktim$elm_protocol_buffers$Internal$Int64$shiftRightBy63 = function (_v0) {
+	var higher = _v0.a.higher;
+	var onlyOnesOrZeros = higher >> 31;
+	return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, onlyOnesOrZeros, onlyOnesOrZeros);
+};
+var $eriktim$elm_protocol_buffers$Internal$Int64$toZigZag = function (value) {
+	return A2(
+		$eriktim$elm_protocol_buffers$Internal$Int64$xor,
+		$eriktim$elm_protocol_buffers$Internal$Int64$shiftRightBy63(value),
+		A2($eriktim$elm_protocol_buffers$Internal$Int64$shiftLeftBy, 1, value));
+};
+var $eriktim$elm_protocol_buffers$Internal$Int64$operations = {fromBase128: $eriktim$elm_protocol_buffers$Internal$Int64$fromBase128, fromSigned: $elm$core$Basics$identity, fromZigZag: $eriktim$elm_protocol_buffers$Internal$Int64$fromZigZag, popBase128: $eriktim$elm_protocol_buffers$Internal$Int64$popBase128, pushBase128: $eriktim$elm_protocol_buffers$Internal$Int64$pushBase128, toSigned: $elm$core$Basics$identity, toZigZag: $eriktim$elm_protocol_buffers$Internal$Int64$toZigZag};
+var $eriktim$elm_protocol_buffers$Protobuf$Decode$packedDecoder = F2(
+	function (decoderWireType, decoder) {
+		return $eriktim$elm_protocol_buffers$Protobuf$Decode$Decoder(
+			function (wireType) {
+				if (wireType.$ === 'LengthDelimited') {
+					return decoder;
+				} else {
+					return _Utils_eq(wireType, decoderWireType) ? decoder : $elm$bytes$Bytes$Decode$fail;
+				}
+			});
+	});
+var $eriktim$elm_protocol_buffers$Protobuf$Decode$uintDecoder = function (config) {
+	return A2(
+		$eriktim$elm_protocol_buffers$Protobuf$Decode$packedDecoder,
+		$eriktim$elm_protocol_buffers$Internal$Protobuf$VarInt,
+		A2(
+			$elm$bytes$Bytes$Decode$map,
+			$elm$core$Tuple$mapSecond(config.fromSigned),
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$varIntDecoder(config)));
+};
+var $eriktim$elm_protocol_buffers$Protobuf$Decode$uint64 = $eriktim$elm_protocol_buffers$Protobuf$Decode$uintDecoder($eriktim$elm_protocol_buffers$Internal$Int64$operations);
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__BtcBalanceInfo = A2(
 	$eriktim$elm_protocol_buffers$Protobuf$Decode$message,
-	$author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionReply,
+	$author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BtcBalanceInfo,
 	_List_fromArray(
 		[
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
 			1,
-			$eriktim$elm_protocol_buffers$Protobuf$Decode$string,
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$uint64,
 			F2(
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{version: a});
+						{availableBalance: a});
+				})),
+			A3(
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
+			2,
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$uint64,
+			F2(
+				function (a, r) {
+					return _Utils_update(
+						r,
+						{reservedBalance: a});
+				})),
+			A3(
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
+			3,
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$uint64,
+			F2(
+				function (a, r) {
+					return _Utils_update(
+						r,
+						{totalAvailableBalance: a});
+				})),
+			A3(
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
+			4,
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$uint64,
+			F2(
+				function (a, r) {
+					return _Utils_update(
+						r,
+						{lockedBalance: a});
 				}))
 		]));
-var $author$project$Proto$Io$Haveno$Protobuffer$decodeGetVersionReply = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetVersionReply;
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__XmrBalanceInfo = {
+	availableBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	balance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	pendingBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	reservedOfferBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	reservedTradeBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0)
+};
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__XmrBalanceInfo = A2(
+	$eriktim$elm_protocol_buffers$Protobuf$Decode$message,
+	$author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__XmrBalanceInfo,
+	_List_fromArray(
+		[
+			A3(
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
+			1,
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$uint64,
+			F2(
+				function (a, r) {
+					return _Utils_update(
+						r,
+						{balance: a});
+				})),
+			A3(
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
+			2,
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$uint64,
+			F2(
+				function (a, r) {
+					return _Utils_update(
+						r,
+						{availableBalance: a});
+				})),
+			A3(
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
+			3,
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$uint64,
+			F2(
+				function (a, r) {
+					return _Utils_update(
+						r,
+						{pendingBalance: a});
+				})),
+			A3(
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
+			4,
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$uint64,
+			F2(
+				function (a, r) {
+					return _Utils_update(
+						r,
+						{reservedOfferBalance: a});
+				})),
+			A3(
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
+			5,
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$uint64,
+			F2(
+				function (a, r) {
+					return _Utils_update(
+						r,
+						{reservedTradeBalance: a});
+				}))
+		]));
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo = {btc: $elm$core$Maybe$Nothing, xmr: $elm$core$Maybe$Nothing};
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__BalancesInfo = A2(
+	$eriktim$elm_protocol_buffers$Protobuf$Decode$message,
+	$author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo,
+	_List_fromArray(
+		[
+			A3(
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
+			1,
+			A2($eriktim$elm_protocol_buffers$Protobuf$Decode$map, $elm$core$Maybe$Just, $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__BtcBalanceInfo),
+			F2(
+				function (a, r) {
+					return _Utils_update(
+						r,
+						{btc: a});
+				})),
+			A3(
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
+			2,
+			A2($eriktim$elm_protocol_buffers$Protobuf$Decode$map, $elm$core$Maybe$Just, $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__XmrBalanceInfo),
+			F2(
+				function (a, r) {
+					return _Utils_update(
+						r,
+						{xmr: a});
+				}))
+		]));
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetBalancesReply = {balances: $elm$core$Maybe$Nothing};
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetBalancesReply = A2(
+	$eriktim$elm_protocol_buffers$Protobuf$Decode$message,
+	$author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetBalancesReply,
+	_List_fromArray(
+		[
+			A3(
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
+			1,
+			A2($eriktim$elm_protocol_buffers$Protobuf$Decode$map, $elm$core$Maybe$Just, $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__BalancesInfo),
+			F2(
+				function (a, r) {
+					return _Utils_update(
+						r,
+						{balances: a});
+				}))
+		]));
+var $author$project$Proto$Io$Haveno$Protobuffer$decodeGetBalancesReply = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetBalancesReply;
 var $eriktim$elm_protocol_buffers$Protobuf$Encode$Encoder = F2(
 	function (a, b) {
 		return {$: 'Encoder', a: a, b: b};
@@ -12990,7 +12732,10 @@ var $eriktim$elm_protocol_buffers$Protobuf$Encode$sequence = function (items) {
 			A2($elm$core$List$map, $elm$core$Tuple$second, items)));
 };
 var $elm$core$List$sortBy = _List_sortBy;
-var $elm$core$Bitwise$or = _Bitwise_or;
+var $elm$core$Tuple$pair = F2(
+	function (a, b) {
+		return _Utils_Tuple2(a, b);
+	});
 var $elm$bytes$Bytes$Encode$U8 = function (a) {
 	return {$: 'U8', a: a};
 };
@@ -13126,12 +12871,38 @@ var $eriktim$elm_protocol_buffers$Protobuf$Encode$message = function (items) {
 				$eriktim$elm_protocol_buffers$Protobuf$Encode$toKeyValuePairEncoder,
 				A2($elm$core$List$sortBy, $elm$core$Tuple$first, items))));
 };
-var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetVersionRequest = function (_v0) {
-	return $eriktim$elm_protocol_buffers$Protobuf$Encode$message(_List_Nil);
+var $elm$bytes$Bytes$Encode$getStringWidth = _Bytes_getStringWidth;
+var $elm$bytes$Bytes$Encode$Utf8 = F2(
+	function (a, b) {
+		return {$: 'Utf8', a: a, b: b};
+	});
+var $elm$bytes$Bytes$Encode$string = function (str) {
+	return A2(
+		$elm$bytes$Bytes$Encode$Utf8,
+		_Bytes_getStringWidth(str),
+		str);
 };
-var $author$project$Proto$Io$Haveno$Protobuffer$encodeGetVersionRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetVersionRequest;
-var $author$project$Proto$Io$Haveno$Protobuffer$GetVersion$getVersion = $anmolitor$elm_grpc$Grpc$Internal$Rpc(
-	{decoder: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetVersionReply, encoder: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetVersionRequest, _package: 'io.haveno.protobuffer', rpcName: 'GetVersion', service: 'GetVersion'});
+var $eriktim$elm_protocol_buffers$Protobuf$Encode$string = function (v) {
+	var width = $elm$bytes$Bytes$Encode$getStringWidth(v);
+	return A2(
+		$eriktim$elm_protocol_buffers$Protobuf$Encode$Encoder,
+		$eriktim$elm_protocol_buffers$Internal$Protobuf$LengthDelimited(width),
+		_Utils_Tuple2(
+			width,
+			$elm$bytes$Bytes$Encode$string(v)));
+};
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetBalancesRequest = function (value) {
+	return $eriktim$elm_protocol_buffers$Protobuf$Encode$message(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				1,
+				$eriktim$elm_protocol_buffers$Protobuf$Encode$string(value.currencyCode))
+			]));
+};
+var $author$project$Proto$Io$Haveno$Protobuffer$encodeGetBalancesRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetBalancesRequest;
+var $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getBalances = $anmolitor$elm_grpc$Grpc$Internal$Rpc(
+	{decoder: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetBalancesReply, encoder: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetBalancesRequest, _package: 'io.haveno.protobuffer', rpcName: 'GetBalances', service: 'Wallets'});
 var $anmolitor$elm_grpc$Grpc$grpcContentType = 'application/grpc-web+proto';
 var $anmolitor$elm_grpc$Grpc$new = F2(
 	function (rpc, req) {
@@ -13643,6 +13414,579 @@ var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 					$anmolitor$elm_grpc$Grpc$rpcPath(req.rpc))
 			});
 	});
+var $author$project$Pages$Wallet$gotAvailableBalances = function () {
+	var grpcRequest = A2(
+		$anmolitor$elm_grpc$Grpc$setHost,
+		'http://localhost:8080',
+		A3(
+			$anmolitor$elm_grpc$Grpc$addHeader,
+			'password',
+			'apitest',
+			A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getBalances, $author$project$Proto$Io$Haveno$Protobuffer$defaultGetBalancesRequest)));
+	return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Wallet$GotBalances, grpcRequest);
+}();
+var $author$project$Pages$Wallet$Loaded = {$: 'Loaded'};
+var $author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo;
+var $author$project$Pages$Wallet$initialModel = {
+	address: 'Not Connected',
+	balances: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
+	errors: _List_Nil,
+	isHardwareWalletConnected: false,
+	isPopUpVisible: true,
+	pagetitle: 'Wallet',
+	status: $author$project$Pages$Wallet$Loaded
+};
+var $author$project$Pages$Wallet$init = function (_v0) {
+	return _Utils_Tuple2($author$project$Pages$Wallet$initialModel, $author$project$Pages$Wallet$gotAvailableBalances);
+};
+var $author$project$Pages$Dashboard$initialModel = {
+	balance: '0.00',
+	errors: _List_Nil,
+	flagUrl: A6($elm$url$Url$Url, $elm$url$Url$Http, 'localhost', $elm$core$Maybe$Nothing, '/dashboard', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing),
+	havenoAPKHttpRequest: $elm$core$Maybe$Nothing,
+	pagetitle: 'Dashboard',
+	root: $author$project$Pages$Dashboard$Dashboard(
+		{name: 'Loading...'}),
+	status: $author$project$Pages$Dashboard$Loaded,
+	version: 'No Haveno version available'
+};
+var $author$project$Pages$Hardware$initialModel = {
+	apiSpecifics: {accessToken: $elm$core$Maybe$Nothing, maxResults: ''},
+	datetimeFromMain: $elm$core$Maybe$Nothing,
+	errors: _List_Nil,
+	flagUrl: A6(
+		$elm$url$Url$Url,
+		$elm$url$Url$Http,
+		'localhost',
+		$elm$core$Maybe$Just(1234),
+		'/hardware',
+		$elm$core$Maybe$Nothing,
+		$elm$core$Maybe$Nothing),
+	isHardwareDeviceConnected: false,
+	isReturnUser: false,
+	isValidNewAccessToken: false,
+	isXMRWalletConnected: false,
+	objectJSONfromJSPort: $elm$core$Maybe$Nothing,
+	queryType: $author$project$Pages$Hardware$Spectator,
+	root: $author$project$Pages$Hardware$Hardware(
+		{name: 'Loading...'}),
+	status: $author$project$Pages$Hardware$Loaded,
+	title: 'Hardware',
+	user: $author$project$Data$User$emptySpectator,
+	xmrWalletAddress: ''
+};
+var $elm$parser$Parser$DeadEnd = F3(
+	function (row, col, problem) {
+		return {col: col, problem: problem, row: row};
+	});
+var $elm$parser$Parser$problemToDeadEnd = function (p) {
+	return A3($elm$parser$Parser$DeadEnd, p.row, p.col, p.problem);
+};
+var $elm$parser$Parser$Advanced$bagToList = F2(
+	function (bag, list) {
+		bagToList:
+		while (true) {
+			switch (bag.$) {
+				case 'Empty':
+					return list;
+				case 'AddRight':
+					var bag1 = bag.a;
+					var x = bag.b;
+					var $temp$bag = bag1,
+						$temp$list = A2($elm$core$List$cons, x, list);
+					bag = $temp$bag;
+					list = $temp$list;
+					continue bagToList;
+				default:
+					var bag1 = bag.a;
+					var bag2 = bag.b;
+					var $temp$bag = bag1,
+						$temp$list = A2($elm$parser$Parser$Advanced$bagToList, bag2, list);
+					bag = $temp$bag;
+					list = $temp$list;
+					continue bagToList;
+			}
+		}
+	});
+var $elm$parser$Parser$Advanced$run = F2(
+	function (_v0, src) {
+		var parse = _v0.a;
+		var _v1 = parse(
+			{col: 1, context: _List_Nil, indent: 1, offset: 0, row: 1, src: src});
+		if (_v1.$ === 'Good') {
+			var value = _v1.b;
+			return $elm$core$Result$Ok(value);
+		} else {
+			var bag = _v1.b;
+			return $elm$core$Result$Err(
+				A2($elm$parser$Parser$Advanced$bagToList, bag, _List_Nil));
+		}
+	});
+var $elm$parser$Parser$run = F2(
+	function (parser, source) {
+		var _v0 = A2($elm$parser$Parser$Advanced$run, parser, source);
+		if (_v0.$ === 'Ok') {
+			var a = _v0.a;
+			return $elm$core$Result$Ok(a);
+		} else {
+			var problems = _v0.a;
+			return $elm$core$Result$Err(
+				A2($elm$core$List$map, $elm$parser$Parser$problemToDeadEnd, problems));
+		}
+	});
+var $elm$parser$Parser$Advanced$Bad = F2(
+	function (a, b) {
+		return {$: 'Bad', a: a, b: b};
+	});
+var $elm$parser$Parser$Advanced$Good = F3(
+	function (a, b, c) {
+		return {$: 'Good', a: a, b: b, c: c};
+	});
+var $elm$parser$Parser$Advanced$Parser = function (a) {
+	return {$: 'Parser', a: a};
+};
+var $elm$parser$Parser$Advanced$andThen = F2(
+	function (callback, _v0) {
+		var parseA = _v0.a;
+		return $elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _v1 = parseA(s0);
+				if (_v1.$ === 'Bad') {
+					var p = _v1.a;
+					var x = _v1.b;
+					return A2($elm$parser$Parser$Advanced$Bad, p, x);
+				} else {
+					var p1 = _v1.a;
+					var a = _v1.b;
+					var s1 = _v1.c;
+					var _v2 = callback(a);
+					var parseB = _v2.a;
+					var _v3 = parseB(s1);
+					if (_v3.$ === 'Bad') {
+						var p2 = _v3.a;
+						var x = _v3.b;
+						return A2($elm$parser$Parser$Advanced$Bad, p1 || p2, x);
+					} else {
+						var p2 = _v3.a;
+						var b = _v3.b;
+						var s2 = _v3.c;
+						return A3($elm$parser$Parser$Advanced$Good, p1 || p2, b, s2);
+					}
+				}
+			});
+	});
+var $elm$parser$Parser$andThen = $elm$parser$Parser$Advanced$andThen;
+var $elm$parser$Parser$Advanced$isSubChar = _Parser_isSubChar;
+var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
+	function (isGood, offset, row, col, s0) {
+		chompWhileHelp:
+		while (true) {
+			var newOffset = A3($elm$parser$Parser$Advanced$isSubChar, isGood, offset, s0.src);
+			if (_Utils_eq(newOffset, -1)) {
+				return A3(
+					$elm$parser$Parser$Advanced$Good,
+					_Utils_cmp(s0.offset, offset) < 0,
+					_Utils_Tuple0,
+					{col: col, context: s0.context, indent: s0.indent, offset: offset, row: row, src: s0.src});
+			} else {
+				if (_Utils_eq(newOffset, -2)) {
+					var $temp$isGood = isGood,
+						$temp$offset = offset + 1,
+						$temp$row = row + 1,
+						$temp$col = 1,
+						$temp$s0 = s0;
+					isGood = $temp$isGood;
+					offset = $temp$offset;
+					row = $temp$row;
+					col = $temp$col;
+					s0 = $temp$s0;
+					continue chompWhileHelp;
+				} else {
+					var $temp$isGood = isGood,
+						$temp$offset = newOffset,
+						$temp$row = row,
+						$temp$col = col + 1,
+						$temp$s0 = s0;
+					isGood = $temp$isGood;
+					offset = $temp$offset;
+					row = $temp$row;
+					col = $temp$col;
+					s0 = $temp$s0;
+					continue chompWhileHelp;
+				}
+			}
+		}
+	});
+var $elm$parser$Parser$Advanced$chompWhile = function (isGood) {
+	return $elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.offset, s.row, s.col, s);
+		});
+};
+var $elm$parser$Parser$chompWhile = $elm$parser$Parser$Advanced$chompWhile;
+var $elm$parser$Parser$ExpectingEnd = {$: 'ExpectingEnd'};
+var $elm$parser$Parser$Advanced$AddRight = F2(
+	function (a, b) {
+		return {$: 'AddRight', a: a, b: b};
+	});
+var $elm$parser$Parser$Advanced$DeadEnd = F4(
+	function (row, col, problem, contextStack) {
+		return {col: col, contextStack: contextStack, problem: problem, row: row};
+	});
+var $elm$parser$Parser$Advanced$Empty = {$: 'Empty'};
+var $elm$parser$Parser$Advanced$fromState = F2(
+	function (s, x) {
+		return A2(
+			$elm$parser$Parser$Advanced$AddRight,
+			$elm$parser$Parser$Advanced$Empty,
+			A4($elm$parser$Parser$Advanced$DeadEnd, s.row, s.col, x, s.context));
+	});
+var $elm$parser$Parser$Advanced$end = function (x) {
+	return $elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return _Utils_eq(
+				$elm$core$String$length(s.src),
+				s.offset) ? A3($elm$parser$Parser$Advanced$Good, false, _Utils_Tuple0, s) : A2(
+				$elm$parser$Parser$Advanced$Bad,
+				false,
+				A2($elm$parser$Parser$Advanced$fromState, s, x));
+		});
+};
+var $elm$parser$Parser$end = $elm$parser$Parser$Advanced$end($elm$parser$Parser$ExpectingEnd);
+var $elm$parser$Parser$Advanced$mapChompedString = F2(
+	function (func, _v0) {
+		var parse = _v0.a;
+		return $elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _v1 = parse(s0);
+				if (_v1.$ === 'Bad') {
+					var p = _v1.a;
+					var x = _v1.b;
+					return A2($elm$parser$Parser$Advanced$Bad, p, x);
+				} else {
+					var p = _v1.a;
+					var a = _v1.b;
+					var s1 = _v1.c;
+					return A3(
+						$elm$parser$Parser$Advanced$Good,
+						p,
+						A2(
+							func,
+							A3($elm$core$String$slice, s0.offset, s1.offset, s0.src),
+							a),
+						s1);
+				}
+			});
+	});
+var $elm$parser$Parser$Advanced$getChompedString = function (parser) {
+	return A2($elm$parser$Parser$Advanced$mapChompedString, $elm$core$Basics$always, parser);
+};
+var $elm$parser$Parser$getChompedString = $elm$parser$Parser$Advanced$getChompedString;
+var $elm$parser$Parser$Advanced$map = F2(
+	function (func, _v0) {
+		var parse = _v0.a;
+		return $elm$parser$Parser$Advanced$Parser(
+			function (s0) {
+				var _v1 = parse(s0);
+				if (_v1.$ === 'Good') {
+					var p = _v1.a;
+					var a = _v1.b;
+					var s1 = _v1.c;
+					return A3(
+						$elm$parser$Parser$Advanced$Good,
+						p,
+						func(a),
+						s1);
+				} else {
+					var p = _v1.a;
+					var x = _v1.b;
+					return A2($elm$parser$Parser$Advanced$Bad, p, x);
+				}
+			});
+	});
+var $elm$parser$Parser$map = $elm$parser$Parser$Advanced$map;
+var $elm$parser$Parser$Problem = function (a) {
+	return {$: 'Problem', a: a};
+};
+var $elm$parser$Parser$Advanced$problem = function (x) {
+	return $elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return A2(
+				$elm$parser$Parser$Advanced$Bad,
+				false,
+				A2($elm$parser$Parser$Advanced$fromState, s, x));
+		});
+};
+var $elm$parser$Parser$problem = function (msg) {
+	return $elm$parser$Parser$Advanced$problem(
+		$elm$parser$Parser$Problem(msg));
+};
+var $elm$parser$Parser$Advanced$succeed = function (a) {
+	return $elm$parser$Parser$Advanced$Parser(
+		function (s) {
+			return A3($elm$parser$Parser$Advanced$Good, false, a, s);
+		});
+};
+var $elm$parser$Parser$succeed = $elm$parser$Parser$Advanced$succeed;
+var $author$project$Data$Hardware$validXMRAddressParser = A2(
+	$elm$parser$Parser$andThen,
+	function (str) {
+		return A2(
+			$elm$parser$Parser$map,
+			function (_v0) {
+				return str;
+			},
+			$elm$parser$Parser$end);
+	},
+	A2(
+		$elm$parser$Parser$andThen,
+		function (str) {
+			return ($elm$core$String$length(str) === 95) ? $elm$parser$Parser$succeed(str) : $elm$parser$Parser$problem('Invalid length');
+		},
+		$elm$parser$Parser$getChompedString(
+			$elm$parser$Parser$chompWhile($elm$core$Char$isAlphaNum))));
+var $author$project$Main$isValidXMRAddress = function (str) {
+	var _v0 = A2($elm$parser$Parser$run, $author$project$Data$Hardware$validXMRAddressParser, str);
+	if (_v0.$ === 'Ok') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var $author$project$Main$OperationEventMsg = function (operationEventMsg) {
+	return {operationEventMsg: operationEventMsg};
+};
+var $author$project$Main$justmsgFieldFromJsonDecoder = A2(
+	$elm$json$Json$Decode$map,
+	$author$project$Main$OperationEventMsg,
+	A2($elm$json$Json$Decode$field, 'operationEventMsg', $elm$json$Json$Decode$string));
+var $elm$browser$Browser$Navigation$load = _Browser_load;
+var $elm$core$Debug$log = _Debug_log;
+var $author$project$Main$pageToUrlPath = function (page) {
+	switch (page.$) {
+		case 'HardwarePage':
+			return '/hardware';
+		case 'DashboardPage':
+			return '/dashboard';
+		case 'WalletPage':
+			return '/wallet';
+		default:
+			return '/';
+	}
+};
+var $elm$url$Url$Parser$State = F5(
+	function (visited, unvisited, params, frag, value) {
+		return {frag: frag, params: params, unvisited: unvisited, value: value, visited: visited};
+	});
+var $elm$url$Url$Parser$getFirstMatch = function (states) {
+	getFirstMatch:
+	while (true) {
+		if (!states.b) {
+			return $elm$core$Maybe$Nothing;
+		} else {
+			var state = states.a;
+			var rest = states.b;
+			var _v1 = state.unvisited;
+			if (!_v1.b) {
+				return $elm$core$Maybe$Just(state.value);
+			} else {
+				if ((_v1.a === '') && (!_v1.b.b)) {
+					return $elm$core$Maybe$Just(state.value);
+				} else {
+					var $temp$states = rest;
+					states = $temp$states;
+					continue getFirstMatch;
+				}
+			}
+		}
+	}
+};
+var $elm$url$Url$Parser$removeFinalEmpty = function (segments) {
+	if (!segments.b) {
+		return _List_Nil;
+	} else {
+		if ((segments.a === '') && (!segments.b.b)) {
+			return _List_Nil;
+		} else {
+			var segment = segments.a;
+			var rest = segments.b;
+			return A2(
+				$elm$core$List$cons,
+				segment,
+				$elm$url$Url$Parser$removeFinalEmpty(rest));
+		}
+	}
+};
+var $elm$url$Url$Parser$preparePath = function (path) {
+	var _v0 = A2($elm$core$String$split, '/', path);
+	if (_v0.b && (_v0.a === '')) {
+		var segments = _v0.b;
+		return $elm$url$Url$Parser$removeFinalEmpty(segments);
+	} else {
+		var segments = _v0;
+		return $elm$url$Url$Parser$removeFinalEmpty(segments);
+	}
+};
+var $elm$url$Url$Parser$addToParametersHelp = F2(
+	function (value, maybeList) {
+		if (maybeList.$ === 'Nothing') {
+			return $elm$core$Maybe$Just(
+				_List_fromArray(
+					[value]));
+		} else {
+			var list = maybeList.a;
+			return $elm$core$Maybe$Just(
+				A2($elm$core$List$cons, value, list));
+		}
+	});
+var $elm$url$Url$Parser$addParam = F2(
+	function (segment, dict) {
+		var _v0 = A2($elm$core$String$split, '=', segment);
+		if ((_v0.b && _v0.b.b) && (!_v0.b.b.b)) {
+			var rawKey = _v0.a;
+			var _v1 = _v0.b;
+			var rawValue = _v1.a;
+			var _v2 = $elm$url$Url$percentDecode(rawKey);
+			if (_v2.$ === 'Nothing') {
+				return dict;
+			} else {
+				var key = _v2.a;
+				var _v3 = $elm$url$Url$percentDecode(rawValue);
+				if (_v3.$ === 'Nothing') {
+					return dict;
+				} else {
+					var value = _v3.a;
+					return A3(
+						$elm$core$Dict$update,
+						key,
+						$elm$url$Url$Parser$addToParametersHelp(value),
+						dict);
+				}
+			}
+		} else {
+			return dict;
+		}
+	});
+var $elm$url$Url$Parser$prepareQuery = function (maybeQuery) {
+	if (maybeQuery.$ === 'Nothing') {
+		return $elm$core$Dict$empty;
+	} else {
+		var qry = maybeQuery.a;
+		return A3(
+			$elm$core$List$foldr,
+			$elm$url$Url$Parser$addParam,
+			$elm$core$Dict$empty,
+			A2($elm$core$String$split, '&', qry));
+	}
+};
+var $elm$url$Url$Parser$parse = F2(
+	function (_v0, url) {
+		var parser = _v0.a;
+		return $elm$url$Url$Parser$getFirstMatch(
+			parser(
+				A5(
+					$elm$url$Url$Parser$State,
+					_List_Nil,
+					$elm$url$Url$Parser$preparePath(url.path),
+					$elm$url$Url$Parser$prepareQuery(url.query),
+					url.fragment,
+					$elm$core$Basics$identity)));
+	});
+var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var $author$project$Main$sendMessageToJs = _Platform_outgoingPort('sendMessageToJs', $elm$json$Json$Encode$string);
+var $author$project$Main$setDashboardHavenoVersion = F2(
+	function (dashboardModel, model) {
+		return _Utils_update(
+			dashboardModel,
+			{version: model.version});
+	});
+var $author$project$Main$GotDashboardMsg = function (a) {
+	return {$: 'GotDashboardMsg', a: a};
+};
+var $author$project$Main$toDashboard = F2(
+	function (model, _v0) {
+		var dashboard = _v0.a;
+		var cmd = _v0.b;
+		return _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{
+					page: $author$project$Main$DashboardPage(dashboard)
+				}),
+			$elm$core$Platform$Cmd$batch(
+				_List_fromArray(
+					[
+						A2($elm$core$Platform$Cmd$map, $author$project$Main$GotDashboardMsg, cmd),
+						A2($elm$core$Task$perform, $author$project$Main$AdjustTimeZone, $elm$time$Time$here)
+					])));
+	});
+var $author$project$Main$FundsPage = function (a) {
+	return {$: 'FundsPage', a: a};
+};
+var $author$project$Main$GotFundsMsg = function (a) {
+	return {$: 'GotFundsMsg', a: a};
+};
+var $author$project$Main$toFunds = F2(
+	function (model, _v0) {
+		var funds = _v0.a;
+		var cmd = _v0.b;
+		return _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{
+					page: $author$project$Main$FundsPage(funds)
+				}),
+			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFundsMsg, cmd));
+	});
+var $author$project$Main$GotHardwareMsg = function (a) {
+	return {$: 'GotHardwareMsg', a: a};
+};
+var $author$project$Main$GotVersion = function (a) {
+	return {$: 'GotVersion', a: a};
+};
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionReply = {version: ''};
+var $eriktim$elm_protocol_buffers$Protobuf$Decode$lengthDelimitedDecoder = function (decoder) {
+	return $eriktim$elm_protocol_buffers$Protobuf$Decode$Decoder(
+		function (wireType) {
+			if (wireType.$ === 'LengthDelimited') {
+				var width = wireType.a;
+				return A2(
+					$elm$bytes$Bytes$Decode$map,
+					$elm$core$Tuple$pair(width),
+					decoder(width));
+			} else {
+				return $elm$bytes$Bytes$Decode$fail;
+			}
+		});
+};
+var $elm$bytes$Bytes$Decode$string = function (n) {
+	return $elm$bytes$Bytes$Decode$Decoder(
+		_Bytes_read_string(n));
+};
+var $eriktim$elm_protocol_buffers$Protobuf$Decode$string = $eriktim$elm_protocol_buffers$Protobuf$Decode$lengthDelimitedDecoder($elm$bytes$Bytes$Decode$string);
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetVersionReply = A2(
+	$eriktim$elm_protocol_buffers$Protobuf$Decode$message,
+	$author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionReply,
+	_List_fromArray(
+		[
+			A3(
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
+			1,
+			$eriktim$elm_protocol_buffers$Protobuf$Decode$string,
+			F2(
+				function (a, r) {
+					return _Utils_update(
+						r,
+						{version: a});
+				}))
+		]));
+var $author$project$Proto$Io$Haveno$Protobuffer$decodeGetVersionReply = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetVersionReply;
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetVersionRequest = function (_v0) {
+	return $eriktim$elm_protocol_buffers$Protobuf$Encode$message(_List_Nil);
+};
+var $author$project$Proto$Io$Haveno$Protobuffer$encodeGetVersionRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetVersionRequest;
+var $author$project$Proto$Io$Haveno$Protobuffer$GetVersion$getVersion = $anmolitor$elm_grpc$Grpc$Internal$Rpc(
+	{decoder: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetVersionReply, encoder: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetVersionRequest, _package: 'io.haveno.protobuffer', rpcName: 'GetVersion', service: 'GetVersion'});
 var $author$project$Main$sendVersionRequest = function (request) {
 	var grpcRequest = A2(
 		$anmolitor$elm_grpc$Grpc$setHost,
@@ -13757,6 +14101,24 @@ var $author$project$Main$toSupport = F2(
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotSupportMsg, cmd));
 	});
+var $author$project$Main$GotWalletMsg = function (a) {
+	return {$: 'GotWalletMsg', a: a};
+};
+var $author$project$Main$WalletPage = function (a) {
+	return {$: 'WalletPage', a: a};
+};
+var $author$project$Main$toWallet = F2(
+	function (model, _v0) {
+		var wallet = _v0.a;
+		var cmd = _v0.b;
+		return _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{
+					page: $author$project$Main$WalletPage(wallet)
+				}),
+			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotWalletMsg, cmd));
+	});
 var $author$project$Pages$Blank$update = F2(
 	function (msg, model) {
 		var newModel = msg.a;
@@ -13800,75 +14162,57 @@ var $author$project$Extras$Constants$httpErrorToString = function (err) {
 };
 var $author$project$Pages$Dashboard$update = F2(
 	function (msg, model) {
-		switch (msg.$) {
-			case 'GotVersion':
-				if (msg.a.$ === 'Ok') {
-					var versionResp = msg.a.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								version: $elm$core$Maybe$Just(versionResp)
-							}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{version: model.version}),
-						$elm$core$Platform$Cmd$none);
-				}
-			case 'GotInitialModel':
-				var newModel = msg.a;
+		if (msg.$ === 'GotInitialModel') {
+			var newModel = msg.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					newModel,
+					{pagetitle: model.pagetitle}),
+				$elm$core$Platform$Cmd$none);
+		} else {
+			if (msg.a.$ === 'Ok') {
+				var auth = msg.a.a;
+				var headers = _List_fromArray(
+					[
+						A2(
+						$elm$http$Http$header,
+						'Authorization',
+						'Bearer ' + A2(
+							$elm$core$Maybe$withDefault,
+							'No access token 2',
+							$elm$core$Maybe$Just(auth.deployment_model)))
+					]);
+				var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.flagUrl.host) ? $elm$url$Url$toString(
+					A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
+					A6(
+						$elm$url$Url$Url,
+						model.flagUrl.protocol,
+						model.flagUrl.host,
+						$elm$core$Maybe$Just(3000),
+						$author$project$Extras$Constants$middleWarePath,
+						$elm$core$Maybe$Nothing,
+						$elm$core$Maybe$Nothing));
+				var newHttpParams = A6($author$project$Pages$Dashboard$HavenoAPKHttpRequest, $author$project$Extras$Constants$get, headers, flagUrlWithMongoDBMWAndPortUpdate, $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+				var newModel = _Utils_update(
+					model,
+					{
+						havenoAPKHttpRequest: $elm$core$Maybe$Just(newHttpParams)
+					});
+				return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
+			} else {
+				var responseErr = msg.a.a;
+				var respErr = $author$project$Extras$Constants$httpErrorToString(responseErr);
 				return _Utils_Tuple2(
 					_Utils_update(
-						newModel,
-						{pagetitle: model.pagetitle}),
-					$elm$core$Platform$Cmd$none);
-			default:
-				if (msg.a.$ === 'Ok') {
-					var auth = msg.a.a;
-					var headers = _List_fromArray(
-						[
-							A2(
-							$elm$http$Http$header,
-							'Authorization',
-							'Bearer ' + A2(
-								$elm$core$Maybe$withDefault,
-								'No access token 2',
-								$elm$core$Maybe$Just(auth.deployment_model)))
-						]);
-					var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.flagUrl.host) ? $elm$url$Url$toString(
-						A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
-						A6(
-							$elm$url$Url$Url,
-							model.flagUrl.protocol,
-							model.flagUrl.host,
-							$elm$core$Maybe$Just(3000),
-							$author$project$Extras$Constants$middleWarePath,
-							$elm$core$Maybe$Nothing,
-							$elm$core$Maybe$Nothing));
-					var newHttpParams = A6($author$project$Pages$Dashboard$HavenoAPKHttpRequest, $author$project$Extras$Constants$get, headers, flagUrlWithMongoDBMWAndPortUpdate, $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-					var newModel = _Utils_update(
 						model,
 						{
-							havenoAPKHttpRequest: $elm$core$Maybe$Just(newHttpParams)
-						});
-					return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
-				} else {
-					var responseErr = msg.a.a;
-					var respErr = $author$project$Extras$Constants$httpErrorToString(responseErr);
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								errors: _Utils_ap(
-									model.errors,
-									_List_fromArray(
-										[respErr]))
-							}),
-						$elm$core$Platform$Cmd$none);
-				}
+							errors: _Utils_ap(
+								model.errors,
+								_List_fromArray(
+									[respErr]))
+						}),
+					$elm$core$Platform$Cmd$none);
+			}
 		}
 	});
 var $author$project$Pages$Funds$update = F2(
@@ -13893,10 +14237,6 @@ var $author$project$Pages$Hardware$Login = function (a) {
 };
 var $author$project$Pages$Hardware$MemberSelectedView = {$: 'MemberSelectedView'};
 var $author$project$Pages$Hardware$OwnedSelectedView = {$: 'OwnedSelectedView'};
-var $author$project$Data$Hardware$Rank = F3(
-	function (rank, player, challenger) {
-		return {challenger: challenger, player: player, rank: rank};
-	});
 var $author$project$Pages$Hardware$RegisterUser = function (a) {
 	return {$: 'RegisterUser', a: a};
 };
@@ -13904,7 +14244,6 @@ var $author$project$Types$DateType$SelectedDateTime = F2(
 	function (a, b) {
 		return {$: 'SelectedDateTime', a: a, b: b};
 	});
-var $author$project$Pages$Hardware$SpectatorSelectedView = {$: 'SpectatorSelectedView'};
 var $author$project$Pages$Hardware$ToMongoDBMWConfig = F6(
 	function (method, headers, url, body, timeout, tracker) {
 		return {body: body, headers: headers, method: method, timeout: timeout, tracker: tracker, url: url};
@@ -13925,22 +14264,6 @@ var $author$project$Pages$Hardware$UpdatePhone = function (a) {
 	return {$: 'UpdatePhone', a: a};
 };
 var $author$project$Extras$Constants$emptyEmailPassword = {email: '', password: ''};
-var $author$project$Data$Hardware$emptyRank = {
-	challenger: {id: 'String', nickname: 'String'},
-	player: {id: 'String', nickname: 'String'},
-	rank: 0
-};
-var $author$project$Data$Hardware$emptyRanking = {
-	active: false,
-	baseaddress: {city: '', street: ''},
-	id: '',
-	ladder: _List_fromArray(
-		[$author$project$Data$Hardware$emptyRank]),
-	name: '',
-	owner_id: '',
-	owner_name: '',
-	player_count: 0
-};
 var $author$project$Pages$Hardware$isValidXMRAddress = function (str) {
 	var _v0 = A2($elm$parser$Parser$run, $author$project$Data$Hardware$validXMRAddressParser, str);
 	if (_v0.$ === 'Ok') {
@@ -13956,7 +14279,6 @@ var $author$project$Pages$Hardware$justmsgFieldFromJsonDecoder = A2(
 	$elm$json$Json$Decode$map,
 	$author$project$Pages$Hardware$OperationEventMsg,
 	A2($elm$json$Json$Decode$field, 'operationEventMsg', $elm$json$Json$Decode$string));
-var $author$project$Extras$Constants$noCurrentChallengerId = '6353e8b6aedf80653eb34191';
 var $author$project$Pages$Hardware$ProfileResponse = function (a) {
 	return {$: 'ProfileResponse', a: a};
 };
@@ -14223,8 +14545,6 @@ var $author$project$Pages$Hardware$update = F2(
 							queryType: $author$project$Pages$Hardware$Login($author$project$Extras$Constants$emptyEmailPassword)
 						}),
 					$elm$core$Platform$Cmd$none);
-			case 'ConfirmLeaveMemberRanking':
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'RegisteredUserJoin':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -14238,12 +14558,6 @@ var $author$project$Pages$Hardware$update = F2(
 					_Utils_update(
 						model,
 						{queryType: $author$project$Pages$Hardware$ConfirmLeaveMemberView}),
-					$elm$core$Platform$Cmd$none);
-			case 'ConfirmJoin':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{queryType: $author$project$Pages$Hardware$SpectatorSelectedView}),
 					$elm$core$Platform$Cmd$none);
 			case 'SpectatorJoin':
 				var _v1 = model.user;
@@ -14271,13 +14585,6 @@ var $author$project$Pages$Hardware$update = F2(
 							queryType: $author$project$Pages$Hardware$Login($author$project$Extras$Constants$emptyEmailPassword)
 						}),
 					$elm$core$Platform$Cmd$none);
-			case 'ConfirmChallenge':
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			case 'ConfirmResult':
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			case 'ViewRank':
-				var rank = msg.a;
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'CancelCreateNewRanking':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -14321,20 +14628,8 @@ var $author$project$Pages$Hardware$update = F2(
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'CreateNewRanking':
 				var userInfo = msg.a;
-				var newRanking = $author$project$Data$Hardware$emptyRanking;
-				var newRank = A3(
-					$author$project$Data$Hardware$Rank,
-					1,
-					{id: userInfo.userid, nickname: userInfo.nickname},
-					{id: $author$project$Extras$Constants$noCurrentChallengerId, nickname: 'Challenger'});
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'ViewMember':
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			case 'FetchMember':
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			case 'ListSpectator':
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			case 'FetchOwned':
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'ResponseDataFromMain':
 				var receivedJson = msg.a;
@@ -14354,35 +14649,24 @@ var $author$project$Pages$Hardware$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{isHardwareLNSConnected: updatedIsLNSConnected, isHardwareLNXConnected: updatedIsLNXConnected, isXMRWalletConnected: updatedIsXMRConnected, xmrWalletAddress: decodedHardwareDeviceMsg}),
+						{isHardwareDeviceConnected: updatedIsLNXConnected, isXMRWalletConnected: updatedIsXMRConnected}),
 					$elm$core$Platform$Cmd$none);
 			case 'Confirm':
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			case 'ConfirmNewRanking':
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'Cancel':
 				return _Utils_Tuple2(
 					function () {
 						var _v3 = model.queryType;
-						switch (_v3.$) {
-							case 'ConfirmDeleteOwnedRanking':
-								return _Utils_update(
-									model,
-									{queryType: $author$project$Pages$Hardware$OwnedSelectedView});
-							case 'ConfirmChallengeView':
-								return _Utils_update(
-									model,
-									{queryType: $author$project$Pages$Hardware$MemberSelectedView});
-							case 'CreateChallengeView':
-								return _Utils_update(
-									model,
-									{queryType: $author$project$Pages$Hardware$LoggedInUser});
-							default:
-								return _Utils_update(
-									model,
-									{
-										queryType: $author$project$Pages$Hardware$Login($author$project$Extras$Constants$emptyEmailPassword)
-									});
+						if (_v3.$ === 'ConfirmDeleteOwnedRanking') {
+							return _Utils_update(
+								model,
+								{queryType: $author$project$Pages$Hardware$OwnedSelectedView});
+						} else {
+							return _Utils_update(
+								model,
+								{
+									queryType: $author$project$Pages$Hardware$Login($author$project$Extras$Constants$emptyEmailPassword)
+								});
 						}
 					}(),
 					$elm$core$Platform$Cmd$none);
@@ -14392,7 +14676,7 @@ var $author$project$Pages$Hardware$update = F2(
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'ClickedXMRWalletConnect':
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			case 'ClickedXMRInitiateTransaction':
+			case 'ClickedTempXMRAddr':
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'RegisUser':
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -14520,19 +14804,6 @@ var $author$project$Pages$Hardware$update = F2(
 					var newModel = _Utils_update(
 						model,
 						{queryType: $author$project$Pages$Hardware$LoggedInUser});
-					var headers = _List_Nil;
-					var flagUrlWithMongoDBMWAndPortUpdate = A2($elm$core$String$contains, $author$project$Extras$Constants$localorproductionServerAutoCheck, model.flagUrl.host) ? $elm$url$Url$toString(
-						A6($elm$url$Url$Url, model.flagUrl.protocol, model.flagUrl.host, $elm$core$Maybe$Nothing, $author$project$Extras$Constants$middleWarePath, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)) : $elm$url$Url$toString(
-						A6(
-							$elm$url$Url$Url,
-							model.flagUrl.protocol,
-							model.flagUrl.host,
-							$elm$core$Maybe$Just(3000),
-							$author$project$Extras$Constants$middleWarePath,
-							$elm$core$Maybe$Nothing,
-							$elm$core$Maybe$Nothing));
-					var newHttpParams = A6($author$project$Pages$Hardware$ToMongoDBMWConfig, $author$project$Extras$Constants$get, headers, flagUrlWithMongoDBMWAndPortUpdate, $elm$http$Http$emptyBody, $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
-					var apiSpecs = model.apiSpecifics;
 					return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
 				} else {
 					var responseErr = msg.a.a;
@@ -14613,14 +14884,6 @@ var $author$project$Pages$Hardware$update = F2(
 								[newFailedErr])
 						});
 					return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
-				}
-			case 'SpectatorRankingResponse':
-				if (msg.a.$ === 'Ok') {
-					var specRankingResult = msg.a.a;
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				} else {
-					var responseErr = msg.a.a;
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 'UpdateNickName':
 				var value = msg.a;
@@ -14730,6 +14993,60 @@ var $author$project$Pages$Support$update = F2(
 				newModel,
 				{title: model.title}),
 			$elm$core$Platform$Cmd$none);
+	});
+var $author$project$Pages$Wallet$Errored = {$: 'Errored'};
+var $author$project$Pages$Wallet$xmrBalanceInfoInstance = {
+	availableBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 100, 0),
+	balance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 110, 0),
+	pendingBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	reservedOfferBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 50, 0),
+	reservedTradeBalance: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 5, 0)
+};
+var $author$project$Pages$Wallet$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'GotInitialModel':
+				var newModel = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{address: newModel.address, balances: newModel.balances}),
+					$elm$core$Platform$Cmd$none);
+			case 'ClosePopUp':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{isPopUpVisible: false}),
+					$elm$core$Platform$Cmd$none);
+			case 'SetAddress':
+				var address = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{address: address}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				if (msg.a.$ === 'Ok') {
+					var response = msg.a.a;
+					var tempBals = $elm$core$Maybe$Just(
+						{
+							btc: $elm$core$Maybe$Nothing,
+							xmr: $elm$core$Maybe$Just($author$project$Pages$Wallet$xmrBalanceInfoInstance)
+						});
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{balances: tempBals}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					var error = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{status: $author$project$Pages$Wallet$Errored}),
+						$elm$core$Platform$Cmd$none);
+				}
+		}
 	});
 var $author$project$Main$Blank = {$: 'Blank'};
 var $author$project$Main$Buy = {$: 'Buy'};
@@ -14860,12 +15177,12 @@ var $author$project$Main$urlAsPageParser = $elm$url$Url$Parser$oneOf(
 			$elm$url$Url$Parser$s('hardware'))
 		]));
 var $author$project$Main$toBlank = F2(
-	function (model, _v28) {
-		var blank = _v28.a;
-		var cmd = _v28.b;
-		var _v29 = A2($author$project$Main$update, $author$project$Main$HardwareDeviceConnect, model);
-		var newModel = _v29.a;
-		var hwareConnectCmd = _v29.b;
+	function (model, _v38) {
+		var blank = _v38.a;
+		var cmd = _v38.b;
+		var _v39 = A2($author$project$Main$update, $author$project$Main$OnInitHardwareDeviceConnect, model);
+		var newModel = _v39.a;
+		var hwareConnectCmd = _v39.b;
 		return _Utils_Tuple2(
 			newModel,
 			$elm$core$Platform$Cmd$batch(
@@ -14899,18 +15216,20 @@ var $author$project$Main$update = F2(
 			case 'GotVersion':
 				if (msg.a.$ === 'Ok') {
 					var versionResp = msg.a.a;
+					var verResp = function () {
+						var version = versionResp.version;
+						return version;
+					}();
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{
-								version: $elm$core$Maybe$Just(versionResp)
-							}),
+							{version: verResp}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{version: model.version}),
+							{version: 'Error obtaining version'}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 'ShowPopUp':
@@ -14924,170 +15243,208 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
+							isNavMenuActive: false,
 							isPopUpVisible: false,
 							page: $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel)
 						}),
 					$elm$core$Platform$Cmd$none);
-			case 'HardwareDeviceConnect':
+			case 'OnInitHardwareDeviceConnect':
 				return _Utils_Tuple2(
 					model,
 					$author$project$Main$sendMessageToJs('connectLNS'));
-			case 'RecvText':
-				var textMessageFromJs = msg.a;
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 'Recv':
 				var rawJsonMessage = msg.a;
-				if (A2(
-					$elm$core$String$contains,
-					'Problem',
-					$author$project$Main$fromJsonToString(rawJsonMessage))) {
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								errors: _Utils_ap(
-									model.errors,
-									_List_fromArray(
-										['Problem fetching data']))
-							}),
-						$elm$core$Platform$Cmd$none);
+				var newhwUrl = A6(
+					$elm$url$Url$Url,
+					$elm$url$Url$Http,
+					'localhost',
+					$elm$core$Maybe$Just(1234),
+					'/hardware',
+					$elm$core$Maybe$Nothing,
+					$elm$core$Maybe$Nothing);
+				var decodedHardwareDeviceMsg = function () {
+					var _v22 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
+					if (_v22.$ === 'Ok') {
+						var message = _v22.a;
+						return message.operationEventMsg;
+					} else {
+						var err = _v22.a;
+						return 'error';
+					}
+				}();
+				var devModel = (decodedHardwareDeviceMsg === 'nanoS') ? $elm$core$Maybe$Just($author$project$Main$NanoS) : ((decodedHardwareDeviceMsg === 'nanoX') ? $elm$core$Maybe$Just($author$project$Main$NanoX) : $elm$core$Maybe$Nothing);
+				var connectionErr = $author$project$Main$getDeviceResponseMsg(
+					$author$project$Main$fromJsonToString(rawJsonMessage));
+				if (connectionErr.$ === 'Just') {
+					switch (connectionErr.a.$) {
+						case 'NoDevice':
+							var _v16 = connectionErr.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										currentJsMessage: 'No device',
+										deviceModel: devModel,
+										page: $author$project$Main$BlankPage($author$project$Pages$Blank$initialModel),
+										xmrHardwareWalletAddressError: $elm$core$Maybe$Just($author$project$Main$NoDevice)
+									}),
+								$elm$core$Platform$Cmd$none);
+						case 'DeviceNeedsPermission':
+							var _v17 = connectionErr.a;
+							return _Utils_eq(
+								model.page,
+								$author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel)) ? _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										currentJsMessage: 'Device needs permission',
+										deviceModel: devModel,
+										flag: newhwUrl,
+										isHardwareDeviceConnected: false,
+										isPopUpVisible: false,
+										page: $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel),
+										xmrHardwareWalletAddressError: $elm$core$Maybe$Just($author$project$Main$DeviceNeedsPermission)
+									}),
+								$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										currentJsMessage: 'Device needs permission',
+										deviceModel: devModel,
+										isPopUpVisible: true,
+										page: $author$project$Main$BlankPage($author$project$Pages$Blank$initialModel),
+										xmrHardwareWalletAddressError: $elm$core$Maybe$Just($author$project$Main$DeviceNeedsPermission)
+									}),
+								$elm$core$Platform$Cmd$none);
+						case 'DeviceLocked':
+							var _v18 = connectionErr.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										currentJsMessage: 'Device Locked',
+										deviceModel: devModel,
+										flag: newhwUrl,
+										isHardwareDeviceConnected: true,
+										isPopUpVisible: false,
+										page: $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel),
+										xmrHardwareWalletAddressError: $elm$core$Maybe$Just($author$project$Main$DeviceLocked)
+									}),
+								$elm$core$Platform$Cmd$none);
+						case 'DeviceUnlocked_XMRWalletClosed':
+							var _v19 = connectionErr.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										currentJsMessage: 'UNKNOWN_APDU',
+										deviceModel: devModel,
+										flag: newhwUrl,
+										isHardwareDeviceConnected: true,
+										isPopUpVisible: false,
+										page: $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel),
+										xmrHardwareWalletAddressError: $elm$core$Maybe$Just($author$project$Main$DeviceUnlocked_XMRWalletClosed)
+									}),
+								$elm$core$Platform$Cmd$none);
+						default:
+							var _v20 = connectionErr.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										currentJsMessage: 'Device Unlocked - XMR Wallet Open',
+										deviceModel: devModel,
+										flag: newhwUrl,
+										isHardwareDeviceConnected: true,
+										isPopUpVisible: false,
+										page: $author$project$Main$HardwarePage($author$project$Pages$Hardware$initialModel),
+										xmrHardwareWalletAddressError: $elm$core$Maybe$Just($author$project$Main$DeviceUnlocked_XMRWalletOpen)
+									}),
+								$elm$core$Platform$Cmd$none);
+					}
 				} else {
-					if (A2(
-						$elm$core$String$contains,
-						'LOGINDENIED',
-						$author$project$Main$fromJsonToString(rawJsonMessage))) {
-						return _Utils_Tuple2(
-							_Utils_update(
+					var _v21 = model.page;
+					switch (_v21.$) {
+						case 'DashboardPage':
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						case 'SellPage':
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						case 'BlankPage':
+							var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
+							var newUrl = A6(
+								$elm$url$Url$Url,
+								$elm$url$Url$Http,
+								'localhost',
+								$elm$core$Maybe$Just(1234),
+								'/dashboard',
+								$elm$core$Maybe$Nothing,
+								$elm$core$Maybe$Nothing);
+							var newMainModel = _Utils_update(
 								model,
 								{
-									errors: _Utils_ap(
-										model.errors,
-										_List_fromArray(
-											['Login Denied - Please try again ...']))
-								}),
-							$elm$core$Platform$Cmd$none);
-					} else {
-						var _v13 = model.page;
-						switch (_v13.$) {
-							case 'DashboardPage':
-								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-							case 'SellPage':
-								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-							case 'BlankPage':
-								var hwModel = $author$project$Pages$Hardware$initialModel;
-								var decodedHardwareDeviceMsg = function () {
-									var _v14 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
-									if (_v14.$ === 'Ok') {
-										var message = _v14.a;
-										return message.operationEventMsg;
-									} else {
-										var err = _v14.a;
-										return 'error';
-									}
-								}();
-								var updatedIsLNSConnected = ((!model.isHardwareLNSConnected) && (decodedHardwareDeviceMsg === 'nanoS')) ? true : (model.isHardwareLNSConnected ? true : false);
-								var updatedIsLNXConnected = ((!model.isHardwareLNXConnected) && (decodedHardwareDeviceMsg === 'nanoX')) ? true : (model.isHardwareLNXConnected ? true : false);
-								var updatedIsValidXMRAddressConnected = ((!model.isXMRWalletConnected) && $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg)) ? true : (model.isXMRWalletConnected ? true : false);
-								var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6(
-									$elm$url$Url$Url,
-									$elm$url$Url$Http,
-									'localhost',
-									$elm$core$Maybe$Just(1234),
-									'/dashboard',
-									$elm$core$Maybe$Nothing,
-									$elm$core$Maybe$Nothing) : A6(
-									$elm$url$Url$Url,
-									$elm$url$Url$Http,
-									'localhost',
-									$elm$core$Maybe$Just(1234),
-									'/hardware',
-									$elm$core$Maybe$Nothing,
-									$elm$core$Maybe$Nothing);
-								var popupVisibility = (updatedIsLNSConnected || (updatedIsLNXConnected || updatedIsValidXMRAddressConnected)) ? false : true;
-								var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
-								var newHardwareModel = _Utils_update(
-									hwModel,
-									{isHardwareLNXConnected: updatedIsLNXConnected, isXMRWalletConnected: updatedIsValidXMRAddressConnected, xmrWalletAddress: updatedWalletAddress});
-								var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage(newHardwareModel);
-								var newMainModel = _Utils_update(
-									model,
-									{flag: newUrlAfterCheckConnections, isHardwareLNSConnected: updatedIsLNSConnected, isHardwareLNXConnected: updatedIsLNXConnected, isPopUpVisible: popupVisibility, isXMRWalletConnected: updatedIsValidXMRAddressConnected, page: newPage, xmrWalletAddress: updatedWalletAddress});
-								return ((newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected) ? _Utils_Tuple2(
-									_Utils_update(
-										newMainModel,
-										{
-											page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel)
-										}),
-									$elm$core$Platform$Cmd$none) : ((newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) ? _Utils_Tuple2(
-									_Utils_update(
-										newMainModel,
-										{
-											page: $author$project$Main$HardwarePage(newHardwareModel)
-										}),
-									$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none));
-							case 'PortfolioPage':
-								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-							case 'FundsPage':
-								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-							case 'SupportPage':
-								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-							case 'BuyPage':
-								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-							case 'MarketPage':
-								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-							default:
-								var hwModel = $author$project$Pages$Hardware$initialModel;
-								var decodedHardwareDeviceMsg = function () {
-									var _v15 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$justmsgFieldFromJsonDecoder, rawJsonMessage);
-									if (_v15.$ === 'Ok') {
-										var message = _v15.a;
-										return message.operationEventMsg;
-									} else {
-										var err = _v15.a;
-										return 'error';
-									}
-								}();
-								var updatedIsLNSConnected = ((!model.isHardwareLNSConnected) && (decodedHardwareDeviceMsg === 'nanoS')) ? true : (model.isHardwareLNSConnected ? true : false);
-								var updatedIsLNXConnected = ((!model.isHardwareLNXConnected) && (decodedHardwareDeviceMsg === 'nanoX')) ? true : (model.isHardwareLNXConnected ? true : false);
-								var updatedIsValidXMRAddressConnected = ((!model.isXMRWalletConnected) && $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg)) ? true : (model.isXMRWalletConnected ? true : false);
-								var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6(
-									$elm$url$Url$Url,
-									$elm$url$Url$Http,
-									'localhost',
-									$elm$core$Maybe$Just(1234),
-									'/dashboard',
-									$elm$core$Maybe$Nothing,
-									$elm$core$Maybe$Nothing) : A6(
-									$elm$url$Url$Url,
-									$elm$url$Url$Http,
-									'localhost',
-									$elm$core$Maybe$Just(1234),
-									'/hardware',
-									$elm$core$Maybe$Nothing,
-									$elm$core$Maybe$Nothing);
-								var popupVisibility = (updatedIsLNSConnected || (updatedIsLNXConnected || updatedIsValidXMRAddressConnected)) ? false : true;
-								var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
-								var newHardwareModel = _Utils_update(
-									hwModel,
-									{isHardwareLNXConnected: updatedIsLNXConnected, isXMRWalletConnected: updatedIsValidXMRAddressConnected, xmrWalletAddress: updatedWalletAddress});
-								var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel) : $author$project$Main$HardwarePage(newHardwareModel);
-								var newMainModel = _Utils_update(
-									model,
-									{flag: newUrlAfterCheckConnections, isHardwareLNSConnected: updatedIsLNSConnected, isHardwareLNXConnected: updatedIsLNXConnected, isPopUpVisible: popupVisibility, isXMRWalletConnected: updatedIsValidXMRAddressConnected, page: newPage, xmrWalletAddress: updatedWalletAddress});
-								return ((newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) && newMainModel.isXMRWalletConnected) ? _Utils_Tuple2(
-									_Utils_update(
-										newMainModel,
-										{
-											page: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel)
-										}),
-									$elm$core$Platform$Cmd$none) : ((newMainModel.isHardwareLNSConnected || newMainModel.isHardwareLNXConnected) ? A2(
-									$author$project$Main$toHardware,
+									flag: newUrl,
+									page: $author$project$Main$DashboardPage(
+										A2($author$project$Main$setDashboardHavenoVersion, $author$project$Pages$Dashboard$initialModel, model)),
+									xmrWalletAddress: updatedWalletAddress
+								});
+							return _Utils_Tuple2(newMainModel, $elm$core$Platform$Cmd$none);
+						case 'PortfolioPage':
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						case 'FundsPage':
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						case 'SupportPage':
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						case 'BuyPage':
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						case 'MarketPage':
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						case 'WalletPage':
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						default:
+							var updatedWalletAddress = $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg) ? decodedHardwareDeviceMsg : '';
+							var updatedIsValidXMRAddressConnected = ((!model.isXMRWalletConnected) && $author$project$Main$isValidXMRAddress(decodedHardwareDeviceMsg)) ? true : (model.isXMRWalletConnected ? true : false);
+							var newUrlAfterCheckConnections = updatedIsValidXMRAddressConnected ? A6(
+								$elm$url$Url$Url,
+								$elm$url$Url$Http,
+								'localhost',
+								$elm$core$Maybe$Just(1234),
+								'/dashboard',
+								$elm$core$Maybe$Nothing,
+								$elm$core$Maybe$Nothing) : A6(
+								$elm$url$Url$Url,
+								$elm$url$Url$Http,
+								'localhost',
+								$elm$core$Maybe$Just(1234),
+								'/hardware',
+								$elm$core$Maybe$Nothing,
+								$elm$core$Maybe$Nothing);
+							var hwModel = $author$project$Pages$Hardware$initialModel;
+							var newHardwareModel = _Utils_update(
+								hwModel,
+								{isXMRWalletConnected: updatedIsValidXMRAddressConnected, xmrWalletAddress: updatedWalletAddress});
+							var newPage = updatedIsValidXMRAddressConnected ? $author$project$Main$DashboardPage(
+								A2($author$project$Main$setDashboardHavenoVersion, $author$project$Pages$Dashboard$initialModel, model)) : $author$project$Main$HardwarePage(newHardwareModel);
+							var devMod = (decodedHardwareDeviceMsg === 'nanoS') ? $elm$core$Maybe$Just($author$project$Main$NanoS) : $elm$core$Maybe$Just($author$project$Main$NanoX);
+							var newMainModel = _Utils_update(
+								model,
+								{deviceModel: devMod, flag: newUrlAfterCheckConnections, isHardwareDeviceConnected: true, isPopUpVisible: false, isXMRWalletConnected: updatedIsValidXMRAddressConnected, page: newPage, xmrWalletAddress: updatedWalletAddress});
+							return ((newMainModel.isHardwareDeviceConnected || newMainModel.isHardwareDeviceConnected) && newMainModel.isXMRWalletConnected) ? _Utils_Tuple2(
+								_Utils_update(
 									newMainModel,
-									A2(
-										$author$project$Pages$Hardware$update,
-										$author$project$Pages$Hardware$ResponseDataFromMain(rawJsonMessage),
-										newHardwareModel)) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none));
-						}
+									{
+										isNavMenuActive: true,
+										page: $author$project$Main$DashboardPage(
+											A2($author$project$Main$setDashboardHavenoVersion, $author$project$Pages$Dashboard$initialModel, model))
+									}),
+								$elm$core$Platform$Cmd$none) : ((newMainModel.isHardwareDeviceConnected || newMainModel.isHardwareDeviceConnected) ? A2(
+								$author$project$Main$toHardware,
+								_Utils_update(
+									newMainModel,
+									{isNavMenuActive: false}),
+								A2(
+									$author$project$Pages$Hardware$update,
+									$author$project$Pages$Hardware$ResponseDataFromMain(rawJsonMessage),
+									newHardwareModel)) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none));
 					}
 				}
 			case 'Tick':
@@ -15110,13 +15467,15 @@ var $author$project$Main$update = F2(
 				var urlRequest = msg.a;
 				if (urlRequest.$ === 'External') {
 					var href = urlRequest.a;
+					var _v24 = A2($elm$core$Debug$log, 'url', href);
 					return _Utils_Tuple2(
 						model,
 						$elm$browser$Browser$Navigation$load(href));
 				} else {
 					var url = urlRequest.a;
-					var _v17 = $elm$url$Url$toString(url);
-					if (_v17 === 'https://haveno-web-dev.netlify.app//') {
+					var _v25 = A2($elm$core$Debug$log, 'url', url);
+					var _v26 = $elm$url$Url$toString(url);
+					if (_v26 === 'https://haveno-web-dev.netlify.app//') {
 						return _Utils_Tuple2(
 							model,
 							$elm$browser$Browser$Navigation$load(
@@ -15130,9 +15489,12 @@ var $author$project$Main$update = F2(
 				return A2($author$project$Main$updateUrl, url, model);
 			case 'GotDashboardMsg':
 				var dashboardMsg = msg.a;
-				var _v18 = model.page;
-				if (_v18.$ === 'DashboardPage') {
-					var dashboard = _v18.a;
+				var _v27 = model.page;
+				if (_v27.$ === 'DashboardPage') {
+					var dashboard = _v27.a;
+					var updatedDashboardModel = _Utils_update(
+						dashboard,
+						{version: '1.0.0'});
 					return A2(
 						$author$project$Main$toDashboard,
 						model,
@@ -15142,9 +15504,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotSellMsg':
 				var sellMsg = msg.a;
-				var _v19 = model.page;
-				if (_v19.$ === 'SellPage') {
-					var sell = _v19.a;
+				var _v28 = model.page;
+				if (_v28.$ === 'SellPage') {
+					var sell = _v28.a;
 					return A2(
 						$author$project$Main$toSell,
 						model,
@@ -15154,9 +15516,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotBlankMsg':
 				var blankMsg = msg.a;
-				var _v20 = model.page;
-				if (_v20.$ === 'BlankPage') {
-					var blank = _v20.a;
+				var _v29 = model.page;
+				if (_v29.$ === 'BlankPage') {
+					var blank = _v29.a;
 					return A2(
 						$author$project$Main$toBlank,
 						model,
@@ -15166,9 +15528,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotPortfolioMsg':
 				var termsMsg = msg.a;
-				var _v21 = model.page;
-				if (_v21.$ === 'PortfolioPage') {
-					var terms = _v21.a;
+				var _v30 = model.page;
+				if (_v30.$ === 'PortfolioPage') {
+					var terms = _v30.a;
 					return A2(
 						$author$project$Main$toPortfolio,
 						model,
@@ -15178,9 +15540,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotFundsMsg':
 				var privacyMsg = msg.a;
-				var _v22 = model.page;
-				if (_v22.$ === 'FundsPage') {
-					var privacy = _v22.a;
+				var _v31 = model.page;
+				if (_v31.$ === 'FundsPage') {
+					var privacy = _v31.a;
 					return A2(
 						$author$project$Main$toFunds,
 						model,
@@ -15190,9 +15552,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotSupportMsg':
 				var supportMsg = msg.a;
-				var _v23 = model.page;
-				if (_v23.$ === 'SupportPage') {
-					var support = _v23.a;
+				var _v32 = model.page;
+				if (_v32.$ === 'SupportPage') {
+					var support = _v32.a;
 					return A2(
 						$author$project$Main$toSupport,
 						model,
@@ -15202,9 +15564,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotBuyMsg':
 				var pricingMsg = msg.a;
-				var _v24 = model.page;
-				if (_v24.$ === 'BuyPage') {
-					var pricing = _v24.a;
+				var _v33 = model.page;
+				if (_v33.$ === 'BuyPage') {
+					var pricing = _v33.a;
 					return A2(
 						$author$project$Main$toPricing,
 						model,
@@ -15214,9 +15576,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotMarketMsg':
 				var aboutMsg = msg.a;
-				var _v25 = model.page;
-				if (_v25.$ === 'MarketPage') {
-					var about = _v25.a;
+				var _v34 = model.page;
+				if (_v34.$ === 'MarketPage') {
+					var about = _v34.a;
 					return A2(
 						$author$project$Main$toMarket,
 						model,
@@ -15224,11 +15586,23 @@ var $author$project$Main$update = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
+			case 'GotWalletMsg':
+				var walletMsg = msg.a;
+				var _v35 = model.page;
+				if (_v35.$ === 'WalletPage') {
+					var wallet = _v35.a;
+					return A2(
+						$author$project$Main$toWallet,
+						model,
+						A2($author$project$Pages$Wallet$update, walletMsg, wallet));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
 			case 'GotHardwareMsg':
 				var hardwareMsg = msg.a;
-				var _v26 = model.page;
-				if (_v26.$ === 'HardwarePage') {
-					var hardwareModel = _v26.a;
+				var _v36 = model.page;
+				if (_v36.$ === 'HardwarePage') {
+					var hardwareModel = _v36.a;
 					switch (hardwareMsg.$) {
 						case 'ClickedHardwareDeviceConnect':
 							var newHardwareModel = _Utils_update(
@@ -15252,18 +15626,18 @@ var $author$project$Main$update = F2(
 										page: $author$project$Main$HardwarePage(newHardwareModel)
 									}),
 								$author$project$Main$sendMessageToJs('getMoneroAddress'));
-						case 'ClickedXMRInitiateTransaction':
-							var amt = hardwareMsg.a;
-							var newHardwareModel = _Utils_update(
-								hardwareModel,
-								{queryType: $author$project$Pages$Hardware$LoggedInUser});
+						case 'ClickedTempXMRAddr':
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
-										page: $author$project$Main$HardwarePage(newHardwareModel)
+										isNavMenuActive: true,
+										isXMRWalletConnected: true,
+										page: $author$project$Main$DashboardPage(
+											A2($author$project$Main$setDashboardHavenoVersion, $author$project$Pages$Dashboard$initialModel, model)),
+										xmrWalletAddress: 'BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32'
 									}),
-								$author$project$Main$sendMessageToJs('initiateXMRToBTCTrans ' + ('~^&' + amt)));
+								$elm$core$Platform$Cmd$none);
 						default:
 							return A2(
 								$author$project$Main$toHardware,
@@ -15306,20 +15680,20 @@ var $author$project$Main$updateUrl = F2(
 							$author$project$Main$toDashboard,
 							newModel,
 							$author$project$Pages$Dashboard$init(
-								{flagUrl: newFlagUrl, time: $elm$core$Maybe$Nothing}));
+								{havenoVersion: model.version, time: $elm$core$Maybe$Nothing}));
 					} else {
 						if (oauthCode.a === '') {
 							return A2(
 								$author$project$Main$toDashboard,
 								newModel,
 								$author$project$Pages$Dashboard$init(
-									{flagUrl: newFlagUrl, time: $elm$core$Maybe$Nothing}));
+									{havenoVersion: model.version, time: $elm$core$Maybe$Nothing}));
 						} else {
 							return A2(
 								$author$project$Main$toDashboard,
 								newModel,
 								$author$project$Pages$Dashboard$init(
-									{flagUrl: newFlagUrl, time: $elm$core$Maybe$Nothing}));
+									{havenoVersion: model.version, time: $elm$core$Maybe$Nothing}));
 						}
 					}
 				case 'Sell':
@@ -15364,15 +15738,21 @@ var $author$project$Main$updateUrl = F2(
 						$author$project$Main$toMarket,
 						model,
 						$author$project$Pages$Market$init(_Utils_Tuple0));
-				default:
+				case 'Wallet':
 					var _v10 = _v0.a;
+					return A2(
+						$author$project$Main$toWallet,
+						model,
+						$author$project$Pages$Wallet$init('XMR'));
+				default:
+					var _v11 = _v0.a;
 					var newHWmodel = function () {
-						var _v11 = model.page;
-						if (_v11.$ === 'HardwarePage') {
-							var hardwareModel = _v11.a;
+						var _v12 = model.page;
+						if (_v12.$ === 'HardwarePage') {
+							var hardwareModel = _v12.a;
 							return _Utils_update(
 								hardwareModel,
-								{isHardwareLNXConnected: model.isHardwareLNXConnected, isXMRWalletConnected: model.isXMRWalletConnected});
+								{isHardwareDeviceConnected: model.isHardwareDeviceConnected, isXMRWalletConnected: model.isXMRWalletConnected});
 						} else {
 							return $author$project$Pages$Hardware$initialModel;
 						}
@@ -15403,7 +15783,7 @@ var $author$project$Main$updateUrl = F2(
 				$author$project$Main$toDashboard,
 				model,
 				$author$project$Pages$Dashboard$init(
-					{flagUrl: model.flag, time: $elm$core$Maybe$Nothing}));
+					{havenoVersion: model.version, time: $elm$core$Maybe$Nothing}));
 		}
 	});
 var $elm$json$Json$Decode$andThen = _Json_andThen;
@@ -15432,17 +15812,20 @@ var $author$project$Main$init = F3(
 			}
 		}();
 		var updatedModel = {
+			currentJsMessage: '',
+			deviceModel: $elm$core$Maybe$Nothing,
 			errors: _List_Nil,
 			flag: decodedJsonFromSetupElmmjs,
-			isHardwareLNSConnected: false,
-			isHardwareLNXConnected: false,
+			isHardwareDeviceConnected: false,
 			isNavMenuActive: false,
+			isPageHeaderVisible: false,
 			isPopUpVisible: true,
 			isXMRWalletConnected: false,
 			key: key,
 			page: $author$project$Main$BlankPage($author$project$Pages$Blank$initialModel),
 			time: $elm$time$Time$millisToPosix(0),
-			version: $elm$core$Maybe$Nothing,
+			version: 'No Haveno version available',
+			xmrHardwareWalletAddressError: $elm$core$Maybe$Nothing,
 			xmrWalletAddress: '',
 			zone: $elm$core$Maybe$Nothing
 		};
@@ -15463,15 +15846,6 @@ var $author$project$Main$subscriptions = function (_v0) {
 var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$footer = _VirtualDom_node('footer');
 var $author$project$Main$footerContent = function (model) {
-	var newVersion = function () {
-		var _v0 = model.version;
-		if (_v0.$ === 'Just') {
-			var version = _v0.a.version;
-			return version;
-		} else {
-			return 'No Haveno version available';
-		}
-	}();
 	return A2(
 		$elm$html$Html$footer,
 		_List_Nil,
@@ -15510,18 +15884,18 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.0.16')
+										$elm$html$Html$text('Version 0.0.21')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
 								$elm$html$Html$p,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$id('havenoversion')
+										$elm$html$Html$Attributes$id('havenofooterver')
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text(newVersion)
+										$elm$html$Html$text(model.version)
 									]))
 							]))
 					]))
@@ -15554,12 +15928,40 @@ var $author$project$Main$isHWConnectedIndicator = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$Attributes$class(
-											isConnected ? 'indicator green' : (model.isPopUpVisible ? 'indicator white' : 'indicator red'))
+											isConnected ? 'indicator green' : (model.isPopUpVisible ? 'indicator white' : 'indicator red')),
+											$elm$html$Html$Attributes$id('connectionIndicator')
 										]),
 									_List_fromArray(
 										[
 											$elm$html$Html$text(
-											model.isPopUpVisible ? '_' : (model.isHardwareLNSConnected ? 'Nano S Connected' : (model.isHardwareLNXConnected ? 'Nano X Connected' : 'No hardware device connected')))
+											function () {
+												if (model.isPopUpVisible) {
+													return '_';
+												} else {
+													if (model.isHardwareDeviceConnected) {
+														var _v0 = model.deviceModel;
+														if (_v0.$ === 'Just') {
+															if (_v0.a.$ === 'NanoS') {
+																var _v1 = _v0.a;
+																return 'Nano S Connected';
+															} else {
+																var _v2 = _v0.a;
+																return 'Nano X Connected';
+															}
+														} else {
+															return 'Unable to detect device model';
+														}
+													} else {
+														if (_Utils_eq(
+															model.xmrHardwareWalletAddressError,
+															$elm$core$Maybe$Just($author$project$Main$DeviceNeedsPermission))) {
+															return 'Please connect to a Chrome based mobile browser';
+														} else {
+															return 'No hardware device connected';
+														}
+													}
+												}
+											}())
 										]))
 								]))
 						]))
@@ -15590,32 +15992,75 @@ var $author$project$Main$isXMRWalletConnectedIndicator = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$class(
-										((model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected) ? 'indicator green' : (model.isPopUpVisible ? 'indicator white' : 'indicator red')),
+										((model.isHardwareDeviceConnected || model.isHardwareDeviceConnected) && model.isXMRWalletConnected) ? 'indicator green' : (model.isPopUpVisible ? 'indicator white' : 'indicator red')),
 										$elm$html$Html$Attributes$id('xmrwalletconnection')
 									]),
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										((model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected) ? 'XMR Wallet Connected' : (model.isPopUpVisible ? '_' : 'XMR Wallet Not Connected'))
+										((model.isHardwareDeviceConnected || model.isHardwareDeviceConnected) && model.isXMRWalletConnected) ? 'XMR Wallet Connected' : (model.isPopUpVisible ? '_' : 'XMR Wallet Not Connected'))
 									])),
 								A2(
 								$elm$html$Html$h4,
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$class(
-										((model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected) ? 'indicator green' : (model.isPopUpVisible ? 'indicator white' : 'indicator red')),
+										((model.isHardwareDeviceConnected || model.isHardwareDeviceConnected) && (model.isXMRWalletConnected && $author$project$Main$isValidXMRAddress(model.xmrWalletAddress))) ? 'indicator green' : (model.isPopUpVisible ? 'indicator white' : 'indicator red')),
 										$elm$html$Html$Attributes$id('xmrwalletaddress')
 									]),
 								_List_fromArray(
 									[
 										$elm$html$Html$text(
-										((model.isHardwareLNSConnected || model.isHardwareLNXConnected) && model.isXMRWalletConnected) ? ('XMR Wallet Address: ' + model.xmrWalletAddress) : (model.isPopUpVisible ? '_' : 'No XMR Wallet Address'))
+										(model.isHardwareDeviceConnected && (model.isXMRWalletConnected && $author$project$Main$isValidXMRAddress(model.xmrWalletAddress))) ? ('XMR Wallet Address: ' + model.xmrWalletAddress) : (model.isPopUpVisible ? '_' : 'No XMR Wallet Address'))
 									]))
 							]))
 					]))
 			]));
 };
+var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
+var $elm$html$Html$Attributes$height = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'height',
+		$elm$core$String$fromInt(n));
+};
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $elm$html$Html$Attributes$width = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'width',
+		$elm$core$String$fromInt(n));
+};
+var $author$project$Main$logoImage = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('topLinks-flex-container')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$img,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$src('assets/resources/images/logo-splash100X33.png'),
+					$elm$html$Html$Attributes$width(100),
+					$elm$html$Html$Attributes$height(33),
+					$elm$html$Html$Attributes$alt('Haveno Logo'),
+					$elm$html$Html$Attributes$title('Haveno Logo'),
+					$elm$html$Html$Attributes$id('logoImage'),
+					$elm$html$Html$Attributes$class('topLinksLogo')
+				]),
+			_List_Nil)
+		]));
 var $elm$html$Html$nav = _VirtualDom_node('nav');
+var $author$project$Main$Wallet = {$: 'Wallet'};
 var $elm$html$Html$Attributes$classList = function (classes) {
 	return $elm$html$Html$Attributes$class(
 		A2(
@@ -15695,7 +16140,7 @@ var $author$project$Main$isActive = function (_v0) {
 				var _v17 = _v1.a;
 				return false;
 			}
-		default:
+		case 'Hardware':
 			if (_v1.b.$ === 'HardwarePage') {
 				var _v18 = _v1.a;
 				return true;
@@ -15703,39 +16148,16 @@ var $author$project$Main$isActive = function (_v0) {
 				var _v19 = _v1.a;
 				return false;
 			}
+		default:
+			if (_v1.b.$ === 'WalletPage') {
+				var _v20 = _v1.a;
+				return true;
+			} else {
+				var _v21 = _v1.a;
+				return false;
+			}
 	}
 };
-var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
-var $elm$html$Html$Attributes$height = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'height',
-		$elm$core$String$fromInt(n));
-};
-var $elm$html$Html$img = _VirtualDom_node('img');
-var $elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
-var $elm$html$Html$Attributes$width = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'width',
-		$elm$core$String$fromInt(n));
-};
-var $author$project$Main$logoImage = A2(
-	$elm$html$Html$img,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$src('assets/resources/images/logo-splash100X33.png'),
-			$elm$html$Html$Attributes$width(100),
-			$elm$html$Html$Attributes$height(33),
-			$elm$html$Html$Attributes$alt('Haveno Logo'),
-			$elm$html$Html$Attributes$title('Haveno Logo')
-		]),
-	_List_Nil);
 var $author$project$Main$navLinks = function (page) {
 	var navLink = F2(
 		function (route, _v0) {
@@ -15778,7 +16200,7 @@ var $author$project$Main$navLinks = function (page) {
 				$elm$html$Html$li,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('logo')
+						$elm$html$Html$Attributes$class('logoInNavLinks')
 					]),
 				_List_fromArray(
 					[
@@ -15800,6 +16222,10 @@ var $author$project$Main$navLinks = function (page) {
 				navLink,
 				$author$project$Main$Dashboard,
 				{caption: 'Dashboard', url: 'dashboard'}),
+				A2(
+				navLink,
+				$author$project$Main$Wallet,
+				{caption: 'Wallet', url: 'wallet'}),
 				A2(
 				navLink,
 				$author$project$Main$Market,
@@ -15858,50 +16284,6 @@ var $author$project$Main$burgerMenu = function (page) {
 };
 var $elm$html$Html$header = _VirtualDom_node('header');
 var $elm$html$Html$i = _VirtualDom_node('i');
-var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
-var $elm$html$Html$Attributes$target = $elm$html$Html$Attributes$stringProperty('target');
-var $author$project$Main$socialsLinks = A2(
-	$elm$html$Html$div,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('socials-main-container')
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('socials-sub-container socials-sub-container-whatsapp')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$i,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$a,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$href(''),
-									$elm$html$Html$Attributes$target('_blank')
-								]),
-							_List_fromArray(
-								[
-									A3(
-									$elm$html$Html$node,
-									'ion-icon',
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$name('logo-whatsapp')
-										]),
-									_List_Nil)
-								]))
-						]))
-				]))
-		]));
 var $author$project$Main$topLinksLeft = function () {
 	var navLink = function (_v0) {
 		var url = _v0.url;
@@ -15961,36 +16343,8 @@ var $author$project$Main$topLinksLeft = function () {
 			]));
 	return links;
 }();
-var $author$project$Main$topLinksLogoImage = A2(
-	$elm$html$Html$img,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$src('assets/resources/images/logo-splash100X33.png'),
-			$elm$html$Html$Attributes$width(100),
-			$elm$html$Html$Attributes$height(33),
-			$elm$html$Html$Attributes$alt('Haveno Logo'),
-			$elm$html$Html$Attributes$title('Haveno Logo')
-		]),
-	_List_Nil);
-var $author$project$Main$topLinksLogo = A2(
-	$elm$html$Html$div,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('topLinksLogo')
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$a,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$href('https://haveno-web-dev.netlify.app/')
-				]),
-			_List_fromArray(
-				[$author$project$Main$topLinksLogoImage]))
-		]));
 var $author$project$Main$pageHeader = function (model) {
-	var pageheader = A2(
+	var pageheader = model.isPageHeaderVisible ? A2(
 		$elm$html$Html$header,
 		_List_Nil,
 		_List_fromArray(
@@ -16004,9 +16358,7 @@ var $author$project$Main$pageHeader = function (model) {
 				_List_fromArray(
 					[
 						model.isNavMenuActive ? $author$project$Main$burgerMenu(model.page) : A2($elm$html$Html$div, _List_Nil, _List_Nil),
-						$author$project$Main$topLinksLogo,
-						$author$project$Main$topLinksLeft,
-						$author$project$Main$socialsLinks
+						$author$project$Main$topLinksLeft
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -16050,22 +16402,8 @@ var $author$project$Main$pageHeader = function (model) {
 							]),
 						_List_Nil)
 					]))
-			]));
+			])) : A2($elm$html$Html$div, _List_Nil, _List_Nil);
 	return pageheader;
-};
-var $author$project$Main$showVideoOrBanner = function (page) {
-	return A2(
-		$elm$html$Html$img,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('banner'),
-				$elm$html$Html$Attributes$src('assets/resources/images/Haveno-banner1918X494.png'),
-				$elm$html$Html$Attributes$alt('Haveno'),
-				$elm$html$Html$Attributes$width(1918),
-				$elm$html$Html$Attributes$height(494),
-				$elm$html$Html$Attributes$title('Haveno Banner')
-			]),
-		_List_Nil);
 };
 var $elm$html$Html$section = _VirtualDom_node('section');
 var $author$project$Pages$Blank$content = A2(
@@ -21687,8 +22025,8 @@ var $Orasund$elm_ui_framework$Framework$Heading$h = function (inputLevel) {
 		]);
 };
 var $Orasund$elm_ui_framework$Framework$Heading$h1 = $Orasund$elm_ui_framework$Framework$Heading$h(1);
-var $Orasund$elm_ui_framework$Framework$Heading$h4 = $Orasund$elm_ui_framework$Framework$Heading$h(4);
 var $Orasund$elm_ui_framework$Framework$Heading$h6 = $Orasund$elm_ui_framework$Framework$Heading$h(6);
+var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
 var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
 var $mdgriffith$elm_ui$Internal$Flag$fontColor = $mdgriffith$elm_ui$Internal$Flag$flag(14);
 var $mdgriffith$elm_ui$Element$Font$color = function (fontColor) {
@@ -22126,20 +22464,15 @@ var $author$project$Pages$Dashboard$view = function (model) {
 					$Orasund$elm_ui_framework$Framework$Heading$h1,
 					$mdgriffith$elm_ui$Element$text('Haveno Web - Dashboard')),
 					$mdgriffith$elm_ui$Element$text('\n'),
-					$mdgriffith$elm_ui$Element$text('Your version is:'),
 					A2(
 					$mdgriffith$elm_ui$Element$el,
-					$Orasund$elm_ui_framework$Framework$Heading$h4,
-					$mdgriffith$elm_ui$Element$text(
-						A2(
-							$elm$core$Maybe$withDefault,
-							'',
-							A2(
-								$elm$core$Maybe$map,
-								function ($) {
-									return $.version;
-								},
-								model.version)))),
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$Region$heading(4),
+							$mdgriffith$elm_ui$Element$htmlAttribute(
+							$elm$html$Html$Attributes$id('versiondisplay'))
+						]),
+					$mdgriffith$elm_ui$Element$text('Your version is: ' + model.version)),
 					$mdgriffith$elm_ui$Element$text('\n'),
 					function () {
 					var _v0 = model.errors;
@@ -22245,9 +22578,7 @@ var $author$project$Pages$Funds$view = function (_v0) {
 	return $author$project$Pages$Funds$content;
 };
 var $author$project$Pages$Hardware$ClickedHardwareDeviceConnect = {$: 'ClickedHardwareDeviceConnect'};
-var $author$project$Pages$Hardware$ClickedXMRInitiateTransaction = function (a) {
-	return {$: 'ClickedXMRInitiateTransaction', a: a};
-};
+var $author$project$Pages$Hardware$ClickedTempXMRAddr = {$: 'ClickedTempXMRAddr'};
 var $author$project$Pages$Hardware$ClickedXMRWalletConnect = {$: 'ClickedXMRWalletConnect'};
 var $Orasund$elm_ui_framework$Framework$Heading$h5 = $Orasund$elm_ui_framework$Framework$Heading$h(5);
 var $mdgriffith$elm_ui$Internal$Model$Button = {$: 'Button'};
@@ -22648,7 +22979,7 @@ var $author$project$Pages$Hardware$infoBtn = F2(
 				onPress: $elm$core$Maybe$Just(msg)
 			});
 	});
-var $author$project$Pages$Hardware$hardwareWalletView = function (model) {
+var $author$project$Pages$Hardware$hardwareWalletConnectionOptionsView = function (model) {
 	return A2(
 		$Orasund$elm_ui_framework$Framework$responsiveLayout,
 		_List_Nil,
@@ -22660,16 +22991,13 @@ var $author$project$Pages$Hardware$hardwareWalletView = function (model) {
 					A2(
 					$mdgriffith$elm_ui$Element$el,
 					$Orasund$elm_ui_framework$Framework$Heading$h5,
-					$mdgriffith$elm_ui$Element$text('Welcome - Please Connect XMR Wallet')),
+					$mdgriffith$elm_ui$Element$text('Welcome - Please Connect Your Hardware Device')),
 					$mdgriffith$elm_ui$Element$text('\n'),
-					A2($author$project$Pages$Hardware$infoBtn, 'Connect Hardware Device', $author$project$Pages$Hardware$ClickedHardwareDeviceConnect),
+					A2($author$project$Pages$Hardware$infoBtn, 'Grant Browser Permissions To Device', $author$project$Pages$Hardware$ClickedHardwareDeviceConnect),
 					$mdgriffith$elm_ui$Element$text('\n'),
-					A2($author$project$Pages$Hardware$infoBtn, 'Connect XMR Wallet', $author$project$Pages$Hardware$ClickedXMRWalletConnect),
+					A2($author$project$Pages$Hardware$infoBtn, 'Get Monero Address', $author$project$Pages$Hardware$ClickedXMRWalletConnect),
 					$mdgriffith$elm_ui$Element$text('\n'),
-					A2(
-					$author$project$Pages$Hardware$infoBtn,
-					'Initiate Transaction',
-					$author$project$Pages$Hardware$ClickedXMRInitiateTransaction('0.01')),
+					A2($author$project$Pages$Hardware$infoBtn, 'Temp Got XMR Addr', $author$project$Pages$Hardware$ClickedTempXMRAddr),
 					function () {
 					var _v0 = model.errors;
 					if (!_v0.b) {
@@ -22751,11 +23079,11 @@ var $author$project$Pages$Hardware$view = function (model) {
 									_List_fromArray(
 										[
 											$elm$html$Html$Attributes$class('split-col'),
-											$elm$html$Html$Attributes$id('hardwareWalletView')
+											$elm$html$Html$Attributes$id('hardwareWalletConnectionOptionsView')
 										]),
 									_List_fromArray(
 										[
-											$author$project$Pages$Hardware$hardwareWalletView(model)
+											$author$project$Pages$Hardware$hardwareWalletConnectionOptionsView(model)
 										]));
 						}
 					}(),
@@ -23066,8 +23394,191 @@ var $author$project$Pages$Support$content = A2(
 var $author$project$Pages$Support$view = function (_v0) {
 	return $author$project$Pages$Support$content;
 };
+var $eriktim$elm_protocol_buffers$Internal$Int64$toInts = function (_v0) {
+	var higher = _v0.a.higher;
+	var lower = _v0.a.lower;
+	return _Utils_Tuple2(higher, lower);
+};
+var $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts = $eriktim$elm_protocol_buffers$Internal$Int64$toInts;
+var $author$project$Pages$Wallet$btcBalanceAsString = function (balInfo) {
+	if (balInfo.$ === 'Just') {
+		var blInfo = balInfo.a;
+		var _v1 = blInfo.btc;
+		if (_v1.$ === 'Nothing') {
+			return '0.00';
+		} else {
+			var btcbalinfo = _v1.a;
+			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(btcbalinfo.availableBalance);
+			var firstInt = _v2.a;
+			var secondInt = _v2.b;
+			return $elm$core$String$fromInt(firstInt) + ('.' + $elm$core$String$fromInt(secondInt));
+		}
+	} else {
+		return '';
+	}
+};
+var $author$project$Pages$Wallet$reservedOfferBalanceAsString = function (balInfo) {
+	if (balInfo.$ === 'Just') {
+		var blInfo = balInfo.a;
+		var _v1 = blInfo.xmr;
+		if (_v1.$ === 'Nothing') {
+			return '0.00';
+		} else {
+			var xmrbalinfo = _v1.a;
+			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(xmrbalinfo.reservedOfferBalance);
+			var firstInt = _v2.a;
+			var secondInt = _v2.b;
+			return $elm$core$String$fromInt(firstInt) + ('.' + $elm$core$String$fromInt(secondInt));
+		}
+	} else {
+		return '';
+	}
+};
+var $author$project$Pages$Wallet$xmrBalanceAsString = function (balInfo) {
+	if (balInfo.$ === 'Just') {
+		var blInfo = balInfo.a;
+		var _v1 = blInfo.xmr;
+		if (_v1.$ === 'Nothing') {
+			return '0.00';
+		} else {
+			var xmrbalinfo = _v1.a;
+			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(xmrbalinfo.availableBalance);
+			var firstInt = _v2.a;
+			var secondInt = _v2.b;
+			return $elm$core$String$fromInt(firstInt) + ('.' + $elm$core$String$fromInt(secondInt));
+		}
+	} else {
+		return '0.00';
+	}
+};
+var $author$project$Pages$Wallet$custodialWalletView = function (model) {
+	return A2(
+		$Orasund$elm_ui_framework$Framework$responsiveLayout,
+		_List_Nil,
+		A2(
+			$mdgriffith$elm_ui$Element$column,
+			$Orasund$elm_ui_framework$Framework$container,
+			_List_fromArray(
+				[
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					$Orasund$elm_ui_framework$Framework$Heading$h1,
+					$mdgriffith$elm_ui$Element$text('Wallet')),
+					$mdgriffith$elm_ui$Element$text('\n'),
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$Region$heading(4),
+							$mdgriffith$elm_ui$Element$htmlAttribute(
+							$elm$html$Html$Attributes$id('xmrbalance'))
+						]),
+					$mdgriffith$elm_ui$Element$text(
+						'Available Balance: ' + ($author$project$Pages$Wallet$xmrBalanceAsString(model.balances) + ' XMR'))),
+					$mdgriffith$elm_ui$Element$text('\n'),
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$Region$heading(4),
+							$mdgriffith$elm_ui$Element$htmlAttribute(
+							$elm$html$Html$Attributes$id('btcbalance'))
+						]),
+					$mdgriffith$elm_ui$Element$text(
+						'Available BTC Balance: ' + ($author$project$Pages$Wallet$btcBalanceAsString(model.balances) + ' BTC'))),
+					$mdgriffith$elm_ui$Element$text('\n'),
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$Region$heading(4),
+							$mdgriffith$elm_ui$Element$htmlAttribute(
+							$elm$html$Html$Attributes$id('reservedOfferBalance'))
+						]),
+					$mdgriffith$elm_ui$Element$text(
+						'Reserved Offer Balance: ' + ($author$project$Pages$Wallet$reservedOfferBalanceAsString(model.balances) + ' XMR'))),
+					$mdgriffith$elm_ui$Element$text('\n')
+				])));
+};
+var $author$project$Pages$Wallet$view = function (model) {
+	return A2(
+		$elm$html$Html$section,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$id('page'),
+				$elm$html$Html$Attributes$class('section-background'),
+				$elm$html$Html$Attributes$class('text-center')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('split')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('split-col')
+							]),
+						_List_Nil),
+						function () {
+						var _v0 = model.status;
+						switch (_v0.$) {
+							case 'Loading':
+								return A2(
+									$elm$html$Html$div,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$div,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('spinner')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('Loading ...')
+												]))
+										]));
+							case 'Errored':
+								return A2(
+									$elm$html$Html$div,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('error')
+										]));
+							default:
+								return A2(
+									$elm$html$Html$div,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('split-col'),
+											$elm$html$Html$Attributes$id('custodialWalletView')
+										]),
+									_List_fromArray(
+										[
+											$author$project$Pages$Wallet$custodialWalletView(model)
+										]));
+						}
+					}(),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('split-col')
+							]),
+						_List_Nil)
+					]))
+			]));
+};
 var $author$project$Main$HidePopUp = {$: 'HidePopUp'};
-var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $author$project$Main$viewPopUp = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -23090,13 +23601,6 @@ var $author$project$Main$viewPopUp = function (model) {
 							]),
 						_List_fromArray(
 							[
-								A2(
-								$elm$html$Html$h2,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Haveno Web App')
-									])),
 								$author$project$Main$logoImage,
 								A2(
 								$elm$html$Html$p,
@@ -23120,14 +23624,14 @@ var $author$project$Main$viewPopUp = function (model) {
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Connect Hardware')
+										$elm$html$Html$text('Continue')
 									]))
 							]))
 					])) : A2($elm$html$Html$div, _List_Nil, _List_Nil)
 			]));
 };
 var $author$project$Main$view = function (model) {
-	var isConnected = (model.isHardwareLNSConnected || model.isHardwareLNXConnected) ? true : false;
+	var isConnected = (model.isHardwareDeviceConnected || model.isHardwareDeviceConnected) ? true : false;
 	var contentByPage = function () {
 		var _v0 = model.page;
 		switch (_v0.$) {
@@ -23179,28 +23683,39 @@ var $author$project$Main$view = function (model) {
 					$elm$html$Html$map,
 					$author$project$Main$GotMarketMsg,
 					$author$project$Pages$Market$view(market));
-			default:
+			case 'HardwarePage':
 				var hardware = _v0.a;
 				return A2(
 					$elm$html$Html$map,
 					$author$project$Main$GotHardwareMsg,
 					$author$project$Pages$Hardware$view(hardware));
+			default:
+				var wallet = _v0.a;
+				return A2(
+					$elm$html$Html$map,
+					$author$project$Main$GotWalletMsg,
+					$author$project$Pages$Wallet$view(wallet));
 		}
 	}();
-	return {
+	return (!model.isPopUpVisible) ? {
 		body: _List_fromArray(
 			[
 				$author$project$Main$pageHeader(model),
-				$author$project$Main$showVideoOrBanner(model.page),
-				$author$project$Main$viewPopUp(model),
+				$author$project$Main$logoImage,
 				contentByPage,
 				A2($author$project$Main$isHWConnectedIndicator, model, isConnected),
 				$author$project$Main$isXMRWalletConnectedIndicator(model),
 				$author$project$Main$footerContent(model)
 			]),
 		title: 'Haveno-Web'
+	} : {
+		body: _List_fromArray(
+			[
+				$author$project$Main$viewPopUp(model)
+			]),
+		title: 'Haveno-Web'
 	};
 };
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$ChangedUrl, onUrlRequest: $author$project$Main$ClickedLink, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$string)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Proto.Io.Haveno.Protobuffer.GetVersionReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply":{"args":[],"type":"{ version : String.String }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"},"Pages.Hardware.AdditionalDataFromJs":{"args":[],"type":"{ userid : String.String, nickname : String.String }"},"Pages.Hardware.ApiSpecifics":{"args":[],"type":"{ maxResults : String.String, accessToken : Maybe.Maybe String.String }"},"Data.Hardware.BaseAddress":{"args":[],"type":"{ street : String.String, city : String.String }"},"Data.User.Description":{"args":[],"type":"{ level : String.String, comment : String.String }"},"Time.Era":{"args":[],"type":"{ start : Basics.Int, offset : Basics.Int }"},"Pages.Dashboard.HavenoAPKHttpRequest":{"args":[],"type":"{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"},"Pages.Hardware.Identities":{"args":[],"type":"{ id : String.String, provider_type : String.String, provider_id : String.String, provider_data : Pages.Hardware.ProviderData }"},"Pages.Hardware.JsonMsgFromJs":{"args":[],"type":"{ operationEventMsg : String.String, dataFromMongo : Pages.Hardware.DataFromMongo, additionalDataFromJs : Pages.Hardware.AdditionalDataFromJs }"},"Data.User.MemberRanking":{"args":[],"type":"{ id : String.String, name : String.String }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Pages.Blank.Model":{"args":[],"type":"{ status : Pages.Blank.Status, title : String.String, root : Pages.Blank.Blank }"},"Pages.Buy.Model":{"args":[],"type":"{ status : Pages.Buy.Status, title : String.String, root : Pages.Buy.Buy }"},"Pages.Dashboard.Model":{"args":[],"type":"{ status : Pages.Dashboard.Status, pagetitle : String.String, root : Pages.Dashboard.Dashboard, balance : String.String, flagUrl : Url.Url, havenoAPKHttpRequest : Maybe.Maybe Pages.Dashboard.HavenoAPKHttpRequest, version : Maybe.Maybe Proto.Io.Haveno.Protobuffer.GetVersionReply, errors : List.List String.String }"},"Pages.Funds.Model":{"args":[],"type":"{ status : Pages.Funds.Status, title : String.String, root : Pages.Funds.Funds }"},"Pages.Hardware.Model":{"args":[],"type":"{ status : Pages.Hardware.Status, title : String.String, root : Pages.Hardware.Hardware, flagUrl : Url.Url, datetimeFromMain : Maybe.Maybe Types.DateType.DateTime, apiSpecifics : Pages.Hardware.ApiSpecifics, queryType : Pages.Hardware.QueryType, isValidNewAccessToken : Basics.Bool, isHardwareLNSConnected : Basics.Bool, isHardwareLNXConnected : Basics.Bool, isXMRWalletConnected : Basics.Bool, xmrWalletAddress : String.String, errors : List.List String.String, isReturnUser : Basics.Bool, user : Data.User.User, objectJSONfromJSPort : Maybe.Maybe Pages.Hardware.JsonMsgFromJs }"},"Pages.Market.Model":{"args":[],"type":"{ status : Pages.Market.Status, title : String.String, root : Pages.Market.Market }"},"Pages.Portfolio.Model":{"args":[],"type":"{ status : Pages.Portfolio.Status, title : String.String, root : Pages.Portfolio.Portfolio }"},"Pages.Sell.Model":{"args":[],"type":"{ status : Pages.Sell.Status, title : String.String, root : Pages.Sell.Sell }"},"Pages.Support.Model":{"args":[],"type":"{ status : Pages.Support.Status, title : String.String, root : Pages.Support.Support }"},"Data.User.NickName":{"args":[],"type":"String.String"},"Data.User.Password":{"args":[],"type":"String.String"},"Data.Hardware.Player":{"args":[],"type":"{ id : String.String, nickname : String.String }"},"Pages.Hardware.ProviderData":{"args":[],"type":"{ email : String.String }"},"Data.Hardware.Rank":{"args":[],"type":"{ rank : Basics.Int, player : Data.Hardware.Player, challenger : Data.Hardware.Player }"},"Data.Hardware.Ranking":{"args":[],"type":"{ id : String.String, active : Basics.Bool, name : String.String, owner_id : String.String, baseaddress : Data.Hardware.BaseAddress, ladder : List.List Data.Hardware.Rank, player_count : Basics.Int, owner_name : String.String }"},"Data.Hardware.RankingSearchResult":{"args":[],"type":"{ id : String.String, name : String.String }"},"Pages.Hardware.RegisterUserDetails":{"args":[],"type":"{ resource_id : String.String, user_details : Data.User.User, additional_fields : String.String }"},"Pages.Hardware.SuccessfulLoginResult":{"args":[],"type":"{ access_token : String.String, refresh_token : String.String, user_id : String.String, device_id : String.String }"},"Pages.Dashboard.SuccessfullBalanceResult":{"args":[],"type":"{ deployment_model : String.String, location : String.String, hostname : String.String, ws_hostname : String.String }"},"Pages.Hardware.SuccessfullLNSConnectResult":{"args":[],"type":"{ function : String.String, date : String.String, id : String.String, message : String.String, transport_type : String.String }"},"Pages.Hardware.SuccessfullProfileResult":{"args":[],"type":"{ user_id : String.String, domain_id : String.String, identities : List.List Pages.Hardware.Identities, data : Pages.Hardware.ProviderData, typeOfData : String.String }"},"Data.User.Token":{"args":[],"type":"String.String"},"Data.User.UserInfo":{"args":[],"type":"{ userid : String.String, password : Data.User.Password, passwordValidationError : String.String, token : Maybe.Maybe Data.User.Token, nickname : Data.User.NickName, isNameInputFocused : Basics.Bool, nameValidationError : String.String, age : Basics.Int, gender : Data.User.Gender, email : Maybe.Maybe String.String, isEmailInputFocused : Basics.Bool, emailValidationError : String.String, mobile : Maybe.Maybe String.String, isMobileInputFocused : Basics.Bool, mobileValidationError : String.String, datestamp : Basics.Int, active : Basics.Bool, ownedRankings : List.List Data.Hardware.Ranking, memberRankings : List.List Data.Hardware.Ranking, updatetext : String.String, description : Data.User.Description, credits : Basics.Int, addInfo : String.String }"},"Pages.Hardware.EmailPasswordLogin":{"args":[],"type":"{ email : String.String, password : String.String }"},"Pages.Hardware.RefreshTokenQueryParams":{"args":[],"type":"{ grant_type : String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"ClickedLink":["Browser.UrlRequest"],"GotDashboardMsg":["Pages.Dashboard.Msg"],"GotSellMsg":["Pages.Sell.Msg"],"GotBlankMsg":["Pages.Blank.Msg"],"GotPortfolioMsg":["Pages.Portfolio.Msg"],"GotFundsMsg":["Pages.Funds.Msg"],"GotSupportMsg":["Pages.Support.Msg"],"GotBuyMsg":["Pages.Buy.Msg"],"GotMarketMsg":["Pages.Market.Msg"],"GotHardwareMsg":["Pages.Hardware.Msg"],"ChangedUrl":["Url.Url"],"Tick":["Time.Posix"],"AdjustTimeZone":["Time.Zone"],"Recv":["Json.Decode.Value"],"RecvText":["String.String"],"NoOp":[],"HardwareDeviceConnect":[],"ShowPopUp":[],"HidePopUp":[],"GotVersion":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"],"NavigateTo":["Main.Page"]}},"Grpc.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["{ metadata : Http.Metadata, response : Bytes.Bytes, errMessage : String.String, status : Grpc.GrpcStatus }"],"BadBody":["Bytes.Bytes"],"UnknownGrpcStatus":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Pages.Blank.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Blank.Model"]}},"Pages.Buy.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Buy.Model"]}},"Pages.Dashboard.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Dashboard.Model"],"BalanceResponse":["Result.Result Http.Error Pages.Dashboard.SuccessfullBalanceResult"],"GotVersion":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"]}},"Pages.Funds.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Funds.Model"]}},"Pages.Hardware.Msg":{"args":[],"tags":{"BookingForm":["Pages.Hardware.RegisterUserDetails"],"UpdateAge":["Basics.Int"],"UpdateGender":["String.String"],"UpdateNickName":["String.String"],"UpdateLevel":["String.String"],"UpdateComment":["String.String"],"UpdateMobile":["String.String"],"UpdatePhone":["String.String"],"CondoNameInput":["String.String"],"CondoAddressInput":["String.String"],"AddInfoInput":["String.String"],"ConfirmBookingForm":[],"NoOp":[],"DismissErrors":[],"Tick":["Time.Posix"],"InputFocused":["String.String"],"InputBlurred":["String.String"],"SelDateTime":["String.String"],"ToggleReturnUser":[],"ClickedHardwareDeviceConnect":[],"ClickedXMRWalletConnect":[],"ClickedXMRInitiateTransaction":["String.String"],"ResponseDataFromMain":["Json.Decode.Value"],"LogOut":[],"Create":[],"CreateNewRanking":["Data.User.UserInfo"],"Cancel":[],"CancelFetchedOwned":["Data.User.UserInfo"],"CancelFetchedMember":[],"CancelFetchedSpectator":[],"CancelCreateNewRanking":[],"CancelRegistration":[],"Confirm":[],"FetchOwned":["Data.Hardware.Ranking"],"FetchMember":["Data.Hardware.Ranking"],"ListSpectator":["Data.Hardware.RankingSearchResult"],"ViewMember":["Data.User.MemberRanking"],"RegisUser":["Data.User.UserInfo"],"RankingNameChg":["String.String"],"StreetAddressChg":["String.String"],"CityAddressChg":["String.String"],"ConfirmNewRanking":["Data.Hardware.Ranking","Data.User.User"],"DialogDeleteOwnedRanking":[],"DeleteOwnedRanking":[],"ViewRank":["Data.Hardware.Rank"],"ConfirmChallenge":["Data.Hardware.Ranking","Data.Hardware.Rank"],"ConfirmResult":["Data.Hardware.ResultOfMatch"],"CancelDialoguePrepareResultView":[],"FetchSpectatorRanking":["String.String"],"SpectatorRankingResponse":["Result.Result Http.Error Data.Hardware.Ranking"],"SpectatorJoin":[],"RegisteredUserJoin":[],"ConfirmJoin":["Data.Hardware.Ranking","String.String","Basics.Int"],"ConfirmLeaveMemberRanking":["Data.Hardware.Ranking","String.String"],"DialogueConfirmJoinView":[],"DialogueConfirmLeaveView":[],"DialogueConfirmDeleteAccount":[],"DeleteAccount":[],"LoginResponse":["Result.Result Http.Error Pages.Hardware.SuccessfulLoginResult"],"LNSConnectResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullLNSConnectResult"],"ProfileResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullProfileResult"]}},"Pages.Market.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Market.Model"]}},"Pages.Portfolio.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Portfolio.Model"]}},"Pages.Sell.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Sell.Model"]}},"Pages.Support.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Support.Model"]}},"Main.Page":{"args":[],"tags":{"DashboardPage":["Pages.Dashboard.Model"],"SellPage":["Pages.Sell.Model"],"PortfolioPage":["Pages.Portfolio.Model"],"FundsPage":["Pages.Funds.Model"],"SupportPage":["Pages.Support.Model"],"BuyPage":["Pages.Buy.Model"],"MarketPage":["Pages.Market.Model"],"HardwarePage":["Pages.Hardware.Model"],"BlankPage":["Pages.Blank.Model"]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Time.Zone":{"args":[],"tags":{"Zone":["Basics.Int","List.List Time.Era"]}},"Pages.Blank.Blank":{"args":[],"tags":{"Blank":["{ name : String.String }"]}},"Http.Body":{"args":[],"tags":{"Body":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Pages.Buy.Buy":{"args":[],"tags":{"Buy":["{ name : String.String }"]}},"Bytes.Bytes":{"args":[],"tags":{"Bytes":[]}},"Pages.Dashboard.Dashboard":{"args":[],"tags":{"Dashboard":["{ name : String.String }"]}},"Pages.Hardware.DataFromMongo":{"args":[],"tags":{"JsonData":["Json.Decode.Value"],"StringData":["String.String"]}},"Types.DateType.DateTime":{"args":[],"tags":{"CurrentDateTime":["Time.Posix","Time.Zone"],"SelectedDateTime":["Time.Posix","Time.Zone"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Pages.Funds.Funds":{"args":[],"tags":{"Funds":["{ name : String.String }"]}},"Data.User.Gender":{"args":[],"tags":{"Male":[],"Female":[]}},"Grpc.GrpcStatus":{"args":[],"tags":{"Ok_":[],"Cancelled":[],"Unknown":[],"InvalidArgument":[],"DeadlineExceeded":[],"NotFound":[],"AlreadyExists":[],"PermissionDenied":[],"ResourceExhausted":[],"FailedPrecondition":[],"Aborted":[],"OutOfRange":[],"Unimplemented":[],"Internal":[],"Unavailable":[],"DataLoss":[],"Unauthenticated":[]}},"Pages.Hardware.Hardware":{"args":[],"tags":{"Hardware":["{ name : String.String }"]}},"Http.Header":{"args":[],"tags":{"Header":["String.String","String.String"]}},"List.List":{"args":["a"],"tags":{}},"Pages.Market.Market":{"args":[],"tags":{"Market":["{ name : String.String }"]}},"Pages.Portfolio.Portfolio":{"args":[],"tags":{"Portfolio":["{ name : String.String }"]}},"Pages.Hardware.QueryType":{"args":[],"tags":{"RefreshTknQP":["Pages.Hardware.RefreshTokenQueryParams"],"Login":["Pages.Hardware.EmailPasswordLogin"],"Spectator":[],"RegisterUser":["Data.User.UserInfo"],"LoggedInUser":[],"CreatingNewLadder":["Data.User.UserInfo"],"OwnedSelectedView":[],"MemberSelectedView":[],"SpectatorSelectedView":[],"ConfirmDeleteOwnedRanking":[],"CreateChallengeView":["Data.Hardware.Rank","Data.Hardware.Ranking"],"ConfirmChallengeView":["Data.Hardware.Rank","Data.Hardware.Ranking"],"PrepareResult":[],"Error":["String.String"],"ConfirmJoinMemberView":[],"ConfirmLeaveMemberView":[],"ConfirmDeleteUserView":[]}},"Data.Hardware.ResultOfMatch":{"args":[],"tags":{"Won":[],"Lost":[],"Undecided":[]}},"Pages.Sell.Sell":{"args":[],"tags":{"Sell":["{ name : String.String }"]}},"Pages.Blank.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Buy.Status":{"args":[],"tags":{"Loading":[],"Loaded":[],"Errored":[]}},"Pages.Dashboard.Status":{"args":[],"tags":{"Loading":[],"Loaded":[],"Errored":[]}},"Pages.Funds.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Hardware.Status":{"args":[],"tags":{"Loading":[],"Loaded":[],"Errored":[]}},"Pages.Market.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Portfolio.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Sell.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Support":{"args":[],"tags":{"Support":["{ name : String.String }"]}},"Data.User.User":{"args":[],"tags":{"Spectator":["Data.User.UserInfo"],"Registered":["Data.User.UserInfo"]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$string)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Proto.Io.Haveno.Protobuffer.GetVersionReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply":{"args":[],"type":"{ version : String.String }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"},"Pages.Hardware.AdditionalDataFromJs":{"args":[],"type":"{ userid : String.String, nickname : String.String }"},"Pages.Hardware.ApiSpecifics":{"args":[],"type":"{ maxResults : String.String, accessToken : Maybe.Maybe String.String }"},"Proto.Io.Haveno.Protobuffer.BalancesInfo":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BalancesInfo"},"Data.User.Description":{"args":[],"type":"{ level : String.String, comment : String.String }"},"Time.Era":{"args":[],"type":"{ start : Basics.Int, offset : Basics.Int }"},"Proto.Io.Haveno.Protobuffer.GetBalancesReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetBalancesReply"},"Pages.Dashboard.HavenoAPKHttpRequest":{"args":[],"type":"{ method : String.String, headers : List.List Http.Header, url : String.String, body : Http.Body, timeout : Maybe.Maybe Basics.Float, tracker : Maybe.Maybe String.String }"},"Pages.Hardware.Identities":{"args":[],"type":"{ id : String.String, provider_type : String.String, provider_id : String.String, provider_data : Pages.Hardware.ProviderData }"},"Protobuf.Types.Int64.Int64":{"args":[],"type":"Internal.Int64.Int64"},"Pages.Hardware.JsonMsgFromJs":{"args":[],"type":"{ operationEventMsg : String.String, dataFromMongo : Pages.Hardware.DataFromMongo, additionalDataFromJs : Pages.Hardware.AdditionalDataFromJs }"},"Data.User.MemberRanking":{"args":[],"type":"{ id : String.String, name : String.String }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Pages.Blank.Model":{"args":[],"type":"{ status : Pages.Blank.Status, title : String.String, root : Pages.Blank.Blank }"},"Pages.Buy.Model":{"args":[],"type":"{ status : Pages.Buy.Status, title : String.String, root : Pages.Buy.Buy }"},"Pages.Dashboard.Model":{"args":[],"type":"{ status : Pages.Dashboard.Status, pagetitle : String.String, root : Pages.Dashboard.Dashboard, balance : String.String, flagUrl : Url.Url, havenoAPKHttpRequest : Maybe.Maybe Pages.Dashboard.HavenoAPKHttpRequest, version : String.String, errors : List.List String.String }"},"Pages.Funds.Model":{"args":[],"type":"{ status : Pages.Funds.Status, title : String.String, root : Pages.Funds.Funds }"},"Pages.Hardware.Model":{"args":[],"type":"{ status : Pages.Hardware.Status, title : String.String, root : Pages.Hardware.Hardware, flagUrl : Url.Url, datetimeFromMain : Maybe.Maybe Types.DateType.DateTime, apiSpecifics : Pages.Hardware.ApiSpecifics, queryType : Pages.Hardware.QueryType, isValidNewAccessToken : Basics.Bool, isHardwareDeviceConnected : Basics.Bool, isXMRWalletConnected : Basics.Bool, xmrWalletAddress : String.String, errors : List.List String.String, isReturnUser : Basics.Bool, user : Data.User.User, objectJSONfromJSPort : Maybe.Maybe Pages.Hardware.JsonMsgFromJs }"},"Pages.Market.Model":{"args":[],"type":"{ status : Pages.Market.Status, title : String.String, root : Pages.Market.Market }"},"Pages.Portfolio.Model":{"args":[],"type":"{ status : Pages.Portfolio.Status, title : String.String, root : Pages.Portfolio.Portfolio }"},"Pages.Sell.Model":{"args":[],"type":"{ status : Pages.Sell.Status, title : String.String, root : Pages.Sell.Sell }"},"Pages.Support.Model":{"args":[],"type":"{ status : Pages.Support.Status, title : String.String, root : Pages.Support.Support }"},"Pages.Wallet.Model":{"args":[],"type":"{ status : Pages.Wallet.Status, pagetitle : String.String, balances : Maybe.Maybe Proto.Io.Haveno.Protobuffer.BalancesInfo, address : String.String, isHardwareWalletConnected : Basics.Bool, errors : List.List String.String, isPopUpVisible : Basics.Bool }"},"Data.User.NickName":{"args":[],"type":"String.String"},"Data.User.Password":{"args":[],"type":"String.String"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BalancesInfo":{"args":[],"type":"{ btc : Maybe.Maybe Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BtcBalanceInfo, xmr : Maybe.Maybe Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__XmrBalanceInfo }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BtcBalanceInfo":{"args":[],"type":"{ availableBalance : Protobuf.Types.Int64.Int64, reservedBalance : Protobuf.Types.Int64.Int64, totalAvailableBalance : Protobuf.Types.Int64.Int64, lockedBalance : Protobuf.Types.Int64.Int64 }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetBalancesReply":{"args":[],"type":"{ balances : Maybe.Maybe Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BalancesInfo }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__XmrBalanceInfo":{"args":[],"type":"{ balance : Protobuf.Types.Int64.Int64, availableBalance : Protobuf.Types.Int64.Int64, pendingBalance : Protobuf.Types.Int64.Int64, reservedOfferBalance : Protobuf.Types.Int64.Int64, reservedTradeBalance : Protobuf.Types.Int64.Int64 }"},"Pages.Hardware.ProviderData":{"args":[],"type":"{ email : String.String }"},"Pages.Hardware.RegisterUserDetails":{"args":[],"type":"{ resource_id : String.String, user_details : Data.User.User, additional_fields : String.String }"},"Pages.Hardware.SuccessfulLoginResult":{"args":[],"type":"{ access_token : String.String, refresh_token : String.String, user_id : String.String, device_id : String.String }"},"Pages.Dashboard.SuccessfullBalanceResult":{"args":[],"type":"{ deployment_model : String.String, location : String.String, hostname : String.String, ws_hostname : String.String }"},"Pages.Hardware.SuccessfullLNSConnectResult":{"args":[],"type":"{ function : String.String, date : String.String, id : String.String, message : String.String, transport_type : String.String }"},"Pages.Hardware.SuccessfullProfileResult":{"args":[],"type":"{ user_id : String.String, domain_id : String.String, identities : List.List Pages.Hardware.Identities, data : Pages.Hardware.ProviderData, typeOfData : String.String }"},"Data.User.Token":{"args":[],"type":"String.String"},"Data.User.UserInfo":{"args":[],"type":"{ userid : String.String, password : Data.User.Password, passwordValidationError : String.String, token : Maybe.Maybe Data.User.Token, nickname : Data.User.NickName, isNameInputFocused : Basics.Bool, nameValidationError : String.String, age : Basics.Int, gender : Data.User.Gender, email : Maybe.Maybe String.String, isEmailInputFocused : Basics.Bool, emailValidationError : String.String, mobile : Maybe.Maybe String.String, isMobileInputFocused : Basics.Bool, mobileValidationError : String.String, datestamp : Basics.Int, active : Basics.Bool, updatetext : String.String, description : Data.User.Description, credits : Basics.Int, addInfo : String.String }"},"Pages.Hardware.EmailPasswordLogin":{"args":[],"type":"{ email : String.String, password : String.String }"},"Internal.Int64.Ints":{"args":[],"type":"{ higher : Basics.Int, lower : Basics.Int }"},"Pages.Hardware.RefreshTokenQueryParams":{"args":[],"type":"{ grant_type : String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"ClickedLink":["Browser.UrlRequest"],"GotDashboardMsg":["Pages.Dashboard.Msg"],"GotSellMsg":["Pages.Sell.Msg"],"GotBlankMsg":["Pages.Blank.Msg"],"GotPortfolioMsg":["Pages.Portfolio.Msg"],"GotFundsMsg":["Pages.Funds.Msg"],"GotSupportMsg":["Pages.Support.Msg"],"GotBuyMsg":["Pages.Buy.Msg"],"GotMarketMsg":["Pages.Market.Msg"],"GotHardwareMsg":["Pages.Hardware.Msg"],"GotWalletMsg":["Pages.Wallet.Msg"],"ChangedUrl":["Url.Url"],"Tick":["Time.Posix"],"AdjustTimeZone":["Time.Zone"],"Recv":["Json.Decode.Value"],"NoOp":[],"OnInitHardwareDeviceConnect":[],"ShowPopUp":[],"HidePopUp":[],"GotVersion":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"],"NavigateTo":["Main.Page"]}},"Grpc.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["{ metadata : Http.Metadata, response : Bytes.Bytes, errMessage : String.String, status : Grpc.GrpcStatus }"],"BadBody":["Bytes.Bytes"],"UnknownGrpcStatus":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Pages.Blank.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Blank.Model"]}},"Pages.Buy.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Buy.Model"]}},"Pages.Dashboard.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Dashboard.Model"],"BalanceResponse":["Result.Result Http.Error Pages.Dashboard.SuccessfullBalanceResult"]}},"Pages.Funds.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Funds.Model"]}},"Pages.Hardware.Msg":{"args":[],"tags":{"BookingForm":["Pages.Hardware.RegisterUserDetails"],"UpdateAge":["Basics.Int"],"UpdateGender":["String.String"],"UpdateNickName":["String.String"],"UpdateLevel":["String.String"],"UpdateComment":["String.String"],"UpdateMobile":["String.String"],"UpdatePhone":["String.String"],"CondoNameInput":["String.String"],"CondoAddressInput":["String.String"],"AddInfoInput":["String.String"],"ConfirmBookingForm":[],"NoOp":[],"DismissErrors":[],"Tick":["Time.Posix"],"InputFocused":["String.String"],"InputBlurred":["String.String"],"SelDateTime":["String.String"],"ToggleReturnUser":[],"ClickedHardwareDeviceConnect":[],"ClickedXMRWalletConnect":[],"ClickedTempXMRAddr":[],"ResponseDataFromMain":["Json.Decode.Value"],"LogOut":[],"Create":[],"CreateNewRanking":["Data.User.UserInfo"],"Cancel":[],"CancelFetchedOwned":["Data.User.UserInfo"],"CancelFetchedMember":[],"CancelFetchedSpectator":[],"CancelCreateNewRanking":[],"CancelRegistration":[],"Confirm":[],"ViewMember":["Data.User.MemberRanking"],"RegisUser":["Data.User.UserInfo"],"RankingNameChg":["String.String"],"StreetAddressChg":["String.String"],"CityAddressChg":["String.String"],"DialogDeleteOwnedRanking":[],"DeleteOwnedRanking":[],"CancelDialoguePrepareResultView":[],"FetchSpectatorRanking":["String.String"],"SpectatorJoin":[],"RegisteredUserJoin":[],"DialogueConfirmJoinView":[],"DialogueConfirmLeaveView":[],"DialogueConfirmDeleteAccount":[],"DeleteAccount":[],"LoginResponse":["Result.Result Http.Error Pages.Hardware.SuccessfulLoginResult"],"LNSConnectResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullLNSConnectResult"],"ProfileResponse":["Result.Result Http.Error Pages.Hardware.SuccessfullProfileResult"]}},"Pages.Market.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Market.Model"]}},"Pages.Portfolio.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Portfolio.Model"]}},"Pages.Sell.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Sell.Model"]}},"Pages.Support.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Support.Model"]}},"Pages.Wallet.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Wallet.Model"],"ClosePopUp":[],"SetAddress":["String.String"],"GotBalances":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetBalancesReply"]}},"Main.Page":{"args":[],"tags":{"DashboardPage":["Pages.Dashboard.Model"],"SellPage":["Pages.Sell.Model"],"PortfolioPage":["Pages.Portfolio.Model"],"FundsPage":["Pages.Funds.Model"],"SupportPage":["Pages.Support.Model"],"BuyPage":["Pages.Buy.Model"],"MarketPage":["Pages.Market.Model"],"HardwarePage":["Pages.Hardware.Model"],"WalletPage":["Pages.Wallet.Model"],"BlankPage":["Pages.Blank.Model"]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Time.Zone":{"args":[],"tags":{"Zone":["Basics.Int","List.List Time.Era"]}},"Pages.Blank.Blank":{"args":[],"tags":{"Blank":["{ name : String.String }"]}},"Http.Body":{"args":[],"tags":{"Body":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Pages.Buy.Buy":{"args":[],"tags":{"Buy":["{ name : String.String }"]}},"Bytes.Bytes":{"args":[],"tags":{"Bytes":[]}},"Pages.Dashboard.Dashboard":{"args":[],"tags":{"Dashboard":["{ name : String.String }"]}},"Pages.Hardware.DataFromMongo":{"args":[],"tags":{"JsonData":["Json.Decode.Value"],"StringData":["String.String"]}},"Types.DateType.DateTime":{"args":[],"tags":{"CurrentDateTime":["Time.Posix","Time.Zone"],"SelectedDateTime":["Time.Posix","Time.Zone"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Pages.Funds.Funds":{"args":[],"tags":{"Funds":["{ name : String.String }"]}},"Data.User.Gender":{"args":[],"tags":{"Male":[],"Female":[]}},"Grpc.GrpcStatus":{"args":[],"tags":{"Ok_":[],"Cancelled":[],"Unknown":[],"InvalidArgument":[],"DeadlineExceeded":[],"NotFound":[],"AlreadyExists":[],"PermissionDenied":[],"ResourceExhausted":[],"FailedPrecondition":[],"Aborted":[],"OutOfRange":[],"Unimplemented":[],"Internal":[],"Unavailable":[],"DataLoss":[],"Unauthenticated":[]}},"Pages.Hardware.Hardware":{"args":[],"tags":{"Hardware":["{ name : String.String }"]}},"Http.Header":{"args":[],"tags":{"Header":["String.String","String.String"]}},"Internal.Int64.Int64":{"args":[],"tags":{"Int64":["Internal.Int64.Ints"]}},"List.List":{"args":["a"],"tags":{}},"Pages.Market.Market":{"args":[],"tags":{"Market":["{ name : String.String }"]}},"Pages.Portfolio.Portfolio":{"args":[],"tags":{"Portfolio":["{ name : String.String }"]}},"Pages.Hardware.QueryType":{"args":[],"tags":{"RefreshTknQP":["Pages.Hardware.RefreshTokenQueryParams"],"Login":["Pages.Hardware.EmailPasswordLogin"],"Spectator":[],"RegisterUser":["Data.User.UserInfo"],"LoggedInUser":[],"CreatingNewLadder":["Data.User.UserInfo"],"OwnedSelectedView":[],"MemberSelectedView":[],"SpectatorSelectedView":[],"ConfirmDeleteOwnedRanking":[],"PrepareResult":[],"Error":["String.String"],"ConfirmJoinMemberView":[],"ConfirmLeaveMemberView":[],"ConfirmDeleteUserView":[]}},"Pages.Sell.Sell":{"args":[],"tags":{"Sell":["{ name : String.String }"]}},"Pages.Blank.Status":{"args":[],"tags":{"Loading":[],"Loaded":[],"Errored":[]}},"Pages.Buy.Status":{"args":[],"tags":{"Loading":[],"Loaded":[],"Errored":[]}},"Pages.Dashboard.Status":{"args":[],"tags":{"Loading":[],"Loaded":[],"Errored":[]}},"Pages.Funds.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Hardware.Status":{"args":[],"tags":{"Loading":[],"Loaded":[],"Errored":[]}},"Pages.Market.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Portfolio.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Sell.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Wallet.Status":{"args":[],"tags":{"Loading":[],"Loaded":[],"Errored":[]}},"Pages.Support.Support":{"args":[],"tags":{"Support":["{ name : String.String }"]}},"Data.User.User":{"args":[],"tags":{"Spectator":["Data.User.UserInfo"],"Registered":["Data.User.UserInfo"]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));

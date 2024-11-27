@@ -1,5 +1,3 @@
-//import { setupElmPorts, connectLNS } from "./hardware/ledgerInterop.js";
-//import { connectLNS } from "./hardware/ledgerInterop.js";
 import { checkDeviceConnection } from "./hardware/checkDeviceConnect.js";
 import { getMoneroAddress } from "./hardware/xmrHardwareInterop.js";
 // NOTE: This is the main file for communicating with Elm. It receives messages from Elm and
@@ -18,8 +16,6 @@ export async function handleMessageFromElm(message, app) {
 
   switch (messageArr[0]) {
     case "connectLNS":
-      
-
       try {
         //connectLNS(app);
         // Perform further actions with the device
@@ -41,17 +37,16 @@ export async function handleMessageFromElm(message, app) {
       }
       break;
 
-      
-      case "initiateXMRToBTCTrans":
-        //connectLNS(app)
-  
-        try {
-          // Perform further actions with the device
-          hwinterop.initiateXMRToBTCTrans( messageArr[1]);
-        } catch (error) {
-          console.error("Device connection error:", error);
-        }
-        break;
+    case "initiateXMRToBTCTrans":
+      //connectLNS(app)
+
+      try {
+        // Perform further actions with the device
+        hwinterop.initiateXMRToBTCTrans(messageArr[1]);
+      } catch (error) {
+        console.error("Device connection error:", error);
+      }
+      break;
 
     //NOTE: We're going to talk to mongodb via the node application
     // to do searches, so we can do them anonymously

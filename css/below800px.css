@@ -20,23 +20,24 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* background-color: var(--clr-neutral-900-with-opacity); */
-  background-color: var(--clr-neutral-100);
+  background-color: var(--clr-neutral-900-with-opacity);
 }
 
 .topLinksLogo {
-  /* width: 100%; */
-  width: 20%;
+  width: 100%;
   display: flex;
   /* position: absolute; */
   justify-content: center;
   align-items: center;
-  padding-bottom: 10px;
 }
 
 .socials-sub-container-whatsapp {
   order: 4;
   width: 20%;
+}
+
+.menu-btn {
+  display: block;
 }
 
 .topLinksLeft {
@@ -49,7 +50,7 @@
 }
 
 .main-nav-flex-container {
-  display: none;
+  display: block;
 }
 
 .below800pxnavlinks {
@@ -67,19 +68,8 @@ nav {
 
 }
 
-.logoInNavLinks {
+.logo {
   display: none;
-}
-
-.simpleLogo {
-  display: block;
-}
-
-.smallScreenLogo {
-  display: flex;
-  justify-content: center;
-  z-index: 3;
-  color: white;
 }
 
 .video-container {

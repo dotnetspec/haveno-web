@@ -12,11 +12,13 @@ import Browser.Navigation as Nav exposing (Key)
 import Expect exposing (equal)
 import Extras.TestData as TestData exposing (placeholderUrl)
 import Html exposing (Html, div, i)
+import Json.Decode as D
 import Json.Encode as E
 import Main exposing (Model, Msg, Page(..), Route(..), init, navigate, subscriptions, update, view, viewPopUp)
 import Pages.Blank
 import Pages.Dashboard as Dashboard exposing (..)
 import Pages.Hardware as Hardware exposing (..)
+import Pages.Wallet as Wallet exposing (..)
 import Spec exposing (..)
 import Spec.Claim as Claim exposing (Claim, Verdict)
 import Spec.Command exposing (send)
@@ -555,7 +557,6 @@ runSpecTests =
                             |> Spec.expect
                                 (Navigator.location <|
                                     Claim.isEqual Debug.toString
-                                        -- NOTE: I think this is location according to Nav.Key rather than page(?)
                                         "http://localhost:1234/"
                                 )
                         )
@@ -785,6 +786,78 @@ runSpecTests =
                         )
                     ]
             )
+        , --Runner.skip <|
+          --Runner.pick <|
+          scenario "11: Checking the Menu is active on the Wallet page"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    -- NOTE: Currently believe this is equivalent to the user clicking a link
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                )
+                -- NOTE: You need to do this to get away from 'Blank' page
+                |> when "the user clicks the Continue button"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                |> when "the LNX hww is detected"
+                    [ -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
+                    ]
+                {- |> when "the hardware XMR wallet returns a valid XMR address"
+                   [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
+                   ]
+                -}
+                |> when "the user uses the burger menu to nav to the Wallet page"
+                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
+                -- Simulate user clicking the Wallet navLink in the burger menu
+                |> when "the user clicks the Wallet navLink in the burger menu"
+                    [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
+                |> Spec.when "we log the http requests"
+                    [ Spec.Http.logRequests
+                    ]
+                |> Spec.observeThat
+                    [ it "a. should be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    , it "b.is on the Wallet page"
+                        -- NOTE: Cos connected with valid XMR address
+                        (Observer.observeModel .page
+                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.WalletPage Wallet.initialModel)
+                        )
+                    ]
+            )
+        , --Runner.skip <|
+          Runner.pick <|
+            scenario "12. sendMessageToJs sends 'ElmReady' on init"
+                (given
+                    (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                        |> Spec.Setup.withDocument Main.view
+                        |> Spec.Setup.withUpdate Main.update
+                        |> Spec.Setup.withSubscriptions Main.subscriptions
+                        |> Spec.Setup.forNavigation
+                            { onUrlRequest = Main.ClickedLink
+                            , onUrlChange = Main.ChangedUrl
+                            }
+                    )
+                    |> Spec.observeThat
+                        [ it "should send 'ElmReady' through sendMessageToJs"
+                            (Spec.Port.observe "sendMessageToJs" D.string
+                                |> Spec.expect
+                                    (Claim.isListWhere
+                                        [ Claim.isEqual Debug.toString "ElmReady"
+                                        , Claim.isEqual Debug.toString "connectLNS"
+                                        ]
+                                    )
+                            )
+                        ]
+                )
         ]
 
 

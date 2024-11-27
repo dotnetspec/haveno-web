@@ -17,7 +17,7 @@ import Extras.Constants as Constants exposing (yck_id)
 import Extras.TestData as TestData exposing (placeholderUrl)
 import Framework.Heading as Heading
 import Grpc exposing (..)
-import Html exposing (Html, a, br, button, div, footer, h2, h3, h4, h5, h6, header, i, img, li, nav, node, p, source, span, text, ul)
+import Html exposing (Html, a, br, button, div, footer, h2, h3, h4, h5, h6, header, i, img, li, nav, node, p, source, span, text, ul, input, label)
 import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick)
 import Json.Decode as JD
@@ -105,12 +105,14 @@ init flag url key =
             -- NOTE: This is actually the only place in the app that is currently affecting the notification mesage
             , xmrWalletAddress = "" --""
             , isPopUpVisible = True
-            , isNavMenuActive = False
+            , isNavMenuActive = True
             , version = "No Haveno version available"
-            , isPageHeaderVisible = False
+
+            --, isPageHeaderVisible = True
             , currentJsMessage = ""
             , xmrHardwareWalletAddressError = Nothing
             , deviceModel = Nothing
+            , initialized = False
             }
     in
     updateUrl url updatedModel
@@ -145,11 +147,13 @@ type alias Model =
     , xmrWalletAddress : String
     , isPopUpVisible : Bool
     , isNavMenuActive : Bool
-    , isPageHeaderVisible : Bool
+
+    --, isPageHeaderVisible : Bool
     , version : String
     , currentJsMessage : String
     , xmrHardwareWalletAddressError : Maybe XmrHardwareWalletAddressError
     , deviceModel : Maybe DeviceModel
+    , initialized : Bool
     }
 
 
@@ -217,6 +221,7 @@ type Msg
     | HidePopUp
     | GotVersion (Result Grpc.Error GetVersionReply)
     | NavigateTo Page
+    | InitComplete
 
 
 
@@ -246,6 +251,9 @@ pageToUrlPath page =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        InitComplete ->
+            ( { model | initialized = True }, Cmd.none )
+
         NavigateTo newpage ->
             let
                 newUrl =
@@ -399,26 +407,31 @@ update msg model =
                                            "error"
                                 -}
                                 {- updatedIsLNSConnected =
-                                    if model.isHardwareDeviceConnected == False && decodedHardwareDeviceMsg == "nanoS" then
-                                        True
+                                       if model.isHardwareDeviceConnected == False && decodedHardwareDeviceMsg == "nanoS" then
+                                           True
 
-                                    else if model.isHardwareDeviceConnected == True then
-                                        True
+                                       else if model.isHardwareDeviceConnected == True then
+                                           True
+
+                                       else
+                                           False
+
+                                   updatedIsLNXConnected =
+                                       if model.isHardwareDeviceConnected == False && decodedHardwareDeviceMsg == "nanoX" then
+                                           True
+
+                                       else if model.isHardwareDeviceConnected == True then
+                                           True
+
+                                       else
+                                           False
+                                -}
+                                devMod =
+                                    if decodedHardwareDeviceMsg == "nanoS" then
+                                        Just NanoS
 
                                     else
-                                        False
-
-                                updatedIsLNXConnected =
-                                    if model.isHardwareDeviceConnected == False && decodedHardwareDeviceMsg == "nanoX" then
-                                        True
-
-                                    else if model.isHardwareDeviceConnected == True then
-                                        True
-
-                                    else
-                                        False -}
-
-                                devMod = if decodedHardwareDeviceMsg == "nanoS" then Just NanoS else Just NanoX
+                                        Just NanoX
 
                                 updatedIsValidXMRAddressConnected =
                                     if model.isXMRWalletConnected == False && isValidXMRAddress decodedHardwareDeviceMsg then
@@ -439,20 +452,20 @@ update msg model =
 
                                 -- HACK: You will probably want to change this to a more sophisticated logic
                                 {- popupVisibility =
-                                    if updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected then
-                                        False
+                                   if updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected then
+                                       False
 
-                                    else
-                                        True -}
-
+                                   else
+                                       True
+                                -}
                                 hwModel =
                                     Pages.Hardware.initialModel
 
                                 newHardwareModel =
                                     { hwModel
                                         | --isHardwareDeviceConnected = updatedIsLNXConnected
-                                        --, 
-                                        isXMRWalletConnected = updatedIsValidXMRAddressConnected
+                                          --,
+                                          isXMRWalletConnected = updatedIsValidXMRAddressConnected
                                         , xmrWalletAddress = updatedWalletAddress
                                     }
 
@@ -481,10 +494,10 @@ update msg model =
                                         , deviceModel = devMod
                                     }
                             in
-                            if (newMainModel.isHardwareDeviceConnected || newMainModel.isHardwareDeviceConnected) && newMainModel.isXMRWalletConnected then
+                            if newMainModel.isHardwareDeviceConnected && newMainModel.isXMRWalletConnected then
                                 ( { newMainModel | isNavMenuActive = True, page = DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model }, Cmd.none )
 
-                            else if newMainModel.isHardwareDeviceConnected || newMainModel.isHardwareDeviceConnected then
+                            else if newMainModel.isHardwareDeviceConnected then
                                 toHardware { newMainModel | isNavMenuActive = False } (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) newHardwareModel)
 
                             else
@@ -505,9 +518,19 @@ update msg model =
         ClickedLink urlRequest ->
             case urlRequest of
                 Browser.External href ->
+                    {- let
+                           _ =
+                               Debug.log "url" href
+                       in
+                    -}
                     ( model, Nav.load href )
 
                 Browser.Internal url ->
+                    {- let
+                           _ =
+                               Debug.log "url" url
+                       in
+                    -}
                     -- NOTE: If site isn't explicitly branched like
                     -- this, it is parsed as an internal link. We
                     -- need to load it as if it were an external link
@@ -644,8 +667,12 @@ update msg model =
                             )
 
                         Pages.Hardware.ClickedTempXMRAddr ->
-                            ( { model | page = DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model, isNavMenuActive = True, isXMRWalletConnected = True 
-                            , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"}
+                            ( { model
+                                | page = DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model
+                                , isNavMenuActive = True
+                                , isXMRWalletConnected = True
+                                , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                              }
                             , Cmd.none
                             )
 
@@ -750,22 +777,24 @@ view model =
     -- TODO: Make this content's naming conventions closely match the
     -- related css.
     -- NOTE: 'pagetitle' or 'title' in pages is not the same as 'title' in the document
-    if not model.isPopUpVisible then
+    if model.isPopUpVisible then
         { title = "Haveno-Web"
         , body =
-            [ pageHeader model
-            , logoImage
-            , contentByPage
-            , isHWConnectedIndicator model isConnected
-            , isXMRWalletConnectedIndicator model
-            , footerContent model
+            [ --div [ Attr.class "topLinks-flex-container" ] [burgerMenu model.page]
+                pageHeader model.page
+                , viewPopUp model
             ]
         }
 
     else
         { title = "Haveno-Web"
         , body =
-            [ viewPopUp model
+            [ pageHeader model.page
+            , logoImage
+            , contentByPage
+            , isHWConnectedIndicator model isConnected
+            , isXMRWalletConnectedIndicator model
+            , footerContent model
             ]
         }
 
@@ -1063,7 +1092,7 @@ toBlank model ( blank, cmd ) =
       {- -- NOTE: In your example, Cmd.map GotSellMsg cmd, GotSellMsg is indeed a function,
          but you're not explicitly applying it. Cmd.map will take care of applying GotSellMsg to each value that the command produces.
       -}
-    , Cmd.batch [ Cmd.map GotBlankMsg cmd, hwareConnectCmd ]
+    , Cmd.batch [ Cmd.map GotBlankMsg cmd, hwareConnectCmd, notifyJsReady ]
     )
 
 
@@ -1207,7 +1236,6 @@ sendVersionRequest request =
 
 getDeviceResponseMsg : String -> Maybe XmrHardwareWalletAddressError
 getDeviceResponseMsg errorString =
-    
     {-
        -- NOTE: If need this it clashes with "No device selected" and we need to sort out the order of the checks
        if String.contains "No device" errorString then
@@ -1364,50 +1392,44 @@ logoImage =
 {- -- NOTE: What gets displayed here is heavily dependent on css -}
 
 
-pageHeader : Model -> Html msg
-pageHeader model =
+pageHeader : Page -> Html msg
+pageHeader page =
     let
+        _ = Debug.log "pageHeader " "is ready" 
         pageheader =
-            if model.isPageHeaderVisible then
-                header []
-                    [ div [ Attr.class "topLinks-flex-container" ]
-                        {- -- NOTE: When, how and/or if burgerMenu, topLinksLogo or topLinksLeft is displayed is also determined by the .css -}
-                        [ if model.isNavMenuActive then
-                            burgerMenu model.page
-
-                          else
-                            div [] []
-
-                        --, topLinksLogo
-                        , topLinksLeft
-                        ]
-
-                    {- -- NOTE: When main-nav-flex-container is displayed is determined by the .css -}
-                    , div [ Attr.class "main-nav-flex-container" ]
-                        [ div [ class "section" ]
-                            [{- input [ type_ "checkbox", id "nav-toggle", class "nav-toggle" ] []
-                                , nav [ class "navlinks" ] [ navLinks page ]
-                                , label [ for "nav-toggle", Attr.classList [ ( "nav-toggle-label", True ), ( "header-left-element", False ) ] ]
-                                    [ div []
-                                        []
-                                    ]
-                             -}
-                             --nav [ class "navlinks" ] [ navLinks page ]
-                            ]
-
-                        --,
-                        , div [ class "nav-section-above800px" ]
-                            [ --div [ Attr.class "topLinksLogo" ] [ hrefLogoImage ]
-                              nav [ class "above800pxnavlinks" ] [ navLinks model.page ]
-                            ]
-                        , div [ class "section" ]
-                            [--socialsLinks
-                            ]
-                        ]
+            header []
+                [ div [ Attr.class "topLinks-flex-container" ]
+                    {- -- NOTE: When, how and/or if burgerMenu, topLinksLogo or topLinksLeft is displayed is determined by the .css -}
+                    [ burgerMenu page
+                    , topLinksLogo
+                    , topLinksLeft
+                    , socialsLinks
                     ]
 
-            else
-                div [] []
+                {- -- NOTE: When main-nav-flex-container is displayed is determined by the .css -}
+                , div [ Attr.class "main-nav-flex-container" ]
+                    [ div [ class "section" ]
+                        [input [ type_ "checkbox", id "nav-toggle", class "nav-toggle" ] []
+                            , nav [ class "navlinks" ] [ navLinks page ]
+                            , label [ for "nav-toggle", Attr.classList [ ( "nav-toggle-label", True ), ( "header-left-element", False ) ] ]
+                                [ 
+                                ]
+                        ,
+                         nav [ class "navlinks" ] [ navLinks page ]
+                        ]
+
+                    --,
+                    , div [ class "nav-section-above800px" ]
+                        [ --div [ Attr.class "topLinksLogo" ] [ hrefLogoImage ]
+                          nav [ class "above800pxnavlinks" ] [ navLinks page ]
+                        ]
+                    , div [ class "section" ]
+                        [--socialsLinks
+                        ]
+                    ]
+                ]
+
+        --]
     in
     pageheader
 
@@ -1439,6 +1461,7 @@ navLinks page =
                 [ li [ class "logoInNavLinks" ] [ a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "logoImageShrink" ] [ logoImage ] ]
                 , navLink Blank { url = "/", caption = "" }
                 , navLink Dashboard { url = "dashboard", caption = "Dashboard" }
+                , navLink Wallet { url = "wallet", caption = "Wallet" }
                 , navLink Market { url = "market", caption = "Market" }
                 , navLink Support { url = "support", caption = "Support" }
                 , navLink Sell { url = "sell", caption = "Sell" }
@@ -1448,6 +1471,88 @@ navLinks page =
                 ]
     in
     links
+
+
+topLinksLogo : Html msg
+topLinksLogo =
+    div [ Attr.class "topLinksLogo" ] [ a [ Attr.href "https://haveno-web.squashpassion.com" ] [ topLinksLogoImage ] ]
+
+
+topLinksLogoImage : Html msg
+topLinksLogoImage =
+    img
+        [ Attr.src "resources/Logos/monero_icon.jpg"
+
+        -- NOTE: always define the width and height of images. This reduces flickering,
+        -- because the browser can reserve space for the image before loading.
+        , Attr.width 100
+        , Attr.height 33
+        , Attr.alt "Monero Logo"
+        , Attr.title "Monero Logo"
+        ]
+        []
+
+
+socialsLinks : Html msg
+socialsLinks =
+    div
+        [ Attr.class "socials-main-container"
+        ]
+        [ {- -- NOTE: Only turn these on when they exist.
+             The green b/ground is cos whatsapp is at the .md.hydrated:hover (low) level
+             See css notes for further info
+          -}
+          --     div
+          --     [ Attr.class "socials-sub-container socials-sub-container-facebook"
+          --     ]
+          --     [ i
+          --         [{- NOTE: all elements are nodes, but not all nodes are elements -}]
+          --         [ node "ion-icon"
+          --             [ Attr.name "logo-facebook"
+          --             ]
+          --             []
+          --         ]
+          --     ]
+          -- , div
+          --     [ Attr.class "socials-sub-container socials-sub-container-youtube"
+          --     ]
+          --     [ i
+          --         []
+          --         [ node "ion-icon"
+          --             [ Attr.name "logo-youtube"
+          --             ]
+          --             []
+          --         ]
+          --     ]
+          -- , div
+          --     [ Attr.class "socials-sub-container socials-sub-container-instagram"
+          --     ]
+          --     [ i
+          --         []
+          --         [ node "ion-icon"
+          --             [ Attr.name "logo-instagram"
+          --             ]
+          --             []
+          --         ]
+          --     ]
+          -- ,
+          div
+            [ Attr.class "socials-sub-container socials-sub-container-whatsapp"
+            ]
+            [ i
+                []
+                [ a
+                    [ Attr.href ""
+                    , Attr.target "_blank"
+                    ]
+                    [ node "ion-icon"
+                        [ Attr.name "logo-whatsapp"
+                        ]
+                        []
+                    ]
+                ]
+            ]
+        ]
 
 
 topLinksLeft : Html msg
@@ -1482,6 +1587,11 @@ topLinksLeft =
 
 -- NAV: Cmd Msgs
 -- these might e.g. be sent to ports etc.
+
+
+notifyJsReady : Cmd Msg
+notifyJsReady =
+    sendMessageToJs "ElmReady"
 
 
 logOutUser : Cmd Msg
@@ -1545,7 +1655,9 @@ isXMRWalletConnectedIndicator model =
             [ span []
                 [ h4
                     [ Attr.class
-                        (if (model.isHardwareDeviceConnected || model.isHardwareDeviceConnected) && model.isXMRWalletConnected then
+                        (if (model.isHardwareDeviceConnected || model.isHardwareDeviceConnected) 
+                        --&& model.isXMRWalletConnected 
+                        then
                             "indicator green"
 
                          else if model.isPopUpVisible then

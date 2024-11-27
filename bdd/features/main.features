@@ -147,6 +147,17 @@ be compatible with hwd usage and suggest working mobile browser versions
 **And** it should display the Dashboard page
 **And** it should ensure the navigation menu is enabled
 
+#### **Scenario 11: Device connected - use nav to Dashboard, use burger menu to nav to Wallet**  
+
+**Given** the user accesses the Hardware page
+**And** the user has the hardware device connected to their mobile device 
+**And** the user has opened the XMR wallet on the device
+**When** the user clicks the "Temp Got XMR Address" feature
+**Then** the user uses burger menu to nav to Wallet page
+**And** it should ensure the navigation menu is enabled
+**And** it should display the Wallet page
+
+
 
 
 ### **Summary**

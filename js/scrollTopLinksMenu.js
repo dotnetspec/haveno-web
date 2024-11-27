@@ -1,19 +1,20 @@
-$(window).on('scroll', function () {
-    if ($(window).scrollTop() > 50) {
-      $('div.nav-section-above800px').addClass('headeronscrolldown')
-      $('nav ul').addClass('ulonscrolldown')
-      $('nav img').addClass('logoImageShrink')
-      /* NOTE: For class selector make sure you have '.'' */
-      $('.topLinks-flex-container').addClass('topLinks-transition')
-      /* Remove */
-      $('nav img').removeClass('logoImageExpand')
-    } else {
-      $('div.nav-section-above800px').removeClass('headeronscrolldown')
-      $('nav ul').removeClass('ulonscrolldown')
-      $('nav img').removeClass('logoImageShrink')
-      $('.topLinks-flex-container').removeClass('topLinks-transition')
+document.addEventListener('DOMContentLoaded', () => {
+  const menuBtn = document.querySelector('#menu-btn'); // Using the ID selector instead
+  const menuItems = document.querySelector('.below800pxnavlinks'); // Using the class of the nav links
 
-      /* Add */
-      $('nav img').addClass('logoImageExpand')
-    }
-  })
+  if (!menuBtn) {
+      console.error('Menu button  not found!');
+      return;
+  }
+
+  if (!menuItems) {
+    console.error('Menu items not found!');
+    return;
+}
+
+  menuBtn.addEventListener('click', () => {
+      console.log('Menu button clicked');
+      menuItems.classList.toggle('open'); // Toggle class to show/hide menu
+      menuBtn.classList.toggle('open'); // Toggle class for the burger icon
+  });
+});
