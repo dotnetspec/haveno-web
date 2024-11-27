@@ -1538,6 +1538,23 @@ prepareEmailPwordLogin emailPword =
 -- we manage to get all the necessary from the the change (unlikely)
 
 
+validXMRAddressParser : Parser String
+validXMRAddressParser =
+    getChompedString (chompWhile Char.isAlphaNum)
+        |> Parser.andThen
+            (\str ->
+                if String.length str == 95 then
+                    Parser.succeed str
+
+                else
+                    Parser.problem "Invalid length"
+            )
+        |> Parser.andThen
+            (\str ->
+                end
+                    |> Parser.map (\_ -> str)
+            )
+
 ensureDataIsJsonObj : DataFromMongo -> D.Value
 ensureDataIsJsonObj dataFromMongo =
     case dataFromMongo of
