@@ -104,6 +104,7 @@ init flag url key =
             , isPopUpVisible = True
             , isNavMenuActive = True
             , version = Nothing
+            , deviceModel = Nothing
             }
     in
     --updateUrl (updateUrlPath url "/hardware") updatedModel
@@ -141,6 +142,7 @@ type alias Model =
     , isPopUpVisible : Bool
     , isNavMenuActive : Bool
     , version : Maybe GetVersionReply
+    , deviceModel : Maybe DeviceModel
     }
 
 
@@ -316,116 +318,123 @@ update msg model =
                     WalletPage _ ->
                         ( model, Cmd.none )
 
-                    HardwarePage hwModel ->
-                        let
-                            -- NOTE: You can only see the rawJsonMessage in the console if you use JE.encode 2
-                            -- but you can't decode it if you use it that way
-                            --_ = Debug.log "receivedJson" (E.encode 0 receivedJson)
-                            -- NOTE: We are doing the logic here so that Main's model is updated as well as hardware's
-                            -- REVIEW: If we can update Main's model after updating hardware's model, we can avoid doing it here
-                            decodedHardwareDeviceMsg =
-                                case JD.decodeValue justmsgFieldFromJsonDecoder rawJsonMessage of
-                                    Ok message ->
-                                        message.operationEventMsg
+                    HardwarePage _ ->
+                            -- NOTE: unless we figure out how to update Main's model after updating hardware's model, we will not
+                            -- be using ResponseDataFromMain to manage the logic here.
+                            --toHardware newMainModel (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) newHardwareModel)
+                            --updateUrl (Url.Url Http "localhost" Nothing "/hardware" Nothing Nothing) newMainModel
+                            --updateUrl newUrlAfterCheckConnections newMainModel
+                            let
+                                decodedHardwareDeviceMsg =
+                                   case JD.decodeValue justmsgFieldFromJsonDecoder rawJsonMessage of
+                                       Ok message ->
+                                           message.operationEventMsg
 
-                                    Err err ->
-                                        --JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
-                                        "error"
+                                       Err err ->
+                                           --JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
+                                           "error"
+                               
+                                {- updatedIsLNSConnected =
+                                       if model.isHardwareDeviceConnected == False && decodedHardwareDeviceMsg == "nanoS" then
+                                           True
 
-                            updatedIsLNSConnected =
-                                if model.isHardwareLNSConnected == False && decodedHardwareDeviceMsg == "nanoS" then
-                                    True
+                                       else if model.isHardwareDeviceConnected == True then
+                                           True
 
-                                else if model.isHardwareLNSConnected == True then
-                                    True
+                                       else
+                                           False
 
-                                else
-                                    False
+                                   updatedIsLNXConnected =
+                                       if model.isHardwareDeviceConnected == False && decodedHardwareDeviceMsg == "nanoX" then
+                                           True
 
-                            updatedIsLNXConnected =
-                                if model.isHardwareLNXConnected == False && decodedHardwareDeviceMsg == "nanoX" then
-                                    True
+                                       else if model.isHardwareDeviceConnected == True then
+                                           True
 
-                                else if model.isHardwareLNXConnected == True then
-                                    True
+                                       else
+                                           False
+                                -}
+                                devMod =
+                                    if decodedHardwareDeviceMsg == "nanoS" then
+                                        Just NanoS
 
-                                else
-                                    False
+                                    else
+                                        Just NanoX
 
-                            updatedIsValidXMRAddressConnected =
-                                if model.isXMRWalletConnected == False && isValidXMRAddress decodedHardwareDeviceMsg then
-                                    True
+                                updatedIsValidXMRAddressConnected =
+                                    if model.isXMRWalletConnected == False && isValidXMRAddress decodedHardwareDeviceMsg then
+                                        True
 
-                                else if model.isXMRWalletConnected == True then
-                                    True
+                                    else if model.isXMRWalletConnected == True then
+                                        True
 
-                                else
-                                    False
+                                    else
+                                        False
 
-                            updatedWalletAddress =
-                                if isValidXMRAddress decodedHardwareDeviceMsg then
-                                    decodedHardwareDeviceMsg
+                                updatedWalletAddress =
+                                    if isValidXMRAddress decodedHardwareDeviceMsg then
+                                        decodedHardwareDeviceMsg
 
-                                else
-                                    ""
+                                    else
+                                        ""
 
-                            newUrl =
-                                Url.Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
+                                -- HACK: You will probably want to change this to a more sophisticated logic
+                                {- popupVisibility =
+                                   if updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected then
+                                       False
 
-                            -- HACK: You will probably want to change this to a more sophisticated logic
-                            popupVisibility =
-                                if updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected then
-                                    False
+                                   else
+                                       True
+                                -}
+                                hwModel =
+                                    Pages.Hardware.initialModel
 
-                                else
-                                    True
+                                newHardwareModel =
+                                    { hwModel
+                                        | --isHardwareDeviceConnected = updatedIsLNXConnected
+                                          --,
+                                          isXMRWalletConnected = updatedIsValidXMRAddressConnected
+                                        , xmrWalletAddress = updatedWalletAddress
+                                    }
 
-                            newHardwareModel =
-                                { hwModel
-                                    | isHardwareDeviceConnected = updatedIsLNXConnected
-                                    , isXMRWalletConnected = updatedIsValidXMRAddressConnected
-                                    , xmrWalletAddress = updatedWalletAddress
-                                }
+                                newPage =
+                                    if updatedIsValidXMRAddressConnected then
+                                        --DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model
+                                        DashboardPage Pages.Dashboard.initialModel
 
-                            newPage =
-                                if updatedIsValidXMRAddressConnected then
-                                    DashboardPage Pages.Dashboard.initialModel
+                                    else
+                                        HardwarePage newHardwareModel
 
-                                else
-                                    HardwarePage newHardwareModel
+                                newUrlAfterCheckConnections =
+                                    if updatedIsValidXMRAddressConnected then
+                                        Url.Url Http "localhost" (Just 1234) "/dashboard" Nothing Nothing
 
-                            newUrlAfterCheckConnections =
-                                if updatedIsValidXMRAddressConnected then
-                                    Url.Url Http "localhost" (Just 1234) "/dashboard" Nothing Nothing
+                                    else
+                                        Url.Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
 
-                                else
-                                    Url.Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
+                                newMainModel =
+                                    { model
+                                        | page = newPage
+                                        , isHardwareDeviceConnected = True
+                                        , isXMRWalletConnected = updatedIsValidXMRAddressConnected
+                                        , isPopUpVisible = False
+                                        , flag = newUrlAfterCheckConnections
+                                        , xmrWalletAddress = updatedWalletAddress
+                                        , deviceModel = devMod
+                                    }
+                            in
+                            if newMainModel.isHardwareDeviceConnected && newMainModel.isXMRWalletConnected then
+                                ( { 
+                                    --newMainModel | isNavMenuActive = True, page = DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model }
+                                    newMainModel | isNavMenuActive = True, page = DashboardPage Pages.Dashboard.initialModel }
+                                    , Cmd.none )
 
-                            _ =
-                                Debug.log "newPage" newPage
+                            else if newMainModel.isHardwareDeviceConnected then
+                                toHardware { newMainModel | isNavMenuActive = False } (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) newHardwareModel)
 
-                            newMainModel =
-                                { model
-                                    | page = newPage
-                                    , isHardwareLNSConnected = updatedIsLNSConnected
-                                    , isHardwareLNXConnected = updatedIsLNXConnected
-                                    , isXMRWalletConnected = updatedIsValidXMRAddressConnected
-                                    , isPopUpVisible = popupVisibility
-                                    , flag = newUrlAfterCheckConnections
-                                    , xmrWalletAddress = updatedWalletAddress
+                            else
+                                ( model, Cmd.none )
 
-                                    --, selectedranking = newRanking
-                                    --, objectJSONfromJSPort = Just decodedJsObj
-                                    --, errors = errors
-                                }
-
-                            -- NOTE: model.key newUrlAfterCheckConnections actually changes the path in the browser. Not sure if need to do this
-                        in
-                        -- NOTE: unless we figure out how to update Main's model after updating hardware's model, we will not
-                        -- be using ResponseDataFromMain to manage the logic here.
-                        --toHardware newMainModel (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) newHardwareModel)
-                        --updateUrl (Url.Url Http "localhost" Nothing "/hardware" Nothing Nothing) newMainModel
-                        updateUrl newUrlAfterCheckConnections newMainModel
 
         Tick newTime ->
             ( { model
@@ -942,8 +951,9 @@ updateUrl url model =
                         HardwarePage hardwareModel ->
                             -- NOTE: Update Hardware page with relevant parts of Main's model
                             { hardwareModel
-                                | isHardwareDeviceConnected = model.isHardwareLNXConnected
-                                , isXMRWalletConnected = model.isXMRWalletConnected
+                                | --isHardwareDeviceConnected = model.isHardwareLNXConnected
+                                --, 
+                                isXMRWalletConnected = model.isXMRWalletConnected
                             }
 
                         _ ->
@@ -1125,11 +1135,11 @@ viewPopUp model =
                     ]
                 ]
 
-          else if model.isHardwareLNSConnected then
+          else if model.isHardwareDeviceConnected then
             div [] [ text "Nano S Connected" ]
 
-          else if model.isHardwareLNXConnected then
-            div [] [ text "Nano X Connected" ]
+          {- else if model.isHardwareLNXConnected then
+            div [] [ text "Nano X Connected" ] -}
 
           else
             div [] []
