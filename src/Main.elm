@@ -578,7 +578,7 @@ update msg model =
                                 "getMoneroAddress"
                             )
 
-                        Pages.Hardware.ClickedXMRInitiateTransaction amt ->
+                        {- Pages.Accounts.ClickedXMRInitiateTransaction amt ->
                             let
                                 newHardwareModel =
                                     { hardwareModel | queryType = Pages.Hardware.LoggedInUser }
@@ -588,7 +588,7 @@ update msg model =
                                 "initiateXMRToBTCTrans "
                                     ++ "~^&"
                                     ++ amt
-                            )
+                            ) -}
 
                         _ ->
                             -- otherwise operate within the Hardware sub module:
