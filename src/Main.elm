@@ -97,9 +97,9 @@ init flag url key =
             , time = Time.millisToPosix 0
             , zone = Nothing -- Replace with the actual time zone if available
             , errors = []
-            , isHardwareLNSConnected = False
-            , isHardwareLNXConnected = False
+            , isHardwareDeviceConnected = False
             , isXMRWalletConnected = False
+            , xmrHardwareWalletAddressError = Nothing
             , xmrWalletAddress = ""
             , isPopUpVisible = True
             , isNavMenuActive = True
@@ -134,9 +134,9 @@ type alias Model =
     , time : Time.Posix
     , zone : Maybe Time.Zone
     , errors : List String
-    , isHardwareLNSConnected : Bool
-    , isHardwareLNXConnected : Bool
+    , isHardwareDeviceConnected : Bool
     , isXMRWalletConnected : Bool
+    , xmrHardwareWalletAddressError : Maybe XmrHardwareWalletAddressError
     , xmrWalletAddress : String
     , isPopUpVisible : Bool
     , isNavMenuActive : Bool
@@ -314,8 +314,7 @@ update msg model =
                         ( model, Cmd.none )
 
                     WalletPage _ ->
-                            ( model, Cmd.none )
-
+                        ( model, Cmd.none )
 
                     HardwarePage hwModel ->
                         let
@@ -578,17 +577,17 @@ update msg model =
                             )
 
                         {- Pages.Accounts.ClickedXMRInitiateTransaction amt ->
-                            let
-                                newHardwareModel =
-                                    { hardwareModel | queryType = Pages.Hardware.LoggedInUser }
-                            in
-                            ( { model | page = HardwarePage newHardwareModel }
-                            , sendMessageToJs <|
-                                "initiateXMRToBTCTrans "
-                                    ++ "~^&"
-                                    ++ amt
-                            ) -}
-
+                           let
+                               newHardwareModel =
+                                   { hardwareModel | queryType = Pages.Hardware.LoggedInUser }
+                           in
+                           ( { model | page = HardwarePage newHardwareModel }
+                           , sendMessageToJs <|
+                               "initiateXMRToBTCTrans "
+                                   ++ "~^&"
+                                   ++ amt
+                           )
+                        -}
                         _ ->
                             -- otherwise operate within the Hardware sub module:
                             toHardware model (Pages.Hardware.update hardwareMsg hardwareModel)
@@ -678,7 +677,7 @@ view model =
                         |> Html.map GotWalletMsg
 
         isConnected =
-            if model.isHardwareLNSConnected || model.isHardwareLNXConnected then
+            if model.isHardwareDeviceConnected then
                 True
 
             else
@@ -961,8 +960,6 @@ updateUrl url model =
                 -- Model -> ( Pages.Hardware.Model, Cmd Pages.Hardware.Msg ) -> ( Model, Cmd Msg )
                 |> toHardware newModel
 
-            
-
         Nothing ->
             Pages.Dashboard.init { time = Nothing, flagUrl = model.flag }
                 |> toDashboard model
@@ -1029,6 +1026,7 @@ toMarket model ( market, cmd ) =
     ( { model | page = MarketPage market }
     , Cmd.map GotMarketMsg cmd
     )
+
 
 toWallet : Model -> ( Pages.Wallet.Model, Cmd Pages.Wallet.Msg ) -> ( Model, Cmd Msg )
 toWallet model ( wallet, cmd ) =
@@ -1183,6 +1181,23 @@ port sendMessageToJs : String -> Cmd msg
 
 
 port receiveMessageFromJs : (JD.Value -> msg) -> Sub msg
+
+
+
+-- NAV: Types
+
+
+type XmrHardwareWalletAddressError
+    = NoDevice
+    | DeviceNeedsPermission
+    | DeviceLocked
+    | DeviceUnlocked_XMRWalletClosed
+    | DeviceUnlocked_XMRWalletOpen
+
+
+type DeviceModel
+    = NanoS
+    | NanoX
 
 
 
@@ -1494,14 +1509,14 @@ isHWConnectedIndicator model isConnected =
 
 
 isXMRWalletConnectedIndicator : Model -> Html msg
-isXMRWalletConnectedIndicator model  =
+isXMRWalletConnectedIndicator model =
     h3 []
         [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
             [ br [] []
             , span []
                 [ h6
                     [ Attr.class
-                        (if model.isHardwareLNSConnected || model.isHardwareLNXConnected then
+                        (if model.isHardwareDeviceConnected then
                             "indicator green"
 
                          else
@@ -1509,7 +1524,7 @@ isXMRWalletConnectedIndicator model  =
                         )
                     ]
                     [ text
-                        (if model.isHardwareLNSConnected || model.isHardwareLNXConnected then
+                        (if model.isHardwareDeviceConnected then
                             "XMR Wallet Connected"
 
                          else if model.isPopUpVisible then
@@ -1522,7 +1537,7 @@ isXMRWalletConnectedIndicator model  =
                 , br [] []
                 , h5 []
                     [ text
-                        (if model.isHardwareLNSConnected || model.isHardwareLNXConnected then
+                        (if model.isHardwareDeviceConnected then
                             "XMR Wallet Address: " ++ model.xmrWalletAddress
 
                          else if model.isPopUpVisible then
