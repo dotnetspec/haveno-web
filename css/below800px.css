@@ -79,3 +79,11 @@ nav {
 .banner {
   display: none;
 }
+
+.menu-btn {
+  display: block;
+}
+
+.main-nav-flex-container {
+  display: block;
+}
