@@ -32,6 +32,7 @@ import Pages.Market
 import Pages.Portfolio
 import Pages.Sell
 import Pages.Support
+import Pages.Wallet
 import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
@@ -196,6 +197,7 @@ type Msg
     | GotBuyMsg Pages.Buy.Msg
     | GotMarketMsg Pages.Market.Msg
     | GotHardwareMsg Pages.Hardware.Msg
+    | GotWalletMsg Pages.Wallet.Msg
     | ChangedUrl Url.Url
     | Tick Time.Posix
     | AdjustTimeZone Time.Zone
@@ -310,6 +312,10 @@ update msg model =
 
                     MarketPage _ ->
                         ( model, Cmd.none )
+
+                    WalletPage _ ->
+                            ( model, Cmd.none )
+
 
                     HardwarePage hwModel ->
                         let
@@ -527,6 +533,14 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        GotWalletMsg walletMsg ->
+            case model.page of
+                WalletPage wallet ->
+                    toWallet model (Pages.Wallet.update walletMsg wallet)
+
+                _ ->
+                    ( model, Cmd.none )
+
         -- NOTE: GotHardwareMsg is triggered by toHardware, which is triggered by updateUrl
         -- which is triggered by init. updateUrl is sent the url and uses the parser to parse it.
         -- The parser outputs the Hardware page so that the case in updateUrl can branch on Hardware.
@@ -660,6 +674,10 @@ view model =
                     Pages.Hardware.view hardware
                         |> Html.map GotHardwareMsg
 
+                WalletPage wallet ->
+                    Pages.Wallet.view wallet
+                        |> Html.map GotWalletMsg
+
         isConnected =
             if model.isHardwareLNSConnected || model.isHardwareLNXConnected then
                 True
@@ -711,6 +729,7 @@ type Route
     | Market
     | Hardware
     | Blank
+    | Wallet
 
 
 
@@ -730,6 +749,7 @@ type
     | MarketPage Pages.Market.Model
     | HardwarePage Pages.Hardware.Model
     | BlankPage Pages.Blank.Model
+    | WalletPage Pages.Wallet.Model
 
 
 
@@ -803,6 +823,7 @@ urlAsPageParser =
         , Url.Parser.map Buy (Url.Parser.s "buy")
         , Url.Parser.map Market (Url.Parser.s "market")
         , Url.Parser.map Hardware (Url.Parser.s "hardware")
+        , Url.Parser.map Wallet (Url.Parser.s "wallet")
         ]
 
 
@@ -912,6 +933,10 @@ updateUrl url model =
             Pages.Market.init ()
                 |> toMarket model
 
+        Just Wallet ->
+            Pages.Wallet.init "wallet init string"
+                |> toWallet model
+
         Just Hardware ->
             let
                 newHWmodel =
@@ -937,6 +962,8 @@ updateUrl url model =
             Pages.Hardware.init { time = Nothing, flagUrl = Url.Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing }
                 -- Model -> ( Pages.Hardware.Model, Cmd Pages.Hardware.Msg ) -> ( Model, Cmd Msg )
                 |> toHardware newModel
+
+            
 
         Nothing ->
             Pages.Dashboard.init { time = Nothing, flagUrl = model.flag }
@@ -1003,6 +1030,12 @@ toMarket : Model -> ( Pages.Market.Model, Cmd Pages.Market.Msg ) -> ( Model, Cmd
 toMarket model ( market, cmd ) =
     ( { model | page = MarketPage market }
     , Cmd.map GotMarketMsg cmd
+    )
+
+toWallet : Model -> ( Pages.Wallet.Model, Cmd Pages.Wallet.Msg ) -> ( Model, Cmd Msg )
+toWallet model ( wallet, cmd ) =
+    ( { model | page = WalletPage wallet }
+    , Cmd.map GotWalletMsg cmd
     )
 
 
@@ -1601,6 +1634,12 @@ isActive { link, page } =
             True
 
         ( Hardware, _ ) ->
+            False
+
+        ( Wallet, WalletPage _ ) ->
+            True
+
+        ( Wallet, _ ) ->
             False
 
 
