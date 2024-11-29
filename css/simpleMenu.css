@@ -1,0 +1,54 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .menu-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 15px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+    z-index: 1100;
+  }
+  
+  .menu {
+    position: fixed;
+    top: 0;
+    left: -250px; /* Start hidden off-screen */
+    width: 250px;
+    height: 100%;
+    background-color: #333;
+    color: white;
+    transition: left 0.3s ease; /* Smooth slide-in effect */
+    z-index: 1000;
+    overflow-y: auto; /* Add scrolling for long menus */
+  }
+  
+  .menu.open {
+    left: 0; /* Slide menu into view */
+  }
+  
+  .menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 20px 0;
+  }
+  
+  .menu ul li {
+    padding: 10px 20px;
+    border-bottom: 1px solid #444;
+  }
+  
+  .menu ul li a {
+    text-decoration: none;
+    color: white;
+  }
+  
+  .menu ul li a:hover {
+    color: #00aced; /* Highlight on hover */
+  }
+  

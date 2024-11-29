@@ -116,7 +116,7 @@ init flag url key =
             , xmrHardwareWalletAddressError = Nothing
             , deviceModel = Nothing
             , initialized = False
-            
+            , isMenuOpen = False
             }
     in
     updateUrl url updatedModel
@@ -158,6 +158,7 @@ type alias Model =
     , currentJsMessage : String
     , deviceModel : Maybe DeviceModel
     , initialized : Bool
+    , isMenuOpen : Bool
     }
 
 
@@ -226,6 +227,7 @@ type Msg
     | GotVersion (Result Grpc.Error GetVersionReply)
     | NavigateTo Page
     | InitComplete
+    | ToggleMenu
 
 
 
@@ -255,6 +257,9 @@ pageToUrlPath page =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ToggleMenu ->
+            ( { model | isMenuOpen = not model.isMenuOpen }, Cmd.none )
+
         InitComplete ->
             ( { model | initialized = True }, Cmd.none )
 
@@ -537,19 +542,9 @@ update msg model =
         ClickedLink urlRequest ->
             case urlRequest of
                 Browser.External href ->
-                    {- let
-                           _ =
-                               Debug.log "url" href
-                       in
-                    -}
                     ( model, Nav.load href )
 
                 Browser.Internal url ->
-                    {- let
-                           _ =
-                               Debug.log "url" url
-                       in
-                    -}
                     -- NOTE: If site isn't explicitly branched like
                     -- this, it is parsed as an internal link. We
                     -- need to load it as if it were an external link
@@ -782,8 +777,6 @@ view model =
                     Pages.Wallet.view wallet
                         |> Html.map GotWalletMsg
 
-              
-
         isConnected =
             if model.isHardwareDeviceConnected then
                 True
@@ -799,7 +792,8 @@ view model =
         { title = "Haveno-Web"
         , body =
             [ --div [ Attr.class "topLinks-flex-container" ] [burgerMenu model.page]
-              pageHeader model.page
+              --pageHeader model.page
+              newMenu model
             , viewPopUp model
             ]
         }
@@ -807,7 +801,8 @@ view model =
     else
         { title = "Haveno-Web"
         , body =
-            [ pageHeader model.page
+            [ --pageHeader model.page
+            newMenu model
             , logoImage
             , contentByPage
             , isHWConnectedIndicator model isConnected
@@ -861,7 +856,6 @@ type
     | HardwarePage Pages.Hardware.Model
     | WalletPage Pages.Wallet.Model
     | BlankPage Pages.Blank.Model
-    
 
 
 
@@ -1422,46 +1416,69 @@ logoImage =
 {- -- NOTE: What gets displayed here is heavily dependent on css -}
 
 
-pageHeader : Page -> Html msg
-pageHeader page =
+pageHeader : Model -> Html Msg
+pageHeader model =
     let
-        _ =
-            Debug.log "pageHeader " "is ready"
-
         pageheader =
             header []
                 [ div [ Attr.class "topLinks-flex-container" ]
                     {- -- NOTE: When, how and/or if burgerMenu, topLinksLogo or topLinksLeft is displayed is determined by the .css -}
-                    [ burgerMenu page
+                    [ --burgerMenu page
+                      --,
+                      newMenu model
                     , topLinksLogo
                     , topLinksLeft
                     , socialsLinks
                     ]
 
                 {- -- NOTE: When main-nav-flex-container is displayed is determined by the .css -}
-                , div [ Attr.class "main-nav-flex-container" ]
-                    [ div [ class "section" ]
-                        [ input [ type_ "checkbox", id "nav-toggle", class "nav-toggle" ] []
-                        , nav [ class "navlinks" ] [ navLinks page ]
-                        , label [ for "nav-toggle", Attr.classList [ ( "nav-toggle-label", True ), ( "header-left-element", False ) ] ]
-                            []
-                        , nav [ class "navlinks" ] [ navLinks page ]
-                        ]
+                {- , div [ Attr.class "main-nav-flex-container" ]
+                   [ div [ class "section" ]
+                       [ input [ type_ "checkbox", id "nav-toggle", class "nav-toggle" ] []
+                       , nav [ class "navlinks" ] [ navLinks page ]
+                       , label [ for "nav-toggle", Attr.classList [ ( "nav-toggle-label", True ), ( "header-left-element", False ) ] ]
+                           []
+                       , nav [ class "navlinks" ] [ navLinks page ]
+                       ]
 
-                    --,
-                    , div [ class "nav-section-above800px" ]
-                        [ --div [ Attr.class "topLinksLogo" ] [ hrefLogoImage ]
-                          nav [ class "above800pxnavlinks" ] [ navLinks page ]
-                        ]
-                    , div [ class "section" ]
-                        [--socialsLinks
-                        ]
-                    ]
+                   --,
+                   , div [ class "nav-section-above800px" ]
+                       [ --div [ Attr.class "topLinksLogo" ] [ hrefLogoImage ]
+                         nav [ class "above800pxnavlinks" ] [ navLinks page ]
+                       ]
+                   , div [ class "section" ]
+                       [--socialsLinks
+                       ]
+                   ]
+                -}
                 ]
 
         --]
     in
     pageheader
+
+
+newMenu : Model -> Html Msg
+newMenu model =
+    div []
+        [ button
+            [ class "menu-btn"
+            , onClick ToggleMenu
+            ]
+            [ text
+                (if model.isMenuOpen then
+                    "Close Menu"
+
+                 else
+                    "Open Menu"
+                )
+            ]
+        , div
+            [ classList [ ( "menu", True ), ( "open", model.isMenuOpen ) ] ]
+            [ 
+                navLinks model.page 
+            ]
+        ]
 
 
 burgerMenu : Page -> Html msg

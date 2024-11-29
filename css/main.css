@@ -61,11 +61,12 @@ old colors:
 
 /* NOTE: Pull in the external files -- WARN: must remain at top of this file */
 
-@import './defaults.css';
+/* @import './defaults.css';
 @import './burger.css';
 @import './below800px.css';
 @import './above800px.css' screen and (min-width: 800px);
-@import './forms.css';
+@import './forms.css'; */
+@import './simpleMenu.css';
 
 
 /* NOTE: Kevin's standard defaults */
