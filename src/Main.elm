@@ -110,13 +110,11 @@ init flag url key =
             , isPopUpVisible = True
             , isNavMenuActive = True
             , version = "No Haveno version available"
-
-            --, isPageHeaderVisible = True
             , currentJsMessage = ""
             , xmrHardwareWalletAddressError = Nothing
             , deviceModel = Nothing
             , initialized = False
-            , isMenuOpen = False
+            , isMenuOpen = True
             }
     in
     updateUrl url updatedModel
@@ -802,7 +800,7 @@ view model =
         { title = "Haveno-Web"
         , body =
             [ --pageHeader model.page
-            newMenu model
+              newMenu model
             , logoImage
             , contentByPage
             , isHWConnectedIndicator model isConnected
@@ -1413,7 +1411,7 @@ logoImage =
 
 
 
-{- -- NOTE: What gets displayed here is heavily dependent on css -}
+{- -- NOTE: What gets displayed here might also dependent on css. Working to minimize this -}
 
 
 pageHeader : Model -> Html Msg
@@ -1422,72 +1420,40 @@ pageHeader model =
         pageheader =
             header []
                 [ div [ Attr.class "topLinks-flex-container" ]
-                    {- -- NOTE: When, how and/or if burgerMenu, topLinksLogo or topLinksLeft is displayed is determined by the .css -}
-                    [ --burgerMenu page
-                      --,
-                      newMenu model
+                    [ newMenu model
                     , topLinksLogo
                     , topLinksLeft
                     , socialsLinks
                     ]
-
-                {- -- NOTE: When main-nav-flex-container is displayed is determined by the .css -}
-                {- , div [ Attr.class "main-nav-flex-container" ]
-                   [ div [ class "section" ]
-                       [ input [ type_ "checkbox", id "nav-toggle", class "nav-toggle" ] []
-                       , nav [ class "navlinks" ] [ navLinks page ]
-                       , label [ for "nav-toggle", Attr.classList [ ( "nav-toggle-label", True ), ( "header-left-element", False ) ] ]
-                           []
-                       , nav [ class "navlinks" ] [ navLinks page ]
-                       ]
-
-                   --,
-                   , div [ class "nav-section-above800px" ]
-                       [ --div [ Attr.class "topLinksLogo" ] [ hrefLogoImage ]
-                         nav [ class "above800pxnavlinks" ] [ navLinks page ]
-                       ]
-                   , div [ class "section" ]
-                       [--socialsLinks
-                       ]
-                   ]
-                -}
                 ]
-
-        --]
     in
     pageheader
 
 
 newMenu : Model -> Html Msg
 newMenu model =
-    div []
-        [ button
-            [ class "menu-btn"
-            , onClick ToggleMenu
-            ]
-            [ text
-                (if model.isMenuOpen then
-                    "Close Menu"
+    if model.isNavMenuActive == True && model.isMenuOpen == True then
+        div []
+            [ button
+                [ class "menu-btn"
+                , onClick ToggleMenu
+                ]
+                [ text
+                    (if model.isMenuOpen then
+                        "Close Menu"
 
-                 else
-                    "Open Menu"
-                )
+                     else
+                        "Open Menu"
+                    )
+                ]
+            , div
+                [ classList [ ( "menu", True ), ( "open", model.isMenuOpen ) ] ]
+                [ navLinks model.page
+                ]
             ]
-        , div
-            [ classList [ ( "menu", True ), ( "open", model.isMenuOpen ) ] ]
-            [ 
-                navLinks model.page 
-            ]
-        ]
 
-
-burgerMenu : Page -> Html msg
-burgerMenu page =
-    div [ class "menu-btn", id "menu-btn" ]
-        [ div [ class "menu-btn_burger" ]
-            []
-        , nav [ class "below800pxnavlinks" ] [ navLinks page ]
-        ]
+    else
+        div [] []
 
 
 navLinks : Page -> Html msg
