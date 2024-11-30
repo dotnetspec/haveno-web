@@ -680,11 +680,10 @@ update msg model =
 
                         Pages.Hardware.ClickedTempXMRAddr ->
                             ( { model
-                                | page = WalletPage <|  Pages.Wallet.initialModel
+                                | page = WalletPage <| Pages.Wallet.initialModel
                                 , isNavMenuActive = True
                                 , isXMRWalletConnected = True
                                 , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
-                                
                               }
                             , Cmd.none
                             )
@@ -759,8 +758,6 @@ view model =
                 WalletPage wallet ->
                     Pages.Wallet.view wallet
                         |> Html.map GotWalletMsg
-
-       
     in
     -- NAV : View Page Content
     -- TODO: Make this content's naming conventions closely match the
@@ -769,10 +766,7 @@ view model =
     if model.isPopUpVisible then
         { title = "Haveno-Web"
         , body =
-            [ 
-            
-
-              newMenu model
+            [ newMenu model
             , viewPopUp model
             ]
         }
@@ -780,9 +774,17 @@ view model =
     else
         { title = "Haveno-Web"
         , body =
-            [ 
-              newMenu model
-            , topLogo
+            [ newMenu model
+            , div
+                [ class "topLogoContainer"
+                ]
+                [ div [ class "topLogo-content" ]
+                    [ topLogo ]
+
+                {- else if model.isHardwareLNXConnected then
+                   div [] [ text "Nano X Connected" ]
+                -}
+                ]
             , contentByPage
             , isHWDeviceConnectedIndicator model
             , isXMRWalletConnectedIndicator model
@@ -1269,10 +1271,7 @@ viewPopUp model =
         [ if model.isPopUpVisible then
             div [ class "modal" ]
                 [ div [ class "modal-content" ]
-                    [ {- h2 [] [ text "Haveno Web App" ]
-                         ,
-                      -}
-                      topLogo
+                    [ topLogo
                     , p [] [ text "No Hardware Device Detected!" ]
                     , p [] [ text "Please connect your LNS/LNX hardware device to continue" ]
                     , button [ onClick HidePopUp ] [ text "Continue" ]
@@ -1280,10 +1279,16 @@ viewPopUp model =
                 ]
 
           else if model.isHardwareDeviceConnected then
-            div [] [ text "Nano S Connected" ]
-            {- else if model.isHardwareLNXConnected then
-               div [] [ text "Nano X Connected" ]
-            -}
+            div
+                [ class "topLogoContainer"
+                ]
+                [ div [ class "topLogo-content" ]
+                    [ topLogo, text "Nano S Connected" ]
+
+                {- else if model.isHardwareLNXConnected then
+                   div [] [ text "Nano X Connected" ]
+                -}
+                ]
 
           else
             div [] []
@@ -1374,27 +1379,18 @@ showVideoOrBanner page =
 
 topLogo : Html msg
 topLogo =
-    div [ class "topLogoContainer"
-        
+    img
+        [ Attr.src "assets/resources/images/logo-splash100X33.png"
+
+        -- NOTE: always define the width and height of images. This reduces flickering,
+        -- because the browser can reserve space for the image before loading.
+        , Attr.width 100
+        , Attr.height 33
+        , Attr.alt "Haveno Logo"
+        , Attr.title "Haveno Logo"
+        , id "topLogoId"
         ]
-        [ img
-            [ Attr.src "assets/resources/images/logo-splash100X33.png"
-
-            -- NOTE: always define the width and height of images. This reduces flickering,
-            -- because the browser can reserve space for the image before loading.
-            , Attr.width 100
-            , Attr.height 33
-            , Attr.alt "Haveno Logo"
-            , Attr.title "Haveno Logo"
-            , id "topLogoId"
-            , class "topLogo"
-            ]
-            []
-        ]
-
-
-
-
+        []
 
 
 newMenu : Model -> Html Msg
@@ -1419,8 +1415,9 @@ newMenu model =
                 ]
             ]
 
-    else if model.isNavMenuActive == True  then
-        div [] [ button
+    else if model.isNavMenuActive == True then
+        div []
+            [ button
                 [ class "menu-btn"
                 , onClick ToggleMenu
                 ]
@@ -1431,9 +1428,11 @@ newMenu model =
                      else
                         "Open Menu"
                     )
-                ]]
-    else 
-        div [][]
+                ]
+            ]
+
+    else
+        div [] []
 
 
 navLinks : Page -> Html msg
@@ -1464,7 +1463,6 @@ navLinks page =
                 ]
     in
     links
-
 
 
 socialsLinks : Html msg

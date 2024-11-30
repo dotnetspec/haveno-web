@@ -66,6 +66,8 @@ old colors:
 @import './below800px.css';
 @import './above800px.css' screen and (min-width: 800px);
 @import './forms.css'; */
+@import './defaults.css';
+@import './below800px.css';
 @import './simpleMenu.css';
 
 
@@ -382,6 +384,7 @@ i a:hover {
   padding: 20px;
   border-radius: 5px;
   text-align: center;
+  
 }
 
 /* Indicator styles */

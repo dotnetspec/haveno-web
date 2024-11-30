@@ -144,7 +144,8 @@ view model =
                 Loaded ->
                     div
                         [ class "split-col"
-                        , id "custodialWalletView"
+                        , 
+                        id "custodialWalletView"
                         ]
                         [ custodialWalletView model
                         ]

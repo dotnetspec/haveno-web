@@ -165,7 +165,10 @@ ul.availabilityList{padding-left: 0px;}
   line-height: 1.6;
   overflow: hidden;
   
+  /* Ensure the content is not obscured */
+  margin-top: 1rem; /* Adjust based on the height of your menu button */
 }
+
 
 .split img {
   align-self: center;
