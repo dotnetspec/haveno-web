@@ -1377,6 +1377,7 @@ showVideoOrBanner page =
 -}
 
 
+
 topLogo : Html msg
 topLogo =
     img
@@ -1389,8 +1390,10 @@ topLogo =
         , Attr.alt "Haveno Logo"
         , Attr.title "Haveno Logo"
         , id "topLogoId"
+        , class "topLogo"
         ]
         []
+        
 
 
 newMenu : Model -> Html Msg
