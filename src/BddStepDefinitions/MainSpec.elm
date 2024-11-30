@@ -37,12 +37,13 @@ import Url exposing (Protocol(..), Url)
 
 
 
-
 -- NOTE: App.Model and App.Msg are type paramters for the Spec type
 -- They make Spec type more flexible as it can be used with any model and msg types
 -- NOTE: Any test involving subscriptions will need to be specified here using withSubscriptions
 
-placeholderUrl = Url Http "localhost" (Just 1234) "/" Nothing Nothing
+
+placeholderUrl =
+    Url Http "localhost" (Just 1234) "/" Nothing Nothing
 
 
 runSpecTests : Spec Main.Model Main.Msg
@@ -171,12 +172,10 @@ runSpecTests =
                         (Markup.observeElement
                             |> Markup.query
                             << by [ tag "h4" ]
-                           
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
                                         Claim.isStringContaining 1 "Please connect to a Chrome based mobile browser"
-                                        
                                 )
                         )
                     , it "should NOT be possible to use the Menu"
@@ -207,7 +206,6 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isFalse
                         )
-              
                     , it "should NOT be possible to use the Menu"
                         (Observer.observeModel .isNavMenuActive
                             |> Spec.expect
@@ -786,11 +784,12 @@ runSpecTests =
                     ]
                 {- |> when "the hardware XMR wallet returns a valid XMR address"
                    [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
-                   ]
-                -}
+                   ] -}
+               
                 -- HACK: This gives us a valid XMR address for testing from the UI
                 |> when "the user clicks the Grant Browser Permissions button"
                     [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
+                
                 |> Spec.observeThat
                     [ it "a.hides the popup"
                         (Observer.observeModel .isPopUpVisible
@@ -833,6 +832,17 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isTrue
                         )
+                    , it "should display the menu"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ tag "button" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.attribute "class" <|
+                                        Claim.isSomethingWhere <|
+                                        Claim.isStringContaining 1 "menu-btn"
+                                )
+                        )
                     ]
             )
         , --Runner.skip <|
@@ -862,7 +872,6 @@ runSpecTests =
                    ]
                 -}
                 -- HACK: This gives us a valid XMR address for testing from the UI, so use for now:
-               
                 |> when "the user uses the menu to nav to the Wallet page"
                     [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
                 -- Simulate user clicking the Wallet navLink in the burger menu
@@ -886,29 +895,29 @@ runSpecTests =
             )
         , --Runner.skip <|
           --Runner.pick <|
-            scenario "12. sendMessageToJs sends 'ElmReady' on init"
-                (given
-                    (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
-                        |> Spec.Setup.withDocument Main.view
-                        |> Spec.Setup.withUpdate Main.update
-                        |> Spec.Setup.withSubscriptions Main.subscriptions
-                        |> Spec.Setup.forNavigation
-                            { onUrlRequest = Main.ClickedLink
-                            , onUrlChange = Main.ChangedUrl
-                            }
-                    )
-                    |> Spec.observeThat
-                        [ it "should send 'ElmReady' through sendMessageToJs"
-                            (Spec.Port.observe "sendMessageToJs" D.string
-                                |> Spec.expect
-                                    (Claim.isListWhere
-                                        [ Claim.isEqual Debug.toString "ElmReady"
-                                        , Claim.isEqual Debug.toString "connectLNS"
-                                        ]
-                                    )
-                            )
-                        ]
+          scenario "12. sendMessageToJs sends 'ElmReady' on init"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
                 )
+                |> Spec.observeThat
+                    [ it "should send 'ElmReady' through sendMessageToJs"
+                        (Spec.Port.observe "sendMessageToJs" D.string
+                            |> Spec.expect
+                                (Claim.isListWhere
+                                    [ Claim.isEqual Debug.toString "ElmReady"
+                                    , Claim.isEqual Debug.toString "connectLNS"
+                                    ]
+                                )
+                        )
+                    ]
+            )
         ]
 
 

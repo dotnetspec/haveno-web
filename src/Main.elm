@@ -684,6 +684,7 @@ update msg model =
                                 , isNavMenuActive = True
                                 , isXMRWalletConnected = True
                                 , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                
                               }
                             , Cmd.none
                             )
@@ -701,22 +702,6 @@ update msg model =
 
 
 -- NAV: View
-
-
-{-| Take a page's Html and frames it with a header and footer.
-
-The caller provides the current user, so we can display in either
-"signed in" (rendering username) or "signed out" mode.
-
-isLoading is for determining whether we should show a loading spinner
-in the header. (This comes up during slow page transitions.)
-
--}
-
-
-
--- NOTE: Just to illustrate that model can be clarified by explicitly
--- exposing it in annotation
 
 
 view : Model -> Browser.Document Msg
@@ -1447,8 +1432,21 @@ newMenu model =
                 ]
             ]
 
-    else
-        div [] []
+    else if model.isNavMenuActive == True  then
+        div [] [ button
+                [ class "menu-btn"
+                , onClick ToggleMenu
+                ]
+                [ text
+                    (if model.isMenuOpen then
+                        "Close Menu"
+
+                     else
+                        "Open Menu"
+                    )
+                ]]
+    else 
+        div [][]
 
 
 navLinks : Page -> Html msg
