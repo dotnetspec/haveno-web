@@ -32,5 +32,7 @@ gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/haveno-dex/haveno-t
 
 gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/haveno-dex/haveno && make funding-wallet-local; exec bash"
 
+#Server is probably already running. If not, run one of the the following commands:
+#gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/elm-merge/haveno-web && yarn serve; exec bash"
 #gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/elm-merge/haveno-web && npx http-server dist -p 1234 --cors; exec bash"
-gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/elm-merge/haveno-web && yarn serve; exec bash"
+

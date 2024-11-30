@@ -769,8 +769,9 @@ view model =
     if model.isPopUpVisible then
         { title = "Haveno-Web"
         , body =
-            [ --div [ Attr.class "topLinks-flex-container" ] [burgerMenu model.page]
-              --pageHeader model.page
+            [ 
+            
+
               newMenu model
             , viewPopUp model
             ]
@@ -779,7 +780,7 @@ view model =
     else
         { title = "Haveno-Web"
         , body =
-            [ --pageHeader model.page
+            [ 
               newMenu model
             , logoImage
             , contentByPage
@@ -1373,7 +1374,9 @@ showVideoOrBanner page =
 
 logoImage : Html msg
 logoImage =
-    div [ class "topLinks-flex-container" ]
+    div [ 
+        
+        ]
         [ img
             [ Attr.src "assets/resources/images/logo-splash100X33.png"
 
@@ -1384,30 +1387,14 @@ logoImage =
             , Attr.alt "Haveno Logo"
             , Attr.title "Haveno Logo"
             , id "logoImage"
-            , class "topLinksLogo"
+            , class "topLogo"
             ]
             []
         ]
 
 
 
-{- -- NOTE: What gets displayed here might also dependent on css. Working to minimize this -}
 
-
-pageHeader : Model -> Html Msg
-pageHeader model =
-    let
-        pageheader =
-            header []
-                [ div [ Attr.class "topLinks-flex-container" ]
-                    [ newMenu model
-                    , topLinksLogo
-                    , topLinksLeft
-                    , socialsLinks
-                    ]
-                ]
-    in
-    pageheader
 
 
 newMenu : Model -> Html Msg
@@ -1478,25 +1465,6 @@ navLinks page =
     in
     links
 
-
-topLinksLogo : Html msg
-topLinksLogo =
-    div [ Attr.class "topLinksLogo" ] [ a [ Attr.href "https://haveno-web.squashpassion.com" ] [ topLinksLogoImage ] ]
-
-
-topLinksLogoImage : Html msg
-topLinksLogoImage =
-    img
-        [ Attr.src "resources/Logos/monero_icon.jpg"
-
-        -- NOTE: always define the width and height of images. This reduces flickering,
-        -- because the browser can reserve space for the image before loading.
-        , Attr.width 100
-        , Attr.height 33
-        , Attr.alt "Monero Logo"
-        , Attr.title "Monero Logo"
-        ]
-        []
 
 
 socialsLinks : Html msg

@@ -190,7 +190,7 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isNothing
                         )
-                    , it "should find the topLinksLogoImage image"
+                    , it "should find the topLogoImage image"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ id "logoImage" ]
@@ -218,7 +218,7 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isNothing
                         )
-                    , it "should find the topLinksLogoImage image"
+                    , it "should find the topLogoImage image"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ id "logoImage" ]
