@@ -33,8 +33,8 @@ import Spec.Port exposing (..)
 import Spec.Report exposing (note)
 import Spec.Setup exposing (Setup, init, withSubscriptions, withUpdate, withView)
 import Spec.Step exposing (log)
-import Spec.Time
 import Url exposing (Protocol(..), Url)
+
 
 
 
@@ -316,6 +316,10 @@ runSpecTests =
                         }
                     |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
                 )
+                |> when "the LNS hwd is detected"
+                    [ -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonNanoSDetected
+                    ]
                 |> when "the device is detected, but the XMR wallet is NOT connected"
                     [ Spec.Port.send "receiveMessageFromJs" jsonXMRWalletClosed
                     ]
@@ -334,6 +338,16 @@ runSpecTests =
                                     Markup.text <|
                                         Claim.isStringContaining 1 "Welcome - Please Connect Your Hardware Device"
                                 )
+                        )
+                    , it "models the hardware device as connected"
+                        (Observer.observeModel .isHardwareDeviceConnected
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    , it "models the XMR wallt as NOT connected"
+                        (Observer.observeModel .isXMRWalletConnected
+                            |> Spec.expect
+                                Claim.isFalse
                         )
                     , it "displays a message indicating the XMR wallet is NOT connected"
                         (Markup.observeElement

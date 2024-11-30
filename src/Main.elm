@@ -102,19 +102,19 @@ init flag url key =
 
             -- REVIEW: Should it be impossible to nav without hw device connection?
             -- HACK: Making these next 2 True, so we can get to the wallet page, fails 10 tests:
-            , isXMRWalletConnected = False -- False
+            , isXMRWalletConnected = False
 
             -- HACK: Temp until we receive the address from the hw device
             -- NOTE: This is actually the only place in the app that is currently affecting the notification mesage
             , xmrWalletAddress = "" --""
             , isPopUpVisible = True
-            , isNavMenuActive = True
+            , isNavMenuActive = False
             , version = "No Haveno version available"
             , currentJsMessage = ""
             , xmrHardwareWalletAddressError = Nothing
             , deviceModel = Nothing
             , initialized = False
-            , isMenuOpen = True
+            , isMenuOpen = False
             }
     in
     updateUrl url updatedModel
@@ -775,12 +775,7 @@ view model =
                     Pages.Wallet.view wallet
                         |> Html.map GotWalletMsg
 
-        isConnected =
-            if model.isHardwareDeviceConnected then
-                True
-
-            else
-                False
+       
     in
     -- NAV : View Page Content
     -- TODO: Make this content's naming conventions closely match the
@@ -803,7 +798,7 @@ view model =
               newMenu model
             , logoImage
             , contentByPage
-            , isHWConnectedIndicator model isConnected
+            , isHWDeviceConnectedIndicator model
             , isXMRWalletConnectedIndicator model
             , footerContent model
             ]
@@ -1616,14 +1611,14 @@ logOutUser =
 -- NAV: Main Persistent
 
 
-isHWConnectedIndicator : Model -> Bool -> Html msg
-isHWConnectedIndicator model isConnected =
+isHWDeviceConnectedIndicator : Model -> Html msg
+isHWDeviceConnectedIndicator model =
     h4 []
         [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
             [ span []
                 [ span
                     [ Attr.class
-                        (if isConnected then
+                        (if model.isHardwareDeviceConnected then
                             "indicator green"
 
                          else if model.isPopUpVisible then
@@ -1668,7 +1663,7 @@ isXMRWalletConnectedIndicator model =
             [ span []
                 [ h4
                     [ Attr.class
-                        (if model.isHardwareDeviceConnected then
+                        (if model.isXMRWalletConnected then
                             "indicator green"
 
                          else if model.isPopUpVisible then
@@ -1680,7 +1675,7 @@ isXMRWalletConnectedIndicator model =
                     , Attr.id "xmrwalletconnection"
                     ]
                     [ text
-                        (if model.isHardwareDeviceConnected then
+                        (if model.isXMRWalletConnected then
                             "XMR Wallet Connected"
 
                          else if model.isPopUpVisible then
