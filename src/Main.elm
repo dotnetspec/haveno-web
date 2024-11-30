@@ -1734,7 +1734,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.0.21" ]
+                , p [] [ text "Version 0.1.21" ]
                 , text "Haveno Version"
                 , p [ id "havenofooterver" ]
                     [ text

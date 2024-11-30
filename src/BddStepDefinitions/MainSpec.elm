@@ -891,6 +891,22 @@ runSpecTests =
                         (Observer.observeModel .page
                             |> Spec.expect (Claim.isEqual Debug.toString <| Main.WalletPage Wallet.initialModel)
                         )
+                    , it "should be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    , it "should display the menu"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ tag "button" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.attribute "class" <|
+                                        Claim.isSomethingWhere <|
+                                        Claim.isStringContaining 1 "menu-btn"
+                                )
+                        )
                     ]
             )
         , --Runner.skip <|
