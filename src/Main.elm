@@ -782,7 +782,7 @@ view model =
         , body =
             [ 
               newMenu model
-            , logoImage
+            , topLogo
             , contentByPage
             , isHWDeviceConnectedIndicator model
             , isXMRWalletConnectedIndicator model
@@ -1272,7 +1272,7 @@ viewPopUp model =
                     [ {- h2 [] [ text "Haveno Web App" ]
                          ,
                       -}
-                      logoImage
+                      topLogo
                     , p [] [ text "No Hardware Device Detected!" ]
                     , p [] [ text "Please connect your LNS/LNX hardware device to continue" ]
                     , button [ onClick HidePopUp ] [ text "Continue" ]
@@ -1372,9 +1372,9 @@ showVideoOrBanner page =
 -}
 
 
-logoImage : Html msg
-logoImage =
-    div [ 
+topLogo : Html msg
+topLogo =
+    div [ class "topLogoContainer"
         
         ]
         [ img
@@ -1386,7 +1386,7 @@ logoImage =
             , Attr.height 33
             , Attr.alt "Haveno Logo"
             , Attr.title "Haveno Logo"
-            , id "logoImage"
+            , id "topLogoId"
             , class "topLogo"
             ]
             []
@@ -1451,7 +1451,7 @@ navLinks page =
             ul
                 [-- NOTE: img is now managed separately so is can be shrunk etc. withouth affecting the links
                 ]
-                [ li [ class "logoInNavLinks" ] [ a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "logoImageShrink" ] [ logoImage ] ]
+                [ li [ class "logoInNavLinks" ] [ a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "topLogoShrink" ] [ topLogo ] ]
                 , navLink Blank { url = "/", caption = "" }
                 , navLink Dashboard { url = "dashboard", caption = "Dashboard" }
                 , navLink Wallet { url = "wallet", caption = "Wallet" }

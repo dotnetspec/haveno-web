@@ -23,13 +23,22 @@
   background-color: var(--clr-neutral-900-with-opacity);
 }
 
-.topLogo {
-  width: 100%;
+/* Container styles */
+.topLogoContainer {
   display: flex;
-  /* position: absolute; */
-  justify-content: center;
-  align-items: center;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;    /* Centers vertically (not necessary here but good for robustness) */
+  width: 100%;            /* Full width */
+  position: absolute;     /* Allow positioning */
+  top: 0;                 /* At the top of the page */
 }
+
+/* Image styles (optional) */
+.topLogo {
+  max-width: 100px; /* Limit the width for responsiveness */
+  height: auto;     /* Maintain aspect ratio */
+}
+
 
 .socials-sub-container-whatsapp {
   order: 4;
