@@ -788,6 +788,7 @@ runSpecTests =
                    [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
                    ]
                 -}
+                -- HACK: This gives us a valid XMR address for testing from the UI
                 |> when "the user clicks the Grant Browser Permissions button"
                     [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
                 |> Spec.observeThat
@@ -821,11 +822,11 @@ runSpecTests =
                                         Claim.isStringContaining 1 "XMR Wallet Address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
                                 )
                         )
-                    , it "b.is on the Dashboard page"
+                    , it "is on the Wallet page"
                         -- NOTE: Cos connected with valid XMR address
                         (Observer.observeModel .page
-                            -- NOTE: This is the model's page, not the page in the browser - Dashboard.initialModel is a placeholder for the test only here
-                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.DashboardPage Dashboard.initialModel)
+                            -- NOTE: This is the model's page, not the page in the browser - Wallet.initialModel is a placeholder for the test only here
+                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.WalletPage Wallet.initialModel)
                         )
                     , it "should be possible to use the Menu"
                         (Observer.observeModel .isNavMenuActive
@@ -860,7 +861,9 @@ runSpecTests =
                    [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
                    ]
                 -}
-                |> when "the user uses the burger menu to nav to the Wallet page"
+                -- HACK: This gives us a valid XMR address for testing from the UI, so use for now:
+               
+                |> when "the user uses the menu to nav to the Wallet page"
                     [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
                 -- Simulate user clicking the Wallet navLink in the burger menu
                 |> when "the user clicks the Wallet navLink in the burger menu"

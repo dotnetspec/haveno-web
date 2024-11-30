@@ -680,7 +680,7 @@ update msg model =
 
                         Pages.Hardware.ClickedTempXMRAddr ->
                             ( { model
-                                | page = DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model
+                                | page = WalletPage <|  Pages.Wallet.initialModel
                                 , isNavMenuActive = True
                                 , isXMRWalletConnected = True
                                 , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
