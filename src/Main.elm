@@ -223,64 +223,55 @@ type Msg
     | ShowPopUp
     | HidePopUp
     | GotVersion (Result Grpc.Error GetVersionReply)
-    | NavigateTo Page
     | InitComplete
     | ToggleMenu
 
 
 
---| MsgToSpecMsg Msg
 -- ...
 -- NAV: Update
 -- NOTE: See GotHardwareMsg for example of how data that depended on Main (due to use of subscription)
 -- was handled before sending the page model where it could be used
-
-
-pageToUrlPath : Page -> String
-pageToUrlPath page =
-    case page of
-        HardwarePage _ ->
-            "/hardware"
-
-        DashboardPage _ ->
-            "/dashboard"
-
-        WalletPage _ ->
-            "/wallet"
-
-        _ ->
-            "/"
+-- NOTE: Roughly ordered in terms of importance
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ClickedLink urlRequest ->
+            case urlRequest of
+                Browser.External href ->
+                    ( model, Nav.load href )
+
+                -- NOTE: simpleMenu has internal hrefs, so updates here
+                Browser.Internal url ->
+                    -- NOTE: If site isn't explicitly branched like
+                    -- this, it is parsed as an internal link. We
+                    -- need to load it as if it were an external link
+                    -- (using Nav.load) for it to work on production server
+                    -- this isn't currently used and points nowhere
+                    case Url.toString url of
+                        "https://haveno-web-dev.netlify.app//" ->
+                            ( model, Nav.load (Url.toString url) )
+
+                        -- NOTE: Nav.pushUrl only manipulates the address bar
+                        -- and triggers ChangedUrl
+                        _ ->
+                            updateUrl url model
+
+        -- NOTE: translate URL (e.g. Back btn) into a Page and store it in our Model
+        -- this is the place to handle transitions. This is where we can get more fancy
+        -- with clicked links (use Erl package on the links e.g. Erl.extractPath)
+        {- It looks like we're supposed to use this instead of Browser.onUrlChange in Subscriptions (as per older docs) -}
+        -- NOTE: The only way this is triggered currently is by the js menu code clicks
+        ChangedUrl url ->
+            updateUrl url model
+
         ToggleMenu ->
             ( { model | isMenuOpen = not model.isMenuOpen }, Cmd.none )
 
         InitComplete ->
             ( { model | initialized = True }, Cmd.none )
-
-        NavigateTo newpage ->
-            let
-                newUrl =
-                    Url.Url Http "localhost" (Just 1234) (pageToUrlPath newpage) Nothing Nothing
-            in
-            ( { model | page = newpage }
-            , Nav.pushUrl model.key (pageToUrlPath newpage)
-            )
-
-        GotVersion (Ok versionResp) ->
-            let
-                verResp =
-                    case versionResp of
-                        { version } ->
-                            version
-            in
-            ( { model | version = verResp }, Cmd.none )
-
-        GotVersion (Err _) ->
-            ( { model | version = "Error obtaining version" }, Cmd.none )
 
         ShowPopUp ->
             ( { model | isPopUpVisible = True }, Cmd.none )
@@ -296,6 +287,18 @@ update msg model =
               sendMessageToJs
                 "connectLNS"
             )
+
+        GotVersion (Ok versionResp) ->
+            let
+                verResp =
+                    case versionResp of
+                        { version } ->
+                            version
+            in
+            ( { model | version = verResp }, Cmd.none )
+
+        GotVersion (Err _) ->
+            ( { model | version = "Error obtaining version" }, Cmd.none )
 
         -- NAV: Recv rawJsonMessage
         -- NOTE: This is updated when a message from js is received
@@ -398,55 +401,7 @@ update msg model =
                             ( model, Cmd.none )
 
                         HardwarePage _ ->
-                            -- NOTE: unless we figure out how to update Main's model after updating hardware's model, we will not
-                            -- be using ResponseDataFromMain to manage the logic here.
-                            --toHardware newMainModel (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) newHardwareModel)
-                            --updateUrl (Url.Url Http "localhost" Nothing "/hardware" Nothing Nothing) newMainModel
-                            --updateUrl newUrlAfterCheckConnections newMainModel
                             let
-                                {- decodedHardwareDeviceMsg =
-                                                  case JD.decodeValue justmsgFieldFromJsonDecoder rawJsonMessage of
-                                                      Ok message ->
-                                                          message.operationEventMsg
-                                   WalletPage _ ->
-                                       ( model, Cmd.none )
-
-                                   HardwarePage _ ->
-                                           -- NOTE: unless we figure out how to update Main's model after updating hardware's model, we will not
-                                           -- be using ResponseDataFromMain to manage the logic here.
-                                           --toHardware newMainModel (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) newHardwareModel)
-                                           --updateUrl (Url.Url Http "localhost" Nothing "/hardware" Nothing Nothing) newMainModel
-                                           --updateUrl newUrlAfterCheckConnections newMainModel
-                                           let
-                                               decodedHardwareDeviceMsg =
-                                                  case JD.decodeValue justmsgFieldFromJsonDecoder rawJsonMessage of
-                                                      Ok message ->
-                                                          message.operationEventMsg
-
-                                                      Err err ->
-                                                          --JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
-                                                          "error"
-                                -}
-                                {- updatedIsLNSConnected =
-                                       if model.isHardwareDeviceConnected == False && decodedHardwareDeviceMsg == "nanoS" then
-                                           True
-
-                                       else if model.isHardwareDeviceConnected == True then
-                                           True
-
-                                       else
-                                           False
-
-                                   updatedIsLNXConnected =
-                                       if model.isHardwareDeviceConnected == False && decodedHardwareDeviceMsg == "nanoX" then
-                                           True
-
-                                       else if model.isHardwareDeviceConnected == True then
-                                           True
-
-                                       else
-                                           False
-                                -}
                                 devMod =
                                     if decodedHardwareDeviceMsg == "nanoS" then
                                         Just NanoS
@@ -471,28 +426,17 @@ update msg model =
                                     else
                                         ""
 
-                                -- HACK: You will probably want to change this to a more sophisticated logic
-                                {- popupVisibility =
-                                   if updatedIsLNSConnected || updatedIsLNXConnected || updatedIsValidXMRAddressConnected then
-                                       False
-
-                                   else
-                                       True
-                                -}
                                 hwModel =
                                     Pages.Hardware.initialModel
 
                                 newHardwareModel =
                                     { hwModel
-                                        | --isHardwareDeviceConnected = updatedIsLNXConnected
-                                          --,
-                                          isXMRWalletConnected = updatedIsValidXMRAddressConnected
+                                        | isXMRWalletConnected = updatedIsValidXMRAddressConnected
                                         , xmrWalletAddress = updatedWalletAddress
                                     }
 
                                 newPage =
                                     if updatedIsValidXMRAddressConnected then
-                                        --DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model
                                         DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model
 
                                     else
@@ -536,34 +480,6 @@ update msg model =
             ( { model | zone = Just newZone }
             , Cmd.none
             )
-
-        ClickedLink urlRequest ->
-            case urlRequest of
-                Browser.External href ->
-                    ( model, Nav.load href )
-
-                Browser.Internal url ->
-                    -- NOTE: If site isn't explicitly branched like
-                    -- this, it is parsed as an internal link. We
-                    -- need to load it as if it were an external link
-                    -- (using Nav.load) for it to work on production server
-                    -- this isn't currently used and points nowhere
-                    case Url.toString url of
-                        "https://haveno-web-dev.netlify.app//" ->
-                            ( model, Nav.load (Url.toString url) )
-
-                        -- NOTE: Nav.pushUrl only manipulates the address bar
-                        -- and triggers ChangedUrl
-                        _ ->
-                            ( model, Cmd.none )
-
-        -- NOTE: translate URL (e.g. Back btn) into a Page and store it in our Model
-        -- this is the place to handle transitions. This is where we can get more fancy
-        -- with clicked links (use Erl package on the links e.g. Erl.extractPath)
-        {- It looks like we're supposed to use this instead of Browser.onUrlChange in Subscriptions (as per older docs) -}
-        -- NOTE: The only way this is triggered currently is by the js menu code clicks
-        ChangedUrl url ->
-            updateUrl url model
 
         GotDashboardMsg dashboardMsg ->
             case model.page of
@@ -953,45 +869,18 @@ updateUrl url model =
     -- NOTE: The urlAsPageParser here describes how to translate a URL into a Page.
     -- Parser.parse is a function that uses the description to do it.
     let
+        _ =
+            Debug.log "updateUrl url" url
+
         urlMinusQueryStr =
             { url | query = Just "" }
-
-        oauthCode =
-            gotCodeFromUrl url
     in
     -- NOTE: Parse the url to get a ROUTE type
     case Url.Parser.parse urlAsPageParser urlMinusQueryStr of
+        -- NOTE: Following are ROUTES, not PAGES
         Just Dashboard ->
-            let
-                newFlagUrl =
-                    Url.Url Http "localhost" (Just 1234) "/dashboard" Nothing Nothing
-
-                newModel =
-                    { model | flag = newFlagUrl }
-            in
-            -- TODO: Review below as we don't use Oauth.Callback any more:
-            -- NOTE: When we get an oauth code we want to move program control to Oauth.Callback
-            -- so that we can manage the UI with the user separately from Main.elm.
-            -- Specifying /oauth/callback in Zoho URI config is more tricky than letting it return
-            -- to root and then switching here according to whether or not a code has been received
-            -- REVIEW: We're no longer using oathcode
-            case oauthCode of
-                Nothing ->
-                    -- NOTE: Unlike in book, we're not sending filenames etc. to init. Just ().
-                    -- If you wanted info in this page to e.g. be based on an Http.get then
-                    -- follow book to setup here:
-                    -- REVIEW: We're not using oauth code - probably remove
-                    Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
-                        |> toDashboard newModel
-
-                Just "" ->
-                    Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
-                        |> toDashboard newModel
-
-                -- HACK: -- FIX?
-                Just _ ->
-                    Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
-                        |> toDashboard newModel
+            Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
+                |> toDashboard model
 
         Just Sell ->
             Pages.Sell.init ()
@@ -1032,9 +921,7 @@ updateUrl url model =
                         HardwarePage hardwareModel ->
                             -- NOTE: Update Hardware page with relevant parts of Main's model
                             { hardwareModel
-                                | --isHardwareDeviceConnected = model.isHardwareDeviceConnected
-                                  --,
-                                  isHardwareDeviceConnected = model.isHardwareDeviceConnected
+                                | isHardwareDeviceConnected = model.isHardwareDeviceConnected
                                 , isXMRWalletConnected = model.isXMRWalletConnected
                             }
 
@@ -1049,7 +936,6 @@ updateUrl url model =
             -- REVIEW: Time is sent through here as it may speed up the slots fetch in Hardware - tbc
             -- RF: Change name flagUrl to domainUrl
             Pages.Hardware.init { time = Nothing, flagUrl = Url.Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing }
-                -- Model -> ( Pages.Hardware.Model, Cmd Pages.Hardware.Msg ) -> ( Model, Cmd Msg )
                 |> toHardware newModel
 
         Nothing ->
@@ -1377,7 +1263,6 @@ showVideoOrBanner page =
 -}
 
 
-
 topLogo : Html msg
 topLogo =
     img
@@ -1393,7 +1278,6 @@ topLogo =
         , class "topLogo"
         ]
         []
-        
 
 
 newMenu : Model -> Html Msg
@@ -1446,6 +1330,10 @@ navLinks page =
         -- Route and page are also there for isActive.
         navLink : Route -> { url : String, caption : String } -> Html msg
         navLink route { url, caption } =
+            let
+                _ =
+                    Debug.log "url in navlink" url
+            in
             li [ classList [ ( "active", isActive { link = route, page = page } ), ( "navLink", True ) ] ]
                 [ a [ href url ] [ text caption ] ]
 
@@ -1464,97 +1352,6 @@ navLinks page =
                 , navLink Hardware { url = "hardware", caption = "Hardware" }
                 , navLink Portfolio { url = "portfolio", caption = "Portfolio" }
                 ]
-    in
-    links
-
-
-socialsLinks : Html msg
-socialsLinks =
-    div
-        [ Attr.class "socials-main-container"
-        ]
-        [ {- -- NOTE: Only turn these on when they exist.
-             The green b/ground is cos whatsapp is at the .md.hydrated:hover (low) level
-             See css notes for further info
-          -}
-          --     div
-          --     [ Attr.class "socials-sub-container socials-sub-container-facebook"
-          --     ]
-          --     [ i
-          --         [{- NOTE: all elements are nodes, but not all nodes are elements -}]
-          --         [ node "ion-icon"
-          --             [ Attr.name "logo-facebook"
-          --             ]
-          --             []
-          --         ]
-          --     ]
-          -- , div
-          --     [ Attr.class "socials-sub-container socials-sub-container-youtube"
-          --     ]
-          --     [ i
-          --         []
-          --         [ node "ion-icon"
-          --             [ Attr.name "logo-youtube"
-          --             ]
-          --             []
-          --         ]
-          --     ]
-          -- , div
-          --     [ Attr.class "socials-sub-container socials-sub-container-instagram"
-          --     ]
-          --     [ i
-          --         []
-          --         [ node "ion-icon"
-          --             [ Attr.name "logo-instagram"
-          --             ]
-          --             []
-          --         ]
-          --     ]
-          -- ,
-          div
-            [ Attr.class "socials-sub-container socials-sub-container-whatsapp"
-            ]
-            [ i
-                []
-                [ a
-                    [ Attr.href ""
-                    , Attr.target "_blank"
-                    ]
-                    [ node "ion-icon"
-                        [ Attr.name "logo-whatsapp"
-                        ]
-                        []
-                    ]
-                ]
-            ]
-        ]
-
-
-topLinksLeft : Html msg
-topLinksLeft =
-    let
-        links =
-            div
-                [ Attr.class "topLinksLeft"
-                ]
-                -- FIX: make into mailto:
-                [ Html.i
-                    [ Attr.class "material-icons"
-                    ]
-                    [ text "email" ]
-                , navLink { url = "/", caption = "potential support url   " }
-                , Html.i
-                    [ Attr.class "material-icons"
-                    ]
-                    [ text "support" ]
-                , navLink { url = "support", caption = "other potential support" }
-                ]
-
-        -- NOTE: We just want to display these on every page, so no route required
-        navLink : { url : String, caption : String } -> Html msg
-        navLink { url, caption } =
-            li [ class "emailphone" ]
-                [ a [ href url ] [ text caption ] ]
     in
     links
 
@@ -1683,16 +1480,6 @@ isXMRWalletConnectedIndicator model =
 
 footerContent : Model -> Html msg
 footerContent model =
-    {- let
-           newVersion =
-               case model.version of
-                   Just { version } ->
-                       version
-
-                   Nothing ->
-                       "No Haveno version available"
-       in
-    -}
     footer []
         [ div [ Attr.class "footer", Attr.style "text-align" "center" ]
             [ br []
@@ -1703,7 +1490,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.1.22" ]
+                , p [] [ text "Version 0.1.23" ]
                 , text "Haveno Version"
                 , p [ id "havenofooterver" ]
                     [ text

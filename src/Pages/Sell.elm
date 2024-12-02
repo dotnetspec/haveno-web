@@ -1,4 +1,4 @@
-module Pages.Sell exposing (Model, Msg, content, init, update, view)
+module Pages.Sell exposing (Model, Msg, content, init, initialModel, update, view)
 
 import Buttons.Default exposing (defaultButton)
 import Html exposing (..)
@@ -34,7 +34,7 @@ initialModel =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { initialModel | title = "Haveno-Web Sell" }
+    ( initialModel
     , Cmd.none
     )
 
