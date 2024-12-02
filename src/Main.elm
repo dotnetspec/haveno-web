@@ -869,9 +869,6 @@ updateUrl url model =
     -- NOTE: The urlAsPageParser here describes how to translate a URL into a Page.
     -- Parser.parse is a function that uses the description to do it.
     let
-        _ =
-            Debug.log "updateUrl url" url
-
         urlMinusQueryStr =
             { url | query = Just "" }
     in
@@ -1330,10 +1327,6 @@ navLinks page =
         -- Route and page are also there for isActive.
         navLink : Route -> { url : String, caption : String } -> Html msg
         navLink route { url, caption } =
-            let
-                _ =
-                    Debug.log "url in navlink" url
-            in
             li [ classList [ ( "active", isActive { link = route, page = page } ), ( "navLink", True ) ] ]
                 [ a [ href url ] [ text caption ] ]
 
