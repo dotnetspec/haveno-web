@@ -12,6 +12,8 @@ import Pages.Blank
 import Pages.Dashboard as Dashboard exposing (..)
 import Pages.Hardware as Hardware exposing (..)
 import Pages.Wallet as Wallet exposing (Model, Msg, init, update, view)
+import Proto.Io.Haveno.Protobuffer exposing (BalancesInfo)
+import Protobuf.Types.Int64 exposing (fromInts)
 import Spec exposing (..)
 import Spec.Claim as Claim exposing (Claim, Verdict)
 import Spec.Command exposing (send)
@@ -27,6 +29,21 @@ import Spec.Setup exposing (Setup, init, withSubscriptions, withUpdate, withView
 import Spec.Step exposing (log)
 import Spec.Time
 import Url exposing (Protocol(..), Url)
+
+
+gotXmrBalance : Maybe BalancesInfo -> ( Int, Int )
+gotXmrBalance balances =
+    case balances of
+        Just balancesInfo ->
+            case balancesInfo.xmr of
+                Just xmrrec ->
+                    Protobuf.Types.Int64.toInts xmrrec.balance
+
+                Nothing ->
+                    ( 0, 0 )
+
+        _ ->
+            ( 0, 0 )
 
 
 runSpecTests : Spec Wallet.Model Wallet.Msg
@@ -91,295 +108,297 @@ runSpecTests =
                             )
                         ]
                 )
-                -- NOTE: Uncomment these tests one at a time to maintain managability
+
+        -- NOTE: Uncomment these tests one at a time to maintain managability
         {- , scenario "3: Generating a New Subaddress"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                )
-                |> when "the user requests a new subaddress"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonRequestNewSubaddress ]
-                |> Spec.observeThat
-                    [ it "displays the new subaddress"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "newSubaddress" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "New Subaddress"
-                                )
-                        )
-                    ]
-            )
-        , scenario "4: Retrieving the Primary Address"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                )
-                |> when "the app retrieves the primary address"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonRequestPrimaryAddress ]
-                |> Spec.observeThat
-                    [ it "displays the primary address"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "primaryAddress" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Primary Address"
-                                )
-                        )
-                    ]
-            )
-        , scenario "5: Checking Address Balance"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                )
-                |> when "the app queries the address balance"
-                    [ Spec.Port.send "receiveMessageFromJs" (jsonRequestAddressBalance "someAddress") ]
-                |> Spec.observeThat
-                    [ it "displays the address balance"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "addressBalance" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Address Balance: 0.0 XMR"
-                                )
-                        )
-                    ]
-            )
-        , scenario "6: Viewing Funding Addresses"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                )
-                |> when "the app retrieves the funding addresses"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonRequestFundingAddresses ]
-                |> Spec.observeThat
-                    [ it "displays the funding addresses"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "fundingAddresses" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Funding Address"
-                                )
-                        )
-                    ]
-            )
-        , scenario "7: Unlocking the Wallet"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                )
-                |> when "the user attempts to unlock the wallet"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonUnlockWalletRequest ]
-                |> Spec.observeThat
-                    [ it "updates the Wallet page to reflect the unlocked state"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "walletUnlocked" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Wallet Unlocked"
-                                )
-                        )
-                    ]
-            )
-        , scenario "8: Locking the Wallet"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                )
-                |> when "the user requests to lock the wallet"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonLockWalletRequest ]
-                |> Spec.observeThat
-                    [ it "updates the Wallet page to reflect the locked state"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "walletLocked" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Wallet Locked"
-                                )
-                        )
-                    ]
-            )
-        , scenario "9: Setting a Wallet Password"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                )
-                |> when "the user sets a password for the wallet"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonSetWalletPassword ]
-                |> Spec.observeThat
-                    [ it "confirms the wallet password was successfully set"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "passwordSetConfirmation" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Password successfully set"
-                                )
-                        )
-                    ]
-            )
-        , scenario "10: Removing the Wallet Password"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                )
-                |> when "the user removes the wallet password"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonRemoveWalletPassword ]
-                |> Spec.observeThat
-                    [ it "confirms the password was successfully removed"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "passwordRemovedConfirmation" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Password successfully removed"
-                                )
-                        )
-                    ]
-            )
-        , scenario "11: Relaying a Monero Transaction"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                )
-                |> when "the user requests to relay a transaction"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonRelayTransaction ]
-                |> Spec.observeThat
-                    [ it "broadcasts the transaction to the Monero network"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "transactionStatus" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Transaction Relayed"
-                                )
-                        )
-                    ]
-            )
-        , scenario "12: Creating a New Monero Transaction"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                )
-                |> when "the user initiates a new transaction"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonCreateTransaction ]
-                |> Spec.observeThat
-                    [ it "displays the pending transaction status"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "transactionPending" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Transaction Pending"
-                                )
-                        )
-                    ]
-            )
-        , scenario "2: Show pending balance correctly when a transaction is initiated"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                )
-                |> when "the user initiates a transaction"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonTransactionInitiated ]
-                |> when "the transaction enters pending status"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonTransactionPending ]
-                |> Spec.observeThat
-                    [ it "displays the pending balance correctly"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "pendingBalance" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Pending Balance: 20.0 XMR"
-                                )
-                        )
-                    ]
-            )
-        , scenario "3: Display warning when attempting to send more than available balance"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                )
-                |> when "the user attempts to send more than the available balance"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonExceedsAvailableBalance ]
-                |> Spec.observeThat
-                    [ it "displays an error message about insufficient funds"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "errorMessage" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Insufficient funds"
-                                )
-                        )
-                    ]
-            )
-        , scenario "5: Show wallet balance updates after successful deposit"
-            (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
-                    |> Spec.Setup.withLocation placeholderUrl
-                )
-                |> when "the user successfully deposits funds into the wallet"
-                    [ Spec.Port.send "receiveMessageFromJs" jsonDepositSuccess ]
-                |> Spec.observeThat
-                    [ it "updates the available balance after deposit"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "availableBalance" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Available Balance: 200.0 XMR"
-                                )
-                        )
-                    ]
-            ) -}
+               (given
+                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                       |> Spec.Setup.withView Wallet.view
+                       |> Spec.Setup.withUpdate Wallet.update
+                       |> Spec.Setup.withLocation placeholderUrl
+                   )
+                   |> when "the user requests a new subaddress"
+                       [ Spec.Port.send "receiveMessageFromJs" jsonRequestNewSubaddress ]
+                   |> Spec.observeThat
+                       [ it "displays the new subaddress"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "newSubaddress" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "New Subaddress"
+                                   )
+                           )
+                       ]
+               )
+           , scenario "4: Retrieving the Primary Address"
+               (given
+                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                       |> Spec.Setup.withView Wallet.view
+                       |> Spec.Setup.withUpdate Wallet.update
+                       |> Spec.Setup.withLocation placeholderUrl
+                   )
+                   |> when "the app retrieves the primary address"
+                       [ Spec.Port.send "receiveMessageFromJs" jsonRequestPrimaryAddress ]
+                   |> Spec.observeThat
+                       [ it "displays the primary address"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "primaryAddress" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Primary Address"
+                                   )
+                           )
+                       ]
+               )
+           , scenario "5: Checking Address Balance"
+               (given
+                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                       |> Spec.Setup.withView Wallet.view
+                       |> Spec.Setup.withUpdate Wallet.update
+                       |> Spec.Setup.withLocation placeholderUrl
+                   )
+                   |> when "the app queries the address balance"
+                       [ Spec.Port.send "receiveMessageFromJs" (jsonRequestAddressBalance "someAddress") ]
+                   |> Spec.observeThat
+                       [ it "displays the address balance"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "addressBalance" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Address Balance: 0.0 XMR"
+                                   )
+                           )
+                       ]
+               )
+           , scenario "6: Viewing Funding Addresses"
+               (given
+                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                       |> Spec.Setup.withView Wallet.view
+                       |> Spec.Setup.withUpdate Wallet.update
+                       |> Spec.Setup.withLocation placeholderUrl
+                   )
+                   |> when "the app retrieves the funding addresses"
+                       [ Spec.Port.send "receiveMessageFromJs" jsonRequestFundingAddresses ]
+                   |> Spec.observeThat
+                       [ it "displays the funding addresses"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "fundingAddresses" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Funding Address"
+                                   )
+                           )
+                       ]
+               )
+           , scenario "7: Unlocking the Wallet"
+               (given
+                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                       |> Spec.Setup.withView Wallet.view
+                       |> Spec.Setup.withUpdate Wallet.update
+                       |> Spec.Setup.withLocation placeholderUrl
+                   )
+                   |> when "the user attempts to unlock the wallet"
+                       [ Spec.Port.send "receiveMessageFromJs" jsonUnlockWalletRequest ]
+                   |> Spec.observeThat
+                       [ it "updates the Wallet page to reflect the unlocked state"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "walletUnlocked" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Wallet Unlocked"
+                                   )
+                           )
+                       ]
+               )
+           , scenario "8: Locking the Wallet"
+               (given
+                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                       |> Spec.Setup.withView Wallet.view
+                       |> Spec.Setup.withUpdate Wallet.update
+                       |> Spec.Setup.withLocation placeholderUrl
+                   )
+                   |> when "the user requests to lock the wallet"
+                       [ Spec.Port.send "receiveMessageFromJs" jsonLockWalletRequest ]
+                   |> Spec.observeThat
+                       [ it "updates the Wallet page to reflect the locked state"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "walletLocked" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Wallet Locked"
+                                   )
+                           )
+                       ]
+               )
+           , scenario "9: Setting a Wallet Password"
+               (given
+                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                       |> Spec.Setup.withView Wallet.view
+                       |> Spec.Setup.withUpdate Wallet.update
+                       |> Spec.Setup.withLocation placeholderUrl
+                   )
+                   |> when "the user sets a password for the wallet"
+                       [ Spec.Port.send "receiveMessageFromJs" jsonSetWalletPassword ]
+                   |> Spec.observeThat
+                       [ it "confirms the wallet password was successfully set"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "passwordSetConfirmation" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Password successfully set"
+                                   )
+                           )
+                       ]
+               )
+           , scenario "10: Removing the Wallet Password"
+               (given
+                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                       |> Spec.Setup.withView Wallet.view
+                       |> Spec.Setup.withUpdate Wallet.update
+                       |> Spec.Setup.withLocation placeholderUrl
+                   )
+                   |> when "the user removes the wallet password"
+                       [ Spec.Port.send "receiveMessageFromJs" jsonRemoveWalletPassword ]
+                   |> Spec.observeThat
+                       [ it "confirms the password was successfully removed"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "passwordRemovedConfirmation" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Password successfully removed"
+                                   )
+                           )
+                       ]
+               )
+           , scenario "11: Relaying a Monero Transaction"
+               (given
+                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                       |> Spec.Setup.withView Wallet.view
+                       |> Spec.Setup.withUpdate Wallet.update
+                       |> Spec.Setup.withLocation placeholderUrl
+                   )
+                   |> when "the user requests to relay a transaction"
+                       [ Spec.Port.send "receiveMessageFromJs" jsonRelayTransaction ]
+                   |> Spec.observeThat
+                       [ it "broadcasts the transaction to the Monero network"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "transactionStatus" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Transaction Relayed"
+                                   )
+                           )
+                       ]
+               )
+           , scenario "12: Creating a New Monero Transaction"
+               (given
+                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                       |> Spec.Setup.withView Wallet.view
+                       |> Spec.Setup.withUpdate Wallet.update
+                       |> Spec.Setup.withLocation placeholderUrl
+                   )
+                   |> when "the user initiates a new transaction"
+                       [ Spec.Port.send "receiveMessageFromJs" jsonCreateTransaction ]
+                   |> Spec.observeThat
+                       [ it "displays the pending transaction status"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "transactionPending" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Transaction Pending"
+                                   )
+                           )
+                       ]
+               )
+           , scenario "2: Show pending balance correctly when a transaction is initiated"
+               (given
+                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                       |> Spec.Setup.withView Wallet.view
+                       |> Spec.Setup.withUpdate Wallet.update
+                       |> Spec.Setup.withLocation placeholderUrl
+                   )
+                   |> when "the user initiates a transaction"
+                       [ Spec.Port.send "receiveMessageFromJs" jsonTransactionInitiated ]
+                   |> when "the transaction enters pending status"
+                       [ Spec.Port.send "receiveMessageFromJs" jsonTransactionPending ]
+                   |> Spec.observeThat
+                       [ it "displays the pending balance correctly"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "pendingBalance" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Pending Balance: 20.0 XMR"
+                                   )
+                           )
+                       ]
+               )
+           , scenario "3: Display warning when attempting to send more than available balance"
+               (given
+                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                       |> Spec.Setup.withView Wallet.view
+                       |> Spec.Setup.withUpdate Wallet.update
+                       |> Spec.Setup.withLocation placeholderUrl
+                   )
+                   |> when "the user attempts to send more than the available balance"
+                       [ Spec.Port.send "receiveMessageFromJs" jsonExceedsAvailableBalance ]
+                   |> Spec.observeThat
+                       [ it "displays an error message about insufficient funds"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "errorMessage" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Insufficient funds"
+                                   )
+                           )
+                       ]
+               )
+           , scenario "5: Show wallet balance updates after successful deposit"
+               (given
+                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                       |> Spec.Setup.withView Wallet.view
+                       |> Spec.Setup.withUpdate Wallet.update
+                       |> Spec.Setup.withLocation placeholderUrl
+                   )
+                   |> when "the user successfully deposits funds into the wallet"
+                       [ Spec.Port.send "receiveMessageFromJs" jsonDepositSuccess ]
+                   |> Spec.observeThat
+                       [ it "updates the available balance after deposit"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "availableBalance" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Available Balance: 200.0 XMR"
+                                   )
+                           )
+                       ]
+               )
+        -}
         ]
 
 
@@ -483,10 +502,6 @@ jsonRelayTransaction =
     E.object
         [ ( "action", E.string "relayXmrTx" ) -- Action type for relaying a transaction
         ]
-
-
-
-
 
 
 jsonTransactionInitiated : E.Value

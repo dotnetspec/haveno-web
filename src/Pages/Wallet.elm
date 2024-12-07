@@ -1,4 +1,4 @@
-module Pages.Wallet exposing (Model, Msg, init, initialModel, update, view)
+module Pages.Wallet exposing (Model, Msg(..), init, initialModel, update, view)
 
 import Buttons.Default exposing (defaultButton)
 import Debug exposing (log)
@@ -33,21 +33,18 @@ type alias Model =
     , pagetitle : String
     , balances : Maybe Protobuf.BalancesInfo
     , address : String
-    , isHardwareWalletConnected : Bool
     , errors : List String
-    , isPopUpVisible : Bool
     }
 
 
 initialModel : Model
 initialModel =
     { status = Loaded
-    , pagetitle = "Wallet"
+    , pagetitle = "Haveno Web Wallet"
     , balances = Just Protobuf.defaultBalancesInfo
-    , address = "Not Connected"
-    , isHardwareWalletConnected = False
+    -- HACK: Hardcoding the address for now
+    , address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
     , errors = []
-    , isPopUpVisible = True
     }
 
 
@@ -56,21 +53,29 @@ type Status
     | Loaded
     | Errored
 
+
+
 -- NAV: Init
+
+
 init : String -> ( Model, Cmd Msg )
 init _ =
-    ( initialModel
+    
+    -- HACK: Hardcoding the address for now
+    ( {initialModel | address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"}
     , gotAvailableBalances
     )
 
 
 type Msg
-    = GotInitialModel Model
-    | ClosePopUp
-    | SetAddress String
+    = SetAddress String
     | GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
 
+
+
 -- HACK: Currently hard coding the response to test the UI
+
+
 xmrBalanceInfoInstance : Protobuf.XmrBalanceInfo
 xmrBalanceInfoInstance =
     { balance = Protobuf.Types.Int64.fromInts 110 0
@@ -84,31 +89,25 @@ xmrBalanceInfoInstance =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        GotInitialModel newModel ->
-            ( { model | balances = newModel.balances, address = newModel.address }, Cmd.none )
-
-        ClosePopUp ->
-            ( { model | isPopUpVisible = False }, Cmd.none )
-
         SetAddress address ->
             ( { model | address = address }, Cmd.none )
 
         GotBalances (Ok response) ->
-            let
-              
-
-                -- HACK: Want to replace xmrBalanceInfoInstance with response
-                -- also so that real base64 test data is used.
-
-                tempBals =
-                    Just { btc = Nothing, xmr = Just xmrBalanceInfoInstance }
-            in
+            -- HACK: Want to replace xmrBalanceInfoInstance with response
+            -- also so that real base64 test data is used.
+            {- let
+                _ =
+                    Debug.log "GotBalances" response
+            in -}
             -- TODO: Update the model with the response
-            ( { model | balances = tempBals }, Cmd.none )
+            ( { model | balances = response.balances, status = Loaded }, Cmd.none )
 
         --( { model | balances = response.balances}, Cmd.none )
         GotBalances (Err error) ->
-          
+            {- let
+                _ =
+                    Debug.log "GotBalances error " error
+            in -}
             ( { model | status = Errored }, Cmd.none )
 
 
@@ -144,8 +143,7 @@ view model =
                 Loaded ->
                     div
                         [ class "split-col"
-                        , 
-                        id "custodialWalletView"
+                        , id "custodialWalletView"
                         ]
                         [ custodialWalletView model
                         ]
@@ -159,12 +157,15 @@ view model =
 
 custodialWalletView : Model -> Html Msg
 custodialWalletView model =
-   
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
             [ Element.el Heading.h1 <| Element.text "Wallet"
             , Element.text "\n"
-
+            , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "currentaddress") ]
+                --Heading.h4
+                -- NOTE: if this address doesn't appear, it means init never got called
+                (Element.text ("Current address: " ++ model.address))
+            , Element.text "\n"
             -- WARN: Carefull with the management of the imports here:
             , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "xmrbalance") ]
                 --Heading.h4
@@ -218,6 +219,7 @@ btcBalanceAsString balInfo =
         Nothing ->
             ""
 
+
 reservedOfferBalanceAsString : Maybe Protobuf.BalancesInfo -> String
 reservedOfferBalanceAsString balInfo =
     case balInfo of
@@ -237,12 +239,16 @@ reservedOfferBalanceAsString balInfo =
             ""
 
 
+
 -- NAV: gRPC calls
 
 
 gotAvailableBalances : Cmd Msg
 gotAvailableBalances =
     let
+        {- _ =
+           Debug.log "gotAvailableBalances" "gotAvailableBalances" -}
+       
         grpcRequest =
             Grpc.new Wallets.getBalances Protobuf.defaultGetBalancesRequest
                 |> Grpc.addHeader "password" "apitest"

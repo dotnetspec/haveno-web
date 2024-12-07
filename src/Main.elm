@@ -116,6 +116,10 @@ init flag url key =
             , initialized = False
             , isMenuOpen = False
             }
+
+        {- _ =
+           Debug.log "init" "yes"
+        -}
     in
     updateUrl url updatedModel
 
@@ -265,6 +269,11 @@ update msg model =
         {- It looks like we're supposed to use this instead of Browser.onUrlChange in Subscriptions (as per older docs) -}
         -- NOTE: The only way this is triggered currently is by the js menu code clicks
         ChangedUrl url ->
+            {- let
+                   _ =
+                       Debug.log "url about to update" "in ChangedUrl"
+               in
+            -}
             updateUrl url model
 
         ToggleMenu ->
@@ -437,14 +446,19 @@ update msg model =
 
                                 newPage =
                                     if updatedIsValidXMRAddressConnected then
-                                        DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model
+                                        let
+                                            
+                                            newWalletModel = Pages.Wallet.initialModel
+                                        in
+                                        
+                                        WalletPage {newWalletModel | address = updatedWalletAddress}
 
                                     else
                                         HardwarePage newHardwareModel
 
                                 newUrlAfterCheckConnections =
                                     if updatedIsValidXMRAddressConnected then
-                                        Url.Url Http "localhost" (Just 1234) "/dashboard" Nothing Nothing
+                                        Url.Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing
 
                                     else
                                         Url.Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
@@ -461,7 +475,7 @@ update msg model =
                                     }
                             in
                             if newMainModel.isHardwareDeviceConnected && newMainModel.isXMRWalletConnected then
-                                ( { newMainModel | isNavMenuActive = True, page = DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model }, Cmd.none )
+                                ( { newMainModel | isNavMenuActive = True, page = newPage }, Cmd.none )
 
                             else if newMainModel.isHardwareDeviceConnected then
                                 toHardware { newMainModel | isNavMenuActive = False } (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) newHardwareModel)
@@ -595,18 +609,29 @@ update msg model =
                             )
 
                         Pages.Hardware.ClickedTempXMRAddr ->
-                            ( { model
-                                | page = WalletPage <| Pages.Wallet.initialModel
-                                , isNavMenuActive = True
-                                , isXMRWalletConnected = True
-                                , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
-                              }
-                            , Cmd.none
-                            )
+                            {- let
+                                   _ =
+                                       Debug.log "click temp " "yes"
+                               in
+                            -}
+                            {- ( { model
+                                   | page = WalletPage <| Pages.Wallet.initialModel
+                                   , isNavMenuActive = True
+                                   , isXMRWalletConnected = True
+                                   , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                 }
+                               , Cmd.none
+                               )
+                            -}
+                            let
+                                newMainModel =
+                                    { model | page = WalletPage <| Pages.Wallet.initialModel, isNavMenuActive = True, isXMRWalletConnected = True, xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" }
+                            in
+                            toWallet newMainModel (Pages.Wallet.update (Pages.Wallet.SetAddress model.xmrWalletAddress) Pages.Wallet.initialModel)
 
                         _ ->
-                            -- otherwise operate within the Hardware sub module:
-                            toHardware model (Pages.Hardware.update hardwareMsg hardwareModel)
+                            -- otherwise operate within the Wallet sub module:
+                            toWallet model (Pages.Wallet.update (Pages.Wallet.SetAddress model.xmrWalletAddress) Pages.Wallet.initialModel)
 
                 _ ->
                     ( model, Cmd.none )
@@ -908,8 +933,9 @@ updateUrl url model =
                 |> toMarket model
 
         Just Wallet ->
-            Pages.Wallet.init "XMR"
-                |> toWallet model
+            -- HACK: Temp until we receive the address from the hw device
+            Pages.Wallet.init "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                |> toWallet { model | xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" }
 
         Just Hardware ->
             let

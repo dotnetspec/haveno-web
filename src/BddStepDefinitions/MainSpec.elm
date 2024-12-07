@@ -3,8 +3,6 @@ module BddStepDefinitions.MainSpec exposing (..)
 {- -- NOTE: 'Main' here refers to settings that hold throughout the app, e.g. isLNSConnected, not just on a given page, so the tests
    might switch to particular pages and check that 'global' settings (Main's model) are correct
 -}
---import Pages.Wallet as Wallet exposing (..)
---import Pages.Wallet as Wallet exposing (..)
 
 import BddStepDefinitions.Extra exposing (..)
 import BddStepDefinitions.Runner as Runner exposing (..)
@@ -19,8 +17,8 @@ import Main exposing (Model, Msg, Page(..), Route(..), init, navigate, subscript
 import Pages.Blank
 import Pages.Dashboard as Dashboard exposing (..)
 import Pages.Hardware as Hardware exposing (..)
-import Pages.Wallet as Wallet exposing (..)
 import Pages.Sell as Sell exposing (..)
+import Pages.Wallet as Wallet exposing (..)
 import Spec exposing (..)
 import Spec.Claim as Claim exposing (Claim, Verdict)
 import Spec.Command exposing (send)
@@ -421,11 +419,11 @@ runSpecTests =
                                         Claim.isStringContaining 1 "XMR Wallet Address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
                                 )
                         )
-                    , it "b.is on the Dashboard page"
+                    , it "b.is on the Wallet page"
                         -- NOTE: Cos connected with valid XMR address
                         (Observer.observeModel .page
-                            -- NOTE: This is the model's page, not the page in the browser - Dashboard.initialModel is a placeholder for the test only here
-                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.DashboardPage Dashboard.initialModel)
+                            -- NOTE: This is the model's page, not the page in the browser - Wallet.initialModel is a placeholder for the test only here
+                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.WalletPage Wallet.initialModel)
                         )
                     , it "should be possible to use the Menu"
                         (Observer.observeModel .isNavMenuActive
@@ -555,16 +553,16 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Haveno Web - Dashboard"
+                                        Claim.isStringContaining 1 "Wallet"
                                 )
                         )
 
                     -- NOTE: It appears that we can check that the page is the Dashboard page by checking the model
                     -- but we cannot check the text in the page, without an update e.g. from button click,
                     -- because it's not the setup module's (Main) responsibility
-                    , it "f.is on the Dashboard page"
+                    , it "f.is on the Wallet page"
                         (Observer.observeModel .page
-                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.DashboardPage Dashboard.initialModel)
+                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.WalletPage Wallet.initialModel)
                         )
                     ]
             )
@@ -614,20 +612,10 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Haveno Web - Dashboard"
+                                        Claim.isStringContaining 1 "Wallet"
                                 )
                         )
-                    , it "d. makes the Haveno version visible to the user on the Dashboard page"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ Spec.Markup.Selector.id "versiondisplay" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "1.0.7"
-                                )
-                        )
-                    , it "d. displays Haveno version number in the footer"
+                    , it "e. displays Haveno version number in the footer"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ Spec.Markup.Selector.id "havenofooterver" ]
@@ -783,13 +771,13 @@ runSpecTests =
                     [ -- NOTE: 'send' here means send from js to elm
                       Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
                     ]
-                {- |> when "the hardware XMR wallet returns a valid XMR address"
-                   [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
-                   ]
-                -}
+                |> when "the hardware XMR wallet returns a valid XMR address"
+                    [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
+                    ]
                 -- HACK: This gives us a valid XMR address for testing from the UI
-                |> when "the user clicks the Grant Browser Permissions button"
-                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
+                {- |> when "the user clicks the Grant Browser Permissions button"
+                   [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
+                -}
                 |> Spec.observeThat
                     [ it "a.hides the popup"
                         (Observer.observeModel .isPopUpVisible
@@ -867,16 +855,17 @@ runSpecTests =
                     [ -- NOTE: 'send' here means send from js to elm
                       Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
                     ]
-                {- |> when "the hardware XMR wallet returns a valid XMR address"
-                   [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
-                   ]
-                -}
+                |> when "the hardware XMR wallet returns a valid XMR address"
+                    [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
+                    ]
                 -- HACK: This gives us a valid XMR address for testing from the UI, so use for now:
-                |> when "the user uses the menu to nav to the Wallet page"
-                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
+                {- |> when "the user uses the menu to nav to the Wallet page"
+                   [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
+                -}
                 -- Simulate user clicking the Wallet navLink in the burger menu
-                |> when "the user clicks the Wallet navLink in the burger menu"
-                    [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
+                {- |> when "the user clicks the Wallet navLink in the burger menu"
+                   [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
+                -}
                 |> Spec.when "we log the http requests"
                     [ Spec.Http.logRequests
                     ]
@@ -886,15 +875,15 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isTrue
                         )
-                    , it "b.is on the Wallet page"
+                    , it "b. should be an address in the model"
+                        (Observer.observeModel .xmrWalletAddress
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <| "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32")
+                        )
+                    , it "c.is on the Wallet page"
                         -- NOTE: Cos connected with valid XMR address
                         (Observer.observeModel .page
                             |> Spec.expect (Claim.isEqual Debug.toString <| Main.WalletPage Wallet.initialModel)
-                        )
-                    , it "should be possible to use the Menu"
-                        (Observer.observeModel .isNavMenuActive
-                            |> Spec.expect
-                                Claim.isTrue
                         )
                     , it "should display the menu"
                         (Markup.observeElement
@@ -936,68 +925,144 @@ runSpecTests =
             )
         , --Runner.skip <|
           --Runner.pick <|
-            scenario "13: Checking the Menu nav links work"
-                (given
-                    (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
-                        |> Spec.Setup.withDocument Main.view
-                        |> Spec.Setup.withUpdate Main.update
-                        |> Spec.Setup.withSubscriptions Main.subscriptions
-                        |> Spec.Setup.forNavigation
-                            { onUrlRequest = Main.ClickedLink
-                            , onUrlChange = Main.ChangedUrl
-                            }
-                        -- NOTE: Currently believe this is equivalent to the user clicking a link
-                        |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
-                    )
-                    -- NOTE: You need to do this to get away from 'Blank' page
-                    |> when "the user clicks the Continue button"
-                        [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
-                    |> when "the LNX hww is detected"
-                        [ -- NOTE: 'send' here means send from js to elm
-                          Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
-                        ]
-                    {- |> when "the hardware XMR wallet returns a valid XMR address"
-                       [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
-                       ]
-                    -}
-                    -- HACK: This gives us a valid XMR address for testing from the UI, e.g. enabling the menu, so use for now:
-                    |> when "the user uses the menu to nav to the Wallet page"
-                        [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
-                    -- Simulate user clicking the Sell href navLink in the simple menu
-                    |> when "the user clicks the Sell navLink in the menu"
-                        [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
-                    |> Spec.when "we log the http requests"
-                        [ Spec.Http.logRequests
-                        ]
-                    |> Spec.observeThat
-                        [ it "a. should be possible to use the Menu"
-                            (Observer.observeModel .isNavMenuActive
-                                |> Spec.expect
-                                    Claim.isTrue
-                            )
-                        , it "b.is on the Sell page"
-                            -- NOTE: Cos connected with valid XMR address
-                            (Observer.observeModel .page
-                                |> Spec.expect (Claim.isEqual Debug.toString <| Main.SellPage Sell.initialModel)
-                            )
-                        , it "should be possible to use the Menu"
-                            (Observer.observeModel .isNavMenuActive
-                                |> Spec.expect
-                                    Claim.isTrue
-                            )
-                        , it "should display the menu"
-                            (Markup.observeElement
-                                |> Markup.query
-                                << by [ tag "button" ]
-                                |> Spec.expect
-                                    (Claim.isSomethingWhere <|
-                                        Markup.attribute "class" <|
-                                            Claim.isSomethingWhere <|
-                                                Claim.isStringContaining 1 "menu-btn"
-                                    )
-                            )
-                        ]
+          scenario "13: Checking the Menu nav links work"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    -- NOTE: Currently believe this is equivalent to the user clicking a link
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
                 )
+                -- NOTE: You need to do this to get away from 'Blank' page
+                |> when "the user clicks the Continue button"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                |> when "the LNX hww is detected"
+                    [ -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
+                    ]
+                {- |> when "the hardware XMR wallet returns a valid XMR address"
+                   [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
+                   ]
+                -}
+                -- HACK: This gives us a valid XMR address for testing from the UI, e.g. enabling the menu, so use for now:
+                |> when "the user uses the menu to nav to the Wallet page"
+                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
+                -- Simulate user clicking the Sell href navLink in the simple menu
+                |> when "the user clicks the Sell navLink in the menu"
+                    [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
+                |> Spec.when "we log the http requests"
+                    [ Spec.Http.logRequests
+                    ]
+                |> Spec.observeThat
+                    [ it "a. should be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    , it "b.is on the Sell page"
+                        -- NOTE: Cos connected with valid XMR address
+                        (Observer.observeModel .page
+                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.SellPage Sell.initialModel)
+                        )
+                    , it "should be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    , it "should display the menu"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ tag "button" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.attribute "class" <|
+                                        Claim.isSomethingWhere <|
+                                            Claim.isStringContaining 1 "menu-btn"
+                                )
+                        )
+                    ]
+            )
+        , --Runner.skip <|
+          --Runner.pick <|
+          scenario "14: Checking the Wallet page has initialized after ClickedTempXMRAddr"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    -- NOTE: Currently believe this is equivalent to the user clicking a link
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                )
+                -- NOTE: You need to do this to get away from 'Blank' page
+                |> when "the user clicks the Continue button"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                |> when "the LNX hww is detected"
+                    [ -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
+                    ]
+                |> when "the hardware XMR wallet returns a valid XMR address"
+                    [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
+                    ]
+                |> when "the user navigates to another navLink in the menu"
+                    [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
+                -- HACK: This gives us a valid XMR address for testing from the UI, so use for now:
+                {- |> when "the user uses the menu to nav to the Wallet page"
+                   [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
+                -}
+                -- Simulate user clicking the Wallet href navLink in the simple menu
+                |> when "the user then clicks the Wallet navLink in the menu"
+                    [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
+                -- Simulate user clicking the Wallet navLink in the burger menu
+                |> Spec.when "we log the http requests"
+                    [ Spec.Http.logRequests
+                    ]
+                |> Spec.observeThat
+                    [ it "a. should have the xmr address in the Main model"
+                        (Observer.observeModel .xmrWalletAddress
+                            |> Spec.expect (Claim.isEqual Debug.toString "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32")
+                        )
+                    , it "b.is on the Wallet page with an updated inital wallet model"
+                        -- NOTE: Cos connected with valid XMR address
+                        (Observer.observeModel .page
+                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.WalletPage Wallet.initialModel)
+                        )
+                    , it "should be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    , it "should display the menu"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ tag "button" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.attribute "class" <|
+                                        Claim.isSomethingWhere <|
+                                            Claim.isStringContaining 1 "menu-btn"
+                                )
+                        )
+                    , it "should display the current address from the wallet page model"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "currentaddress" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Current address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                )
+                        )
+                    ]
+            )
         ]
 
 
