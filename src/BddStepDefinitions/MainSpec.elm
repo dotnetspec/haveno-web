@@ -19,6 +19,8 @@ import Pages.Dashboard as Dashboard exposing (..)
 import Pages.Hardware as Hardware exposing (..)
 import Pages.Sell as Sell exposing (..)
 import Pages.Wallet as Wallet exposing (..)
+import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
+import Proto.Io.Haveno.Protobuffer.Internals_
 import Spec exposing (..)
 import Spec.Claim as Claim exposing (Claim, Verdict)
 import Spec.Command exposing (send)
@@ -1059,6 +1061,82 @@ runSpecTests =
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
                                         Claim.isStringContaining 1 "Current address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                )
+                        )
+                    ]
+            )
+        , --Runner.skip <|
+          Runner.pick <|
+          scenario "14: Checking the Wallet page has initialized after ClickedTempXMRAddr"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    -- NOTE: Currently believe this is equivalent to the user clicking a link
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                    |> Stub.serve [ TestData.successfulWalletWithBalancesFetch ]
+                )
+                -- NOTE: You need to do this to get away from 'Blank' page
+                |> when "the user clicks the Continue button"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                |> when "the LNX hww is detected"
+                    [ -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
+                    ]
+                |> when "the hardware XMR wallet returns a valid XMR address"
+                    [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
+                    ]
+                |> when "the user navigates to another navLink in the menu"
+                    [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
+                -- HACK: This gives us a valid XMR address for testing from the UI, so use for now:
+                {- |> when "the user uses the menu to nav to the Wallet page"
+                   [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
+                -}
+                -- Simulate user clicking the Wallet href navLink in the simple menu
+                |> when "the user then clicks the Wallet navLink in the menu"
+                    [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
+                -- Simulate user clicking the Wallet navLink in the burger menu
+                |> Spec.when "we log the http requests"
+                    [ Spec.Http.logRequests
+                    ]
+                |> Spec.observeThat
+                    [ it "b.is on the Wallet page with an updated inital wallet model"
+                        -- NOTE: Cos connected with valid XMR address
+                        (Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.WalletPage <|
+                                        { address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        , balances = Just { btc = Nothing, xmr = Nothing }
+                                        , errors = []
+                                        , pagetitle = "Haveno Web Wallet"
+                                        , status = Wallet.Loaded
+                                        }
+                                )
+                        )
+                    , it "displays the available balance correctly"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ id "xmrbalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Available Balance: 100.0 XMR"
+                                )
+                        )
+                    , it "displays the reserved balance correctly"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ id "reservedOfferBalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Reserved Offer Balance: 50.0 XMR"
                                 )
                         )
                     ]

@@ -72,9 +72,9 @@ runSpecTests =
                         )
                     ]
             )
-        , --Runner.skip <|
+        --, --Runner.skip <|
           --Runner.pick <|
-            scenario "2: Show available balance and reserved balance correctly in the UI"
+            {- scenario "2: Show available balance and reserved balance correctly in the UI"
                 (given
                     (Spec.Setup.init (Wallet.init "http://localhost:1234")
                         |> Spec.Setup.withView Wallet.view
@@ -85,6 +85,7 @@ runSpecTests =
                     |> Spec.when "we log the http requests"
                         [ Spec.Http.logRequests
                         ]
+                    
                     |> Spec.observeThat
                         [ it "displays the available balance correctly"
                             (Markup.observeElement
@@ -106,8 +107,8 @@ runSpecTests =
                                             Claim.isStringContaining 1 "Reserved Offer Balance: 50.0 XMR"
                                     )
                             )
-                        ]
-                )
+                        ] 
+                )-}
 
         -- NOTE: Uncomment these tests one at a time to maintain managability
         {- , scenario "3: Generating a New Subaddress"

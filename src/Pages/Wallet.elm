@@ -1,4 +1,4 @@
-module Pages.Wallet exposing (Model, Msg(..), init, initialModel, update, view)
+module Pages.Wallet exposing (Model, Msg(..), Status(..), init, initialModel, update, view)
 
 import Buttons.Default exposing (defaultButton)
 import Debug exposing (log)
@@ -26,6 +26,7 @@ import Protobuf.Types.Int64 exposing (toInts)
 import Spec.Markup exposing (log)
 import Types.DateType as DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
+import Utils.MyUtils as MyUtils
 
 
 type alias Model =
@@ -39,9 +40,10 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { status = Loaded
+    { status = Loading
     , pagetitle = "Haveno Web Wallet"
     , balances = Just Protobuf.defaultBalancesInfo
+
     -- HACK: Hardcoding the address for now
     , address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
     , errors = []
@@ -60,9 +62,8 @@ type Status
 
 init : String -> ( Model, Cmd Msg )
 init _ =
-    
     -- HACK: Hardcoding the address for now
-    ( {initialModel | address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"}
+    ( { initialModel | address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" }
     , gotAvailableBalances
     )
 
@@ -95,19 +96,19 @@ update msg model =
         GotBalances (Ok response) ->
             -- HACK: Want to replace xmrBalanceInfoInstance with response
             -- also so that real base64 test data is used.
-            {- let
+            let
                 _ =
-                    Debug.log "GotBalances" response
-            in -}
+                    Debug.log "GotBalances" response.balances
+            in
             -- TODO: Update the model with the response
             ( { model | balances = response.balances, status = Loaded }, Cmd.none )
 
         --( { model | balances = response.balances}, Cmd.none )
         GotBalances (Err error) ->
-            {- let
+            let
                 _ =
-                    Debug.log "GotBalances error " error
-            in -}
+                    Debug.log "GotBalances error " <| MyUtils.gotGrpcErr error
+            in
             ( { model | status = Errored }, Cmd.none )
 
 
@@ -166,6 +167,7 @@ custodialWalletView model =
                 -- NOTE: if this address doesn't appear, it means init never got called
                 (Element.text ("Current address: " ++ model.address))
             , Element.text "\n"
+
             -- WARN: Carefull with the management of the imports here:
             , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "xmrbalance") ]
                 --Heading.h4
@@ -247,8 +249,8 @@ gotAvailableBalances : Cmd Msg
 gotAvailableBalances =
     let
         {- _ =
-           Debug.log "gotAvailableBalances" "gotAvailableBalances" -}
-       
+           Debug.log "gotAvailableBalances" "gotAvailableBalances"
+        -}
         grpcRequest =
             Grpc.new Wallets.getBalances Protobuf.defaultGetBalancesRequest
                 |> Grpc.addHeader "password" "apitest"
