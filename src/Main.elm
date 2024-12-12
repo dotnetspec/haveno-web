@@ -35,6 +35,7 @@ import Pages.Wallet
 import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
+import Protobuf.Decode
 import Spec.Navigator exposing (show)
 import Spec.Step exposing (log)
 import Task
@@ -116,10 +117,6 @@ init flag url key =
             , initialized = False
             , isMenuOpen = False
             }
-
-        {- _ =
-           Debug.log "init" "yes"
-        -}
     in
     updateUrl url updatedModel
 
@@ -269,11 +266,6 @@ update msg model =
         {- It looks like we're supposed to use this instead of Browser.onUrlChange in Subscriptions (as per older docs) -}
         -- NOTE: The only way this is triggered currently is by the js menu code clicks
         ChangedUrl url ->
-            {- let
-                   _ =
-                       Debug.log "url about to update" "in ChangedUrl"
-               in
-            -}
             updateUrl url model
 
         ToggleMenu ->
@@ -445,15 +437,15 @@ update msg model =
                                     }
 
                                 newPage =
-                                    if updatedIsValidXMRAddressConnected then
+                                    {- if updatedIsValidXMRAddressConnected then
                                         let
-                                            
-                                            newWalletModel = Pages.Wallet.initialModel
+                                            newWalletModel =
+                                                --Pages.Wallet.initialModel
+                                                model.page
                                         in
-                                        
-                                        WalletPage {newWalletModel | address = updatedWalletAddress}
+                                        WalletPage { newWalletModel | address = updatedWalletAddress }
 
-                                    else
+                                    else -}
                                         HardwarePage newHardwareModel
 
                                 newUrlAfterCheckConnections =
@@ -608,26 +600,30 @@ update msg model =
                                 "getMoneroAddress"
                             )
 
+                        -- HACK: ClickedTempXMRAddr is only necessary until we can get a valid address from the device
                         Pages.Hardware.ClickedTempXMRAddr ->
-                            {- let
-                                   _ =
-                                       Debug.log "click temp " "yes"
-                               in
-                            -}
-                            {- ( { model
-                                   | page = WalletPage <| Pages.Wallet.initialModel
-                                   , isNavMenuActive = True
-                                   , isXMRWalletConnected = True
-                                   , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
-                                 }
-                               , Cmd.none
-                               )
-                            -}
                             let
+                                
+
+                                newWalletModel =
+                                    Pages.Wallet.initialModel
+
+                                updatedBalances =
+                                    Maybe.withDefault Protobuf.defaultGetBalancesReply
+                                        (Protobuf.Decode.decode Protobuf.decodeGetBalancesReply TestData.getBalanceEncodedResponse)
+
                                 newMainModel =
-                                    { model | page = WalletPage <| Pages.Wallet.initialModel, isNavMenuActive = True, isXMRWalletConnected = True, xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" }
+                                    { model | page = WalletPage <| { newWalletModel | balances = updatedBalances.balances }, isNavMenuActive = True, isXMRWalletConnected = True, xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" }
                             in
-                            toWallet newMainModel (Pages.Wallet.update (Pages.Wallet.SetAddress model.xmrWalletAddress) Pages.Wallet.initialModel)
+                            toWallet newMainModel
+                                (Pages.Wallet.update
+                                    (Pages.Wallet.GotBalances
+                                        (Ok
+                                            updatedBalances
+                                        )
+                                    )
+                                    { newWalletModel | balances = updatedBalances.balances }
+                                )
 
                         _ ->
                             -- otherwise operate within the Wallet sub module:
@@ -934,8 +930,8 @@ updateUrl url model =
 
         Just Wallet ->
             -- HACK: Temp until we receive the address from the hw device
-            Pages.Wallet.init "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
-                |> toWallet { model | xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" }
+            Pages.Wallet.init model.xmrWalletAddress
+                |> toWallet model
 
         Just Hardware ->
             let
@@ -1035,9 +1031,17 @@ toMarket model ( market, cmd ) =
     )
 
 
+
+-- NOTE: This is where we can update Wallet's model
+
+
 toWallet : Model -> ( Pages.Wallet.Model, Cmd Pages.Wallet.Msg ) -> ( Model, Cmd Msg )
 toWallet model ( wallet, cmd ) =
-    ( { model | page = WalletPage wallet }
+    let
+        newWalletModel =
+            { wallet | address = model.xmrWalletAddress }
+    in
+    ( { model | page = WalletPage newWalletModel }
     , Cmd.map GotWalletMsg cmd
     )
 
@@ -1509,7 +1513,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.1.23" ]
+                , p [] [ text "Version 0.1.24" ]
                 , text "Haveno Version"
                 , p [ id "havenofooterver" ]
                     [ text

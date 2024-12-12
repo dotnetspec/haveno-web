@@ -45,7 +45,7 @@ initialModel =
     , balances = Just Protobuf.defaultBalancesInfo
 
     -- HACK: Hardcoding the address for now
-    , address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+    , address = ""
     , errors = []
     }
 
@@ -63,7 +63,7 @@ type Status
 init : String -> ( Model, Cmd Msg )
 init _ =
     -- HACK: Hardcoding the address for now
-    ( { initialModel | address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" }
+    ( initialModel
     , gotAvailableBalances
     )
 
@@ -73,20 +73,6 @@ type Msg
     | GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
 
 
-
--- HACK: Currently hard coding the response to test the UI
-
-
-xmrBalanceInfoInstance : Protobuf.XmrBalanceInfo
-xmrBalanceInfoInstance =
-    { balance = Protobuf.Types.Int64.fromInts 110 0
-    , availableBalance = Protobuf.Types.Int64.fromInts 100 0
-    , pendingBalance = Protobuf.Types.Int64.fromInts 0 0
-    , reservedOfferBalance = Protobuf.Types.Int64.fromInts 50 0
-    , reservedTradeBalance = Protobuf.Types.Int64.fromInts 5 0
-    }
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -94,21 +80,9 @@ update msg model =
             ( { model | address = address }, Cmd.none )
 
         GotBalances (Ok response) ->
-            -- HACK: Want to replace xmrBalanceInfoInstance with response
-            -- also so that real base64 test data is used.
-            let
-                _ =
-                    Debug.log "GotBalances" response.balances
-            in
-            -- TODO: Update the model with the response
             ( { model | balances = response.balances, status = Loaded }, Cmd.none )
 
-        --( { model | balances = response.balances}, Cmd.none )
         GotBalances (Err error) ->
-            let
-                _ =
-                    Debug.log "GotBalances error " <| MyUtils.gotGrpcErr error
-            in
             ( { model | status = Errored }, Cmd.none )
 
 
@@ -248,9 +222,6 @@ reservedOfferBalanceAsString balInfo =
 gotAvailableBalances : Cmd Msg
 gotAvailableBalances =
     let
-        {- _ =
-           Debug.log "gotAvailableBalances" "gotAvailableBalances"
-        -}
         grpcRequest =
             Grpc.new Wallets.getBalances Protobuf.defaultGetBalancesRequest
                 |> Grpc.addHeader "password" "apitest"

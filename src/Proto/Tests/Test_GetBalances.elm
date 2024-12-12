@@ -2,7 +2,7 @@ module Proto.Tests.Test_GetBalances exposing (..)
 
 import Bytes exposing (Bytes)
 import Expect
-import Extras.TestData exposing (getBalanceEncodedResponse, successfulWalletWithBalancesFetch)
+import Extras.TestData exposing (getBalanceEncodedResponse, encodeGrpcMessage, successfulWalletWithBalancesFetch)
 import Fuzz exposing (Fuzzer)
 import Parser exposing (run)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (GetBalancesReply, decodeGetBalancesReply, encodeGetBalancesReply)

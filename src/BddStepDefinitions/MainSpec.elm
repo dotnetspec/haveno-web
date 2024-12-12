@@ -3,13 +3,14 @@ module BddStepDefinitions.MainSpec exposing (..)
 {- -- NOTE: 'Main' here refers to settings that hold throughout the app, e.g. isLNSConnected, not just on a given page, so the tests
    might switch to particular pages and check that 'global' settings (Main's model) are correct
 -}
+--import Protobuf.Types.Int64 as Int64 exposing (Int64, fromInts)
 
 import BddStepDefinitions.Extra exposing (..)
 import BddStepDefinitions.Runner as Runner exposing (..)
 import Browser
 import Browser.Navigation as Nav exposing (Key)
 import Expect exposing (equal)
-import Extras.TestData as TestData exposing (placeholderUrl)
+import Extras.TestData as TestData exposing (..)
 import Html exposing (Html, div, i)
 import Json.Decode as D
 import Json.Encode as E
@@ -21,6 +22,8 @@ import Pages.Sell as Sell exposing (..)
 import Pages.Wallet as Wallet exposing (..)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.Internals_
+import Protobuf.Decode
+import Protobuf.Types.Int64 exposing (Int64, fromInts, toInts)
 import Spec exposing (..)
 import Spec.Claim as Claim exposing (Claim, Verdict)
 import Spec.Command exposing (send)
@@ -35,6 +38,7 @@ import Spec.Report exposing (note)
 import Spec.Setup exposing (Setup, init, withSubscriptions, withUpdate, withView)
 import Spec.Step exposing (log)
 import Url exposing (Protocol(..), Url)
+import Data.User as U
 
 
 
@@ -390,6 +394,8 @@ runSpecTests =
                 |> when "the hardware XMR wallet returns a valid XMR address"
                     [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
                     ]
+                |> when "the user uses ClickedTempXMRAddr to simulte an address retrieval and nav to the Wallet page"
+                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
                 |> Spec.observeThat
                     [ it "a.hides the popup"
                         (Observer.observeModel .isPopUpVisible
@@ -424,8 +430,16 @@ runSpecTests =
                     , it "b.is on the Wallet page"
                         -- NOTE: Cos connected with valid XMR address
                         (Observer.observeModel .page
-                            -- NOTE: This is the model's page, not the page in the browser - Wallet.initialModel is a placeholder for the test only here
-                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.WalletPage Wallet.initialModel)
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.WalletPage <|
+                                        { address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        , balances = Just expectedBalances
+                                        , errors = []
+                                        , pagetitle = "Haveno Web Wallet"
+                                        , status = Wallet.Loaded
+                                        }
+                                )
                         )
                     , it "should be possible to use the Menu"
                         (Observer.observeModel .isNavMenuActive
@@ -479,7 +493,6 @@ runSpecTests =
                     , it "b.is on the Hardware page"
                         -- NOTE: Cos connected with valid XMR address
                         (Observer.observeModel .page
-                            -- NOTE: This is the model's page, not the page in the browser - Hardware.initialModel is a placeholder for the test only here
                             |> Spec.expect (Claim.isEqual Debug.toString <| Main.HardwarePage Hardware.initialModel)
                         )
                     , it "should be possible to use the Menu"
@@ -548,23 +561,51 @@ runSpecTests =
                                         Claim.isStringContaining 1 "No Haveno version available"
                                 )
                         )
-                    , it "e. should display a dashboard page"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ tag "h1" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Wallet"
-                                )
-                        )
-
-                    -- NOTE: It appears that we can check that the page is the Dashboard page by checking the model
-                    -- but we cannot check the text in the page, without an update e.g. from button click,
-                    -- because it's not the setup module's (Main) responsibility
-                    , it "f.is on the Wallet page"
+                    , it "f.is on the Hardware page"
                         (Observer.observeModel .page
-                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.WalletPage Wallet.initialModel)
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.HardwarePage <|
+                                        { apiSpecifics = { accessToken = Nothing, maxResults = "" }
+                                        , datetimeFromMain = Nothing
+                                        , errors = []
+                                        , flagUrl = { fragment = Nothing, host = "localhost", path = "/hardware", port_ = Just 1234, protocol = Http, query = Nothing }
+                                        , isHardwareDeviceConnected = False
+                                        , isReturnUser = False
+                                        , isValidNewAccessToken = False
+                                        , isXMRWalletConnected = True
+                                        , objectJSONfromJSPort = Nothing
+                                        , queryType = Spectator
+                                        , root = Hardware.Hardware { name = "Loading..." }
+                                        , status = Hardware.Loaded
+                                        , title = "Hardware"
+                                        , user =
+                                            U.Spectator
+                                                { active = False
+                                                , addInfo = ""
+                                                , age = 40
+                                                , credits = 0
+                                                , datestamp = 0
+                                                , description = { comment = "", level = "" }
+                                                , email = Nothing
+                                                , emailValidationError = ""
+                                                , gender = U.Male
+                                                , isEmailInputFocused = False
+                                                , isMobileInputFocused = False
+                                                , isNameInputFocused = False
+                                                , mobile = Nothing
+                                                , mobileValidationError = ""
+                                                , nameValidationError = ""
+                                                , nickname = ""
+                                                , password = ""
+                                                , passwordValidationError = ""
+                                                , token = Nothing
+                                                , updatetext = ""
+                                                , userid = ""
+                                                }
+                                        , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        }
+                                )
                         )
                     ]
             )
@@ -594,9 +635,10 @@ runSpecTests =
                     [ -- NOTE: 'send' here means send from js to elm
                       Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
                     ]
-                |> Spec.when "we log the http requests"
-                    [ Spec.Http.logRequests
-                    ]
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
                 |> Spec.observeThat
                     [ it
                         "a. the app location should be root "
@@ -607,14 +649,50 @@ runSpecTests =
                                         "http://localhost:1234/"
                                 )
                         )
-                    , it "b. should display a dashboard page"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ tag "h1" ]
+                    , it "f.is on the Hardware page"
+                        (Observer.observeModel .page
                             |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Wallet"
+                                (Claim.isEqual Debug.toString <|
+                                    Main.HardwarePage <|
+                                        { apiSpecifics = { accessToken = Nothing, maxResults = "" }
+                                        , datetimeFromMain = Nothing
+                                        , errors = []
+                                        , flagUrl = { fragment = Nothing, host = "localhost", path = "/hardware", port_ = Just 1234, protocol = Http, query = Nothing }
+                                        , isHardwareDeviceConnected = False
+                                        , isReturnUser = False
+                                        , isValidNewAccessToken = False
+                                        , isXMRWalletConnected = True
+                                        , objectJSONfromJSPort = Nothing
+                                        , queryType = Spectator
+                                        , root = Hardware.Hardware { name = "Loading..." }
+                                        , status = Hardware.Loaded
+                                        , title = "Hardware"
+                                        , user =
+                                            U.Spectator
+                                                { active = False
+                                                , addInfo = ""
+                                                , age = 40
+                                                , credits = 0
+                                                , datestamp = 0
+                                                , description = { comment = "", level = "" }
+                                                , email = Nothing
+                                                , emailValidationError = ""
+                                                , gender = U.Male
+                                                , isEmailInputFocused = False
+                                                , isMobileInputFocused = False
+                                                , isNameInputFocused = False
+                                                , mobile = Nothing
+                                                , mobileValidationError = ""
+                                                , nameValidationError = ""
+                                                , nickname = ""
+                                                , password = ""
+                                                , passwordValidationError = ""
+                                                , token = Nothing
+                                                , updatetext = ""
+                                                , userid = ""
+                                                }
+                                        , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        }
                                 )
                         )
                     , it "e. displays Haveno version number in the footer"
@@ -811,11 +889,51 @@ runSpecTests =
                                         Claim.isStringContaining 1 "XMR Wallet Address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
                                 )
                         )
-                    , it "is on the Wallet page"
-                        -- NOTE: Cos connected with valid XMR address
+                    , it "f.is on the Hardware page"
                         (Observer.observeModel .page
-                            -- NOTE: This is the model's page, not the page in the browser - Wallet.initialModel is a placeholder for the test only here
-                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.WalletPage Wallet.initialModel)
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.HardwarePage <|
+                                        { apiSpecifics = { accessToken = Nothing, maxResults = "" }
+                                        , datetimeFromMain = Nothing
+                                        , errors = []
+                                        , flagUrl = { fragment = Nothing, host = "localhost", path = "/hardware", port_ = Just 1234, protocol = Http, query = Nothing }
+                                        , isHardwareDeviceConnected = False
+                                        , isReturnUser = False
+                                        , isValidNewAccessToken = False
+                                        , isXMRWalletConnected = True
+                                        , objectJSONfromJSPort = Nothing
+                                        , queryType = Spectator
+                                        , root = Hardware.Hardware { name = "Loading..." }
+                                        , status = Hardware.Loaded
+                                        , title = "Hardware"
+                                        , user =
+                                            U.Spectator
+                                                { active = False
+                                                , addInfo = ""
+                                                , age = 40
+                                                , credits = 0
+                                                , datestamp = 0
+                                                , description = { comment = "", level = "" }
+                                                , email = Nothing
+                                                , emailValidationError = ""
+                                                , gender = U.Male
+                                                , isEmailInputFocused = False
+                                                , isMobileInputFocused = False
+                                                , isNameInputFocused = False
+                                                , mobile = Nothing
+                                                , mobileValidationError = ""
+                                                , nameValidationError = ""
+                                                , nickname = ""
+                                                , password = ""
+                                                , passwordValidationError = ""
+                                                , token = Nothing
+                                                , updatetext = ""
+                                                , userid = ""
+                                                }
+                                        , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        }
+                                )
                         )
                     , it "should be possible to use the Menu"
                         (Observer.observeModel .isNavMenuActive
@@ -868,9 +986,10 @@ runSpecTests =
                 {- |> when "the user clicks the Wallet navLink in the burger menu"
                    [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
                 -}
-                |> Spec.when "we log the http requests"
-                    [ Spec.Http.logRequests
-                    ]
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
                 |> Spec.observeThat
                     [ it "a. should be possible to use the Menu"
                         (Observer.observeModel .isNavMenuActive
@@ -882,10 +1001,51 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <| "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32")
                         )
-                    , it "c.is on the Wallet page"
-                        -- NOTE: Cos connected with valid XMR address
+                    , it "f.is on the Hardware page"
                         (Observer.observeModel .page
-                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.WalletPage Wallet.initialModel)
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.HardwarePage <|
+                                        { apiSpecifics = { accessToken = Nothing, maxResults = "" }
+                                        , datetimeFromMain = Nothing
+                                        , errors = []
+                                        , flagUrl = { fragment = Nothing, host = "localhost", path = "/hardware", port_ = Just 1234, protocol = Http, query = Nothing }
+                                        , isHardwareDeviceConnected = False
+                                        , isReturnUser = False
+                                        , isValidNewAccessToken = False
+                                        , isXMRWalletConnected = True
+                                        , objectJSONfromJSPort = Nothing
+                                        , queryType = Spectator
+                                        , root = Hardware.Hardware { name = "Loading..." }
+                                        , status = Hardware.Loaded
+                                        , title = "Hardware"
+                                        , user =
+                                            U.Spectator
+                                                { active = False
+                                                , addInfo = ""
+                                                , age = 40
+                                                , credits = 0
+                                                , datestamp = 0
+                                                , description = { comment = "", level = "" }
+                                                , email = Nothing
+                                                , emailValidationError = ""
+                                                , gender = U.Male
+                                                , isEmailInputFocused = False
+                                                , isMobileInputFocused = False
+                                                , isNameInputFocused = False
+                                                , mobile = Nothing
+                                                , mobileValidationError = ""
+                                                , nameValidationError = ""
+                                                , nickname = ""
+                                                , password = ""
+                                                , passwordValidationError = ""
+                                                , token = Nothing
+                                                , updatetext = ""
+                                                , userid = ""
+                                                }
+                                        , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        }
+                                )
                         )
                     , it "should display the menu"
                         (Markup.observeElement
@@ -957,9 +1117,10 @@ runSpecTests =
                 -- Simulate user clicking the Sell href navLink in the simple menu
                 |> when "the user clicks the Sell navLink in the menu"
                     [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
-                |> Spec.when "we log the http requests"
-                    [ Spec.Http.logRequests
-                    ]
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
                 |> Spec.observeThat
                     [ it "a. should be possible to use the Menu"
                         (Observer.observeModel .isNavMenuActive
@@ -991,83 +1152,7 @@ runSpecTests =
             )
         , --Runner.skip <|
           --Runner.pick <|
-          scenario "14: Checking the Wallet page has initialized after ClickedTempXMRAddr"
-            (given
-                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
-                    |> Spec.Setup.withDocument Main.view
-                    |> Spec.Setup.withUpdate Main.update
-                    |> Spec.Setup.withSubscriptions Main.subscriptions
-                    |> Spec.Setup.forNavigation
-                        { onUrlRequest = Main.ClickedLink
-                        , onUrlChange = Main.ChangedUrl
-                        }
-                    -- NOTE: Currently believe this is equivalent to the user clicking a link
-                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
-                )
-                -- NOTE: You need to do this to get away from 'Blank' page
-                |> when "the user clicks the Continue button"
-                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
-                |> when "the LNX hww is detected"
-                    [ -- NOTE: 'send' here means send from js to elm
-                      Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
-                    ]
-                |> when "the hardware XMR wallet returns a valid XMR address"
-                    [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
-                    ]
-                |> when "the user navigates to another navLink in the menu"
-                    [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
-                -- HACK: This gives us a valid XMR address for testing from the UI, so use for now:
-                {- |> when "the user uses the menu to nav to the Wallet page"
-                   [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
-                -}
-                -- Simulate user clicking the Wallet href navLink in the simple menu
-                |> when "the user then clicks the Wallet navLink in the menu"
-                    [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
-                -- Simulate user clicking the Wallet navLink in the burger menu
-                |> Spec.when "we log the http requests"
-                    [ Spec.Http.logRequests
-                    ]
-                |> Spec.observeThat
-                    [ it "a. should have the xmr address in the Main model"
-                        (Observer.observeModel .xmrWalletAddress
-                            |> Spec.expect (Claim.isEqual Debug.toString "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32")
-                        )
-                    , it "b.is on the Wallet page with an updated inital wallet model"
-                        -- NOTE: Cos connected with valid XMR address
-                        (Observer.observeModel .page
-                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.WalletPage Wallet.initialModel)
-                        )
-                    , it "should be possible to use the Menu"
-                        (Observer.observeModel .isNavMenuActive
-                            |> Spec.expect
-                                Claim.isTrue
-                        )
-                    , it "should display the menu"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ tag "button" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.attribute "class" <|
-                                        Claim.isSomethingWhere <|
-                                            Claim.isStringContaining 1 "menu-btn"
-                                )
-                        )
-                    , it "should display the current address from the wallet page model"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ Spec.Markup.Selector.id "currentaddress" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Current address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
-                                )
-                        )
-                    ]
-            )
-        , --Runner.skip <|
-          Runner.pick <|
-          scenario "14: Checking the Wallet page has initialized after ClickedTempXMRAddr"
+          scenario "14: Checking the Wallet page has initialized after using navlink to Wallet"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -1101,18 +1186,35 @@ runSpecTests =
                 |> when "the user then clicks the Wallet navLink in the menu"
                     [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
                 -- Simulate user clicking the Wallet navLink in the burger menu
-                |> Spec.when "we log the http requests"
-                    [ Spec.Http.logRequests
-                    ]
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
                 |> Spec.observeThat
-                    [ it "b.is on the Wallet page with an updated inital wallet model"
+                    [ it "should be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    , it "should display the menu"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ tag "button" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.attribute "class" <|
+                                        Claim.isSomethingWhere <|
+                                            Claim.isStringContaining 1 "menu-btn"
+                                )
+                        )
+                    , it "b.is on the Wallet page with an updated inital wallet model"
                         -- NOTE: Cos connected with valid XMR address
                         (Observer.observeModel .page
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
                                     Main.WalletPage <|
                                         { address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
-                                        , balances = Just { btc = Nothing, xmr = Nothing }
+                                        , balances = Just expectedBalances
                                         , errors = []
                                         , pagetitle = "Haveno Web Wallet"
                                         , status = Wallet.Loaded
@@ -1126,7 +1228,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Available Balance: 100.0 XMR"
+                                        Claim.isStringContaining 1 "Available Balance: 10000.0 XMR"
                                 )
                         )
                     , it "displays the reserved balance correctly"
@@ -1136,7 +1238,140 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Reserved Offer Balance: 50.0 XMR"
+                                        Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
+                                )
+                        )
+                    , it "should display the current address from the wallet page model"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "currentaddress" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Current address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                )
+                        )
+                    ]
+            )
+        , --Runner.skip <|
+          --Runner.pick <|
+          scenario "15: Checking the Wallet page has initialized after ClickedTempXMRAddr"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    -- NOTE: Currently believe this is equivalent to the user clicking a link
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                    |> Stub.serve [ TestData.successfulWalletWithBalancesFetch ]
+                )
+                -- NOTE: You need to do this to get away from 'Blank' page
+                |> when "the user clicks the Continue button"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                |> when "the LNX hww is detected"
+                    [ -- NOTE: 'send' here means send from js to elm
+                      Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
+                    ]
+                {- |> when "the hardware XMR wallet returns a valid XMR address"
+                   [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
+                   ]
+                -}
+                {- |> when "the user navigates to another navLink in the menu"
+                   [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
+                -}
+                -- HACK: This gives us a valid XMR address for testing from the UI, so use for now:
+                |> when "the user uses ClickedTempXMRAddr to simulte an address retrieval and nav to the Wallet page"
+                    [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
+                -- NOTE: We need to simulate a GetBalancesReply with all the balance data:
+                -- NOTE: Protobuf.Decode.decode (TestData.encodeGrpcMessage TestData.getBalanceEncodedResponse) gives us the expected balances with Int64 etc. decoded
+                {- |> when "the ClickedTempXMRAddr a GotBalances message is received"
+                   [ Spec.Command.send
+                       (Spec.Command.fake <|
+                           Main.GotWalletMsg
+                               (Wallet.GotBalances
+                                   (Ok
+                                       (Maybe.withDefault Protobuf.defaultGetBalancesReply
+                                           (Protobuf.Decode.decode Protobuf.decodeGetBalancesReply
+                                               (TestData.encodeGrpcMessage TestData.getBalanceEncodedResponse)
+                                           )
+                                       )
+                                   )
+                               )
+                       )
+                   ]
+                -}
+                -- Simulate user clicking the Wallet href navLink in the simple menu
+                {- |> when "the user then clicks the Wallet navLink in the menu"
+                   [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
+                -}
+                -- Simulate user clicking the Wallet navLink in the burger menu
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
+                |> Spec.observeThat
+                    [ it "should be possible to use the Menu"
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    , it "should display the menu"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ tag "button" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.attribute "class" <|
+                                        Claim.isSomethingWhere <|
+                                            Claim.isStringContaining 1 "menu-btn"
+                                )
+                        )
+                    , it "b.is on the Wallet page with an updated inital wallet model"
+                        -- NOTE: Cos connected with valid XMR address
+                        (Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.WalletPage <|
+                                        { address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        , balances = Just expectedBalances
+                                        , errors = []
+                                        , pagetitle = "Haveno Web Wallet"
+                                        , status = Wallet.Loaded
+                                        }
+                                )
+                        )
+                    , it "c.displays the available balance correctly"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ id "xmrbalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Available Balance: 10000.0 XMR"
+                                )
+                        )
+                    , it "d.displays the reserved balance correctly"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ id "reservedOfferBalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
+                                )
+                        )
+                    , it "e.should display the current address from the wallet page model"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "currentaddress" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Current address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
                                 )
                         )
                     ]
@@ -1220,3 +1455,23 @@ errorGettingXMRWalletAddress =
 documentToHtml : Browser.Document msg -> Html msg
 documentToHtml document =
     div [] document.body
+
+
+expectedBalances : Protobuf.BalancesInfo
+expectedBalances =
+    { btc =
+        Just
+            { availableBalance = Protobuf.Types.Int64.fromInts 10000 0
+            , lockedBalance = Protobuf.Types.Int64.fromInts 10000 0
+            , reservedBalance = Protobuf.Types.Int64.fromInts 10000 0
+            , totalAvailableBalance = Protobuf.Types.Int64.fromInts 10000 0
+            }
+    , xmr =
+        Just
+            { availableBalance = Protobuf.Types.Int64.fromInts 10000 0
+            , balance = Protobuf.Types.Int64.fromInts 10000 0
+            , pendingBalance = Protobuf.Types.Int64.fromInts 2000 0
+            , reservedOfferBalance = Protobuf.Types.Int64.fromInts 5000 0
+            , reservedTradeBalance = Protobuf.Types.Int64.fromInts 3000 0
+            }
+    }
