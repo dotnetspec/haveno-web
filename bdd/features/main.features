@@ -203,12 +203,19 @@ be compatible with hwd usage and suggest working mobile browser versions
 **And** the reserved balance should be displayed correctly
 **And** the current address from the wallet page model should be displayed
 
-#### **Scenario 16: Display API connection status after user clicks Continue**
+#### **Scenario 16: Display successful API connection status after user clicks Continue**
 
 **Given** the application is initialized
 **And** the user clicks the Continue button
 **When** the application attempts to connect with the Haveno API
-**Then** it should display a message indicating whether the connection to the Haveno API was successful or not
+**Then** it should display a message indicating whether the connection to the Haveno API was successful
+
+#### **Scenario 17: Display unsuccessful API connection status after user clicks Continue**
+
+**Given** the application is initialized
+**And** the user clicks the Continue button
+**When** the application attempts to connect with the Haveno API
+**Then** it should display a message indicating that the connection to the Haveno API was unsuccessful
 
 
 

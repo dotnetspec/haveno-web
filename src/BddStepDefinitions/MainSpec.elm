@@ -1297,7 +1297,7 @@ runSpecTests =
             )
         , --Runner.skip <|
           --Runner.pick <|
-          scenario "16: Display API connection status after user clicks Continue"
+          scenario "16: Display successful API connection status after user clicks Continue"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -1323,6 +1323,38 @@ runSpecTests =
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
                                         Claim.isStringContaining 1 "Connected to Haveno API"
+                                )
+                        )
+                    ]
+            )
+        , --Runner.skip <|
+          --Runner.pick <|
+          scenario "17: Display UNsuccessful API connection status after user clicks Continue*"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Stub.serve [ TestData.unsuccessfullVersionFetch ]
+                )
+                |> when "the user clicks the Continue button and the application attempts to connect with the Haveno API"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                |> Spec.when "we log the http requests"
+                    [ Spec.Http.logRequests
+                    ]
+                |> Spec.observeThat
+                    [ it "should display a message indicating whether the connection to the Haveno API was successful or not"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "apiConnectionStatus" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Not Connected to Haveno API"
                                 )
                         )
                     ]
