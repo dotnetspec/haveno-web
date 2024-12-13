@@ -113,7 +113,7 @@ view model =
                         ]
 
                 Errored ->
-                    div [] [ Html.text "error" ]
+                    div [] [ Html.text "Error" ]
 
                 Loaded ->
                     div
@@ -132,30 +132,18 @@ view model =
 
 custodialWalletView : Model -> Html Msg
 custodialWalletView model =
-    Framework.responsiveLayout [] <|
-        Element.column Framework.container <|
-            [ Element.el Heading.h1 <| Element.text "Wallet"
-            , Element.text "\n"
-            , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "currentaddress") ]
-                --Heading.h4
-                -- NOTE: if this address doesn't appear, it means init never got called
-                (Element.text ("Current address: " ++ model.address))
-            , Element.text "\n"
+    Html.div [ Attr.class "wallet-container" ]
+        [ Html.h1 [ Attr.class "wallet-title" ] [ Html.text "Wallet" ]
+        , Html.div [ Attr.id "currentaddress", Attr.class "address-text" ]
+            [ Html.text ("Current address: " ++ model.address) ]
+        , Html.div [ Attr.id "xmrbalance", Attr.class "balance-text" ]
+            [ Html.text ("Available Balance: " ++ xmrBalanceAsString model.balances ++ " XMR") ]
+        , Html.div [ Attr.id "btcbalance", Attr.class "balance-text" ]
+            [ Html.text ("Available BTC Balance: " ++ btcBalanceAsString model.balances ++ " BTC") ]
+        , Html.div [ Attr.id "reservedOfferBalance", Attr.class "balance-text" ]
+            [ Html.text ("Reserved Offer Balance: " ++ reservedOfferBalanceAsString model.balances ++ " XMR") ]
+        ]
 
-            -- WARN: Carefull with the management of the imports here:
-            , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "xmrbalance") ]
-                --Heading.h4
-                (Element.text ("Available Balance: " ++ xmrBalanceAsString model.balances ++ " XMR"))
-            , Element.text "\n"
-            , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "btcbalance") ]
-                --Heading.h4
-                (Element.text ("Available BTC Balance: " ++ btcBalanceAsString model.balances ++ " BTC"))
-            , Element.text "\n"
-            , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "reservedOfferBalance") ]
-                --Heading.h4
-                (Element.text ("Reserved Offer Balance: " ++ reservedOfferBalanceAsString model.balances ++ " XMR"))
-            , Element.text "\n"
-            ]
 
 
 xmrBalanceAsString : Maybe Protobuf.BalancesInfo -> String

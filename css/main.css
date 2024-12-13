@@ -416,7 +416,7 @@ i a:hover {
 .indicator-container {
   position: absolute;
   top: 10px;
-  right: 10px;
+  right: 20px; /* Adjusted from 10px to 20px to move indicators further away from the right edge */
   display: flex;
   gap: 10px;
 }
@@ -429,3 +429,42 @@ i a:hover {
   background-color: red;
 }
 
+/* Wallet container styles */
+.wallet-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%; /* Ensure it takes full width on smaller screens */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+/* Wallet title styles */
+.wallet-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+  font-family: 'YourFontFamily', sans-serif; /* Ensure this matches the font family used for other headers */
+}
+
+/* Address text styles */
+.address-text {
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+  max-width: 100%; /* Ensure it doesn't overflow the container */
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* Balance text styles */
+.balance-text {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 10px;
+}
