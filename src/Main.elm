@@ -608,6 +608,7 @@ update msg model =
                                 newWalletModel =
                                     Pages.Wallet.initialModel
 
+                                -- NOTE: We're using Test balance data here
                                 updatedBalances =
                                     Maybe.withDefault Protobuf.defaultGetBalancesReply
                                         (Protobuf.Decode.decode Protobuf.decodeGetBalancesReply TestData.getBalanceEncodedResponse)

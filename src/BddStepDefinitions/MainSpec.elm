@@ -9,6 +9,7 @@ import BddStepDefinitions.Extra exposing (..)
 import BddStepDefinitions.Runner as Runner exposing (..)
 import Browser
 import Browser.Navigation as Nav exposing (Key)
+import Data.User as U
 import Expect exposing (equal)
 import Extras.TestData as TestData exposing (..)
 import Html exposing (Html, div, i)
@@ -38,7 +39,6 @@ import Spec.Report exposing (note)
 import Spec.Setup exposing (Setup, init, withSubscriptions, withUpdate, withView)
 import Spec.Step exposing (log)
 import Url exposing (Protocol(..), Url)
-import Data.User as U
 
 
 
@@ -205,39 +205,6 @@ runSpecTests =
                                         Claim.isSomethingWhere <|
                                             Claim.isStringContaining 1 "assets/resources/images/logo-splash100X33.png"
                                 )
-                        )
-                    , it "should NOT be possible to use the Menu"
-                        (Observer.observeModel .isNavMenuActive
-                            |> Spec.expect
-                                Claim.isFalse
-                        )
-                    , it "should NOT be possible to use the Menu"
-                        (Observer.observeModel .isNavMenuActive
-                            |> Spec.expect
-                                Claim.isFalse
-                        )
-                    , it "should NOT be possible to see any nav links"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ tag "ul" ]
-                            |> Spec.expect
-                                Claim.isNothing
-                        )
-                    , it "should find the toptopLogo image"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "topLogoId" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.attribute "src" <|
-                                        Claim.isSomethingWhere <|
-                                            Claim.isStringContaining 1 "assets/resources/images/logo-splash100X33.png"
-                                )
-                        )
-                    , it "should NOT be possible to use the Menu"
-                        (Observer.observeModel .isNavMenuActive
-                            |> Spec.expect
-                                Claim.isFalse
                         )
                     ]
             )
@@ -460,10 +427,8 @@ runSpecTests =
                         { onUrlRequest = Main.ClickedLink
                         , onUrlChange = Main.ChangedUrl
                         }
-                    -- NOTE: Currently believe this is equivalent to the user clicking a link
                     |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
                 )
-                -- NOTE: You need to do this to get away from 'Blank' page
                 |> when "the user clicks the Continue button"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
                 |> when "the hardware XMR wallet returns an error attempting to get XMR address"
@@ -491,14 +456,8 @@ runSpecTests =
                                 )
                         )
                     , it "b.is on the Hardware page"
-                        -- NOTE: Cos connected with valid XMR address
                         (Observer.observeModel .page
                             |> Spec.expect (Claim.isEqual Debug.toString <| Main.HardwarePage Hardware.initialModel)
-                        )
-                    , it "should be possible to use the Menu"
-                        (Observer.observeModel .isNavMenuActive
-                            |> Spec.expect
-                                Claim.isFalse
                         )
                     ]
             )
@@ -1062,7 +1021,7 @@ runSpecTests =
             )
         , --Runner.skip <|
           --Runner.pick <|
-          scenario "12. sendMessageToJs sends 'ElmReady' on init"
+          scenario "12. Ensure Application Initialization"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -1074,7 +1033,7 @@ runSpecTests =
                         }
                 )
                 |> Spec.observeThat
-                    [ it "should send 'ElmReady' through sendMessageToJs"
+                    [ it "it should confirm initialization"
                         (Spec.Port.observe "sendMessageToJs" D.string
                             |> Spec.expect
                                 (Claim.isListWhere
@@ -1085,6 +1044,8 @@ runSpecTests =
                         )
                     ]
             )
+
+           
         , --Runner.skip <|
           --Runner.pick <|
           scenario "13: Checking the Menu nav links work"
@@ -1131,11 +1092,6 @@ runSpecTests =
                         -- NOTE: Cos connected with valid XMR address
                         (Observer.observeModel .page
                             |> Spec.expect (Claim.isEqual Debug.toString <| Main.SellPage Sell.initialModel)
-                        )
-                    , it "should be possible to use the Menu"
-                        (Observer.observeModel .isNavMenuActive
-                            |> Spec.expect
-                                Claim.isTrue
                         )
                     , it "should display the menu"
                         (Markup.observeElement

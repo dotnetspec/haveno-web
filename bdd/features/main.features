@@ -158,6 +158,51 @@ be compatible with hwd usage and suggest working mobile browser versions
 **And** it should display the Wallet page
 
 
+#### **Scenario 12: Ensure Application Initialization**
+
+**Given** the application is initialized
+**When** the application starts
+**Then** it should confirm initialization
+
+#### **Scenario 13: Checking the Menu Nav Links Work**
+
+**Given** the application is initialized
+**And** the user clicks the Continue button
+**And** the LNX hardware wallet is detected
+**And** the user uses the menu to navigate to the Wallet page
+**When** the user clicks the Sell navLink in the menu
+**Then** it should be possible to use the Menu
+**And** the application should be on the Sell page
+**And** the menu should be displayed
+
+#### **Scenario 14: Checking the Wallet Page Initialization After Using NavLink to Wallet**
+
+**Given** the application is initialized
+**And** the user clicks the Continue button
+**And** the LNX hardware wallet is detected
+**And** the hardware XMR wallet returns a valid XMR address
+**And** the user navigates to another navLink in the menu
+**When** the user clicks the Wallet navLink in the menu
+**Then** it should be possible to use the Menu
+**And** the menu should be displayed
+**And** the application should be on the Wallet page with an updated initial wallet model
+**And** the available balance should be displayed correctly
+**And** the reserved balance should be displayed correctly
+**And** the current address from the wallet page model should be displayed
+
+#### **Scenario 15: Checking the Wallet Page Initialization After ClickedTempXMRAddr**
+
+**Given** the application is initialized
+**And** the user clicks the Continue button
+**And** the LNX hardware wallet is detected
+**When** the user uses ClickedTempXMRAddr to simulate an address retrieval and navigate to the Wallet page
+**Then** it should be possible to use the Menu
+**And** the menu should be displayed
+**And** the application should be on the Wallet page with an updated initial wallet model
+**And** the available balance should be displayed correctly
+**And** the reserved balance should be displayed correctly
+**And** the current address from the wallet page model should be displayed
+
 
 
 ### **Summary**
