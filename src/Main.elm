@@ -110,6 +110,7 @@ init flag url key =
             , xmrWalletAddress = "" --""
             , isPopUpVisible = True
             , isNavMenuActive = False
+            , isApiConnected = False
             , version = "No Haveno version available"
             , currentJsMessage = ""
             , xmrHardwareWalletAddressError = Nothing
@@ -151,8 +152,7 @@ type alias Model =
     , xmrWalletAddress : String
     , isPopUpVisible : Bool
     , isNavMenuActive : Bool
-
-    --, isPageHeaderVisible : Bool
+    , isApiConnected : Bool
     , version : String
     , currentJsMessage : String
     , deviceModel : Maybe DeviceModel
@@ -279,7 +279,7 @@ update msg model =
 
         HidePopUp ->
             ( { model | isPopUpVisible = False, isNavMenuActive = False, page = HardwarePage Pages.Hardware.initialModel }
-            , Cmd.none
+            , sendVersionRequest Protobuf.defaultGetVersionRequest
             )
 
         OnInitHardwareDeviceConnect ->
@@ -289,6 +289,7 @@ update msg model =
                 "connectLNS"
             )
 
+        -- NOTE: GotVersion also used as an API Connection indicator
         GotVersion (Ok versionResp) ->
             let
                 verResp =
@@ -296,7 +297,7 @@ update msg model =
                         { version } ->
                             version
             in
-            ( { model | version = verResp }, Cmd.none )
+            ( { model | isApiConnected = True, version = verResp }, Cmd.none )
 
         GotVersion (Err _) ->
             ( { model | version = "Error obtaining version" }, Cmd.none )
@@ -438,15 +439,16 @@ update msg model =
 
                                 newPage =
                                     {- if updatedIsValidXMRAddressConnected then
-                                        let
-                                            newWalletModel =
-                                                --Pages.Wallet.initialModel
-                                                model.page
-                                        in
-                                        WalletPage { newWalletModel | address = updatedWalletAddress }
+                                           let
+                                               newWalletModel =
+                                                   --Pages.Wallet.initialModel
+                                                   model.page
+                                           in
+                                           WalletPage { newWalletModel | address = updatedWalletAddress }
 
-                                    else -}
-                                        HardwarePage newHardwareModel
+                                       else
+                                    -}
+                                    HardwarePage newHardwareModel
 
                                 newUrlAfterCheckConnections =
                                     if updatedIsValidXMRAddressConnected then
@@ -603,8 +605,6 @@ update msg model =
                         -- HACK: ClickedTempXMRAddr is only necessary until we can get a valid address from the device
                         Pages.Hardware.ClickedTempXMRAddr ->
                             let
-                                
-
                                 newWalletModel =
                                     Pages.Wallet.initialModel
 
@@ -718,14 +718,11 @@ view model =
                 ]
                 [ div [ class "topLogo-content" ]
                     [ topLogo ]
-
-                {- else if model.isHardwareLNXConnected then
-                   div [] [ text "Nano X Connected" ]
-                -}
                 ]
             , contentByPage
             , isHWDeviceConnectedIndicator model
             , isXMRWalletConnectedIndicator model
+            , apiConnectionStatusIndicator model
             , footerContent model
             ]
         }
@@ -1495,6 +1492,40 @@ isXMRWalletConnectedIndicator model =
 
                          else
                             "No XMR Wallet Address"
+                        )
+                    ]
+                ]
+            ]
+        ]
+
+
+apiConnectionStatusIndicator : Model -> Html msg
+apiConnectionStatusIndicator model =
+    h4 []
+        [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
+            [ span []
+                [ h4
+                    [ Attr.class
+                        (if model.isApiConnected then
+                            "indicator green"
+
+                         else if model.isPopUpVisible then
+                            "indicator white"
+
+                         else
+                            "indicator red"
+                        )
+                    , Attr.id "apiConnectionStatus"
+                    ]
+                    [ text
+                        (if model.isApiConnected then
+                            "Connected to Haveno API"
+
+                         else if model.isPopUpVisible then
+                            "_"
+
+                         else
+                            "Not Connected to Haveno API"
                         )
                     ]
                 ]

@@ -203,11 +203,17 @@ be compatible with hwd usage and suggest working mobile browser versions
 **And** the reserved balance should be displayed correctly
 **And** the current address from the wallet page model should be displayed
 
+#### **Scenario 16: Display API connection status after user clicks Continue**
+
+**Given** the application is initialized
+**And** the user clicks the Continue button
+**When** the application attempts to connect with the Haveno API
+**Then** it should display a message indicating whether the connection to the Haveno API was successful or not
+
 
 
 ### **Summary**
 
-These scenarios outline the critical interactions between the mobile Tor-based web app and the user-buildable APK leveraging a Haveno daemon. 
-he scenarios cover essential functions like accessing the web app, connecting hardware wallets, initiating and handling transactions, and 
-ensuring secure communication.
+These scenarios outline the critical interactions between the mobile Chrome-based web app and the API leveraging a Haveno daemon. 
+The scenarios cover essential functions like accessing the web app, connecting hardware wallets, initiating and handling transactions, and ensuring secure communication.
 

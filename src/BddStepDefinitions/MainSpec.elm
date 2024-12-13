@@ -1044,8 +1044,6 @@ runSpecTests =
                         )
                     ]
             )
-
-           
         , --Runner.skip <|
           --Runner.pick <|
           scenario "13: Checking the Menu nav links work"
@@ -1141,7 +1139,6 @@ runSpecTests =
                 -- Simulate user clicking the Wallet href navLink in the simple menu
                 |> when "the user then clicks the Wallet navLink in the menu"
                     [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
-                -- Simulate user clicking the Wallet navLink in the burger menu
                 {- |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
                    ]
@@ -1232,43 +1229,9 @@ runSpecTests =
                     [ -- NOTE: 'send' here means send from js to elm
                       Spec.Port.send "receiveMessageFromJs" jsonNanoXDetected
                     ]
-                {- |> when "the hardware XMR wallet returns a valid XMR address"
-                   [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
-                   ]
-                -}
-                {- |> when "the user navigates to another navLink in the menu"
-                   [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
-                -}
                 -- HACK: This gives us a valid XMR address for testing from the UI, so use for now:
                 |> when "the user uses ClickedTempXMRAddr to simulte an address retrieval and nav to the Wallet page"
                     [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
-                -- NOTE: We need to simulate a GetBalancesReply with all the balance data:
-                -- NOTE: Protobuf.Decode.decode (TestData.encodeGrpcMessage TestData.getBalanceEncodedResponse) gives us the expected balances with Int64 etc. decoded
-                {- |> when "the ClickedTempXMRAddr a GotBalances message is received"
-                   [ Spec.Command.send
-                       (Spec.Command.fake <|
-                           Main.GotWalletMsg
-                               (Wallet.GotBalances
-                                   (Ok
-                                       (Maybe.withDefault Protobuf.defaultGetBalancesReply
-                                           (Protobuf.Decode.decode Protobuf.decodeGetBalancesReply
-                                               (TestData.encodeGrpcMessage TestData.getBalanceEncodedResponse)
-                                           )
-                                       )
-                                   )
-                               )
-                       )
-                   ]
-                -}
-                -- Simulate user clicking the Wallet href navLink in the simple menu
-                {- |> when "the user then clicks the Wallet navLink in the menu"
-                   [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
-                -}
-                -- Simulate user clicking the Wallet navLink in the burger menu
-                {- |> Spec.when "we log the http requests"
-                   [ Spec.Http.logRequests
-                   ]
-                -}
                 |> Spec.observeThat
                     [ it "should be possible to use the Menu"
                         (Observer.observeModel .isNavMenuActive
@@ -1328,6 +1291,38 @@ runSpecTests =
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
                                         Claim.isStringContaining 1 "Current address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                )
+                        )
+                    ]
+            )
+        , --Runner.skip <|
+          --Runner.pick <|
+          scenario "16: Display API connection status after user clicks Continue"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Stub.serve [ TestData.successfullVersionFetch ]
+                )
+                |> when "the user clicks the Continue button and the application attempts to connect with the Haveno API"
+                    [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
+                |> Spec.when "we log the http requests"
+                    [ Spec.Http.logRequests
+                    ]
+                |> Spec.observeThat
+                    [ it "should display a message indicating whether the connection to the Haveno API was successful or not"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "apiConnectionStatus" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Connected to Haveno API"
                                 )
                         )
                     ]
