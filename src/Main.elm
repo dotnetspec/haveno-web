@@ -720,12 +720,20 @@ view model =
                     [ topLogo ]
                 ]
             , contentByPage
-            , isHWDeviceConnectedIndicator model
-            , isXMRWalletConnectedIndicator model
-            , apiConnectionStatusIndicator model
+            , indicatorContainer model
             , footerContent model
             ]
         }
+
+
+indicatorContainer : Model -> Html msg
+indicatorContainer model =
+    div [ Attr.class "indicator-container" ]
+        [ isHWDeviceConnectedIndicator model
+        , apiConnectionStatusIndicator model
+        , isXMRWalletConnectedIndicator model
+        , hasReceivedXMRAddrIndicator model
+        ]
 
 
 
@@ -1398,7 +1406,7 @@ logOutUser =
 
 isHWDeviceConnectedIndicator : Model -> Html msg
 isHWDeviceConnectedIndicator model =
-    h4 []
+    span []
         [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
             [ span []
                 [ span
@@ -1412,28 +1420,17 @@ isHWDeviceConnectedIndicator model =
                          else
                             "indicator red"
                         )
-                    , id "connectionIndicator"
+                    , Attr.id "hwdeviceconnection"
                     ]
                     [ text
-                        (if model.isPopUpVisible then
+                        (if model.isHardwareDeviceConnected then
+                            "✔"
+
+                         else if model.isPopUpVisible then
                             "_"
 
-                         else if model.isHardwareDeviceConnected then
-                            case model.deviceModel of
-                                Just NanoS ->
-                                    "Nano S Connected"
-
-                                Just NanoX ->
-                                    "Nano X Connected"
-
-                                Nothing ->
-                                    "Unable to detect device model"
-
-                         else if model.xmrHardwareWalletAddressError == Just DeviceNeedsPermission then
-                            "Please connect to a Chrome based mobile browser"
-
                          else
-                            "No hardware device connected"
+                            "✖"
                         )
                     ]
                 ]
@@ -1443,10 +1440,10 @@ isHWDeviceConnectedIndicator model =
 
 isXMRWalletConnectedIndicator : Model -> Html msg
 isXMRWalletConnectedIndicator model =
-    h4 []
+    span []
         [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
             [ span []
-                [ h4
+                [ span
                     [ Attr.class
                         (if model.isXMRWalletConnected then
                             "indicator green"
@@ -1461,18 +1458,28 @@ isXMRWalletConnectedIndicator model =
                     ]
                     [ text
                         (if model.isXMRWalletConnected then
-                            "XMR Wallet Connected"
+                            "✔"
 
                          else if model.isPopUpVisible then
                             "_"
 
                          else
-                            "XMR Wallet Not Connected"
+                            "✖"
                         )
                     ]
-                , h4
+                ]
+            ]
+        ]
+
+
+hasReceivedXMRAddrIndicator : Model -> Html msg
+hasReceivedXMRAddrIndicator model =
+    span []
+        [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
+            [ span []
+                [ span
                     [ Attr.class
-                        (if (model.isHardwareDeviceConnected || model.isHardwareDeviceConnected) && model.isXMRWalletConnected && isValidXMRAddress model.xmrWalletAddress then
+                        (if not (model.xmrWalletAddress == "") then
                             "indicator green"
 
                          else if model.isPopUpVisible then
@@ -1481,17 +1488,17 @@ isXMRWalletConnectedIndicator model =
                          else
                             "indicator red"
                         )
-                    , Attr.id "xmrwalletaddress"
+                    , Attr.id "xmraddressreceived"
                     ]
                     [ text
-                        (if model.isHardwareDeviceConnected then
-                            "XMR Wallet Address: " ++ model.xmrWalletAddress
+                        (if not (model.xmrWalletAddress == "") then
+                            "✔"
 
                          else if model.isPopUpVisible then
                             "_"
 
                          else
-                            "No XMR Wallet Address"
+                            "✖"
                         )
                     ]
                 ]
@@ -1501,10 +1508,10 @@ isXMRWalletConnectedIndicator model =
 
 apiConnectionStatusIndicator : Model -> Html msg
 apiConnectionStatusIndicator model =
-    h4 []
+    span []
         [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
             [ span []
-                [ h4
+                [ span
                     [ Attr.class
                         (if model.isApiConnected then
                             "indicator green"
@@ -1519,13 +1526,13 @@ apiConnectionStatusIndicator model =
                     ]
                     [ text
                         (if model.isApiConnected then
-                            "Connected to Haveno API"
+                            "✔"
 
                          else if model.isPopUpVisible then
                             "_"
 
                          else
-                            "Not Connected to Haveno API"
+                            "✖"
                         )
                     ]
                 ]
@@ -1545,7 +1552,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.1.25" ]
+                , p [] [ text "Version 0.1.26" ]
                 , text "Haveno Version"
                 , p [ id "havenofooterver" ]
                     [ text

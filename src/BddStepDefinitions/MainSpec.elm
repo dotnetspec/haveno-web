@@ -176,11 +176,11 @@ runSpecTests =
                     , it "should display the 'Connected' indicator as Disconnected (red)"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ tag "h4" ]
+                            << by [ Spec.Markup.Selector.id "apiConnectionStatus" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Please connect to a Chrome based mobile browser"
+                                        Claim.isStringContaining 1 "✖"
                                 )
                         )
                     , it "should NOT be possible to use the Menu"
@@ -252,7 +252,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Connected"
+                                        Claim.isStringContaining 1 "✔"
                                 )
                         )
                     , it "e. should display the hardware page"
@@ -326,7 +326,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "XMR Wallet Not Connected"
+                                        Claim.isStringContaining 1 "✖"
                                 )
                         )
                     , it "should NOT be possible to use the Menu"
@@ -381,17 +381,17 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "XMR Wallet Connected"
+                                        Claim.isStringContaining 1 "✔"
                                 )
                         )
                     , it "e. should display a confirmation message indicating successful discovery of XMR wallet address"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ Spec.Markup.Selector.id "xmrwalletaddress" ]
+                            << by [ Spec.Markup.Selector.id "xmraddressreceived" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "XMR Wallet Address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        Claim.isStringContaining 1 "✔"
                                 )
                         )
                     , it "b.is on the Wallet page"
@@ -452,7 +452,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "XMR Wallet Not Connected"
+                                        Claim.isStringContaining 1 "✖"
                                 )
                         )
                     , it "b.is on the Hardware page"
@@ -709,14 +709,14 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isTrue
                         )
-                    , it "it should display a message informing the user connected"
+                    , it "should display a message informing the user connected"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ Spec.Markup.Selector.id "connectionIndicator" ]
+                            << by [ Spec.Markup.Selector.id "hwdeviceconnection" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Connected"
+                                        Claim.isStringContaining 1 "✔"
                                 )
                         )
 
@@ -731,7 +731,7 @@ runSpecTests =
             )
         , --Runner.skip <|
           --Runner.pick <|
-          scenario "9: User unable to confirm hware device connection in browser"
+          scenario "9: User UNable to confirm hware device connection in browser"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -779,11 +779,11 @@ runSpecTests =
                     , it "should display a message informing the user should switch to another browser type"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ Spec.Markup.Selector.id "connectionIndicator" ]
+                            << by [ Spec.Markup.Selector.id "hwdeviceconnection" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Please connect to a Chrome based mobile browser"
+                                        Claim.isStringContaining 1 "✖"
                                 )
                         )
                     ]
@@ -813,10 +813,7 @@ runSpecTests =
                 |> when "the hardware XMR wallet returns a valid XMR address"
                     [ Spec.Port.send "receiveMessageFromJs" validXMRWalletAddress
                     ]
-                -- HACK: This gives us a valid XMR address for testing from the UI
-                {- |> when "the user clicks the Grant Browser Permissions button"
-                   [ Spec.Command.send (Spec.Command.fake <| Main.GotHardwareMsg Hardware.ClickedTempXMRAddr) ]
-                -}
+                
                 |> Spec.observeThat
                     [ it "a.hides the popup"
                         (Observer.observeModel .isPopUpVisible
@@ -835,17 +832,17 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "XMR Wallet Connected"
+                                        Claim.isStringContaining 1 "✔"
                                 )
                         )
                     , it "e. should display a confirmation message indicating successful discovery of XMR wallet address"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ Spec.Markup.Selector.id "xmrwalletaddress" ]
+                            << by [ Spec.Markup.Selector.id "xmraddressreceived" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "XMR Wallet Address: BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        Claim.isStringContaining 1 "✔"
                                 )
                         )
                     , it "f.is on the Hardware page"
@@ -1311,9 +1308,9 @@ runSpecTests =
                 )
                 |> when "the user clicks the Continue button and the application attempts to connect with the Haveno API"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
-                |> Spec.when "we log the http requests"
+               {-  |> Spec.when "we log the http requests"
                     [ Spec.Http.logRequests
-                    ]
+                    ] -}
                 |> Spec.observeThat
                     [ it "should display a message indicating whether the connection to the Haveno API was successful or not"
                         (Markup.observeElement
@@ -1322,7 +1319,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Connected to Haveno API"
+                                        Claim.isStringContaining 1 "✔"
                                 )
                         )
                     ]
@@ -1343,9 +1340,9 @@ runSpecTests =
                 )
                 |> when "the user clicks the Continue button and the application attempts to connect with the Haveno API"
                     [ Spec.Command.send (Spec.Command.fake Main.HidePopUp) ]
-                |> Spec.when "we log the http requests"
+                {- |> Spec.when "we log the http requests"
                     [ Spec.Http.logRequests
-                    ]
+                    ] -}
                 |> Spec.observeThat
                     [ it "should display a message indicating whether the connection to the Haveno API was successful or not"
                         (Markup.observeElement
@@ -1354,7 +1351,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Not Connected to Haveno API"
+                                        Claim.isStringContaining 1 "✖"
                                 )
                         )
                     ]
