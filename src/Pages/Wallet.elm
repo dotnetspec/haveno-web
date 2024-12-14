@@ -113,7 +113,7 @@ view model =
                         ]
 
                 Errored ->
-                    div [] [ Html.text "Error" ]
+                    div [class "split-col"] [ errorView ]
 
                 Loaded ->
                     div
@@ -142,6 +142,14 @@ custodialWalletView model =
             [ Html.text ("Available BTC Balance: " ++ btcBalanceAsString model.balances ++ " BTC") ]
         , Html.div [ Attr.id "reservedOfferBalance", Attr.class "balance-text" ]
             [ Html.text ("Reserved Offer Balance: " ++ reservedOfferBalanceAsString model.balances ++ " XMR") ]
+        ]
+
+errorView : Html Msg
+errorView =
+    Html.div [ Attr.class "wallet-container" ]
+        [ Html.h1 [ Attr.class "wallet-title" ] [ Html.text "Wallet" ]
+        , Html.div [ Attr.class "error-message", Attr.id "wallet-error-message" ]
+            [ Html.text "Error: Unable to retrieve balances. Please try again later." ]
         ]
 
 

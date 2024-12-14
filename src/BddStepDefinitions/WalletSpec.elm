@@ -1,22 +1,19 @@
 module BddStepDefinitions.WalletSpec exposing (..)
 
--- NOTE: You can only do tests that work within the page, and even then have to find a way to set to Loaded,
--- to get a view. This is why everything is commented out here. Wallet can still be tested from MainSpec and
--- with Unit tests.
-
 import BddStepDefinitions.Extra exposing (..)
 import BddStepDefinitions.Runner as Runner exposing (..)
 import Browser
 import Browser.Navigation as Nav exposing (Key)
 import Expect exposing (equal)
 import Extras.TestData as TestData exposing (..)
+import Grpc
 import Html exposing (Html, div, i)
 import Json.Encode as E
 import Pages.Blank
 import Pages.Dashboard as Dashboard exposing (..)
 import Pages.Hardware as Hardware exposing (..)
 import Pages.Wallet as Wallet exposing (Model, Msg, init, update, view)
-import Proto.Io.Haveno.Protobuffer exposing (BalancesInfo)
+import Proto.Io.Haveno.Protobuffer as Protobuf exposing (BalancesInfo)
 import Protobuf.Types.Int64 exposing (fromInts)
 import Spec exposing (..)
 import Spec.Claim as Claim exposing (Claim, Verdict)
@@ -50,26 +47,30 @@ gotXmrBalance balances =
             ( 0, 0 )
 
 
+
 runSpecTests : Spec Wallet.Model Wallet.Msg
 runSpecTests =
     describe
         "Haveno Web App Wallet Tests"
         [ --Runner.skip <|
           --Runner.pick <|
-          -- NOTE: This is really just a placeholder for now. See note at top.
-          scenario "1: Accessing the Wallet page"
+          scenario "1: Accessing the Wallet page with valid balance data"
             (given
                 (Spec.Setup.init (Wallet.init "http://localhost:1234")
                     |> Spec.Setup.withView Wallet.view
                     |> Spec.Setup.withUpdate Wallet.update
                     |> Spec.Setup.withLocation placeholderUrl
                 )
+               
+                |> when "the user has already clicked the Continue button and triggered the Wallet page"
+                   [ Spec.Command.send (Spec.Command.fake <| Wallet.GotBalances (Ok Protobuf.defaultGetBalancesReply)) ]
+               
                 |> Spec.observeThat
-                    [ it "status is Loaded"
+                    [ it "has status as Loaded"
                         (Observer.observeModel .status
-                            |> Spec.expect (equals Wallet.Loading)
+                            |> Spec.expect (equals Wallet.Loaded)
                         )
-                    {- , it "displays the Wallet page correctly"
+                    , it "displays the Wallet page correctly"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ tag "h1" ]
@@ -78,13 +79,43 @@ runSpecTests =
                                     Markup.text <|
                                         Claim.isStringContaining 1 "Wallet"
                                 )
-                        ) -}
+                        )
+                    ]
+            )
+        , --Runner.skip <|
+          --Runner.pick <|
+          scenario "2: Handling the Wallet page with INvalid balance data"
+            (given
+                (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                    |> Spec.Setup.withView Wallet.view
+                    |> Spec.Setup.withUpdate Wallet.update
+                    |> Spec.Setup.withLocation placeholderUrl
+                )
+               
+                |> when "the user has already clicked the Continue button and triggered the Wallet page"
+                   [ Spec.Command.send (Spec.Command.fake <| Wallet.GotBalances (Result.Err <| Grpc.UnknownGrpcStatus "unknown")) ]
+               
+                |> Spec.observeThat
+                    [ it "has status as Loaded"
+                        (Observer.observeModel .status
+                            |> Spec.expect (equals Wallet.Errored)
+                        )
+                    , it "displays the Wallet page correctly"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id  "wallet-error-message" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Error: Unable to retrieve balances. Please try again later."
+                                )
+                        )
                     ]
             )
 
         --, --Runner.skip <|
         --Runner.pick <|
-        {- scenario "2: Show available balance and reserved balance correctly in the UI"
+        , scenario "2a: Show available balance and reserved balance correctly in the UI"
            (given
                (Spec.Setup.init (Wallet.init "http://localhost:1234")
                    |> Spec.Setup.withView Wallet.view
@@ -104,7 +135,7 @@ runSpecTests =
                            |> Spec.expect
                                (Claim.isSomethingWhere <|
                                    Markup.text <|
-                                       Claim.isStringContaining 1 "Available Balance: 100.0 XMR"
+                                       Claim.isStringContaining 1 "Available Balance: 10000.0 XMR"
                                )
                        )
                    , it "displays the reserved balance correctly"
@@ -114,12 +145,12 @@ runSpecTests =
                            |> Spec.expect
                                (Claim.isSomethingWhere <|
                                    Markup.text <|
-                                       Claim.isStringContaining 1 "Reserved Offer Balance: 50.0 XMR"
+                                       Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
                                )
                        )
                    ]
            )
-        -}
+       
         -- NOTE: Uncomment these tests one at a time to maintain managability
         {- , scenario "3: Generating a New Subaddress"
                (given
