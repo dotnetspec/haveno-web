@@ -2,17 +2,6 @@ module Pages.Wallet exposing (Model, Msg(..), Status(..), View(..), gotNewSubAdd
 
 import Buttons.Default exposing (defaultButton)
 import Debug exposing (log)
-import Element exposing (Attribute, Element, el, text)
-import Element.Font as Font
-import Element.Input as Input
-import Element.Region as Region
-import Framework
-import Framework.Button as Button
-import Framework.Card as Card
-import Framework.Color as Color
-import Framework.Grid as Grid
-import Framework.Heading as Heading
-import Framework.Input as Input
 import Grpc exposing (..)
 import Html exposing (Html, div, section, text)
 import Html.Attributes as Attr exposing (class, id)
@@ -20,7 +9,6 @@ import Http exposing (..)
 import Json.Encode as E exposing (..)
 import Maybe exposing (withDefault)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
-import Proto.Io.Haveno.Protobuffer.Internals_
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import Protobuf.Types.Int64 exposing (toInts)
 import Spec.Markup exposing (log)
@@ -75,7 +63,6 @@ init _ =
     -- HACK: Hardcoding the address for now
     ( initialModel
     , Cmd.batch [ gotAvailableBalances, gotNewSubAddress ]
-   
     )
 
 
@@ -92,14 +79,12 @@ update msg model =
     case msg of
         ClickedGotNewSubaddress ->
             let
-                
-                _ = Debug.log "ClickedGotNewSubaddress" "ClickedGotNewSubaddress"
+                _ =
+                    Debug.log "ClickedGotNewSubaddress" "ClickedGotNewSubaddress"
             in
-            
             ( model, gotNewSubAddress )
 
         GotNewSubaddress (Ok subAddresponse) ->
-            
             ( { model | subaddress = subAddresponse.subaddress, status = Loaded, currentView = SubAddressView }, Cmd.none )
 
         GotNewSubaddress (Err error) ->
@@ -173,15 +158,6 @@ view model =
 -- NAV: View helpers:
 
 
-{- getSubAddrBtn : Model -> Element Msg
-getSubAddrBtn model =
-    Element.column Grid.section <|
-        [ Element.el [] <| Element.text " Obtain a new sub address"
-        , MyUtils.infoBtn "New Sub Address" <| ClickedGotNewSubaddress
-        ] -}
-        
-
-
 custodialWalletView : Model -> Html Msg
 custodialWalletView model =
     Html.div [ Attr.class "wallet-container", Attr.id "custodialWalletView" ]
@@ -194,6 +170,7 @@ custodialWalletView model =
             [ Html.text ("Available BTC Balance: " ++ btcBalanceAsString model.balances ++ " BTC") ]
         , Html.div [ Attr.id "reservedOfferBalance", Attr.class "balance-text" ]
             [ Html.text ("Reserved Offer Balance: " ++ reservedOfferBalanceAsString model.balances ++ " XMR") ]
+        , MyUtils.infoBtn "New Sub Address" <| ClickedGotNewSubaddress
         ]
 
 
@@ -212,9 +189,9 @@ subAddressView newSubaddress =
         [ Html.h1 [ Attr.class "wallet-title" ] [ Html.text "Wallet" ]
         , Html.div [ Attr.class "subaddress-message", Attr.id "newSubaddress" ]
             [ Html.text ("New Subaddress: " ++ newSubaddress) ]
+
         --, getSubAddrBtn initialModel
         ]
-        
 
 
 xmrBalanceAsString : Maybe Protobuf.BalancesInfo -> String
@@ -293,7 +270,6 @@ gotAvailableBalances =
 gotNewSubAddress : Cmd Msg
 gotNewSubAddress =
     let
-        
         grpcRequest =
             Grpc.new Wallets.getXmrNewSubaddress Protobuf.defaultGetXmrNewSubaddressRequest
                 |> Grpc.addHeader "password" "apitest"

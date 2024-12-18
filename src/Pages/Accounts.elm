@@ -268,8 +268,6 @@ update msg model =
             , Cmd.none
             )
 
-        
-
         RegisteredUserJoin ->
             -- TODO: Code the user join
             ( { model
@@ -289,8 +287,6 @@ update msg model =
               }
             , Cmd.none
             )
-
-       
 
         SpectatorJoin ->
             case model.user of
@@ -314,8 +310,6 @@ update msg model =
               }
             , Cmd.none
             )
-
-       
 
         -- REVIEW: Cancel code repitition
         CancelCreateNewRanking ->
@@ -371,17 +365,13 @@ update msg model =
 
         --( { model | selectedranking = R.Owned (R.updatedCity (R.gotRanking model.selectedranking) value) }, Cmd.none )
         CreateNewRanking userInfo ->
-            
-            ( 
-              model
+            ( model
             , Cmd.none
             )
 
         -- TODO: This will probably be rm
         ViewMember _ ->
             ( model, Cmd.none )
-
-        
 
         -- NAV: ResponseDataFromMain - key function
         -- NOTE: All the branching here is configuring the model according to
@@ -441,7 +431,6 @@ update msg model =
         Confirm ->
             ( model, Cmd.none )
 
-        
         Cancel ->
             -- RF: You can make the cancel context specific to the query type
             ( case model.queryType of
@@ -449,8 +438,6 @@ update msg model =
                     { model
                         | queryType = OwnedSelectedView
                     }
-
-                
 
                 _ ->
                     { model
@@ -770,8 +757,6 @@ update msg model =
             , Cmd.none
             )
 
-        
-
         -- NAV: Update - User registration form fields
         UpdateNickName value ->
             let
@@ -933,15 +918,6 @@ view model =
 -- NOTE: Only a Registered user can do this:
 
 
-
-
-
-
-
-
-
-
-
 confirmDeleteUserView : U.UserInfo -> Html Msg
 confirmDeleteUserView userInfo =
     Framework.responsiveLayout [] <|
@@ -958,32 +934,7 @@ confirmDeleteUserView userInfo =
 
 
 
-
-
-
-
-
-
-
-
 -- NAV: Buttons
-
-
-
-
-spectatorView : Html Msg
-spectatorView =
-    Framework.responsiveLayout [] <|
-        Element.column Framework.container <|
-            [ El.globalHeading U.emptySpectator
-            , Element.text "\n Hi Spectator! \n"
-            , infoBtn "Back to Login" LogOut
-            , Element.text "\n"
-
-            --, infoBtn "Cancel" <| Cancel U.emptyUserInfo
-            ]
-
-
 
 
 accountInfoView : Model -> Html Msg
@@ -1058,7 +1009,6 @@ registerView userInfo =
             , userDetailsConfirmPanel userInfo
             , Element.text "\n"
             ]
-
 
 
 
@@ -1164,7 +1114,6 @@ type QueryType
     | MemberSelectedView
     | SpectatorSelectedView
     | ConfirmDeleteOwnedRanking
-  
     | PrepareResult
     | Error String
     | ConfirmJoinMemberView
@@ -1406,8 +1355,6 @@ additonalDataFromJsDecoder =
         (field "nickname" D.string)
 
 
-
-
 successfullLoginResultDecoder : Decoder SuccessfulLoginResult
 successfullLoginResultDecoder =
     D.map4 SuccessfulLoginResult
@@ -1459,13 +1406,6 @@ profileDecoder =
         (D.field "identities" identitiesDecoder)
         (D.field "data" providerDataDecoder)
         (D.field "type" D.string)
-
-
-
-
-
-
-
 
 
 
@@ -1542,9 +1482,6 @@ playerDecoder =
         (D.field "playerId" D.string)
         (D.field "challengerId" D.string)
         (D.field "rank" D.int)
-
-
-
 
 
 fullDocumentDecoder : Decoder FullDocument
@@ -1691,9 +1628,6 @@ profileRequest model =
 
 
 
-
-
-
 --Cmd.none
 
 
@@ -1704,8 +1638,6 @@ prepareEmailPwordLogin emailPword =
         , ( "email", E.string emailPword.email )
         , ( "password", E.string emailPword.password )
         ]
-
-
 
 
 ensureDataIsJsonObj : DataFromMongo -> D.Value
@@ -1748,9 +1680,6 @@ isValidXMRAddress str =
             False
 
 
-
-
-
 handleDecodeUser : D.Value -> U.UserInfo
 handleDecodeUser rawJsonMessage =
     let
@@ -1768,9 +1697,6 @@ handleDecodeUser rawJsonMessage =
         Err err ->
             -- HACK:
             U.emptyUserInfo
-
-
-
 
 
 getIdFromValue : D.Value -> Result D.Error String
@@ -1810,9 +1736,6 @@ convertJsonStringToJsonValue jsonString =
             -- There was an error decoding the JSON.
             -- The error message will give you some information about what went wrong.
             Err (D.errorToString err)
-
-
-
 
 
 isValidatedForAllUserDetailsInput : U.UserInfo -> Bool
@@ -2270,5 +2193,3 @@ gotLastUpdatedBy json =
 
 
 -- NAV: Html Snippets
-
-

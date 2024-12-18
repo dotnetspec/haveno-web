@@ -11,11 +11,9 @@ import Browser.Navigation as Nav exposing (..)
 import Data.Hardware as R
 import Data.User as U exposing (User(..))
 import Debug exposing (log)
-import Element exposing (Element, el)
 import Erl exposing (..)
 import Extras.Constants as Constants exposing (yck_id)
 import Extras.TestData as TestData exposing (placeholderUrl)
-import Framework.Heading as Heading
 import Grpc exposing (..)
 import Html exposing (Html, a, br, button, div, footer, h2, h3, h4, h5, h6, header, i, img, input, label, li, nav, node, p, source, span, text, ul)
 import Html.Attributes as Attr exposing (..)
@@ -36,15 +34,12 @@ import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map,
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
 import Protobuf.Decode
-import Spec.Navigator exposing (show)
-import Spec.Step exposing (log)
 import Task
 import Time
 import Types.DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 import Url.Parser exposing ((</>), (<?>), oneOf, s)
 import Url.Parser.Query as Query exposing (..)
-import Pages.Wallet as Wallet
 
 
 placeholderUrl =
@@ -561,15 +556,17 @@ update msg model =
         GotWalletMsg walletMsg ->
             case model.page of
                 WalletPage wallet ->
-                    
                     case walletMsg of
                         Pages.Wallet.ClickedGotNewSubaddress ->
                             let
-                                _ = Debug.log "ClickedGotNewSubaddress in Main" wallet
+                                _ =
+                                    Debug.log "ClickedGotNewSubaddress in Main" wallet
+
                                 newWalletModel =
-                                    { wallet | currentView = Wallet.SubAddressView, status = Pages.Wallet.Loaded }
+                                    { wallet | currentView = Pages.Wallet.SubAddressView, status = Pages.Wallet.Loaded }
                             in
                             toWallet model (Pages.Wallet.update walletMsg newWalletModel)
+
                         _ ->
                             toWallet model (Pages.Wallet.update walletMsg wallet)
 
@@ -1056,7 +1053,7 @@ toWallet : Model -> ( Pages.Wallet.Model, Cmd Pages.Wallet.Msg ) -> ( Model, Cmd
 toWallet model ( wallet, cmd ) =
     let
         newWalletModel =
-            { wallet | address = model.xmrWalletAddress}
+            { wallet | address = model.xmrWalletAddress }
     in
     ( { model | page = WalletPage newWalletModel }
     , Cmd.map GotWalletMsg cmd

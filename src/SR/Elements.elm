@@ -3,6 +3,7 @@
 -- For now we put here.
 -- WARN: Any elements that ref. Msg variant need to be in Main
 -- that will generally be buttons
+-- NOTE: Framework.responsiveLayout [] <| takes any Element Msg back to Html Msg
 
 
 module SR.Elements exposing
