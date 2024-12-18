@@ -44,6 +44,7 @@ import Types.DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 import Url.Parser exposing ((</>), (<?>), oneOf, s)
 import Url.Parser.Query as Query exposing (..)
+import Pages.Wallet as Wallet
 
 
 placeholderUrl =
@@ -560,7 +561,17 @@ update msg model =
         GotWalletMsg walletMsg ->
             case model.page of
                 WalletPage wallet ->
-                    toWallet model (Pages.Wallet.update walletMsg wallet)
+                    
+                    case walletMsg of
+                        Pages.Wallet.ClickedGotNewSubaddress ->
+                            let
+                                _ = Debug.log "ClickedGotNewSubaddress in Main" wallet
+                                newWalletModel =
+                                    { wallet | currentView = Wallet.SubAddressView, status = Pages.Wallet.Loaded }
+                            in
+                            toWallet model (Pages.Wallet.update walletMsg newWalletModel)
+                        _ ->
+                            toWallet model (Pages.Wallet.update walletMsg wallet)
 
                 _ ->
                     ( model, Cmd.none )
@@ -1045,7 +1056,7 @@ toWallet : Model -> ( Pages.Wallet.Model, Cmd Pages.Wallet.Msg ) -> ( Model, Cmd
 toWallet model ( wallet, cmd ) =
     let
         newWalletModel =
-            { wallet | address = model.xmrWalletAddress }
+            { wallet | address = model.xmrWalletAddress}
     in
     ( { model | page = WalletPage newWalletModel }
     , Cmd.map GotWalletMsg cmd

@@ -47,7 +47,6 @@ gotXmrBalance balances =
             ( 0, 0 )
 
 
-
 runSpecTests : Spec Wallet.Model Wallet.Msg
 runSpecTests =
     describe
@@ -61,10 +60,8 @@ runSpecTests =
                     |> Spec.Setup.withUpdate Wallet.update
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-               
                 |> when "the user has already clicked the Continue button and triggered the Wallet page"
-                   [ Spec.Command.send (Spec.Command.fake <| Wallet.GotBalances (Ok Protobuf.defaultGetBalancesReply)) ]
-               
+                    [ Spec.Command.send (Spec.Command.fake <| Wallet.GotBalances (Ok Protobuf.defaultGetBalancesReply)) ]
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
@@ -91,10 +88,8 @@ runSpecTests =
                     |> Spec.Setup.withUpdate Wallet.update
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-               
                 |> when "the user has already clicked the Continue button and triggered the Wallet page"
-                   [ Spec.Command.send (Spec.Command.fake <| Wallet.GotBalances (Result.Err <| Grpc.UnknownGrpcStatus "unknown")) ]
-               
+                    [ Spec.Command.send (Spec.Command.fake <| Wallet.GotBalances (Result.Err <| Grpc.UnknownGrpcStatus "unknown")) ]
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
@@ -103,7 +98,7 @@ runSpecTests =
                     , it "displays the Wallet page correctly"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ Spec.Markup.Selector.id  "wallet-error-message" ]
+                            << by [ Spec.Markup.Selector.id "wallet-error-message" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
@@ -116,65 +111,84 @@ runSpecTests =
         --, --Runner.skip <|
         --Runner.pick <|
         , scenario "2a: Show available balance and reserved balance correctly in the UI"
-           (given
-               (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                   |> Spec.Setup.withView Wallet.view
-                   |> Spec.Setup.withUpdate Wallet.update
-                   |> Spec.Setup.withLocation placeholderUrl
-                   |> Stub.serve [ TestData.successfulWalletWithBalancesFetch ]
-               )
-               |> Spec.when "we log the http requests"
-                   [ Spec.Http.logRequests
-                   ]
+            (given
+                (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                    |> Spec.Setup.withView Wallet.view
+                    |> Spec.Setup.withUpdate Wallet.update
+                    |> Spec.Setup.withLocation placeholderUrl
+                    |> Stub.serve [ TestData.successfulWalletWithBalancesFetch ]
+                )
+                |> Spec.when "we log the http requests"
+                    [ Spec.Http.logRequests
+                    ]
+                |> Spec.observeThat
+                    [ it "displays the available balance correctly"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ id "xmrbalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Available Balance: 10000.0 XMR"
+                                )
+                        )
+                    , it "displays the reserved balance correctly"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ id "reservedOfferBalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
+                                )
+                        )
+                    ]
+            )
+        {- , Runner.skip <|
+          --Runner.pick <|
+            scenario "3: Generating a New Subaddress"
+                (given
+                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                        |> Spec.Setup.withView Wallet.view
+                        |> Spec.Setup.withUpdate Wallet.update
+                        |> Spec.Setup.withLocation placeholderUrl
+                        |> Stub.serve [ TestData.successfullSubAddressFetch ]
+                    )
+                    |> Spec.when "we log the http requests"
+                        [ Spec.Http.logRequests
+                        ]
+                    {- |> when "the user requests a new subaddress"
+                           [ Spec.Command.send (Spec.Command.fake <| Wallet.GotNewSubaddress (Ok { subaddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" })) ]
+                       |> when "the user changes the view to subaddress"
+                           [ Spec.Command.send (Spec.Command.fake <| Wallet.ChangeView Wallet.SubAddressView) ]
+                    -}
+                    |> when "the user uses ClickedTempXMRAddr to simulte an address retrieval and nav to the Wallet page"
+                        [ Spec.Command.send (Spec.Command.fake <| Wallet.ClickedGotNewSubaddress) ]
+                    |> Spec.observeThat
+                        [ it "should have status as SubAddressView"
+                            (Observer.observeModel .status
+                                |> Spec.expect (equals Wallet.Loaded)
+                            )
+                        , it "should have currentView as SubAddressView"
+                            (Observer.observeModel .currentView
+                                |> Spec.expect (equals Wallet.SubAddressView)
+                            )
+                        , it "displays the new subaddress"
+                            (Markup.observeElement
+                                |> Markup.query
+                                << by [ id "newSubaddress" ]
+                                |> Spec.expect
+                                    (Claim.isSomethingWhere <|
+                                        Markup.text <|
+                                            Claim.isStringContaining 1 "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                    )
+                            )
+                        ]
+                ) -}
 
-               |> Spec.observeThat
-                   [ it "displays the available balance correctly"
-                       (Markup.observeElement
-                           |> Markup.query
-                           << by [ id "xmrbalance" ]
-                           |> Spec.expect
-                               (Claim.isSomethingWhere <|
-                                   Markup.text <|
-                                       Claim.isStringContaining 1 "Available Balance: 10000.0 XMR"
-                               )
-                       )
-                   , it "displays the reserved balance correctly"
-                       (Markup.observeElement
-                           |> Markup.query
-                           << by [ id "reservedOfferBalance" ]
-                           |> Spec.expect
-                               (Claim.isSomethingWhere <|
-                                   Markup.text <|
-                                       Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
-                               )
-                       )
-                   ]
-           )
-       
         -- NOTE: Uncomment these tests one at a time to maintain managability
-        {- , scenario "3: Generating a New Subaddress"
-               (given
-                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                       |> Spec.Setup.withView Wallet.view
-                       |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation placeholderUrl
-                   )
-                   |> when "the user requests a new subaddress"
-                       [ Spec.Port.send "receiveMessageFromJs" jsonRequestNewSubaddress ]
-                   |> Spec.observeThat
-                       [ it "displays the new subaddress"
-                           (Markup.observeElement
-                               |> Markup.query
-                               << by [ id "newSubaddress" ]
-                               |> Spec.expect
-                                   (Claim.isSomethingWhere <|
-                                       Markup.text <|
-                                           Claim.isStringContaining 1 "New Subaddress"
-                                   )
-                           )
-                       ]
-               )
-           , scenario "4: Retrieving the Primary Address"
+        {-
+           scenario "4: Retrieving the Primary Address"
                (given
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
@@ -182,7 +196,7 @@ runSpecTests =
                        |> Spec.Setup.withLocation placeholderUrl
                    )
                    |> when "the app retrieves the primary address"
-                       [ Spec.Port.send "receiveMessageFromJs" jsonRequestPrimaryAddress ]
+                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotPrimaryAddress (Ok "Primary Address")) ]
                    |> Spec.observeThat
                        [ it "displays the primary address"
                            (Markup.observeElement
@@ -196,7 +210,8 @@ runSpecTests =
                            )
                        ]
                )
-           , scenario "5: Checking Address Balance"
+
+           scenario "5: Checking Address Balance"
                (given
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
@@ -204,7 +219,7 @@ runSpecTests =
                        |> Spec.Setup.withLocation placeholderUrl
                    )
                    |> when "the app queries the address balance"
-                       [ Spec.Port.send "receiveMessageFromJs" (jsonRequestAddressBalance "someAddress") ]
+                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotAddressBalance (Ok "Address Balance: 0.0 XMR")) ]
                    |> Spec.observeThat
                        [ it "displays the address balance"
                            (Markup.observeElement
@@ -218,7 +233,8 @@ runSpecTests =
                            )
                        ]
                )
-           , scenario "6: Viewing Funding Addresses"
+
+           scenario "6: Viewing Funding Addresses"
                (given
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
@@ -226,7 +242,7 @@ runSpecTests =
                        |> Spec.Setup.withLocation placeholderUrl
                    )
                    |> when "the app retrieves the funding addresses"
-                       [ Spec.Port.send "receiveMessageFromJs" jsonRequestFundingAddresses ]
+                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotFundingAddresses (Ok "Funding Address")) ]
                    |> Spec.observeThat
                        [ it "displays the funding addresses"
                            (Markup.observeElement
@@ -240,7 +256,8 @@ runSpecTests =
                            )
                        ]
                )
-           , scenario "7: Unlocking the Wallet"
+
+           scenario "7: Unlocking the Wallet"
                (given
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
@@ -248,7 +265,7 @@ runSpecTests =
                        |> Spec.Setup.withLocation placeholderUrl
                    )
                    |> when "the user attempts to unlock the wallet"
-                       [ Spec.Port.send "receiveMessageFromJs" jsonUnlockWalletRequest ]
+                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotUnlockWallet (Ok "Wallet Unlocked")) ]
                    |> Spec.observeThat
                        [ it "updates the Wallet page to reflect the unlocked state"
                            (Markup.observeElement
@@ -262,7 +279,8 @@ runSpecTests =
                            )
                        ]
                )
-           , scenario "8: Locking the Wallet"
+
+           scenario "8: Locking the Wallet"
                (given
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
@@ -270,7 +288,7 @@ runSpecTests =
                        |> Spec.Setup.withLocation placeholderUrl
                    )
                    |> when "the user requests to lock the wallet"
-                       [ Spec.Port.send "receiveMessageFromJs" jsonLockWalletRequest ]
+                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotLockWallet (Ok "Wallet Locked")) ]
                    |> Spec.observeThat
                        [ it "updates the Wallet page to reflect the locked state"
                            (Markup.observeElement
@@ -284,7 +302,8 @@ runSpecTests =
                            )
                        ]
                )
-           , scenario "9: Setting a Wallet Password"
+
+           scenario "9: Setting a Wallet Password"
                (given
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
@@ -292,7 +311,7 @@ runSpecTests =
                        |> Spec.Setup.withLocation placeholderUrl
                    )
                    |> when "the user sets a password for the wallet"
-                       [ Spec.Port.send "receiveMessageFromJs" jsonSetWalletPassword ]
+                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotSetWalletPassword (Ok "Password successfully set")) ]
                    |> Spec.observeThat
                        [ it "confirms the wallet password was successfully set"
                            (Markup.observeElement
@@ -306,7 +325,8 @@ runSpecTests =
                            )
                        ]
                )
-           , scenario "10: Removing the Wallet Password"
+
+           scenario "10: Removing the Wallet Password"
                (given
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
@@ -314,7 +334,7 @@ runSpecTests =
                        |> Spec.Setup.withLocation placeholderUrl
                    )
                    |> when "the user removes the wallet password"
-                       [ Spec.Port.send "receiveMessageFromJs" jsonRemoveWalletPassword ]
+                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotRemoveWalletPassword (Ok "Password successfully removed")) ]
                    |> Spec.observeThat
                        [ it "confirms the password was successfully removed"
                            (Markup.observeElement
@@ -328,7 +348,8 @@ runSpecTests =
                            )
                        ]
                )
-           , scenario "11: Relaying a Monero Transaction"
+
+           scenario "11: Relaying a Monero Transaction"
                (given
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
@@ -336,7 +357,7 @@ runSpecTests =
                        |> Spec.Setup.withLocation placeholderUrl
                    )
                    |> when "the user requests to relay a transaction"
-                       [ Spec.Port.send "receiveMessageFromJs" jsonRelayTransaction ]
+                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotRelayTransaction (Ok "Transaction Relayed")) ]
                    |> Spec.observeThat
                        [ it "broadcasts the transaction to the Monero network"
                            (Markup.observeElement
@@ -350,7 +371,8 @@ runSpecTests =
                            )
                        ]
                )
-           , scenario "12: Creating a New Monero Transaction"
+
+           scenario "12: Creating a New Monero Transaction"
                (given
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
@@ -358,7 +380,7 @@ runSpecTests =
                        |> Spec.Setup.withLocation placeholderUrl
                    )
                    |> when "the user initiates a new transaction"
-                       [ Spec.Port.send "receiveMessageFromJs" jsonCreateTransaction ]
+                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotCreateTransaction (Ok "Transaction Pending")) ]
                    |> Spec.observeThat
                        [ it "displays the pending transaction status"
                            (Markup.observeElement
@@ -372,7 +394,8 @@ runSpecTests =
                            )
                        ]
                )
-           , scenario "2: Show pending balance correctly when a transaction is initiated"
+
+           scenario "13: Show pending balance correctly when a transaction is initiated"
                (given
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
@@ -380,9 +403,9 @@ runSpecTests =
                        |> Spec.Setup.withLocation placeholderUrl
                    )
                    |> when "the user initiates a transaction"
-                       [ Spec.Port.send "receiveMessageFromJs" jsonTransactionInitiated ]
+                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotTransactionInitiated (Ok "Transaction Initiated")) ]
                    |> when "the transaction enters pending status"
-                       [ Spec.Port.send "receiveMessageFromJs" jsonTransactionPending ]
+                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotTransactionPending (Ok "Pending Balance: 20.0 XMR")) ]
                    |> Spec.observeThat
                        [ it "displays the pending balance correctly"
                            (Markup.observeElement
@@ -396,7 +419,8 @@ runSpecTests =
                            )
                        ]
                )
-           , scenario "3: Display warning when attempting to send more than available balance"
+
+           scenario "14: Display warning when attempting to send more than available balance"
                (given
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
@@ -404,7 +428,7 @@ runSpecTests =
                        |> Spec.Setup.withLocation placeholderUrl
                    )
                    |> when "the user attempts to send more than the available balance"
-                       [ Spec.Port.send "receiveMessageFromJs" jsonExceedsAvailableBalance ]
+                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotExceedsAvailableBalance (Ok "Insufficient funds")) ]
                    |> Spec.observeThat
                        [ it "displays an error message about insufficient funds"
                            (Markup.observeElement
@@ -418,7 +442,8 @@ runSpecTests =
                            )
                        ]
                )
-           , scenario "5: Show wallet balance updates after successful deposit"
+
+           scenario "15: Show wallet balance updates after successful deposit"
                (given
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
@@ -426,7 +451,7 @@ runSpecTests =
                        |> Spec.Setup.withLocation placeholderUrl
                    )
                    |> when "the user successfully deposits funds into the wallet"
-                       [ Spec.Port.send "receiveMessageFromJs" jsonDepositSuccess ]
+                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotDepositSuccess (Ok "Available Balance: 200.0 XMR")) ]
                    |> Spec.observeThat
                        [ it "updates the available balance after deposit"
                            (Markup.observeElement

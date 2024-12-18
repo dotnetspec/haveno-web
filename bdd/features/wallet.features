@@ -1,4 +1,3 @@
-
 ### **Feature: Haveno-Web Wallet**
 
 #### **Background:**
@@ -18,6 +17,7 @@ As per main.features:
 **When** the user navigates to the Wallet page
 **Then** the Wallet page is visible to the user
 
+---
 
 #### **Scenario 2: Show available balance and reserved balance correctly in the UI**
 
@@ -31,7 +31,7 @@ As per main.features:
 
 **Given** the hardware device is connected  
 **When** the user requests a new subaddress  
-**Then** the app generates a new Monero subaddress using `getXmrNewSubaddress`  
+**Then** the app generates a new Monero subaddress using `Wallet.GotNewSubaddress`  
 **And** the new subaddress is displayed to the user  
 
 ---
@@ -40,7 +40,7 @@ As per main.features:
 
 **Given** the Wallet page is open  
 **And** the hardware device is connected  
-**When** the app retrieves the primary Monero address using `getXmrPrimaryAddress`  
+**When** the app retrieves the primary Monero address using `Wallet.GotPrimaryAddress`  
 **Then** the primary address is displayed on the Wallet page  
 
 ---
@@ -48,7 +48,7 @@ As per main.features:
 #### **Scenario 5: Checking Address Balance**
 
 **Given** a Monero address is available  
-**When** the app queries the balance for the address using `getAddressBalance`  
+**When** the app queries the balance for the address using `Wallet.GotAddressBalance`  
 **Then** the balance for the specific address is displayed on the Wallet page  
 
 ---
@@ -56,7 +56,7 @@ As per main.features:
 #### **Scenario 6: Viewing Funding Addresses**
 
 **Given** the Wallet page is open  
-**When** the app retrieves available funding addresses using `getFundingAddresses`  
+**When** the app retrieves available funding addresses using `Wallet.GotFundingAddresses`  
 **Then** all funding addresses are displayed on the Wallet page  
 
 ---
@@ -66,7 +66,7 @@ As per main.features:
 **Given** the Wallet page is open  
 **And** the wallet is currently locked  
 **When** the user attempts to unlock the wallet  
-**Then** the app sends an `unlockWallet` request  
+**Then** the app sends an `Wallet.GotUnlockWallet` request  
 **And** the Wallet page updates to reflect the unlocked state  
 
 ---
@@ -76,7 +76,7 @@ As per main.features:
 **Given** the Wallet page is open  
 **And** the wallet is currently unlocked  
 **When** the user requests to lock the wallet  
-**Then** the app sends a `lockWallet` request  
+**Then** the app sends a `Wallet.GotLockWallet` request  
 **And** the Wallet page updates to reflect the locked state  
 
 ---
@@ -85,7 +85,7 @@ As per main.features:
 
 **Given** the Wallet page is open  
 **When** the user sets a password for the wallet  
-**Then** the app sends a `setWalletPassword` request  
+**Then** the app sends a `Wallet.GotSetWalletPassword` request  
 **And** the Wallet page confirms that the password was successfully set  
 
 ---
@@ -95,7 +95,7 @@ As per main.features:
 **Given** the Wallet page is open  
 **And** the wallet has a password set  
 **When** the user removes the wallet password  
-**Then** the app sends a `removeWalletPassword` request  
+**Then** the app sends a `Wallet.GotRemoveWalletPassword` request  
 **And** the Wallet page confirms the password was successfully removed  
 
 ---
@@ -104,7 +104,7 @@ As per main.features:
 
 **Given** the user has created a transaction  
 **When** the user requests to relay the transaction  
-**Then** the app sends a `relayXmrTx` request  
+**Then** the app sends a `Wallet.GotRelayTransaction` request  
 **And** the transaction is broadcast to the Monero network  
 
 ---
@@ -113,7 +113,7 @@ As per main.features:
 
 **Given** the Wallet page is open  
 **When** the user initiates a new transaction  
-**Then** the app sends a `createXmrTx` request with transaction details  
+**Then** the app sends a `Wallet.GotCreateTransaction` request with transaction details  
 **And** the Wallet page displays the pending transaction status  
 
 ---
@@ -122,7 +122,7 @@ As per main.features:
 
 **Given** the Wallet page is open  
 **When** the user requests to view recent transactions  
-**Then** the app retrieves the transactions using `getXmrTxs`  
+**Then** the app retrieves the transactions using `Wallet.GotXmrTxs`  
 **And** the transaction history is displayed on the Wallet page  
 
 ---
@@ -131,13 +131,5 @@ As per main.features:
 
 **Given** the Wallet page is open  
 **When** the user requests to view the wallet seed  
-**Then** the app sends a `getXmrSeed` request  
-**And** the wallet seed is securely displayed to the user  
-
-
-
-
-
-
-
-
+**Then** the app sends a `Wallet.GotXmrSeed` request  
+**And** the wallet seed is securely displayed to the user

@@ -5,7 +5,7 @@ module Utils.MyUtils exposing
     , removeNothingFromList
     , stringFromBool
     ,  stringFromMaybeString
-       --filterMap?:
+    , infoBtn
 
     )
 
@@ -17,6 +17,10 @@ import Http
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (BalancesInfo, BtcBalanceInfo, GetBalancesReply, GetBalancesRequest, XmrBalanceInfo, encodeGetBalancesReply, encodeGetBalancesRequest)
 import Protobuf.Decode
 import Protobuf.Types.Int64 exposing (Int64, fromInts, toInts)
+import Html exposing (Html, button, text)
+import Html.Attributes exposing (class)
+import Html.Events exposing (onClick)
+
 
 
 removeNothingFromList : List (Maybe a) -> List a
@@ -166,3 +170,8 @@ toStringGetBalancesReply reply =
         ++ "reserved = "
         ++ String.fromInt res1
         ++ " }"
+
+
+infoBtn : String -> msg -> Html msg
+infoBtn label msg =
+    button [ class "info-button", onClick msg ] [ text label ]

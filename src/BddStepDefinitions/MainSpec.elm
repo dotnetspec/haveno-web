@@ -405,6 +405,9 @@ runSpecTests =
                                         , errors = []
                                         , pagetitle = "Haveno Web Wallet"
                                         , status = Wallet.Loaded
+                                        , subaddress = ""
+                                        , currentView = Wallet.WalletView
+                                        
                                         }
                                 )
                         )
@@ -1168,6 +1171,8 @@ runSpecTests =
                                         , errors = []
                                         , pagetitle = "Haveno Web Wallet"
                                         , status = Wallet.Loaded
+                                        , subaddress = ""
+                                        , currentView = Wallet.WalletView
                                         }
                                 )
                         )
@@ -1257,6 +1262,8 @@ runSpecTests =
                                         , errors = []
                                         , pagetitle = "Haveno Web Wallet"
                                         , status = Wallet.Loaded
+                                        , subaddress = ""
+                                        , currentView = Wallet.WalletView
                                         }
                                 )
                         )

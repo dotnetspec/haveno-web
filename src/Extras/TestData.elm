@@ -30,35 +30,9 @@ grpcsetGetBalancesURL =
     "http://localhost:8080/io.haveno.protobuffer.Wallets/GetBalances"
 
 
-availabilityRequestURL27_Feb_2024_14_09 : String
-availabilityRequestURL27_Feb_2024_14_09 =
-    "http://localhost:3000/proxy?apiUrl=https://www.zohoapis.com/bookings/v1/json/availableslots&query_type=bookingsAvailability&service_id=4503471000000091024&staff_id=4503471000000033016&selected_date=27-Feb-2024 14:09"
-
-
-failedMongodbLoginStub : Stub.HttpResponseStub
-failedMongodbLoginStub =
-    Stub.for (Route.post loginRequestURL)
-        |> Stub.withStatus 401
-
-
-loginRequestURL : String
-loginRequestURL =
-    "https://ap-southeast-1.aws.realm.mongodb.com/api/client/v2.0/app/sr-espa1-snonq/auth/providers/local-userpass/login"
-
-
-loginRequestLocationURL : String
-loginRequestLocationURL =
-    "https://realm.mongodb.com/api/client/v2.0/app/sr-espa1-snonq/location"
-
-
-loginRequestProfileURL : String
-loginRequestProfileURL =
-    "https://ap-southeast-1.aws.realm.mongodb.com/api/client/v2.0/auth/profile"
-
-
-loginRequestCallURL : String
-loginRequestCallURL =
-    "https://ap-southeast-1.aws.realm.mongodb.com/api/client/v2.0/app/sr-espa1-snonq/functions/call"
+protoBufferWalletBaseUrl : String
+protoBufferWalletBaseUrl =
+    "http://localhost:8080/io.haveno.protobuffer.Wallets/"
 
 
 placeholderUrl : Url
@@ -152,6 +126,13 @@ successfulWalletWithBalancesFetch =
         |> Stub.withBody (Stub.withBytes <| encodeGrpcMessage getBalanceEncodedResponse)
 
 
+successfullSubAddressFetch : Stub.HttpResponseStub
+successfullSubAddressFetch =
+    Stub.for (Route.post <| protoBufferWalletBaseUrl ++ "GetSubAddresses")
+        |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
+        |> Stub.withBody (Stub.withBytes <| encodeGrpcMessage getSubAddressesEncodedResponse)
+
+
 
 -- NOTE: gRPC messages require custom config that is defined in encodeGrpcMessage
 
@@ -208,5 +189,21 @@ getBalanceEncodedResponse =
         encodedResponse : Bytes
         encodedResponse =
             Encode.encode (Protobuf.encodeGetBalancesReply balancesReply)
+    in
+    encodedResponse
+
+
+getSubAddressesEncodedResponse : Bytes
+getSubAddressesEncodedResponse =
+    let
+        -- Create a XmrBalanceInfo message with the desired balances
+        subAddrReply : Protobuf.GetXmrNewSubaddressReply
+        subAddrReply =
+            { subaddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" }
+
+        -- Encode the GetBalancesReply message to bytes
+        encodedResponse : Bytes
+        encodedResponse =
+            Encode.encode (Protobuf.encodeGetXmrNewSubaddressReply subAddrReply)
     in
     encodedResponse
