@@ -164,7 +164,7 @@ runSpecTests =
                     |> when "the response triggers GotNewSubaddress in Wallet.update"
                         [ Spec.Command.send (Spec.Command.fake <| 
                             (Wallet.GotNewSubaddress
-                                (Ok ({subaddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"})) -- Simulate the successful response
+                                (Ok ({subaddress = TestData.subAddress})) -- Simulate the successful response
                             ))
                         ]
                     |> Spec.observeThat
@@ -183,7 +183,7 @@ runSpecTests =
                                 |> Spec.expect
                                     (Claim.isSomethingWhere <|
                                         Markup.text <|
-                                            Claim.isStringContaining 1 "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                            Claim.isStringContaining 1 TestData.subAddress
                                     )
                             )
                         ]

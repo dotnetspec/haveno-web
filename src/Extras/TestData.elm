@@ -199,7 +199,7 @@ getSubAddressesEncodedResponse =
         -- Create a XmrBalanceInfo message with the desired balances
         subAddrReply : Protobuf.GetXmrNewSubaddressReply
         subAddrReply =
-            { subaddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" }
+            { subaddress = subAddress }
 
         -- Encode the GetBalancesReply message to bytes
         encodedResponse : Bytes

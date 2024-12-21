@@ -82,7 +82,7 @@ simpleTestValidXMRAddress =
         \() ->
             let
                 xmrAddress =
-                    "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                    TestData.subAddress
             in
             case parseValidXMRAddressKey xmrAddress of
                 Ok _ ->

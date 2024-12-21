@@ -619,7 +619,7 @@ update msg model =
                                         (Protobuf.Decode.decode Protobuf.decodeGetBalancesReply TestData.getBalanceEncodedResponse)
 
                                 newMainModel =
-                                    { model | page = WalletPage <| { newWalletModel | balances = updatedBalances.balances }, isNavMenuActive = True, isXMRWalletConnected = True, xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" }
+                                    { model | page = WalletPage <| { newWalletModel | balances = updatedBalances.balances }, isNavMenuActive = True, isXMRWalletConnected = True, xmrWalletAddress = TestData.subAddress }
                             in
                             toWallet newMainModel
                                 (Pages.Wallet.update

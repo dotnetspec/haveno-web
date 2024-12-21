@@ -404,7 +404,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
                                     Main.WalletPage <|
-                                        { address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        { address = TestData.subAddress
                                         , balances = Just expectedBalances
                                         , errors = []
                                         , pagetitle = "Haveno Web Wallet"
@@ -569,7 +569,7 @@ runSpecTests =
                                                 , updatetext = ""
                                                 , userid = ""
                                                 }
-                                        , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        , xmrWalletAddress = TestData.subAddress
                                         }
                                 )
                         )
@@ -657,7 +657,7 @@ runSpecTests =
                                                 , updatetext = ""
                                                 , userid = ""
                                                 }
-                                        , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        , xmrWalletAddress = TestData.subAddress
                                         }
                                 )
                         )
@@ -894,7 +894,7 @@ runSpecTests =
                                                 , updatetext = ""
                                                 , userid = ""
                                                 }
-                                        , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        , xmrWalletAddress = TestData.subAddress
                                         }
                                 )
                         )
@@ -962,7 +962,7 @@ runSpecTests =
                     , it "b. should be an address in the model"
                         (Observer.observeModel .xmrWalletAddress
                             |> Spec.expect
-                                (Claim.isEqual Debug.toString <| "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32")
+                                (Claim.isEqual Debug.toString <| TestData.subAddress)
                         )
                     , it "f.is on the Hardware page"
                         (Observer.observeModel .page
@@ -1006,7 +1006,7 @@ runSpecTests =
                                                 , updatetext = ""
                                                 , userid = ""
                                                 }
-                                        , xmrWalletAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        , xmrWalletAddress = TestData.subAddress
                                         }
                                 )
                         )
@@ -1170,7 +1170,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
                                     Main.WalletPage <|
-                                        { address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        { address = TestData.subAddress
                                         , balances = Just expectedBalances
                                         , errors = []
                                         , pagetitle = "Haveno Web Wallet"
@@ -1261,7 +1261,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
                                     Main.WalletPage <|
-                                        { address = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        { address = TestData.subAddress
                                         , balances = Just expectedBalances
                                         , errors = []
                                         , pagetitle = "Haveno Web Wallet"
@@ -1432,7 +1432,7 @@ noDeviceSelectedInBrowser =
 validXMRWalletAddress : E.Value
 validXMRWalletAddress =
     E.object
-        [ ( "operationEventMsg", E.string "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" )
+        [ ( "operationEventMsg", E.string TestData.subAddress )
         ]
 
 
