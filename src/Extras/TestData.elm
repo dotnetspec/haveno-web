@@ -207,3 +207,7 @@ getSubAddressesEncodedResponse =
             Encode.encode (Protobuf.encodeGetXmrNewSubaddressReply subAddrReply)
     in
     encodedResponse
+
+subAddress : String
+subAddress =
+    "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"

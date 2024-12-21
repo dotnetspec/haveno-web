@@ -559,9 +559,6 @@ update msg model =
                     case walletMsg of
                         Pages.Wallet.ClickedGotNewSubaddress ->
                             let
-                                _ =
-                                    Debug.log "ClickedGotNewSubaddress in Main" wallet
-
                                 newWalletModel =
                                     { wallet | currentView = Pages.Wallet.SubAddressView, status = Pages.Wallet.Loaded }
                             in
@@ -702,6 +699,7 @@ view model =
                         |> Html.map GotHardwareMsg
 
                 WalletPage wallet ->
+                    -- NOTE: Html.map is essential to wrap the Wallet.elm view and convert Wallet.Msg into Main.Msg
                     Pages.Wallet.view wallet
                         |> Html.map GotWalletMsg
     in
@@ -1560,7 +1558,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.1.27" ]
+                , p [] [ text "Version 0.1.28" ]
                 , text "Haveno Version"
                 , p [ id "havenofooterver" ]
                     [ text

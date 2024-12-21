@@ -46,7 +46,7 @@ gotXmrBalance balances =
         _ ->
             ( 0, 0 )
 
-
+-- NAV: Test scenarios
 runSpecTests : Spec Wallet.Model Wallet.Msg
 runSpecTests =
     describe
@@ -102,7 +102,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Error: Unable to retrieve balances. Please try again later."
+                                        Claim.isStringContaining 1 "Error: Unable to retrieve relevant data. Please try again later."
                                 )
                         )
                     ]
@@ -144,11 +144,11 @@ runSpecTests =
                         )
                     ]
             )
-        {- , Runner.skip <|
+        , --Runner.skip <|
           --Runner.pick <|
             scenario "3: Generating a New Subaddress"
                 (given
-                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
+                    (Spec.Setup.init (getSubAddrInitModel, (Spec.Command.fake <| Wallet.ClickedGotNewSubaddress)) --(Wallet.init "http://localhost:1234")
                         |> Spec.Setup.withView Wallet.view
                         |> Spec.Setup.withUpdate Wallet.update
                         |> Spec.Setup.withLocation placeholderUrl
@@ -157,13 +157,16 @@ runSpecTests =
                     |> Spec.when "we log the http requests"
                         [ Spec.Http.logRequests
                         ]
-                    {- |> when "the user requests a new subaddress"
-                           [ Spec.Command.send (Spec.Command.fake <| Wallet.GotNewSubaddress (Ok { subaddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" })) ]
-                       |> when "the user changes the view to subaddress"
-                           [ Spec.Command.send (Spec.Command.fake <| Wallet.ChangeView Wallet.SubAddressView) ]
-                    -}
-                    |> when "the user uses ClickedTempXMRAddr to simulte an address retrieval and nav to the Wallet page"
+                    |> when "the user ClickedGotNewSubaddress to simulte an new subaddress retrieval"
                         [ Spec.Command.send (Spec.Command.fake <| Wallet.ClickedGotNewSubaddress) ]
+                        -- NOTE: Use this to bypass need to go via Main.elm, which is what will happen in the real app
+                        -- via GotWalletMsg
+                    |> when "the response triggers GotNewSubaddress in Wallet.update"
+                        [ Spec.Command.send (Spec.Command.fake <| 
+                            (Wallet.GotNewSubaddress
+                                (Ok ({subaddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"})) -- Simulate the successful response
+                            ))
+                        ]
                     |> Spec.observeThat
                         [ it "should have status as SubAddressView"
                             (Observer.observeModel .status
@@ -184,7 +187,7 @@ runSpecTests =
                                     )
                             )
                         ]
-                ) -}
+                )
 
         -- NOTE: Uncomment these tests one at a time to maintain managability
         {-
@@ -467,6 +470,25 @@ runSpecTests =
                )
         -}
         ]
+
+
+
+-- NAV: Initial test models - we can't get from Main unless it's a MainSpec test - so these are expected
+-- state at the start of each test
+
+
+getSubAddrInitModel : Wallet.Model
+getSubAddrInitModel =
+    { status = Wallet.Loaded
+    , pagetitle = "Haveno Web Wallet"
+    , balances = Just Protobuf.defaultBalancesInfo
+
+    -- HACK: Hardcoding the address for now
+    , address = ""
+    , errors = []
+    , subaddress = ""
+    , currentView = Wallet.SubAddressView
+    }
 
 
 

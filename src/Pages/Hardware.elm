@@ -1787,12 +1787,12 @@ infoBtn label msg =
         }
 
 
-displayLoginBtns : Model -> Element Msg
+{- displayLoginBtns : Model -> Element Msg
 displayLoginBtns model =
     Element.column Grid.section <|
         [ Element.el [] <| Element.text " Please login, register or view \n search rankings as a spectator (below):"
         , infoBtn "Connect Wallet" <| ClickedHardwareDeviceConnect
-        ]
+        ] -}
 
 
 

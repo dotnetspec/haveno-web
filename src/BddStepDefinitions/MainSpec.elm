@@ -2,8 +2,12 @@ module BddStepDefinitions.MainSpec exposing (..)
 
 {- -- NOTE: 'Main' here refers to settings that hold throughout the app, e.g. isLNSConnected, not just on a given page, so the tests
    might switch to particular pages and check that 'global' settings (Main's model) are correct
+
+   -- NOTE: This MainSpec file is for INTEGRATION tests, not unit or modular tests. 
+   -- It's for testing the app as a whole, not individual functions. Try to limit tests here to logic, not specifics.
+   -- Other modules like WalletSpec are MODULAR tests, limited to the given page alone.
 -}
---import Protobuf.Types.Int64 as Int64 exposing (Int64, fromInts)
+
 
 import BddStepDefinitions.Extra exposing (..)
 import BddStepDefinitions.Runner as Runner exposing (..)

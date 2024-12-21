@@ -78,10 +78,6 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ClickedGotNewSubaddress ->
-            let
-                _ =
-                    Debug.log "ClickedGotNewSubaddress" "ClickedGotNewSubaddress"
-            in
             ( model, gotNewSubAddress )
 
         GotNewSubaddress (Ok subAddresponse) ->
@@ -179,7 +175,7 @@ errorView =
     Html.div [ Attr.class "wallet-container" ]
         [ Html.h1 [ Attr.class "wallet-title" ] [ Html.text "Wallet" ]
         , Html.div [ Attr.class "error-message", Attr.id "wallet-error-message" ]
-            [ Html.text "Error: Unable to retrieve balances. Please try again later." ]
+            [ Html.text "Error: Unable to retrieve relevant data. Please try again later." ]
         ]
 
 
