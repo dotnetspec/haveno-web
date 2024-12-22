@@ -3,7 +3,6 @@ stages:
   - check-yarn
   - test
   - integration_test
-  - deploy
 
 install-yarn:
   stage: check-yarn
@@ -60,28 +59,3 @@ integration_test:
     - yarn vitest run
     # Run Parcel build
     - yarn build
-    
-deploy:
-  stage: deploy
-  image: alpine:latest
-  script:
-    - apk add --update lftp
-    - apk add --no-cache openssh-client
-    - eval $(ssh-agent -s)
-    - |
-      lftp -d -u "$FTP_USERNAME,$FTP_PASSWORD" "$FTP_SERVER:21098" << EOF
-        # Delete all files in the target directory (but keep subdirectories)
-        set sftp:connect-program 'ssh -a -x -s -l squastgr -p 21098 -oHostKeyAlgorithms=+ssh-rsa -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null'
-        mirror --reverse --delete --only-newer ./dist /home/squastgr/haveno-web.squashpassion.com/public_html
-        # Remove files while keeping subdirectories
-        rm -rf /home/squastgr/haveno-web.squashpassion.com/public_html/* 
-        # Mirror the new files
-        mirror -R ./dist /home/squastgr/haveno-web.squashpassion.com/public_html
-        quit
-      EOF
-  only:
-    - master
-  dependencies:
-    - test
-    - integration_test
-
