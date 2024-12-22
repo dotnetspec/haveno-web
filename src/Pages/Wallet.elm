@@ -183,10 +183,8 @@ subAddressView : String -> Html Msg
 subAddressView newSubaddress =
     Html.div [ Attr.class "wallet-container" ]
         [ Html.h1 [ Attr.class "wallet-title" ] [ Html.text "Wallet" ]
-        , Html.div [ Attr.class "subaddress-message", Attr.id "newSubaddress" ]
+        , Html.div [ Attr.class "address-text", Attr.id "newSubaddress" ]
             [ Html.text ("New Subaddress: " ++ newSubaddress) ]
-
-        --, getSubAddrBtn initialModel
         ]
 
 

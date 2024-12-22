@@ -173,7 +173,7 @@ navigate thekey =
    All the below are creating a value of type Msg. The value is a constructor for the Msg type.
    e.g. ClickedLink Browser.UrlRequest is a constructor for the Msg type. It takes a Browser.UrlRequest value as input
 
-   In practical terms, you would use a type constructor when you want to create a new value of a specific type,
+   In practical terms, you would use a type constructor when you want to create a new value of a SPECIFIC type,
    and you would use a function when you want to perform some computation or operation.
 
    All the below are constructor functions for the Msg type. They are not functions in the traditional sense,
@@ -1558,7 +1558,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.1.28" ]
+                , p [] [ text "Version 0.1.29" ]
                 , text "Haveno Version"
                 , p [ id "havenofooterver" ]
                     [ text
