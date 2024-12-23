@@ -1,7 +1,6 @@
-port module Data.Hardware exposing (HardwareDevice, connect, disconnect, signTransaction, validXMRAddressParser)
+port module Data.Hardware exposing (HardwareDevice, connect, disconnect, signTransaction)
 
-import Char exposing (isAlphaNum)
-import Parser exposing (Parser, chompWhile, end, getChompedString)
+
 
 
 
@@ -92,20 +91,3 @@ signTransaction (HardwareDevice device) transaction =
 
 port sendMessageToJs : String -> Cmd msg
 
-
-validXMRAddressParser : Parser String
-validXMRAddressParser =
-    getChompedString (chompWhile isAlphaNum)
-        |> Parser.andThen
-            (\str ->
-                if String.length str == 95 then
-                    Parser.succeed str
-
-                else
-                    Parser.problem "Invalid length"
-            )
-        |> Parser.andThen
-            (\str ->
-                end
-                    |> Parser.map (\_ -> str)
-            )

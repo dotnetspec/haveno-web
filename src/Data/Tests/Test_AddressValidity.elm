@@ -1,7 +1,7 @@
-module Data.Tests.Test_Hardware exposing (..)
+module Data.Tests.Test_AddressValidity exposing (..)
 
 import Char exposing (isAlphaNum)
-import Data.Hardware exposing (validXMRAddressParser)
+import Data.AddressValidity exposing (validXMRAddressParser)
 import Expect
 import Fuzz exposing (Fuzzer)
 import Parser exposing (run)

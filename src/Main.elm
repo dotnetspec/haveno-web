@@ -8,7 +8,7 @@ port module Main exposing (..)
 
 import Browser
 import Browser.Navigation as Nav exposing (..)
-import Data.Hardware as R
+import Data.AddressValidity as R
 import Data.User as U exposing (User(..))
 import Debug exposing (log)
 import Erl exposing (..)
