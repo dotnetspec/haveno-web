@@ -21,7 +21,7 @@ type alias Model =
     { status : Status
     , pagetitle : String
     , balances : Maybe Protobuf.BalancesInfo
-    , address : String
+    , primaryaddress : String
     , errors : List String
     , subaddress : String
     , currentView : View
@@ -35,7 +35,7 @@ initialModel =
     , balances = Just Protobuf.defaultBalancesInfo
 
     -- HACK: Hardcoding the address for now
-    , address = ""
+    , primaryaddress = ""
     , errors = []
     , subaddress = ""
     , currentView = WalletView
@@ -60,16 +60,16 @@ type View
 
 init : String -> ( Model, Cmd Msg )
 init _ =
-    -- HACK: Hardcoding the address for now
+    
     ( initialModel
-    , Cmd.batch [ gotAvailableBalances, gotNewSubAddress ]
+    , Cmd.batch [ gotAvailableBalances, gotNewPrimaryAddress ]
     )
 
 
 type Msg
-    = SetAddress String
-    | GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
-    | GotNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
+    = GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
+    | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
+    | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | ClickedGotNewSubaddress
     | ChangeView View
 
@@ -80,14 +80,19 @@ update msg model =
         ClickedGotNewSubaddress ->
             ( model, gotNewSubAddress )
 
-        GotNewSubaddress (Ok subAddresponse) ->
-            ( { model | subaddress = subAddresponse.subaddress, status = Loaded, currentView = SubAddressView }, Cmd.none )
+        GotXmrPrimaryAddress (Ok primaryAddresponse) ->
+            ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = WalletView }, Cmd.none )
 
-        GotNewSubaddress (Err error) ->
+        GotXmrPrimaryAddress (Err error) ->
             ( { model | status = Errored }, Cmd.none )
 
-        SetAddress address ->
-            ( { model | address = address }, Cmd.none )
+        GotXmrNewSubaddress (Ok subAddresponse) ->
+            ( { model | subaddress = subAddresponse.subaddress, status = Loaded, currentView = SubAddressView }, Cmd.none )
+
+        GotXmrNewSubaddress (Err error) ->
+            ( { model | status = Errored }, Cmd.none )
+
+        
 
         GotBalances (Ok response) ->
             ( { model | balances = response.balances, status = Loaded }, Cmd.none )
@@ -159,7 +164,7 @@ custodialWalletView model =
     Html.div [ Attr.class "wallet-container", Attr.id "custodialWalletView" ]
         [ Html.h1 [ Attr.class "wallet-title" ] [ Html.text "Wallet" ]
         , Html.div [ Attr.id "currentaddress", Attr.class "address-text" ]
-            [ Html.text ("Current address: " ++ model.address) ]
+            [ Html.text ("Current address: " ++ model.primaryaddress) ]
         , Html.div [ Attr.id "xmrbalance", Attr.class "balance-text" ]
             [ Html.text ("Available Balance: " ++ xmrBalanceAsString model.balances ++ " XMR") ]
         , Html.div [ Attr.id "btcbalance", Attr.class "balance-text" ]
@@ -260,6 +265,17 @@ gotAvailableBalances =
     in
     Grpc.toCmd GotBalances grpcRequest
 
+gotNewPrimaryAddress : Cmd Msg
+gotNewPrimaryAddress =
+    let
+        grpcRequest =
+            Grpc.new Wallets.getXmrPrimaryAddress Protobuf.defaultGetXmrPrimaryAddressRequest
+                |> Grpc.addHeader "password" "apitest"
+                -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
+                |> Grpc.setHost "http://localhost:8080"
+    in
+    Grpc.toCmd GotXmrPrimaryAddress grpcRequest
+
 
 gotNewSubAddress : Cmd Msg
 gotNewSubAddress =
@@ -270,4 +286,4 @@ gotNewSubAddress =
                 -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
                 |> Grpc.setHost "http://localhost:8080"
     in
-    Grpc.toCmd GotNewSubaddress grpcRequest
+    Grpc.toCmd GotXmrNewSubaddress grpcRequest

@@ -38,7 +38,7 @@
 		"scope": "elm",
 		"prefix": "let-log",
 		"body": [
-			"let _ = Debug.log \"$1\" $2 in"
+			"let _ = Debug.log \"$1\" \"$2\"  in"
 		],
 		"description": "Let and log output to console"
 	}

@@ -6,7 +6,6 @@ import Expect
 import Extras.Constants as Consts exposing (..)
 import Json.Decode as D exposing (..)
 import Json.Encode as E exposing (..)
-import Pages.Hardware exposing (..)
 import Test exposing (..)
 
 -- REVIEW: This is left here as a placeholder for the tests

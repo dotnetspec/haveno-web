@@ -10,12 +10,16 @@
     "jstest": "vitest",
     "debug": "elm make src/Main.elm --output=js/elm.js --debug",
     "optimize": "elm make src/Main.elm --output=js/elm.js --optimize",
-    "terminals": "./openterminals.sh",
+    "minTestHaveno": "./terminals/localNet_2_User.sh",
+    "fullTestHaveno": "./terminals/openAll.sh",
+    "backgroundHaveno": "./terminals/oneUserEnvoy.sh",
+    "closeTestHaveno": "./terminals/closeAll.sh",
     "clean": "yarn cache clean",
     "prepare": "husky install",
     "start": "parcel",
     "build": "parcel build",
-    "serve": "parcel serve"
+    "serve": "parcel serve",
+    "release": "yarn unit && yarn spec && yarn jstest && yarn build"
   },
   "husky": {
     "hooks": {

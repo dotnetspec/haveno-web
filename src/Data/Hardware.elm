@@ -1,9 +1,5 @@
 port module Data.Hardware exposing (HardwareDevice, connect, disconnect, signTransaction)
 
-
-
-
-
 -- Internal type not exposed to other modules
 
 
@@ -90,4 +86,3 @@ signTransaction (HardwareDevice device) transaction =
 
 
 port sendMessageToJs : String -> Cmd msg
-

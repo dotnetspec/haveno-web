@@ -24,7 +24,6 @@ import Pages.Blank
 import Pages.Buy
 import Pages.Dashboard
 import Pages.Funds
-import Pages.Hardware exposing (hardwareSubscriptions)
 import Pages.Market
 import Pages.Portfolio
 import Pages.Sell
@@ -73,24 +72,27 @@ main =
 
 -- NAV: Init
 -- NOTE: This is used to initialize the model in init and spec tests
+-- WARN: The app sees Url.Url as 'elm-spec' when testing
 
 
 init : String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flag url key =
+init flag _ key =
     let
         decodedJsonFromSetupElmmjs =
             case JD.decodeString urlDecoder flag of
-                Ok urL ->
-                    urL
+                Ok urLAfterFlagDecode ->
+                    urLAfterFlagDecode
 
                 Err _ ->
-                    -- Handle the case where decoding fails
                     Url.Url Https "haveno-web.squashpassion.com" Nothing "" Nothing Nothing
+
+        urlWithDashboardPath =
+            { decodedJsonFromSetupElmmjs | path = "/dashboard" }
 
         -- NOTE: Initialize the whole model here so that can assign Nav.Key
         updatedModel =
-            { page = BlankPage Pages.Blank.initialModel
-            , flag = decodedJsonFromSetupElmmjs
+            { page = DashboardPage Pages.Dashboard.initialModel
+            , flag = urlWithDashboardPath --decodedJsonFromSetupElmmjs
             , key = key
             , time = Time.millisToPosix 0
             , zone = Nothing -- Replace with the actual time zone if available
@@ -105,7 +107,7 @@ init flag url key =
             -- NOTE: This is actually the only place in the app that is currently affecting the notification mesage
             , xmrWalletAddress = "" --""
             , isPopUpVisible = True
-            , isNavMenuActive = False
+            , isNavMenuActive = True
             , isApiConnected = False
             , version = "No Haveno version available"
             , currentJsMessage = ""
@@ -115,16 +117,7 @@ init flag url key =
             , isMenuOpen = False
             }
     in
-    updateUrl url updatedModel
-
-
-
--- REVIEW:  FORGET THE KEY AND USE FLAG FOR INDICATING NAVIGATION
-
-
-updateUrlPath : Url.Url -> String -> Url.Url
-updateUrlPath url newPath =
-    { url | path = newPath }
+    updateUrl urlWithDashboardPath updatedModel
 
 
 
@@ -209,16 +202,12 @@ type Msg
     | GotSupportMsg Pages.Support.Msg
     | GotBuyMsg Pages.Buy.Msg
     | GotMarketMsg Pages.Market.Msg
-    | GotHardwareMsg Pages.Hardware.Msg
     | GotWalletMsg Pages.Wallet.Msg
     | ChangedUrl Url.Url
     | Tick Time.Posix
     | AdjustTimeZone Time.Zone
     | Recv JD.Value
     | NoOp
-    | OnInitHardwareDeviceConnect
-    | ShowPopUp
-    | HidePopUp
     | GotVersion (Result Grpc.Error GetVersionReply)
     | InitComplete
     | ToggleMenu
@@ -270,24 +259,10 @@ update msg model =
         InitComplete ->
             ( { model | initialized = True }, Cmd.none )
 
-        ShowPopUp ->
-            ( { model | isPopUpVisible = True }, Cmd.none )
-
-        HidePopUp ->
-            ( { model | isPopUpVisible = False, isNavMenuActive = False, page = HardwarePage Pages.Hardware.initialModel }
-            , sendVersionRequest Protobuf.defaultGetVersionRequest
-            )
-
-        OnInitHardwareDeviceConnect ->
-            ( model
-            , -- REF: SportRank2
-              sendMessageToJs
-                "connectLNS"
-            )
-
         -- NOTE: GotVersion also used as an API Connection indicator
         GotVersion (Ok versionResp) ->
             let
+                
                 verResp =
                     case versionResp of
                         { version } ->
@@ -296,182 +271,13 @@ update msg model =
             ( { model | isApiConnected = True, version = verResp }, Cmd.none )
 
         GotVersion (Err _) ->
-            ( { model | version = "Error obtaining version" }, Cmd.none )
+            
+            ( { model | version = "Error obtaining version", isApiConnected = False, isPopUpVisible = False }, Cmd.none )
 
         -- NAV: Recv rawJsonMessage
         -- NOTE: This is updated when a message from js is received
         Recv rawJsonMessage ->
-            let
-                connectionErr =
-                    getDeviceResponseMsg <| fromJsonToString rawJsonMessage
-
-                -- NOTE: rawJsonMessage is a Json value that is ready to be decoded. It does not need to be
-                -- converted to a string.
-                decodedHardwareDeviceMsg =
-                    case JD.decodeValue justmsgFieldFromJsonDecoder rawJsonMessage of
-                        Ok message ->
-                            message.operationEventMsg
-
-                        Err err ->
-                            --JsonMsgFromJs "ERROR" (JsonData (E.object [])) <| { userid = D.errorToString err, nickname = D.errorToString err }
-                            "error"
-
-                devModel =
-                    if decodedHardwareDeviceMsg == "nanoS" then
-                        Just NanoS
-
-                    else if decodedHardwareDeviceMsg == "nanoX" then
-                        Just NanoX
-
-                    else
-                        Nothing
-
-                newhwUrl =
-                    Url.Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
-            in
-            case connectionErr of
-                Just NoDevice ->
-                    ( { model | currentJsMessage = "No device", page = BlankPage Pages.Blank.initialModel, deviceModel = devModel, xmrHardwareWalletAddressError = Just NoDevice }, Cmd.none )
-
-                Just DeviceNeedsPermission ->
-                    -- NOTE: If we're on the Hardware page, we don't want to change the page
-                    if model.page == HardwarePage Pages.Hardware.initialModel then
-                        ( { model | currentJsMessage = "Device needs permission", page = HardwarePage Pages.Hardware.initialModel, deviceModel = devModel, flag = newhwUrl, xmrHardwareWalletAddressError = Just DeviceNeedsPermission, isPopUpVisible = False, isHardwareDeviceConnected = False }, Cmd.none )
-
-                    else
-                        ( { model | currentJsMessage = "Device needs permission", page = BlankPage Pages.Blank.initialModel, deviceModel = devModel, xmrHardwareWalletAddressError = Just DeviceNeedsPermission, isPopUpVisible = True }, Cmd.none )
-
-                Just DeviceLocked ->
-                    ( { model | currentJsMessage = "Device Locked", page = HardwarePage Pages.Hardware.initialModel, deviceModel = devModel, flag = newhwUrl, xmrHardwareWalletAddressError = Just DeviceLocked, isPopUpVisible = False, isHardwareDeviceConnected = True }, Cmd.none )
-
-                Just DeviceUnlocked_XMRWalletClosed ->
-                    ( { model | currentJsMessage = "UNKNOWN_APDU", page = HardwarePage Pages.Hardware.initialModel, deviceModel = devModel, flag = newhwUrl, xmrHardwareWalletAddressError = Just DeviceUnlocked_XMRWalletClosed, isPopUpVisible = False, isHardwareDeviceConnected = True }, Cmd.none )
-
-                Just DeviceUnlocked_XMRWalletOpen ->
-                    ( { model | currentJsMessage = "Device Unlocked - XMR Wallet Open", page = HardwarePage Pages.Hardware.initialModel, deviceModel = devModel, flag = newhwUrl, xmrHardwareWalletAddressError = Just DeviceUnlocked_XMRWalletOpen, isPopUpVisible = False, isHardwareDeviceConnected = True }, Cmd.none )
-
-                -- NO connection issues. Proceed to load relevant page
-                Nothing ->
-                    case model.page of
-                        DashboardPage _ ->
-                            ( model, Cmd.none )
-
-                        SellPage _ ->
-                            ( model, Cmd.none )
-
-                        BlankPage _ ->
-                            let
-                                updatedWalletAddress =
-                                    if isValidXMRAddress decodedHardwareDeviceMsg then
-                                        decodedHardwareDeviceMsg
-
-                                    else
-                                        ""
-
-                                newUrl =
-                                    Url.Url Http "localhost" (Just 1234) "/dashboard" Nothing Nothing
-
-                                newMainModel =
-                                    { model
-                                        | page = DashboardPage <| setDashboardHavenoVersion Pages.Dashboard.initialModel model
-                                        , flag = newUrl
-                                        , xmrWalletAddress = updatedWalletAddress
-                                    }
-                            in
-                            ( newMainModel, Cmd.none )
-
-                        PortfolioPage _ ->
-                            ( model, Cmd.none )
-
-                        FundsPage _ ->
-                            ( model, Cmd.none )
-
-                        SupportPage _ ->
-                            ( model, Cmd.none )
-
-                        BuyPage _ ->
-                            ( model, Cmd.none )
-
-                        MarketPage _ ->
-                            ( model, Cmd.none )
-
-                        WalletPage _ ->
-                            ( model, Cmd.none )
-
-                        HardwarePage _ ->
-                            let
-                                devMod =
-                                    if decodedHardwareDeviceMsg == "nanoS" then
-                                        Just NanoS
-
-                                    else
-                                        Just NanoX
-
-                                updatedIsValidXMRAddressConnected =
-                                    if model.isXMRWalletConnected == False && isValidXMRAddress decodedHardwareDeviceMsg then
-                                        True
-
-                                    else if model.isXMRWalletConnected == True then
-                                        True
-
-                                    else
-                                        False
-
-                                updatedWalletAddress =
-                                    if isValidXMRAddress decodedHardwareDeviceMsg then
-                                        decodedHardwareDeviceMsg
-
-                                    else
-                                        ""
-
-                                hwModel =
-                                    Pages.Hardware.initialModel
-
-                                newHardwareModel =
-                                    { hwModel
-                                        | isXMRWalletConnected = updatedIsValidXMRAddressConnected
-                                        , xmrWalletAddress = updatedWalletAddress
-                                    }
-
-                                newPage =
-                                    {- if updatedIsValidXMRAddressConnected then
-                                           let
-                                               newWalletModel =
-                                                   --Pages.Wallet.initialModel
-                                                   model.page
-                                           in
-                                           WalletPage { newWalletModel | address = updatedWalletAddress }
-
-                                       else
-                                    -}
-                                    HardwarePage newHardwareModel
-
-                                newUrlAfterCheckConnections =
-                                    if updatedIsValidXMRAddressConnected then
-                                        Url.Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing
-
-                                    else
-                                        Url.Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
-
-                                newMainModel =
-                                    { model
-                                        | page = newPage
-                                        , isHardwareDeviceConnected = True
-                                        , isXMRWalletConnected = updatedIsValidXMRAddressConnected
-                                        , isPopUpVisible = False
-                                        , flag = newUrlAfterCheckConnections
-                                        , xmrWalletAddress = updatedWalletAddress
-                                        , deviceModel = devMod
-                                    }
-                            in
-                            if newMainModel.isHardwareDeviceConnected && newMainModel.isXMRWalletConnected then
-                                ( { newMainModel | isNavMenuActive = True, page = newPage }, Cmd.none )
-
-                            else if newMainModel.isHardwareDeviceConnected then
-                                toHardware { newMainModel | isNavMenuActive = False } (Pages.Hardware.update (Pages.Hardware.ResponseDataFromMain rawJsonMessage) newHardwareModel)
-
-                            else
-                                ( model, Cmd.none )
+            ( model, Cmd.none )
 
         Tick newTime ->
             ( { model
@@ -553,6 +359,12 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        -- NOTE: GotWalletMsg is triggered by toHardware, which is triggered by updateUrl
+        -- which is triggered by init. updateUrl is sent the url and uses the parser to parse it.
+        -- The parser outputs the Wallet page so that the case in updateUrl can branch on Wallet.
+        -- Wallet.init can then be run to init the page and the page can, through toHardware, be added
+        -- to the model in Main (as the current page).
+        -- NOTE: Make changes to the Wallet model, cmds etc. in toHardware (more options)
         GotWalletMsg walletMsg ->
             case model.page of
                 WalletPage wallet ->
@@ -566,74 +378,6 @@ update msg model =
 
                         _ ->
                             toWallet model (Pages.Wallet.update walletMsg wallet)
-
-                _ ->
-                    ( model, Cmd.none )
-
-        -- NOTE: GotHardwareMsg is triggered by toHardware, which is triggered by updateUrl
-        -- which is triggered by init. updateUrl is sent the url and uses the parser to parse it.
-        -- The parser outputs the Hardware page so that the case in updateUrl can branch on Hardware.
-        -- Hardware.init can then be run to init the page and the page can, through toHardware, be added
-        -- to the model in Main (as the current page).
-        -- NOTE: Make changes to the Hardware model, cmds etc. in toHardware (more options)
-        GotHardwareMsg hardwareMsg ->
-            case model.page of
-                HardwarePage hardwareModel ->
-                    -- NOTE: Example of handling data coming from sub module to main
-                    -- If the message is one that needs to be handled in Main (e.g. sends message to port)
-                    -- then handle it here:
-                    case hardwareMsg of
-                        Pages.Hardware.ClickedHardwareDeviceConnect ->
-                            let
-                                newHardwareModel =
-                                    { hardwareModel | queryType = Pages.Hardware.Spectator }
-                            in
-                            ( { model
-                                | page =
-                                    HardwarePage newHardwareModel
-                              }
-                            , -- REF: SportRank2
-                              sendMessageToJs
-                                "connectLNS"
-                            )
-
-                        Pages.Hardware.ClickedXMRWalletConnect ->
-                            let
-                                newHardwareModel =
-                                    { hardwareModel | queryType = Pages.Hardware.LoggedInUser }
-                            in
-                            ( { model | page = HardwarePage newHardwareModel }
-                            , sendMessageToJs
-                                "getMoneroAddress"
-                            )
-
-                        -- HACK: ClickedTempXMRAddr is only necessary until we can get a valid address from the device
-                        Pages.Hardware.ClickedTempXMRAddr ->
-                            let
-                                newWalletModel =
-                                    Pages.Wallet.initialModel
-
-                                -- NOTE: We're using Test balance data here
-                                updatedBalances =
-                                    Maybe.withDefault Protobuf.defaultGetBalancesReply
-                                        (Protobuf.Decode.decode Protobuf.decodeGetBalancesReply TestData.getBalanceEncodedResponse)
-
-                                newMainModel =
-                                    { model | page = WalletPage <| { newWalletModel | balances = updatedBalances.balances }, isNavMenuActive = True, isXMRWalletConnected = True, xmrWalletAddress = TestData.subAddress }
-                            in
-                            toWallet newMainModel
-                                (Pages.Wallet.update
-                                    (Pages.Wallet.GotBalances
-                                        (Ok
-                                            updatedBalances
-                                        )
-                                    )
-                                    { newWalletModel | balances = updatedBalances.balances }
-                                )
-
-                        _ ->
-                            -- otherwise operate within the Wallet sub module:
-                            toWallet model (Pages.Wallet.update (Pages.Wallet.SetAddress model.xmrWalletAddress) Pages.Wallet.initialModel)
 
                 _ ->
                     ( model, Cmd.none )
@@ -694,10 +438,6 @@ view model =
                     Pages.Market.view market
                         |> Html.map GotMarketMsg
 
-                HardwarePage hardware ->
-                    Pages.Hardware.view hardware
-                        |> Html.map GotHardwareMsg
-
                 WalletPage wallet ->
                     -- NOTE: Html.map is essential to wrap the Wallet.elm view and convert Wallet.Msg into Main.Msg
                     Pages.Wallet.view wallet
@@ -707,29 +447,20 @@ view model =
     -- TODO: Make this content's naming conventions closely match the
     -- related css.
     -- NOTE: 'pagetitle' or 'title' in pages is not the same as 'title' in the document
-    if model.isPopUpVisible then
-        { title = "Haveno-Web"
-        , body =
-            [ newMenu model
-            , viewPopUp model
+    { title = "Haveno-Web"
+    , body =
+        [ newMenu model
+        , div
+            [ class "topLogoContainer"
             ]
-        }
-
-    else
-        { title = "Haveno-Web"
-        , body =
-            [ newMenu model
-            , div
-                [ class "topLogoContainer"
-                ]
-                [ div [ class "topLogo-content" ]
-                    [ topLogo ]
-                ]
-            , contentByPage
-            , indicatorContainer model
-            , footerContent model
+            [ div [ class "topLogo-content" ]
+                [ topLogo ]
             ]
-        }
+        , contentByPage
+        , indicatorContainer model
+        , footerContent model
+        ]
+    }
 
 
 indicatorContainer : Model -> Html msg
@@ -753,19 +484,19 @@ indicatorContainer model =
 -}
 {- -- NOTE: Representing a parsed route. Similar, but NOT the same as Page -}
 -- NAV: Route
+-- TODO: Complete the others as '...Route'
 
 
 type Route
-    = Dashboard
-    | Sell
-    | Portfolio
+    = DashboardRoute
+    | SellRoute
+    | PortfolioRoute
     | Funds
     | Support
     | Buy
     | Market
-    | Hardware
-    | Wallet
-    | Blank
+    | WalletRoute
+    | BlankRoute
 
 
 
@@ -783,7 +514,6 @@ type
     | SupportPage Pages.Support.Model
     | BuyPage Pages.Buy.Model
     | MarketPage Pages.Market.Model
-    | HardwarePage Pages.Hardware.Model
     | WalletPage Pages.Wallet.Model
     | BlankPage Pages.Blank.Model
 
@@ -849,17 +579,16 @@ urlAsPageParser =
     -- If a Route value representing a Page is sent as input to the parser function,
     -- the resulting 'a' will be a Page (or whatever type Page represents in your specific code).
     oneOf
-        [ Url.Parser.map Blank (s "index.html")
-        , Url.Parser.map Blank Url.Parser.top
-        , Url.Parser.map Dashboard (Url.Parser.s "dashboard")
-        , Url.Parser.map Sell (Url.Parser.s "sell")
-        , Url.Parser.map Portfolio (Url.Parser.s "portfolio")
+        [ Url.Parser.map BlankRoute (s "index.html")
+        , Url.Parser.map BlankRoute Url.Parser.top
+        , Url.Parser.map DashboardRoute (Url.Parser.s "dashboard")
+        , Url.Parser.map SellRoute (Url.Parser.s "sell")
+        , Url.Parser.map PortfolioRoute (Url.Parser.s "portfolio")
         , Url.Parser.map Funds (Url.Parser.s "funds")
         , Url.Parser.map Support (Url.Parser.s "support")
         , Url.Parser.map Buy (Url.Parser.s "buy")
         , Url.Parser.map Market (Url.Parser.s "market")
-        , Url.Parser.map Hardware (Url.Parser.s "hardware")
-        , Url.Parser.map Wallet (Url.Parser.s "wallet")
+        , Url.Parser.map WalletRoute (Url.Parser.s "wallet")
         ]
 
 
@@ -907,20 +636,19 @@ updateUrl url model =
     in
     -- NOTE: Parse the url to get a ROUTE type
     case Url.Parser.parse urlAsPageParser urlMinusQueryStr of
-        -- NOTE: Following are ROUTES, not PAGES
-        Just Dashboard ->
-            Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
-                |> toDashboard model
-
-        Just Sell ->
-            Pages.Sell.init ()
-                |> toSell model
-
-        Just Blank ->
+        Just BlankRoute ->
             Pages.Blank.init ()
                 |> toBlank model
 
-        Just Portfolio ->
+        Just DashboardRoute ->
+            Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
+                |> toDashboard model
+
+        Just SellRoute ->
+            Pages.Sell.init ()
+                |> toSell model
+
+        Just PortfolioRoute ->
             Pages.Portfolio.init ()
                 |> toPortfolio model
 
@@ -940,34 +668,11 @@ updateUrl url model =
             Pages.Market.init ()
                 |> toMarket model
 
-        Just Wallet ->
+        Just WalletRoute ->
             -- HACK: Temp until we receive the address from the hw device
-            Pages.Wallet.init model.xmrWalletAddress
+            Pages.Wallet.init ""
+                --"BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" --model.xmrWalletAddress
                 |> toWallet model
-
-        Just Hardware ->
-            let
-                newHWmodel =
-                    case model.page of
-                        HardwarePage hardwareModel ->
-                            -- NOTE: Update Hardware page with relevant parts of Main's model
-                            { hardwareModel
-                                | isHardwareDeviceConnected = model.isHardwareDeviceConnected
-                                , isXMRWalletConnected = model.isXMRWalletConnected
-                            }
-
-                        _ ->
-                            Pages.Hardware.initialModel
-
-                newModel =
-                    { model | page = HardwarePage newHWmodel }
-            in
-            -- NOTE: This is the only place we can pass args from Main.elm into
-            -- the sub module for initialization
-            -- REVIEW: Time is sent through here as it may speed up the slots fetch in Hardware - tbc
-            -- RF: Change name flagUrl to domainUrl
-            Pages.Hardware.init { time = Nothing, flagUrl = Url.Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing }
-                |> toHardware newModel
 
         Nothing ->
             Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
@@ -978,7 +683,7 @@ toDashboard : Model -> ( Pages.Dashboard.Model, Cmd Pages.Dashboard.Msg ) -> ( M
 toDashboard model ( dashboard, cmd ) =
     ( { model | page = DashboardPage dashboard }
       -- NOTE: Cmd.map is a way to manipulate the result of a command
-    , Cmd.batch [ Cmd.map GotDashboardMsg cmd, Task.perform AdjustTimeZone Time.here ]
+    , Cmd.batch [ Cmd.map GotDashboardMsg cmd, sendVersionRequest Protobuf.defaultGetVersionRequest, Task.perform AdjustTimeZone Time.here ]
     )
 
 
@@ -993,18 +698,9 @@ toSell model ( sell, cmd ) =
 
 
 toBlank : Model -> ( Pages.Blank.Model, Cmd Pages.Blank.Msg ) -> ( Model, Cmd Msg )
-toBlank model ( blank, cmd ) =
-    let
-        -- NOTE: Immediately try and connect the hardware device
-        ( newModel, hwareConnectCmd ) =
-            update OnInitHardwareDeviceConnect model
-    in
-    ( newModel
-      --{ model | page = BlankPage blank }
-      {- -- NOTE: In your example, Cmd.map GotSellMsg cmd, GotSellMsg is indeed a function,
-         but you're not explicitly applying it. Cmd.map will take care of applying GotSellMsg to each value that the command produces.
-      -}
-    , Cmd.batch [ Cmd.map GotBlankMsg cmd, hwareConnectCmd, notifyJsReady ]
+toBlank model ( blankmodel, blankcmd ) =
+    ( model
+    , Cmd.none
     )
 
 
@@ -1045,57 +741,38 @@ toMarket model ( market, cmd ) =
 
 
 -- NOTE: This is where we can update Wallet's model
+{- Let's break down the `toWallet` function step by step in simple terms:
+
+   1. **Function Name and Purpose**:
+      - Its job is to translate information from the `Wallet` module into a format that the main application (`Main`) can understand.
+
+   2. **Input Parameters**:
+      - It takes two inputs:
+        - `model`: Information about the current state of the application in Main's model.
+        - `(Wallet, cmd)`: Information from the `Wallet` module, including Wallet data and commands.
+
+   3. **What it Does**:
+      - It takes the existing Main `model` and updates it to include the `Wallet` data, indicating that the current page is the "Wallet" page.
+      - It translates the commands (`cmd`) coming from the `Wallet` module to a format that `Main` understands.
+
+   4. **Output**:
+      - It produces two things:
+        - An updated Main `model` that now includes the `Wallet` data and indicates the current page is the "Wallet" page.
+        - Commands that have been translated to a format that `Main` can use.
+
+   In simpler terms, this function helps the main part of the app (`Main`) understand and work with the Wallet information provided by the `Wallet` module.
+   It's like translating a message into a language that both parts of the app can understand and use effectively.
+-}
 
 
 toWallet : Model -> ( Pages.Wallet.Model, Cmd Pages.Wallet.Msg ) -> ( Model, Cmd Msg )
 toWallet model ( wallet, cmd ) =
     let
         newWalletModel =
-            { wallet | address = model.xmrWalletAddress }
+            { wallet | primaryaddress = model.xmrWalletAddress }
     in
     ( { model | page = WalletPage newWalletModel }
     , Cmd.map GotWalletMsg cmd
-    )
-
-
-
-{- Let's break down the `toHardware` function step by step in simple terms:
-
-   1. **Function Name and Purpose**:
-      - Its job is to translate information from the `Hardware` module into a format that the main application (`Main`) can understand.
-
-   2. **Input Parameters**:
-      - It takes two inputs:
-        - `model`: Information about the current state of the application in Main's model.
-        - `(hardware, cmd)`: Information from the `Hardware` module, including hardware data and commands.
-
-   3. **What it Does**:
-      - It takes the existing Main `model` and updates it to include the `hardware` data, indicating that the current page is the "Hardware" page.
-      - It translates the commands (`cmd`) coming from the `Hardware` module to a format that `Main` understands.
-
-   4. **Output**:
-      - It produces two things:
-        - An updated Main `model` that now includes the `hardware` data and indicates the current page is the "Hardware" page.
-        - Commands that have been translated to a format that `Main` can use.
-
-   In simpler terms, this function helps the main part of the app (`Main`) understand and work with the hardware information provided by the `Hardware` module.
-   It's like translating a message into a language that both parts of the app can understand and use effectively.
--}
-
-
-toHardware : Model -> ( Pages.Hardware.Model, Cmd Pages.Hardware.Msg ) -> ( Model, Cmd Msg )
-toHardware model ( _, cmd ) =
-    ( {- -- NOTE: Cmd.map is applying the GotHardwareMsg constructor to the message in the command.
-         In Elm, GotHardwareMsg is a type constructor for the Msg type. It's used to create a new Msg value. When you use
-         GotHardwareMsg with Cmd.map, you're telling Elm to take the message that results from the command and wrap it in GotHardwareMsg.
-         In this code, cmd is a command that will produce a Pages.Hardware.Msg when it's executed. Cmd.map GotHardwareMsg cmd creates a new
-         command that, when executed, will produce a Msg that wraps the Pages.Hardware.Msg in GotHardwareMsg.
-
-         So, while GotHardwareMsg is not a function in the traditional sense, it's a type constructor that can be used like a
-         function to create new values.
-      -}
-      model
-    , Cmd.batch [ Cmd.map GotHardwareMsg cmd, sendVersionRequest {} ]
     )
 
 
@@ -1188,36 +865,6 @@ getDeviceResponseMsg errorString =
 setDashboardHavenoVersion : Pages.Dashboard.Model -> Model -> Pages.Dashboard.Model
 setDashboardHavenoVersion dashboardModel model =
     { dashboardModel | version = model.version }
-
-
-viewPopUp : Model -> Html Msg
-viewPopUp model =
-    div []
-        [ if model.isPopUpVisible then
-            div [ class "modal" ]
-                [ div [ class "modal-content" ]
-                    [ topLogo
-                    , p [] [ text "No Hardware Device Detected!" ]
-                    , p [] [ text "Please connect your LNS/LNX hardware device to continue" ]
-                    , button [ onClick HidePopUp ] [ text "Continue" ]
-                    ]
-                ]
-
-          else if model.isHardwareDeviceConnected then
-            div
-                [ class "topLogoContainer"
-                ]
-                [ div [ class "topLogo-content" ]
-                    [ topLogo, text "Nano S Connected" ]
-
-                {- else if model.isHardwareLNXConnected then
-                   div [] [ text "Nano X Connected" ]
-                -}
-                ]
-
-          else
-            div [] []
-        ]
 
 
 isValidXMRAddress : String -> Bool
@@ -1377,15 +1024,14 @@ navLinks page =
                 [-- NOTE: img is now managed separately so is can be shrunk etc. withouth affecting the links
                 ]
                 [ li [ class "logoInNavLinks" ] [ a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "topLogoShrink" ] [ topLogo ] ]
-                , navLink Blank { url = "/", caption = "" }
-                , navLink Dashboard { url = "dashboard", caption = "Dashboard" }
-                , navLink Wallet { url = "wallet", caption = "Wallet" }
+                , navLink BlankRoute { url = "/", caption = "" }
+                , navLink DashboardRoute { url = "dashboard", caption = "Dashboard" }
+                , navLink WalletRoute { url = "wallet", caption = "Wallet" }
                 , navLink Market { url = "market", caption = "Market" }
                 , navLink Support { url = "support", caption = "Support" }
-                , navLink Sell { url = "sell", caption = "Sell" }
+                , navLink SellRoute { url = "sell", caption = "Sell" }
                 , navLink Buy { url = "buy", caption = "Buy" }
-                , navLink Hardware { url = "hardware", caption = "Hardware" }
-                , navLink Portfolio { url = "portfolio", caption = "Portfolio" }
+                , navLink PortfolioRoute { url = "portfolio", caption = "Portfolio" }
                 ]
     in
     links
@@ -1558,7 +1204,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.1.29" ]
+                , p [] [ text "Version 0.3.29" ]
                 , text "Haveno Version"
                 , p [ id "havenofooterver" ]
                     [ text
@@ -1580,28 +1226,28 @@ isActive { link, page } =
         , page
         )
     of
-        ( Dashboard, DashboardPage _ ) ->
+        ( DashboardRoute, DashboardPage _ ) ->
             True
 
-        ( Dashboard, _ ) ->
+        ( DashboardRoute, _ ) ->
             False
 
-        ( Sell, SellPage _ ) ->
+        ( SellRoute, SellPage _ ) ->
             True
 
-        ( Sell, _ ) ->
+        ( SellRoute, _ ) ->
             False
 
-        ( Blank, BlankPage _ ) ->
+        ( BlankRoute, BlankPage _ ) ->
             True
 
-        ( Blank, _ ) ->
+        ( BlankRoute, _ ) ->
             False
 
-        ( Portfolio, PortfolioPage _ ) ->
+        ( PortfolioRoute, PortfolioPage _ ) ->
             True
 
-        ( Portfolio, _ ) ->
+        ( PortfolioRoute, _ ) ->
             False
 
         ( Funds, FundsPage _ ) ->
@@ -1628,16 +1274,10 @@ isActive { link, page } =
         ( Market, _ ) ->
             False
 
-        ( Hardware, HardwarePage _ ) ->
+        ( WalletRoute, WalletPage _ ) ->
             True
 
-        ( Hardware, _ ) ->
-            False
-
-        ( Wallet, WalletPage _ ) ->
-            True
-
-        ( Wallet, _ ) ->
+        ( WalletRoute, _ ) ->
             False
 
 

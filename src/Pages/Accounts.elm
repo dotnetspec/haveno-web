@@ -5,7 +5,7 @@ module Pages.Accounts exposing (..)
 
 import Array exposing (empty)
 import Buttons.Default
-import Data.Hardware as R exposing (validXMRAddressParser)
+import Data.AddressValidity as R exposing (validXMRAddressParser)
 import Data.User as U
 import Derberos.Date.Core as DD
 import Dict exposing (Dict)

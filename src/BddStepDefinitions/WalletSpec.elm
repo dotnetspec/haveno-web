@@ -11,7 +11,6 @@ import Html exposing (Html, div, i)
 import Json.Encode as E
 import Pages.Blank
 import Pages.Dashboard as Dashboard exposing (..)
-import Pages.Hardware as Hardware exposing (..)
 import Pages.Wallet as Wallet exposing (Model, Msg, init, update, view)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (BalancesInfo)
 import Protobuf.Types.Int64 exposing (fromInts)
@@ -46,7 +45,11 @@ gotXmrBalance balances =
         _ ->
             ( 0, 0 )
 
+
+
 -- NAV: Test scenarios
+
+
 runSpecTests : Spec Wallet.Model Wallet.Msg
 runSpecTests =
     describe
@@ -146,48 +149,52 @@ runSpecTests =
             )
         , --Runner.skip <|
           --Runner.pick <|
-            scenario "3: Generating a New Subaddress"
-                (given
-                    (Spec.Setup.init (getSubAddrInitModel, (Spec.Command.fake <| Wallet.ClickedGotNewSubaddress)) --(Wallet.init "http://localhost:1234")
-                        |> Spec.Setup.withView Wallet.view
-                        |> Spec.Setup.withUpdate Wallet.update
-                        |> Spec.Setup.withLocation placeholderUrl
-                        |> Stub.serve [ TestData.successfullSubAddressFetch ]
-                    )
-                    |> Spec.when "we log the http requests"
-                        [ Spec.Http.logRequests
-                        ]
-                    |> when "the user ClickedGotNewSubaddress to simulte an new subaddress retrieval"
-                        [ Spec.Command.send (Spec.Command.fake <| Wallet.ClickedGotNewSubaddress) ]
-                        -- NOTE: Use this to bypass need to go via Main.elm, which is what will happen in the real app
-                        -- via GotWalletMsg
-                    |> when "the response triggers GotNewSubaddress in Wallet.update"
-                        [ Spec.Command.send (Spec.Command.fake <| 
-                            (Wallet.GotNewSubaddress
-                                (Ok ({subaddress = TestData.subAddress})) -- Simulate the successful response
-                            ))
-                        ]
-                    |> Spec.observeThat
-                        [ it "should have status as SubAddressView"
-                            (Observer.observeModel .status
-                                |> Spec.expect (equals Wallet.Loaded)
-                            )
-                        , it "should have currentView as SubAddressView"
-                            (Observer.observeModel .currentView
-                                |> Spec.expect (equals Wallet.SubAddressView)
-                            )
-                        , it "displays the new subaddress"
-                            (Markup.observeElement
-                                |> Markup.query
-                                << by [ id "newSubaddress" ]
-                                |> Spec.expect
-                                    (Claim.isSomethingWhere <|
-                                        Markup.text <|
-                                            Claim.isStringContaining 1 TestData.subAddress
-                                    )
-                            )
-                        ]
+          scenario "3: Generating a New Subaddress"
+            (given
+                (Spec.Setup.init ( getSubAddrInitModel, Spec.Command.fake <| Wallet.ClickedGotNewSubaddress )
+                    --(Wallet.init "http://localhost:1234")
+                    |> Spec.Setup.withView Wallet.view
+                    |> Spec.Setup.withUpdate Wallet.update
+                    |> Spec.Setup.withLocation placeholderUrl
+                    |> Stub.serve [ TestData.successfullSubAddressFetch ]
                 )
+                |> Spec.when "we log the http requests"
+                    [ Spec.Http.logRequests
+                    ]
+                |> when "the user ClickedGotNewSubaddress to simulte an new subaddress retrieval"
+                    [ Spec.Command.send (Spec.Command.fake <| Wallet.ClickedGotNewSubaddress) ]
+                -- NOTE: Use this to bypass need to go via Main.elm, which is what will happen in the real app
+                -- via GotWalletMsg
+                |> when "the response triggers GotNewSubaddress in Wallet.update"
+                    [ Spec.Command.send
+                        (Spec.Command.fake <|
+                            (Wallet.GotXmrNewSubaddress
+                                (Ok { subaddress = TestData.subAddress })
+                             -- Simulate the successful response
+                            )
+                        )
+                    ]
+                |> Spec.observeThat
+                    [ it "should have status as SubAddressView"
+                        (Observer.observeModel .status
+                            |> Spec.expect (equals Wallet.Loaded)
+                        )
+                    , it "should have currentView as SubAddressView"
+                        (Observer.observeModel .currentView
+                            |> Spec.expect (equals Wallet.SubAddressView)
+                        )
+                    , it "displays the new subaddress"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ id "newSubaddress" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 TestData.subAddress
+                                )
+                        )
+                    ]
+            )
 
         -- NOTE: Uncomment these tests one at a time to maintain managability
         {-
@@ -483,8 +490,8 @@ getSubAddrInitModel =
     , pagetitle = "Haveno Web Wallet"
     , balances = Just Protobuf.defaultBalancesInfo
 
-    -- HACK: Hardcoding the address for now
-    , address = ""
+   
+    , primaryaddress = ""
     , errors = []
     , subaddress = ""
     , currentView = Wallet.SubAddressView
