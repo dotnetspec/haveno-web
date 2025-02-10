@@ -981,36 +981,19 @@ menu model =
                 [ class "menu-btn"
                 , onClick ToggleMenu
                 ]
-                [ text
-                    (if model.isMenuOpen then
-                        "Close Menu"
-
-                     else
-                        "Open Menu"
-                    )
-                ]
+                [ text (if model.isMenuOpen then "✖" else "☰") ]
             , div
                 [ classList [ ( "menu", True ), ( "open", model.isMenuOpen ) ] ]
-                [ navLinks model.page
-                ]
+                [ navLinks model.page ]
             ]
-
     else if model.isNavMenuActive == True then
         div []
             [ button
                 [ class "menu-btn"
                 , onClick ToggleMenu
                 ]
-                [ text
-                    (if model.isMenuOpen then
-                        "Close Menu"
-
-                     else
-                        "Open Menu"
-                    )
-                ]
+                [ text (if model.isMenuOpen then "✖" else "☰") ]
             ]
-
     else
         div [] []
 
