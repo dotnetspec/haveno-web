@@ -21,6 +21,14 @@ Main is for functionality that persists across all pages (e.g. Dis/Connected ind
 **Given** the application attempts to connect with the Haveno API
 **Then** it should display a message indicating that the connection to the Haveno API was unsuccessful
 
+#### **Scenario 3: Display the Haveno core app version number"**
+
+**Given** the user accesses the Wallet page
+**When** the application successfully connects with the Haveno API
+**And** it displays Haveno version number on the Dashboard page
+**And** it displays Haveno version number in the footer"
+**And** it should ensure the navigation menu is enabled
+
 
 #### **Scenario 3: Fetching an XMR address from the Haveno daemon - success**
 

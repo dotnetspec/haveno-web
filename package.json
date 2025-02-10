@@ -12,7 +12,7 @@
     "optimize": "elm make src/Main.elm --output=js/elm.js --optimize",
     "minTestHaveno": "./terminals/localNet_2_User.sh",
     "fullTestHaveno": "./terminals/openAll.sh",
-    "backgroundHaveno": "./terminals/oneUserEnvoy.sh",
+    "backgroundForUITest": "./terminals/oneUserEnvoy.sh",
     "closeTestHaveno": "./terminals/closeAll.sh",
     "clean": "yarn cache clean",
     "prepare": "husky install",

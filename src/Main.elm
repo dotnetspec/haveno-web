@@ -267,8 +267,16 @@ update msg model =
                     case versionResp of
                         { version } ->
                             version
+
+                newDashBoardModel = 
+                    case model.page of
+                        DashboardPage dashboard ->
+                            { dashboard | version = verResp }
+
+                        _ ->
+                            Pages.Dashboard.initialModel
             in
-            ( { model | isApiConnected = True, version = verResp }, Cmd.none )
+            ( { model | isApiConnected = True, version = verResp , page = DashboardPage newDashBoardModel}, Cmd.none )
 
         GotVersion (Err _) ->
             
@@ -296,9 +304,9 @@ update msg model =
                 DashboardPage dashboard ->
                     let
                         updatedDashboardModel =
-                            { dashboard | version = "1.0.0" }
+                            { dashboard | version = model.version}
                     in
-                    toDashboard model (Pages.Dashboard.update dashboardMsg dashboard)
+                    toDashboard model (Pages.Dashboard.update dashboardMsg updatedDashboardModel)
 
                 _ ->
                     ( model, Cmd.none )

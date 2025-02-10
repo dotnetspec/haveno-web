@@ -57,7 +57,7 @@ runSpecTests =
           --Runner.pick <|
           scenario "1: Display successful API connection status"
             (given
-            -- NOTE: The URL is passed from js as JSON.stringified
+                -- NOTE: The URL is passed from js as JSON.stringified
                 (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
                     |> Spec.Setup.withDocument Main.view
                     |> Spec.Setup.withUpdate Main.update
@@ -67,7 +67,6 @@ runSpecTests =
                         , onUrlChange = Main.ChangedUrl
                         }
                     |> Stub.serve [ TestData.successfullVersionFetch ]
-                    
                 )
                 {- |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
@@ -117,7 +116,7 @@ runSpecTests =
                         )
                     ]
             )
-        {- , --Runner.skip <|
+        , --Runner.skip <|
           --Runner.pick <|
           scenario "7: Display the Haveno core app version number"
             (given
@@ -132,9 +131,10 @@ runSpecTests =
                     |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/dashboard" Nothing Nothing)
                     |> Stub.serve [ TestData.successfullVersionFetch ]
                 )
-                |> Spec.when "we log the http requests"
-                    [ Spec.Http.logRequests
-                    ]
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
                 |> Spec.observeThat
                     [ it
                         "a. the app location should be dashboard "
@@ -145,15 +145,17 @@ runSpecTests =
                                         "http://localhost:1234/dashboard"
                                 )
                         )
-                    , it "f.is on the Dashboard page"
-                        (Observer.observeModel .page
+                    , it "c. displays Haveno version number on the Dashboard page"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "versiondisplay" ]
                             |> Spec.expect
-                                (Claim.isEqual Debug.toString <|
-                                    Main.DashboardPage <|
-                                        Dashboard.initialModel
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "1.0.7"
                                 )
                         )
-                    , it "e. displays Haveno version number in the footer"
+                    , it "d. displays Haveno version number in the footer"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ Spec.Markup.Selector.id "havenofooterver" ]
@@ -163,206 +165,214 @@ runSpecTests =
                                         Claim.isStringContaining 1 "1.0.7"
                                 )
                         )
+                    , it "e. should be possible to use the Menu"
+                           (Observer.observeModel .isNavMenuActive
+                               |> Spec.expect
+                                   Claim.isTrue
+                           )
                     ]
             )
-        , --Runner.skip <|
-          Runner.pick <|
-            scenario "11: Checking the Menu is active on the Wallet page"
-                (given
-                    (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
-                        |> Spec.Setup.withDocument Main.view
-                        |> Spec.Setup.withUpdate Main.update
-                        |> Spec.Setup.withSubscriptions Main.subscriptions
-                        |> Spec.Setup.forNavigation
-                            { onUrlRequest = Main.ClickedLink
-                            , onUrlChange = Main.ChangedUrl
-                            }
-                        -- NOTE: Currently believe this is equivalent to the user clicking a link
-                        |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
-                        |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch ]
-                    )
-                    -- Simulate user clicking the Wallet navLink in the burger menu
-                    -- NOTE: This causes 'Error: Uncaught [TypeError: First argument to DataView constructor must be an ArrayBuffer]
-                    -- in the test runner, but the test still completes
-                    |> when "the user clicks the Wallet navLink in the burger menu"
-                        [ Spec.Command.send <|
-                            Spec.Command.fake
-                                (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing))
-                        ]
-                    |> Spec.when "we log the http requests"
-                        [ Spec.Http.logRequests
-                        ]
-                    |> Spec.observeThat
-                        [ it "a. should be possible to use the Menu"
-                            (Observer.observeModel .isNavMenuActive
-                                |> Spec.expect
-                                    Claim.isTrue
-                            )
-                        , it "b. should have an address in the model"
-                            (Observer.observeModel .xmrWalletAddress
-                                |> Spec.expect
-                                    (Claim.isEqual Debug.toString <| TestData.subAddress)
-                            )
-                        , it "f.is on the Wallet page"
-                            (Observer.observeModel .page
-                                |> Spec.expect
-                                    (Claim.isEqual Debug.toString <|
-                                        Main.WalletPage <|
-                                            Wallet.initialModel
-                                    )
-                            )
-                        , it "should display the menu"
-                            (Markup.observeElement
-                                |> Markup.query
-                                << by [ tag "button" ]
-                                |> Spec.expect
-                                    (Claim.isSomethingWhere <|
-                                        Markup.attribute "class" <|
-                                            Claim.isSomethingWhere <|
-                                                Claim.isStringContaining 1 "menu-btn"
-                                    )
-                            )
-                        ]
-                )
-        , --Runner.skip <|
-          --Runner.pick <|
-          scenario "13: Checking the Menu nav links work"
-            (given
-                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
-                    |> Spec.Setup.withDocument Main.view
-                    |> Spec.Setup.withUpdate Main.update
-                    |> Spec.Setup.withSubscriptions Main.subscriptions
-                    |> Spec.Setup.forNavigation
-                        { onUrlRequest = Main.ClickedLink
-                        , onUrlChange = Main.ChangedUrl
-                        }
-                    -- NOTE: Currently believe this is equivalent to the user clicking a link
-                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
-                )
-                -- Simulate user clicking the Sell href navLink in the simple menu
-                |> when "the user clicks the Sell navLink in the menu"
-                    [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
-                {- |> Spec.when "we log the http requests"
-                   [ Spec.Http.logRequests
-                   ]
-                -}
-                |> Spec.observeThat
-                    [ it "a. should be possible to use the Menu"
-                        (Observer.observeModel .isNavMenuActive
-                            |> Spec.expect
-                                Claim.isTrue
-                        )
-                    , it "b.is on the Sell page"
-                        -- NOTE: Cos connected with valid XMR address
-                        (Observer.observeModel .page
-                            |> Spec.expect (Claim.isEqual Debug.toString <| Main.SellPage Sell.initialModel)
-                        )
-                    , it "should display the menu"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ tag "button" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.attribute "class" <|
-                                        Claim.isSomethingWhere <|
-                                            Claim.isStringContaining 1 "menu-btn"
-                                )
-                        )
-                    ]
-            )
-        , --Runner.skip <|
-          --Runner.pick <|
-          scenario "14: Checking the Wallet page has initialized after using navlink to Wallet"
-            (given
-                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
-                    |> Spec.Setup.withDocument Main.view
-                    |> Spec.Setup.withUpdate Main.update
-                    |> Spec.Setup.withSubscriptions Main.subscriptions
-                    |> Spec.Setup.forNavigation
-                        { onUrlRequest = Main.ClickedLink
-                        , onUrlChange = Main.ChangedUrl
-                        }
-                    -- NOTE: Currently believe this is equivalent to the user clicking a link
-                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
-                    |> Stub.serve [ TestData.successfulWalletWithBalancesFetch ]
-                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch ]
-                )
-                |> when "the user navigates to another navLink in the menu"
-                    [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
-                -- Simulate user clicking the Wallet href navLink in the simple menu
-                |> when "the user then clicks the Wallet navLink in the menu"
-                    [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
-                {- |> Spec.when "we log the http requests"
-                   [ Spec.Http.logRequests
-                   ]
-                -}
-                |> Spec.observeThat
-                    [ it "should be possible to use the Menu"
-                        (Observer.observeModel .isNavMenuActive
-                            |> Spec.expect
-                                Claim.isTrue
-                        )
-                    , it "should display the menu"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ tag "button" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.attribute "class" <|
-                                        Claim.isSomethingWhere <|
-                                            Claim.isStringContaining 1 "menu-btn"
-                                )
-                        )
-                    , it "b.is on the Wallet page with an updated inital wallet model"
-                        -- NOTE: Cos connected with valid XMR address
-                        (Observer.observeModel .page
-                            |> Spec.expect
-                                (Claim.isEqual Debug.toString <|
-                                    Main.WalletPage <|
-                                        { primaryaddress = ""
-                                        , balances = Just expectedBalances
-                                        , errors = []
-                                        , pagetitle = "Haveno Web Wallet"
-                                        , status = Wallet.Loaded
-                                        , subaddress = "" --TestData.subAddress
-                                        , currentView = Wallet.WalletView
-                                        }
-                                )
-                        )
-                    , it "displays the available balance correctly"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "xmrbalance" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Available Balance: 10000.0 XMR"
-                                )
-                        )
-                    , it "displays the reserved balance correctly"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "reservedOfferBalance" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
-                                )
-                        )
-                    , it "should display the current address from the wallet page model"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ Spec.Markup.Selector.id "currentaddress" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 <|
-                                            "Current address: "
-                                                ++ TestData.subAddress
-                                )
-                        )
-                    ]
-            ) -}
+
+        {-
+           , --Runner.skip <|
+             Runner.pick <|
+               scenario "11: Checking the Menu is active on the Wallet page"
+                   (given
+                       (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                           |> Spec.Setup.withDocument Main.view
+                           |> Spec.Setup.withUpdate Main.update
+                           |> Spec.Setup.withSubscriptions Main.subscriptions
+                           |> Spec.Setup.forNavigation
+                               { onUrlRequest = Main.ClickedLink
+                               , onUrlChange = Main.ChangedUrl
+                               }
+                           -- NOTE: Currently believe this is equivalent to the user clicking a link
+                           |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                           |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch ]
+                       )
+                       -- Simulate user clicking the Wallet navLink in the burger menu
+                       -- NOTE: This causes 'Error: Uncaught [TypeError: First argument to DataView constructor must be an ArrayBuffer]
+                       -- in the test runner, but the test still completes
+                       |> when "the user clicks the Wallet navLink in the burger menu"
+                           [ Spec.Command.send <|
+                               Spec.Command.fake
+                                   (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing))
+                           ]
+                       |> Spec.when "we log the http requests"
+                           [ Spec.Http.logRequests
+                           ]
+                       |> Spec.observeThat
+                           [ it "a. should be possible to use the Menu"
+                               (Observer.observeModel .isNavMenuActive
+                                   |> Spec.expect
+                                       Claim.isTrue
+                               )
+                           , it "b. should have an address in the model"
+                               (Observer.observeModel .xmrWalletAddress
+                                   |> Spec.expect
+                                       (Claim.isEqual Debug.toString <| TestData.subAddress)
+                               )
+                           , it "f.is on the Wallet page"
+                               (Observer.observeModel .page
+                                   |> Spec.expect
+                                       (Claim.isEqual Debug.toString <|
+                                           Main.WalletPage <|
+                                               Wallet.initialModel
+                                       )
+                               )
+                           , it "should display the menu"
+                               (Markup.observeElement
+                                   |> Markup.query
+                                   << by [ tag "button" ]
+                                   |> Spec.expect
+                                       (Claim.isSomethingWhere <|
+                                           Markup.attribute "class" <|
+                                               Claim.isSomethingWhere <|
+                                                   Claim.isStringContaining 1 "menu-btn"
+                                       )
+                               )
+                           ]
+                   )
+           , --Runner.skip <|
+             --Runner.pick <|
+             scenario "13: Checking the Menu nav links work"
+               (given
+                   (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                       |> Spec.Setup.withDocument Main.view
+                       |> Spec.Setup.withUpdate Main.update
+                       |> Spec.Setup.withSubscriptions Main.subscriptions
+                       |> Spec.Setup.forNavigation
+                           { onUrlRequest = Main.ClickedLink
+                           , onUrlChange = Main.ChangedUrl
+                           }
+                       -- NOTE: Currently believe this is equivalent to the user clicking a link
+                       |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                   )
+                   -- Simulate user clicking the Sell href navLink in the simple menu
+                   |> when "the user clicks the Sell navLink in the menu"
+                       [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
+                   {- |> Spec.when "we log the http requests"
+                      [ Spec.Http.logRequests
+                      ]
+                   -}
+                   |> Spec.observeThat
+                       [ it "a. should be possible to use the Menu"
+                           (Observer.observeModel .isNavMenuActive
+                               |> Spec.expect
+                                   Claim.isTrue
+                           )
+                       , it "b.is on the Sell page"
+                           -- NOTE: Cos connected with valid XMR address
+                           (Observer.observeModel .page
+                               |> Spec.expect (Claim.isEqual Debug.toString <| Main.SellPage Sell.initialModel)
+                           )
+                       , it "should display the menu"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ tag "button" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.attribute "class" <|
+                                           Claim.isSomethingWhere <|
+                                               Claim.isStringContaining 1 "menu-btn"
+                                   )
+                           )
+                       ]
+               )
+           , --Runner.skip <|
+             --Runner.pick <|
+             scenario "14: Checking the Wallet page has initialized after using navlink to Wallet"
+               (given
+                   (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                       |> Spec.Setup.withDocument Main.view
+                       |> Spec.Setup.withUpdate Main.update
+                       |> Spec.Setup.withSubscriptions Main.subscriptions
+                       |> Spec.Setup.forNavigation
+                           { onUrlRequest = Main.ClickedLink
+                           , onUrlChange = Main.ChangedUrl
+                           }
+                       -- NOTE: Currently believe this is equivalent to the user clicking a link
+                       |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                       |> Stub.serve [ TestData.successfulWalletWithBalancesFetch ]
+                       |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch ]
+                   )
+                   |> when "the user navigates to another navLink in the menu"
+                       [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
+                   -- Simulate user clicking the Wallet href navLink in the simple menu
+                   |> when "the user then clicks the Wallet navLink in the menu"
+                       [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
+                   {- |> Spec.when "we log the http requests"
+                      [ Spec.Http.logRequests
+                      ]
+                   -}
+                   |> Spec.observeThat
+                       [ it "should be possible to use the Menu"
+                           (Observer.observeModel .isNavMenuActive
+                               |> Spec.expect
+                                   Claim.isTrue
+                           )
+                       , it "should display the menu"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ tag "button" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.attribute "class" <|
+                                           Claim.isSomethingWhere <|
+                                               Claim.isStringContaining 1 "menu-btn"
+                                   )
+                           )
+                       , it "b.is on the Wallet page with an updated inital wallet model"
+                           -- NOTE: Cos connected with valid XMR address
+                           (Observer.observeModel .page
+                               |> Spec.expect
+                                   (Claim.isEqual Debug.toString <|
+                                       Main.WalletPage <|
+                                           { primaryaddress = ""
+                                           , balances = Just expectedBalances
+                                           , errors = []
+                                           , pagetitle = "Haveno Web Wallet"
+                                           , status = Wallet.Loaded
+                                           , subaddress = "" --TestData.subAddress
+                                           , currentView = Wallet.WalletView
+                                           }
+                                   )
+                           )
+                       , it "displays the available balance correctly"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "xmrbalance" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Available Balance: 10000.0 XMR"
+                                   )
+                           )
+                       , it "displays the reserved balance correctly"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ id "reservedOfferBalance" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
+                                   )
+                           )
+                       , it "should display the current address from the wallet page model"
+                           (Markup.observeElement
+                               |> Markup.query
+                               << by [ Spec.Markup.Selector.id "currentaddress" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Markup.text <|
+                                           Claim.isStringContaining 1 <|
+                                               "Current address: "
+                                                   ++ TestData.subAddress
+                                   )
+                           )
+                       ]
+               )
+        -}
         ]
 
 
