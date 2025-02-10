@@ -1,98 +1,16 @@
-
-/* body, */
- /*  h1 {padding-top: 6rem;}
-  h2,
-  h3,
-  p {
-    margin: 0;
-  } */
-
-  /* -- NOTE: Layouts specific to certain pages. Here to get text further down page: */
-  .home {padding-top: 6rem;}
-  .testimonial {padding-top: 6rem;}
-  .contact  {padding-top: 6rem;}
-  .containContactForm {overflow: hidden; width: 100%;}
-
-  .pricing {padding-top: 6rem;}
-
-
-.topLinks-flex-container {
+/* Top logo styles */
+.topLogoContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--clr-neutral-900-with-opacity);
+  width: 100%;
+  position: relative; /* Changed from absolute */
+  top: 0;
+  margin: 1rem 0; /* Added margin to separate from other elements */
+  z-index: 10; /* Ensure it appears above the background but within flow */
 }
 
-/* Container styles */
-.topLogoContainer {
-  display: flex;
-  justify-content: center; /* Centers horizontally */
-  align-items: center;    /* Centers vertically (not necessary here but good for robustness) */
-  width: 100%;            /* Full width */
-  position: absolute;     /* Allow positioning */
-  top: 0;                 /* At the top of the page */
-}
-
-/* Image styles (optional) */
 .topLogo {
-  max-width: 100px; /* Limit the width for responsiveness */
-  height: auto;     /* Maintain aspect ratio */
-}
-
-
-.socials-sub-container-whatsapp {
-  order: 4;
-  width: 20%;
-}
-
-.menu-btn {
-  display: block;
-}
-
-.topLinksLeft {
-  display: none;
-}
-
-/* -- NOTE: Display the menu in the correct section of the html */
-.nav-section-above800px {
-  display: none;
-}
-
-.main-nav-flex-container {
-  display: block;
-}
-
-.below800pxnavlinks {
-  top: 2.5rem;
-  left: -2rem;
-  opacity: 0;
-  transition: opacity 1s ease;
-  display: flex;
-  padding-left: 2rem;
-}
-
-nav {
-  position: relative;
-  background-color: var(--clr-neutral-900-with-opacity);
-
-}
-
-.logo {
-  display: none;
-}
-
-.video-container {
-  display: none;
-}
-
-.banner {
-  display: none;
-}
-
-.menu-btn {
-  display: block;
-}
-
-.main-nav-flex-container {
-  display: block;
+  max-width: 100px;
+  height: auto;
 }

@@ -13671,10 +13671,25 @@ var $author$project$Main$update = F2(
 						var version = versionResp.version;
 						return version;
 					}();
+					var newDashBoardModel = function () {
+						var _v3 = model.page;
+						if (_v3.$ === 'DashboardPage') {
+							var dashboard = _v3.a;
+							return _Utils_update(
+								dashboard,
+								{version: verResp});
+						} else {
+							return $author$project$Pages$Dashboard$initialModel;
+						}
+					}();
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{isApiConnected: true, version: verResp}),
+							{
+								isApiConnected: true,
+								page: $author$project$Main$DashboardPage(newDashBoardModel),
+								version: verResp
+							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
@@ -13704,9 +13719,9 @@ var $author$project$Main$update = F2(
 					$elm$core$Platform$Cmd$none);
 			case 'GotDashboardMsg':
 				var dashboardMsg = msg.a;
-				var _v4 = model.page;
-				if (_v4.$ === 'DashboardPage') {
-					var dashboard = _v4.a;
+				var _v5 = model.page;
+				if (_v5.$ === 'DashboardPage') {
+					var dashboard = _v5.a;
 					var updatedDashboardModel = _Utils_update(
 						dashboard,
 						{version: model.version});
@@ -13719,9 +13734,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotSellMsg':
 				var sellMsg = msg.a;
-				var _v5 = model.page;
-				if (_v5.$ === 'SellPage') {
-					var sell = _v5.a;
+				var _v6 = model.page;
+				if (_v6.$ === 'SellPage') {
+					var sell = _v6.a;
 					return A2(
 						$author$project$Main$toSell,
 						model,
@@ -13731,9 +13746,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotBlankMsg':
 				var blankMsg = msg.a;
-				var _v6 = model.page;
-				if (_v6.$ === 'BlankPage') {
-					var blank = _v6.a;
+				var _v7 = model.page;
+				if (_v7.$ === 'BlankPage') {
+					var blank = _v7.a;
 					return A2(
 						$author$project$Main$toBlank,
 						model,
@@ -13743,9 +13758,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotPortfolioMsg':
 				var termsMsg = msg.a;
-				var _v7 = model.page;
-				if (_v7.$ === 'PortfolioPage') {
-					var terms = _v7.a;
+				var _v8 = model.page;
+				if (_v8.$ === 'PortfolioPage') {
+					var terms = _v8.a;
 					return A2(
 						$author$project$Main$toPortfolio,
 						model,
@@ -13755,9 +13770,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotFundsMsg':
 				var privacyMsg = msg.a;
-				var _v8 = model.page;
-				if (_v8.$ === 'FundsPage') {
-					var privacy = _v8.a;
+				var _v9 = model.page;
+				if (_v9.$ === 'FundsPage') {
+					var privacy = _v9.a;
 					return A2(
 						$author$project$Main$toFunds,
 						model,
@@ -13767,9 +13782,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotSupportMsg':
 				var supportMsg = msg.a;
-				var _v9 = model.page;
-				if (_v9.$ === 'SupportPage') {
-					var support = _v9.a;
+				var _v10 = model.page;
+				if (_v10.$ === 'SupportPage') {
+					var support = _v10.a;
 					return A2(
 						$author$project$Main$toSupport,
 						model,
@@ -13779,9 +13794,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotBuyMsg':
 				var pricingMsg = msg.a;
-				var _v10 = model.page;
-				if (_v10.$ === 'BuyPage') {
-					var pricing = _v10.a;
+				var _v11 = model.page;
+				if (_v11.$ === 'BuyPage') {
+					var pricing = _v11.a;
 					return A2(
 						$author$project$Main$toPricing,
 						model,
@@ -13791,9 +13806,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotMarketMsg':
 				var aboutMsg = msg.a;
-				var _v11 = model.page;
-				if (_v11.$ === 'MarketPage') {
-					var about = _v11.a;
+				var _v12 = model.page;
+				if (_v12.$ === 'MarketPage') {
+					var about = _v12.a;
 					return A2(
 						$author$project$Main$toMarket,
 						model,
@@ -13803,9 +13818,9 @@ var $author$project$Main$update = F2(
 				}
 			case 'GotWalletMsg':
 				var walletMsg = msg.a;
-				var _v12 = model.page;
-				if (_v12.$ === 'WalletPage') {
-					var wallet = _v12.a;
+				var _v13 = model.page;
+				if (_v13.$ === 'WalletPage') {
+					var wallet = _v13.a;
 					if (walletMsg.$ === 'ClickedGotNewSubaddress') {
 						var newWalletModel = _Utils_update(
 							wallet,
@@ -14039,10 +14054,7 @@ var $author$project$Main$isXMRWalletConnectedIndicator = function (model) {
 var $author$project$Main$indicatorContainer = function (model) {
 	return A2(
 		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('indicator-container')
-			]),
+		_List_Nil,
 		_List_fromArray(
 			[
 				$author$project$Main$isHWDeviceConnectedIndicator(model),
@@ -14173,18 +14185,36 @@ var $elm$html$Html$Attributes$width = function (n) {
 		$elm$core$String$fromInt(n));
 };
 var $author$project$Main$topLogo = A2(
-	$elm$html$Html$img,
+	$elm$html$Html$div,
 	_List_fromArray(
 		[
-			$elm$html$Html$Attributes$src('assets/resources/images/logo-splash100X33.png'),
-			$elm$html$Html$Attributes$width(100),
-			$elm$html$Html$Attributes$height(33),
-			$elm$html$Html$Attributes$alt('Haveno Logo'),
-			$elm$html$Html$Attributes$title('Haveno Logo'),
-			$elm$html$Html$Attributes$id('topLogoId'),
-			$elm$html$Html$Attributes$class('topLogo')
+			$elm$html$Html$Attributes$class('topLogoContainer')
 		]),
-	_List_Nil);
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('topLogo-content')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$img,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$src('assets/resources/images/logo-splash100X33.png'),
+							$elm$html$Html$Attributes$width(100),
+							$elm$html$Html$Attributes$height(33),
+							$elm$html$Html$Attributes$alt('Haveno Logo'),
+							$elm$html$Html$Attributes$title('Haveno Logo'),
+							$elm$html$Html$Attributes$id('topLogoId'),
+							$elm$html$Html$Attributes$class('topLogo')
+						]),
+					_List_Nil)
+				]))
+		]));
 var $author$project$Main$navLinks = function (page) {
 	var navLink = F2(
 		function (route, _v0) {
@@ -14276,7 +14306,7 @@ var $author$project$Main$navLinks = function (page) {
 			]));
 	return links;
 };
-var $author$project$Main$newMenu = function (model) {
+var $author$project$Main$menu = function (model) {
 	return (model.isNavMenuActive && model.isMenuOpen) ? A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -20385,7 +20415,7 @@ var $author$project$Pages$Dashboard$view = function (model) {
 					A2(
 					$mdgriffith$elm_ui$Element$el,
 					$Orasund$elm_ui_framework$Framework$Heading$h1,
-					$mdgriffith$elm_ui$Element$text('Haveno Web - Dashboard')),
+					$mdgriffith$elm_ui$Element$text('Dashboard')),
 					$mdgriffith$elm_ui$Element$text('\n'),
 					A2(
 					$mdgriffith$elm_ui$Element$el,
@@ -21153,7 +21183,16 @@ var $author$project$Main$view = function (model) {
 	return {
 		body: _List_fromArray(
 			[
-				$author$project$Main$newMenu(model),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('main-nav-flex-container')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$menu(model)
+					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -21161,19 +21200,35 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$Attributes$class('topLogoContainer')
 					]),
 				_List_fromArray(
+					[$author$project$Main$topLogo])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
 					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('topLogo-content')
-							]),
-						_List_fromArray(
-							[$author$project$Main$topLogo]))
+						$elm$html$Html$Attributes$class('contentByPage')
+					]),
+				_List_fromArray(
+					[contentByPage])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('indicator-container')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$indicatorContainer(model)
 					])),
-				contentByPage,
-				$author$project$Main$indicatorContainer(model),
-				$author$project$Main$footerContent(model)
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('footerContent')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$footerContent(model)
+					]))
 			]),
 		title: 'Haveno-Web'
 	};

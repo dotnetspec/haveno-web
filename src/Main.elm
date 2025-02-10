@@ -262,13 +262,12 @@ update msg model =
         -- NOTE: GotVersion also used as an API Connection indicator
         GotVersion (Ok versionResp) ->
             let
-                
                 verResp =
                     case versionResp of
                         { version } ->
                             version
 
-                newDashBoardModel = 
+                newDashBoardModel =
                     case model.page of
                         DashboardPage dashboard ->
                             { dashboard | version = verResp }
@@ -276,10 +275,9 @@ update msg model =
                         _ ->
                             Pages.Dashboard.initialModel
             in
-            ( { model | isApiConnected = True, version = verResp , page = DashboardPage newDashBoardModel}, Cmd.none )
+            ( { model | isApiConnected = True, version = verResp, page = DashboardPage newDashBoardModel }, Cmd.none )
 
         GotVersion (Err _) ->
-            
             ( { model | version = "Error obtaining version", isApiConnected = False, isPopUpVisible = False }, Cmd.none )
 
         -- NAV: Recv rawJsonMessage
@@ -304,7 +302,7 @@ update msg model =
                 DashboardPage dashboard ->
                     let
                         updatedDashboardModel =
-                            { dashboard | version = model.version}
+                            { dashboard | version = model.version }
                     in
                     toDashboard model (Pages.Dashboard.update dashboardMsg updatedDashboardModel)
 
@@ -457,23 +455,18 @@ view model =
     -- NOTE: 'pagetitle' or 'title' in pages is not the same as 'title' in the document
     { title = "Haveno-Web"
     , body =
-        [ newMenu model
-        , div
-            [ class "topLogoContainer"
-            ]
-            [ div [ class "topLogo-content" ]
-                [ topLogo ]
-            ]
-        , contentByPage
-        , indicatorContainer model
-        , footerContent model
+        [ div [ Attr.class "main-nav-flex-container" ] [ menu model ]
+        , div [ Attr.class "topLogoContainer" ] [ topLogo ]
+        , div [ Attr.class "contentByPage" ] [ contentByPage ]
+        , div [ Attr.class "indicator-container" ] [ indicatorContainer model ] 
+        , div [ Attr.class "footerContent" ] [ footerContent model ]
         ]
     }
 
 
 indicatorContainer : Model -> Html msg
 indicatorContainer model =
-    div [ Attr.class "indicator-container" ]
+    div []
         [ isHWDeviceConnectedIndicator model
         , apiConnectionStatusIndicator model
         , isXMRWalletConnectedIndicator model
@@ -959,23 +952,29 @@ showVideoOrBanner page =
 
 topLogo : Html msg
 topLogo =
-    img
-        [ Attr.src "assets/resources/images/logo-splash100X33.png"
-
-        -- NOTE: always define the width and height of images. This reduces flickering,
-        -- because the browser can reserve space for the image before loading.
-        , Attr.width 100
-        , Attr.height 33
-        , Attr.alt "Haveno Logo"
-        , Attr.title "Haveno Logo"
-        , id "topLogoId"
-        , class "topLogo"
+    div
+        [ class "topLogoContainer"
         ]
-        []
+        [ div [ class "topLogo-content" ]
+            [ img
+                [ Attr.src "assets/resources/images/logo-splash100X33.png"
+
+                -- NOTE: always define the width and height of images. This reduces flickering,
+                -- because the browser can reserve space for the image before loading.
+                , Attr.width 100
+                , Attr.height 33
+                , Attr.alt "Haveno Logo"
+                , Attr.title "Haveno Logo"
+                , id "topLogoId"
+                , class "topLogo"
+                ]
+                []
+            ]
+        ]
 
 
-newMenu : Model -> Html Msg
-newMenu model =
+menu : Model -> Html Msg
+menu model =
     if model.isNavMenuActive == True && model.isMenuOpen == True then
         div []
             [ button

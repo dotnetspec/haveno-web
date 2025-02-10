@@ -189,19 +189,10 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    {- let
-        newVersion =
-            case model.version of
-                Just { version } ->
-                    version
-
-                Nothing ->
-                    "No Haveno version available"
-    in -}
     Framework.responsiveLayout [] <|
         Element.column Framework.container <|
             [ Element.el Heading.h1 <|
-                Element.text "Haveno Web - Dashboard"
+                Element.text "Dashboard"
             , Element.text "\n"
            
             , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "versiondisplay") ]

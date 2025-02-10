@@ -75,7 +75,7 @@ runSpecTests =
                                 |> Spec.expect
                                     (Claim.isSomethingWhere <|
                                         Markup.text <|
-                                            Claim.isStringContaining 1 "Haveno Web"
+                                            Claim.isStringContaining 1 "Dashboard"
                                     )
                             )
                         , it "makes the Haveno version visible to the user"
