@@ -9113,127 +9113,13 @@ var $author$project$Main$apiConnectionStatusIndicator = function (model) {
 					]))
 			]));
 };
-var $author$project$Main$hasReceivedXMRAddrIndicator = function (model) {
-	return A2(
-		$elm$html$Html$span,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('indicator'),
-						A2($elm$html$Html$Attributes$style, 'text-align', 'center')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$span,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$span,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class(
-										(!(model.mg === '')) ? 'indicator green' : (model.bE ? 'indicator white' : 'indicator red')),
-										$elm$html$Html$Attributes$id('xmraddressreceived')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										(!(model.mg === '')) ? '✔' : (model.bE ? '_' : '✖'))
-									]))
-							]))
-					]))
-			]));
-};
-var $author$project$Main$isHWDeviceConnectedIndicator = function (model) {
-	return A2(
-		$elm$html$Html$span,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('indicator'),
-						A2($elm$html$Html$Attributes$style, 'text-align', 'center')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$span,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$span,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class(
-										model.mC ? 'indicator green' : (model.bE ? 'indicator white' : 'indicator red')),
-										$elm$html$Html$Attributes$id('hwdeviceconnection')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										model.mC ? '✔' : (model.bE ? '_' : '✖'))
-									]))
-							]))
-					]))
-			]));
-};
-var $author$project$Main$isXMRWalletConnectedIndicator = function (model) {
-	return A2(
-		$elm$html$Html$span,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('indicator'),
-						A2($elm$html$Html$Attributes$style, 'text-align', 'center')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$span,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$span,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class(
-										model.mE ? 'indicator green' : (model.bE ? 'indicator white' : 'indicator red')),
-										$elm$html$Html$Attributes$id('xmrwalletconnection')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										model.mE ? '✔' : (model.bE ? '_' : '✖'))
-									]))
-							]))
-					]))
-			]));
-};
 var $author$project$Main$indicatorContainer = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
 			[
-				$author$project$Main$isHWDeviceConnectedIndicator(model),
-				$author$project$Main$apiConnectionStatusIndicator(model),
-				$author$project$Main$isXMRWalletConnectedIndicator(model),
-				$author$project$Main$hasReceivedXMRAddrIndicator(model)
+				$author$project$Main$apiConnectionStatusIndicator(model)
 			]));
 };
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;

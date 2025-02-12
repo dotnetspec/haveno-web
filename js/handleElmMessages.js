@@ -6,7 +6,6 @@
 // NOTE: Messages from the Elm 'sendMessageToJs' port are received and parsed here to determine
 // which function (in the relevant .js file) to use to communicate with the hardware device
 export async function handleMessageFromElm(message, app) {
-  console.log("here in handle : ", message);
 
   // NOTE: Use FF debugger to view 'message'
   // HACK: This will need to be more robust. It must be something that will never appear in the json:

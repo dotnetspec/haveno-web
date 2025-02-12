@@ -458,7 +458,7 @@ view model =
         [ div [ Attr.class "main-nav-flex-container" ] [ menu model ]
         , div [ Attr.class "topLogoContainer" ] [ topLogo ]
         , div [ Attr.class "contentByPage" ] [ contentByPage ]
-        , div [ Attr.class "indicator-container" ] [ indicatorContainer model ] 
+        , div [ Attr.class "indicator-container" ] [ indicatorContainer model ]
         , div [ Attr.class "footerContent" ] [ footerContent model ]
         ]
     }
@@ -467,10 +467,7 @@ view model =
 indicatorContainer : Model -> Html msg
 indicatorContainer model =
     div []
-        [ isHWDeviceConnectedIndicator model
-        , apiConnectionStatusIndicator model
-        , isXMRWalletConnectedIndicator model
-        , hasReceivedXMRAddrIndicator model
+        [ apiConnectionStatusIndicator model
         ]
 
 
@@ -685,7 +682,7 @@ toDashboard model ( dashboard, cmd ) =
     ( { model | page = DashboardPage dashboard }
       -- NOTE: Cmd.map is a way to manipulate the result of a command
       -- WARN: sendMessageToJs "msgFromElm" is redundant here but if it isn't actually used somewhere the port won't be recognized on document load
-    , Cmd.batch [ Cmd.map GotDashboardMsg cmd, sendVersionRequest Protobuf.defaultGetVersionRequest, Task.perform AdjustTimeZone Time.here, sendMessageToJs "msgFromElm"  ]
+    , Cmd.batch [ Cmd.map GotDashboardMsg cmd, sendVersionRequest Protobuf.defaultGetVersionRequest, Task.perform AdjustTimeZone Time.here, sendMessageToJs "msgFromElm" ]
     )
 
 
@@ -983,19 +980,35 @@ menu model =
                 [ class "menu-btn"
                 , onClick ToggleMenu
                 ]
-                [ text (if model.isMenuOpen then "✖" else "☰") ]
+                [ text
+                    (if model.isMenuOpen then
+                        "✖"
+
+                     else
+                        "☰"
+                    )
+                ]
             , div
                 [ classList [ ( "menu", True ), ( "open", model.isMenuOpen ) ] ]
                 [ navLinks model.page ]
             ]
+
     else if model.isNavMenuActive == True then
         div []
             [ button
                 [ class "menu-btn"
                 , onClick ToggleMenu
                 ]
-                [ text (if model.isMenuOpen then "✖" else "☰") ]
+                [ text
+                    (if model.isMenuOpen then
+                        "✖"
+
+                     else
+                        "☰"
+                    )
+                ]
             ]
+
     else
         div [] []
 
@@ -1032,19 +1045,15 @@ navLinks page =
 
 -- NAV: Cmd Msgs
 -- these might e.g. be sent to ports etc.
-
-
 {- notifyJsReady : Cmd Msg
-notifyJsReady =
-    sendMessageToJs "ElmReady"
+   notifyJsReady =
+       sendMessageToJs "ElmReady"
 
 
-logOutUser : Cmd Msg
-logOutUser =
-    sendMessageToJs "logOut" -}
-
-
-
+   logOutUser : Cmd Msg
+   logOutUser =
+       sendMessageToJs "logOut"
+-}
 -- NAV: Main Persistent
 
 
