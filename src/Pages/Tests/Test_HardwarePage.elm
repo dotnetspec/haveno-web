@@ -1,6 +1,6 @@
 module Pages.Tests.Test_HardwarePage exposing (..)
 
-import Data.Hardware as R exposing (..)
+
 import Dict exposing (fromList)
 import Expect
 import Extras.Constants as Consts exposing (..)

@@ -48,7 +48,7 @@ module Data.User exposing (..)
    )
 -}
 
-import Data.Hardware as R
+
 import Json.Decode as D
 import Json.Decode.Pipeline as P
 import Time exposing (Month(..))

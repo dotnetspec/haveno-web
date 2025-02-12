@@ -26,7 +26,7 @@ module SR.Elements exposing
 -- WARN: expose all here?
 -- NOTE: Exposing Element gives us access to the rgb colors:
 
-import Data.Hardware as R
+
 import Data.User as U
 import Element exposing (..)
 import Element.Background as Background
