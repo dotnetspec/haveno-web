@@ -9,9 +9,8 @@ import Extras.TestData as TestData exposing (..)
 import Grpc
 import Html exposing (Html, div, i)
 import Json.Encode as E
-import Pages.Blank
 import Pages.Dashboard as Dashboard exposing (..)
-import Pages.Wallet as Wallet exposing (Model, Msg, init, update, view)
+import Pages.Funds as Funds exposing (Model, Msg, init, update, view)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (BalancesInfo)
 import Protobuf.Types.Int64 exposing (fromInts)
 import Spec exposing (..)
@@ -50,55 +49,55 @@ gotXmrBalance balances =
 -- NAV: Test scenarios
 
 
-runSpecTests : Spec Wallet.Model Wallet.Msg
+runSpecTests : Spec Funds.Model Funds.Msg
 runSpecTests =
     describe
-        "Haveno Web App Wallet Tests"
+        "Haveno Web App Funds Tests"
         [ --Runner.skip <|
           --Runner.pick <|
-          scenario "1: Accessing the Wallet page with valid balance data"
+          scenario "1: Accessing the Funds page with valid balance data"
             (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
+                (Spec.Setup.init (Funds.init "http://localhost:1234")
+                    |> Spec.Setup.withView Funds.view
+                    |> Spec.Setup.withUpdate Funds.update
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-                |> when "the user has already clicked the Continue button and triggered the Wallet page"
-                    [ Spec.Command.send (Spec.Command.fake <| Wallet.GotBalances (Ok Protobuf.defaultGetBalancesReply)) ]
+                |> when "the user has already clicked the Continue button and triggered the Funds page"
+                    [ Spec.Command.send (Spec.Command.fake <| Funds.GotBalances (Ok Protobuf.defaultGetBalancesReply)) ]
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
-                            |> Spec.expect (equals Wallet.Loaded)
+                            |> Spec.expect (equals Funds.Loaded)
                         )
-                    , it "displays the Wallet page correctly"
+                    , it "displays the Funds page correctly"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ tag "h1" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Wallet"
+                                        Claim.isStringContaining 1 "Funds"
                                 )
                         )
                     ]
             )
         , --Runner.skip <|
           --Runner.pick <|
-          scenario "2: Handling the Wallet page with INvalid balance data"
+          scenario "2: Handling the Funds page with INvalid balance data"
             (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
+                (Spec.Setup.init (Funds.init "http://localhost:1234")
+                    |> Spec.Setup.withView Funds.view
+                    |> Spec.Setup.withUpdate Funds.update
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-                |> when "the user has already clicked the Continue button and triggered the Wallet page"
-                    [ Spec.Command.send (Spec.Command.fake <| Wallet.GotBalances (Result.Err <| Grpc.UnknownGrpcStatus "unknown")) ]
+                |> when "the user has already clicked the Continue button and triggered the Funds page"
+                    [ Spec.Command.send (Spec.Command.fake <| Funds.GotBalances (Result.Err <| Grpc.UnknownGrpcStatus "unknown")) ]
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
-                            |> Spec.expect (equals Wallet.Errored)
+                            |> Spec.expect (equals Funds.Errored)
                         )
-                    , it "displays the Wallet page correctly"
+                    , it "displays the Funds page correctly"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ Spec.Markup.Selector.id "wallet-error-message" ]
@@ -115,9 +114,9 @@ runSpecTests =
         --Runner.pick <|
         , scenario "2a: Show available balance and reserved balance correctly in the UI"
             (given
-                (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
+                (Spec.Setup.init (Funds.init "http://localhost:1234")
+                    |> Spec.Setup.withView Funds.view
+                    |> Spec.Setup.withUpdate Funds.update
                     |> Spec.Setup.withLocation placeholderUrl
                     |> Stub.serve [ TestData.successfulWalletWithBalancesFetch ]
                 )
@@ -151,10 +150,10 @@ runSpecTests =
           --Runner.pick <|
           scenario "3: Generating a New Subaddress"
             (given
-                (Spec.Setup.init ( getSubAddrInitModel, Spec.Command.fake <| Wallet.ClickedGotNewSubaddress )
-                    --(Wallet.init "http://localhost:1234")
-                    |> Spec.Setup.withView Wallet.view
-                    |> Spec.Setup.withUpdate Wallet.update
+                (Spec.Setup.init ( getSubAddrInitModel, Spec.Command.fake <| Funds.ClickedGotNewSubaddress )
+                    --(Funds.init "http://localhost:1234")
+                    |> Spec.Setup.withView Funds.view
+                    |> Spec.Setup.withUpdate Funds.update
                     |> Spec.Setup.withLocation placeholderUrl
                     |> Stub.serve [ TestData.successfullSubAddressFetch ]
                 )
@@ -162,13 +161,13 @@ runSpecTests =
                     [ Spec.Http.logRequests
                     ]
                 |> when "the user ClickedGotNewSubaddress to simulte an new subaddress retrieval"
-                    [ Spec.Command.send (Spec.Command.fake <| Wallet.ClickedGotNewSubaddress) ]
+                    [ Spec.Command.send (Spec.Command.fake <| Funds.ClickedGotNewSubaddress) ]
                 -- NOTE: Use this to bypass need to go via Main.elm, which is what will happen in the real app
-                -- via GotWalletMsg
-                |> when "the response triggers GotNewSubaddress in Wallet.update"
+                -- via GotFundsMsg
+                |> when "the response triggers GotNewSubaddress in Funds.update"
                     [ Spec.Command.send
                         (Spec.Command.fake <|
-                            (Wallet.GotXmrNewSubaddress
+                            (Funds.GotXmrNewSubaddress
                                 (Ok { subaddress = TestData.subAddress })
                              -- Simulate the successful response
                             )
@@ -177,11 +176,11 @@ runSpecTests =
                 |> Spec.observeThat
                     [ it "should have status as SubAddressView"
                         (Observer.observeModel .status
-                            |> Spec.expect (equals Wallet.Loaded)
+                            |> Spec.expect (equals Funds.Loaded)
                         )
                     , it "should have currentView as SubAddressView"
                         (Observer.observeModel .currentView
-                            |> Spec.expect (equals Wallet.SubAddressView)
+                            |> Spec.expect (equals Funds.SubAddressView)
                         )
                     , it "displays the new subaddress"
                         (Markup.observeElement
@@ -484,17 +483,17 @@ runSpecTests =
 -- state at the start of each test
 
 
-getSubAddrInitModel : Wallet.Model
+getSubAddrInitModel : Funds.Model
 getSubAddrInitModel =
-    { status = Wallet.Loaded
-    , pagetitle = "Haveno Web Wallet"
+    { status = Funds.Loaded
+    , pagetitle = "Haveno Web Funds"
     , balances = Just Protobuf.defaultBalancesInfo
 
    
     , primaryaddress = ""
     , errors = []
     , subaddress = ""
-    , currentView = Wallet.SubAddressView
+    , currentView = Funds.SubAddressView
     }
 
 
@@ -515,13 +514,13 @@ jsonCreateTransaction =
 
 
 
--- JSON-like structure for navigating to the Wallet page
+-- JSON-like structure for navigating to the Funds page
 
 
-jsonNavigateToWalletPage : E.Value
-jsonNavigateToWalletPage =
+jsonNavigateToFundsPage : E.Value
+jsonNavigateToFundsPage =
     E.object
-        [ ( "action", E.string "navigateToWalletPage" ) ]
+        [ ( "action", E.string "navigateToFundsPage" ) ]
 
 
 
@@ -632,6 +631,6 @@ jsonDepositSuccess =
         ]
 
 
-main : Program Flags (Spec.Model Wallet.Model Wallet.Msg) (Spec.Msg Wallet.Msg)
+main : Program Flags (Spec.Model Funds.Model Funds.Msg) (Spec.Msg Funds.Msg)
 main =
     Runner.browserProgram [ runSpecTests ]

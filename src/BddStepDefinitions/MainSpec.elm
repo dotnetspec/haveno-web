@@ -22,7 +22,7 @@ import Main exposing (Model, Msg, Page(..), Route(..), init, navigate, subscript
 import Pages.Blank
 import Pages.Dashboard as Dashboard exposing (..)
 import Pages.Sell as Sell exposing (..)
-import Pages.Wallet as Wallet exposing (..)
+import Pages.Funds as Funds exposing (..)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.Internals_
 import Protobuf.Decode

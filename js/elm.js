@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.uV.jc === region.U.jc)
+	if (region.uV.jc === region.T.jc)
 	{
 		return 'on line ' + region.uV.jc;
 	}
-	return 'on lines ' + region.uV.jc + ' through ' + region.U.jc;
+	return 'on lines ' + region.uV.jc + ' through ' + region.T.jc;
 }
 
 
@@ -4824,7 +4824,7 @@ function _Time_getZoneName()
 	});
 }
 var $author$project$Main$ChangedUrl = function (a) {
-	return {$: 10, a: a};
+	return {$: 9, a: a};
 };
 var $author$project$Main$ClickedLink = function (a) {
 	return {$: 0, a: a};
@@ -5678,73 +5678,7 @@ var $author$project$Pages$Dashboard$init = function (fromMainToDashboard) {
 		_List_Nil);
 	return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
 };
-var $author$project$Pages$Funds$Funds = $elm$core$Basics$identity;
-var $author$project$Pages$Funds$Loading = 0;
-var $author$project$Pages$Funds$initialModel = {
-	qC: {pL: 'Loading...'},
-	uW: 0,
-	vl: 'Funds'
-};
-var $author$project$Pages$Funds$init = function (_v0) {
-	return _Utils_Tuple2(
-		_Utils_update(
-			$author$project$Pages$Funds$initialModel,
-			{vl: 'Haveno-Web Funds'}),
-		$elm$core$Platform$Cmd$none);
-};
-var $author$project$Pages$Market$Loading = 0;
-var $author$project$Pages$Market$Market = $elm$core$Basics$identity;
-var $author$project$Pages$Market$initialModel = {
-	qC: {pL: 'Loading...'},
-	uW: 0,
-	vl: 'Market'
-};
-var $author$project$Pages$Market$init = function (_v0) {
-	return _Utils_Tuple2(
-		_Utils_update(
-			$author$project$Pages$Market$initialModel,
-			{vl: 'Haveno-Web Market'}),
-		$elm$core$Platform$Cmd$none);
-};
-var $author$project$Pages$Portfolio$Loading = 0;
-var $author$project$Pages$Portfolio$Portfolio = $elm$core$Basics$identity;
-var $author$project$Pages$Portfolio$initialModel = {
-	qC: {pL: 'Loading...'},
-	uW: 0,
-	vl: 'Portfolio'
-};
-var $author$project$Pages$Portfolio$init = function (_v0) {
-	return _Utils_Tuple2(
-		_Utils_update(
-			$author$project$Pages$Portfolio$initialModel,
-			{vl: 'Haveno-Web Portfolio'}),
-		$elm$core$Platform$Cmd$none);
-};
-var $author$project$Pages$Sell$Loading = 0;
-var $author$project$Pages$Sell$Sell = $elm$core$Basics$identity;
-var $author$project$Pages$Sell$initialModel = {
-	qC: {pL: 'Loading...'},
-	uW: 0,
-	vl: 'Sell'
-};
-var $author$project$Pages$Sell$init = function (_v0) {
-	return _Utils_Tuple2($author$project$Pages$Sell$initialModel, $elm$core$Platform$Cmd$none);
-};
-var $author$project$Pages$Support$Loading = 0;
-var $author$project$Pages$Support$Support = $elm$core$Basics$identity;
-var $author$project$Pages$Support$initialModel = {
-	qC: {pL: 'Loading...'},
-	uW: 0,
-	vl: 'Support'
-};
-var $author$project$Pages$Support$init = function (_v0) {
-	return _Utils_Tuple2(
-		_Utils_update(
-			$author$project$Pages$Support$initialModel,
-			{vl: 'Haveno-Web Support'}),
-		$elm$core$Platform$Cmd$none);
-};
-var $author$project$Pages$Wallet$GotBalances = function (a) {
+var $author$project$Pages$Funds$GotBalances = function (a) {
 	return {$: 0, a: a};
 };
 var $anmolitor$elm_grpc$Grpc$InternalRpcRequest = $elm$core$Basics$identity;
@@ -7789,7 +7723,7 @@ var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 					$anmolitor$elm_grpc$Grpc$rpcPath(req.kw))
 			});
 	});
-var $author$project$Pages$Wallet$gotAvailableBalances = function () {
+var $author$project$Pages$Funds$gotAvailableBalances = function () {
 	var grpcRequest = A2(
 		$anmolitor$elm_grpc$Grpc$setHost,
 		'http://localhost:8080',
@@ -7798,9 +7732,9 @@ var $author$project$Pages$Wallet$gotAvailableBalances = function () {
 			'password',
 			'apitest',
 			A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getBalances, $author$project$Proto$Io$Haveno$Protobuffer$defaultGetBalancesRequest)));
-	return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Wallet$GotBalances, grpcRequest);
+	return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Funds$GotBalances, grpcRequest);
 }();
-var $author$project$Pages$Wallet$GotXmrPrimaryAddress = function (a) {
+var $author$project$Pages$Funds$GotXmrPrimaryAddress = function (a) {
 	return {$: 1, a: a};
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressRequest = {};
@@ -7845,7 +7779,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Have
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$encodeGetXmrPrimaryAddressRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressRequest;
 var $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getXmrPrimaryAddress = {sC: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetXmrPrimaryAddressReply, sP: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetXmrPrimaryAddressRequest, uc: 'io.haveno.protobuffer', uD: 'GetXmrPrimaryAddress', uM: 'Wallets'};
-var $author$project$Pages$Wallet$gotNewPrimaryAddress = function () {
+var $author$project$Pages$Funds$gotNewPrimaryAddress = function () {
 	var grpcRequest = A2(
 		$anmolitor$elm_grpc$Grpc$setHost,
 		'http://localhost:8080',
@@ -7854,26 +7788,78 @@ var $author$project$Pages$Wallet$gotNewPrimaryAddress = function () {
 			'password',
 			'apitest',
 			A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getXmrPrimaryAddress, $author$project$Proto$Io$Haveno$Protobuffer$defaultGetXmrPrimaryAddressRequest)));
-	return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Wallet$GotXmrPrimaryAddress, grpcRequest);
+	return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Funds$GotXmrPrimaryAddress, grpcRequest);
 }();
-var $author$project$Pages$Wallet$Loading = 0;
-var $author$project$Pages$Wallet$WalletView = 0;
+var $author$project$Pages$Funds$FundsView = 0;
+var $author$project$Pages$Funds$Loading = 0;
 var $author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo;
-var $author$project$Pages$Wallet$initialModel = {
+var $author$project$Pages$Funds$initialModel = {
 	r2: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
 	sy: 0,
 	oL: _List_Nil,
-	mN: 'Haveno Web Wallet',
+	mN: 'Haveno Web Funds',
 	ul: '',
 	uW: 0,
 	u0: ''
 };
-var $author$project$Pages$Wallet$init = function (_v0) {
+var $author$project$Pages$Funds$init = function (_v0) {
 	return _Utils_Tuple2(
-		$author$project$Pages$Wallet$initialModel,
+		$author$project$Pages$Funds$initialModel,
 		$elm$core$Platform$Cmd$batch(
 			_List_fromArray(
-				[$author$project$Pages$Wallet$gotAvailableBalances, $author$project$Pages$Wallet$gotNewPrimaryAddress])));
+				[$author$project$Pages$Funds$gotAvailableBalances, $author$project$Pages$Funds$gotNewPrimaryAddress])));
+};
+var $author$project$Pages$Market$Loading = 0;
+var $author$project$Pages$Market$Market = $elm$core$Basics$identity;
+var $author$project$Pages$Market$initialModel = {
+	qC: {pL: 'Loading...'},
+	uW: 0,
+	vl: 'Market'
+};
+var $author$project$Pages$Market$init = function (_v0) {
+	return _Utils_Tuple2(
+		_Utils_update(
+			$author$project$Pages$Market$initialModel,
+			{vl: 'Haveno-Web Market'}),
+		$elm$core$Platform$Cmd$none);
+};
+var $author$project$Pages$Portfolio$Loading = 0;
+var $author$project$Pages$Portfolio$Portfolio = $elm$core$Basics$identity;
+var $author$project$Pages$Portfolio$initialModel = {
+	qC: {pL: 'Loading...'},
+	uW: 0,
+	vl: 'Portfolio'
+};
+var $author$project$Pages$Portfolio$init = function (_v0) {
+	return _Utils_Tuple2(
+		_Utils_update(
+			$author$project$Pages$Portfolio$initialModel,
+			{vl: 'Haveno-Web Portfolio'}),
+		$elm$core$Platform$Cmd$none);
+};
+var $author$project$Pages$Sell$Loading = 0;
+var $author$project$Pages$Sell$Sell = $elm$core$Basics$identity;
+var $author$project$Pages$Sell$initialModel = {
+	qC: {pL: 'Loading...'},
+	uW: 0,
+	vl: 'Sell'
+};
+var $author$project$Pages$Sell$init = function (_v0) {
+	return _Utils_Tuple2($author$project$Pages$Sell$initialModel, $elm$core$Platform$Cmd$none);
+};
+var $author$project$Pages$Support$Loading = 0;
+var $author$project$Pages$Support$Support = $elm$core$Basics$identity;
+var $author$project$Pages$Support$initialModel = {
+	qC: {pL: 'Loading...'},
+	uW: 0,
+	vl: 'Support'
+};
+var $author$project$Pages$Support$init = function (_v0) {
+	return _Utils_Tuple2(
+		_Utils_update(
+			$author$project$Pages$Support$initialModel,
+			{vl: 'Haveno-Web Support'}),
+		$elm$core$Platform$Cmd$none);
 };
 var $elm$url$Url$Parser$State = F5(
 	function (visited, unvisited, params, frag, value) {
@@ -8001,7 +7987,7 @@ var $author$project$Main$toBlank = F2(
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
 var $author$project$Main$AdjustTimeZone = function (a) {
-	return {$: 12, a: a};
+	return {$: 11, a: a};
 };
 var $author$project$Main$GotDashboardMsg = function (a) {
 	return {$: 1, a: a};
@@ -8024,7 +8010,7 @@ var $elm$core$Platform$Cmd$map = _Platform_map;
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Main$sendMessageToJs = _Platform_outgoingPort('sendMessageToJs', $elm$json$Json$Encode$string);
 var $author$project$Main$GotVersion = function (a) {
-	return {$: 15, a: a};
+	return {$: 14, a: a};
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionReply = {bd: ''};
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetVersionReply = A2(
@@ -8068,7 +8054,7 @@ var $author$project$Main$toDashboard = F2(
 			_Utils_update(
 				model,
 				{
-					O: $author$project$Main$DashboardPage(dashboard)
+					Y: $author$project$Main$DashboardPage(dashboard)
 				}),
 			$elm$core$Platform$Cmd$batch(
 				_List_fromArray(
@@ -8089,11 +8075,14 @@ var $author$project$Main$toFunds = F2(
 	function (model, _v0) {
 		var funds = _v0.a;
 		var cmd = _v0.b;
+		var newFundsModel = _Utils_update(
+			funds,
+			{ul: model.mg});
 		return _Utils_Tuple2(
 			_Utils_update(
 				model,
 				{
-					O: $author$project$Main$FundsPage(funds)
+					Y: $author$project$Main$FundsPage(newFundsModel)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFundsMsg, cmd));
 	});
@@ -8111,7 +8100,7 @@ var $author$project$Main$toMarket = F2(
 			_Utils_update(
 				model,
 				{
-					O: $author$project$Main$MarketPage(market)
+					Y: $author$project$Main$MarketPage(market)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotMarketMsg, cmd));
 	});
@@ -8129,7 +8118,7 @@ var $author$project$Main$toPortfolio = F2(
 			_Utils_update(
 				model,
 				{
-					O: $author$project$Main$PortfolioPage(portfolio)
+					Y: $author$project$Main$PortfolioPage(portfolio)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotPortfolioMsg, cmd));
 	});
@@ -8147,7 +8136,7 @@ var $author$project$Main$toPricing = F2(
 			_Utils_update(
 				model,
 				{
-					O: $author$project$Main$BuyPage(pricing)
+					Y: $author$project$Main$BuyPage(pricing)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotBuyMsg, cmd));
 	});
@@ -8165,7 +8154,7 @@ var $author$project$Main$toSell = F2(
 			_Utils_update(
 				model,
 				{
-					O: $author$project$Main$SellPage(sell)
+					Y: $author$project$Main$SellPage(sell)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotSellMsg, cmd));
 	});
@@ -8183,40 +8172,18 @@ var $author$project$Main$toSupport = F2(
 			_Utils_update(
 				model,
 				{
-					O: $author$project$Main$SupportPage(support)
+					Y: $author$project$Main$SupportPage(support)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotSupportMsg, cmd));
 	});
-var $author$project$Main$GotWalletMsg = function (a) {
-	return {$: 9, a: a};
-};
-var $author$project$Main$WalletPage = function (a) {
-	return {$: 7, a: a};
-};
-var $author$project$Main$toWallet = F2(
-	function (model, _v0) {
-		var wallet = _v0.a;
-		var cmd = _v0.b;
-		var newWalletModel = _Utils_update(
-			wallet,
-			{ul: model.mg});
-		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{
-					O: $author$project$Main$WalletPage(newWalletModel)
-				}),
-			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotWalletMsg, cmd));
-	});
-var $author$project$Main$BlankRoute = 8;
+var $author$project$Main$BlankRoute = 7;
 var $author$project$Main$Buy = 5;
 var $author$project$Main$DashboardRoute = 0;
-var $author$project$Main$Funds = 3;
+var $author$project$Main$FundsRoute = 3;
 var $author$project$Main$Market = 6;
 var $author$project$Main$PortfolioRoute = 2;
 var $author$project$Main$SellRoute = 1;
 var $author$project$Main$Support = 4;
-var $author$project$Main$WalletRoute = 7;
 var $elm$url$Url$Parser$Parser = $elm$core$Basics$identity;
 var $elm$url$Url$Parser$mapState = F2(
 	function (func, _v0) {
@@ -8310,9 +8277,9 @@ var $author$project$Main$urlAsPageParser = $elm$url$Url$Parser$oneOf(
 		[
 			A2(
 			$elm$url$Url$Parser$map,
-			8,
+			7,
 			$elm$url$Url$Parser$s('index.html')),
-			A2($elm$url$Url$Parser$map, 8, $elm$url$Url$Parser$top),
+			A2($elm$url$Url$Parser$map, 7, $elm$url$Url$Parser$top),
 			A2(
 			$elm$url$Url$Parser$map,
 			0,
@@ -8340,11 +8307,7 @@ var $author$project$Main$urlAsPageParser = $elm$url$Url$Parser$oneOf(
 			A2(
 			$elm$url$Url$Parser$map,
 			6,
-			$elm$url$Url$Parser$s('market')),
-			A2(
-			$elm$url$Url$Parser$map,
-			7,
-			$elm$url$Url$Parser$s('wallet'))
+			$elm$url$Url$Parser$s('market'))
 		]));
 var $author$project$Main$updateUrl = F2(
 	function (url, model) {
@@ -8356,7 +8319,7 @@ var $author$project$Main$updateUrl = F2(
 		var _v0 = A2($elm$url$Url$Parser$parse, $author$project$Main$urlAsPageParser, urlMinusQueryStr);
 		if (!_v0.$) {
 			switch (_v0.a) {
-				case 8:
+				case 7:
 					var _v1 = _v0.a;
 					return A2(
 						$author$project$Main$toBlank,
@@ -8386,7 +8349,7 @@ var $author$project$Main$updateUrl = F2(
 					return A2(
 						$author$project$Main$toFunds,
 						model,
-						$author$project$Pages$Funds$init(0));
+						$author$project$Pages$Funds$init(''));
 				case 4:
 					var _v6 = _v0.a;
 					return A2(
@@ -8399,18 +8362,12 @@ var $author$project$Main$updateUrl = F2(
 						$author$project$Main$toPricing,
 						model,
 						$author$project$Pages$Buy$init(0));
-				case 6:
+				default:
 					var _v8 = _v0.a;
 					return A2(
 						$author$project$Main$toMarket,
 						model,
 						$author$project$Pages$Market$init(0));
-				default:
-					var _v9 = _v0.a;
-					return A2(
-						$author$project$Main$toWallet,
-						model,
-						$author$project$Pages$Wallet$init(''));
 			}
 		} else {
 			return A2(
@@ -8462,7 +8419,7 @@ var $author$project$Main$init = F3(
 			bE: true,
 			mE: false,
 			ps: key,
-			O: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel),
+			Y: $author$project$Main$DashboardPage($author$project$Pages$Dashboard$initialModel),
 			gt: $elm$time$Time$millisToPosix(0),
 			bd: 'No Haveno version available',
 			rG: $elm$core$Maybe$Nothing,
@@ -8472,7 +8429,7 @@ var $author$project$Main$init = F3(
 		return A2($author$project$Main$updateUrl, urlWithDashboardPath, updatedModel);
 	});
 var $author$project$Main$Recv = function (a) {
-	return {$: 13, a: a};
+	return {$: 12, a: a};
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$json$Json$Decode$value = _Json_decodeValue;
@@ -8484,8 +8441,8 @@ var $author$project$Main$subscriptions = function (_v0) {
 				$author$project$Main$receiveMessageFromJs($author$project$Main$Recv)
 			]));
 };
-var $author$project$Pages$Wallet$Loaded = 1;
-var $author$project$Pages$Wallet$SubAddressView = 2;
+var $author$project$Pages$Funds$Loaded = 1;
+var $author$project$Pages$Funds$SubAddressView = 2;
 var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $elm$core$Basics$not = _Basics_not;
 var $elm$url$Url$addPort = F2(
@@ -8630,53 +8587,8 @@ var $author$project$Pages$Dashboard$update = F2(
 			}
 		}
 	});
-var $author$project$Pages$Funds$update = F2(
-	function (msg, model) {
-		var newModel = msg;
-		return _Utils_Tuple2(
-			_Utils_update(
-				newModel,
-				{vl: model.vl}),
-			$elm$core$Platform$Cmd$none);
-	});
-var $author$project$Pages$Market$update = F2(
-	function (msg, model) {
-		var newModel = msg;
-		return _Utils_Tuple2(
-			_Utils_update(
-				newModel,
-				{vl: model.vl}),
-			$elm$core$Platform$Cmd$none);
-	});
-var $author$project$Pages$Portfolio$update = F2(
-	function (msg, model) {
-		var newModel = msg;
-		return _Utils_Tuple2(
-			_Utils_update(
-				newModel,
-				{vl: model.vl}),
-			$elm$core$Platform$Cmd$none);
-	});
-var $author$project$Pages$Sell$update = F2(
-	function (msg, model) {
-		var newModel = msg;
-		return _Utils_Tuple2(
-			_Utils_update(
-				newModel,
-				{vl: model.vl}),
-			$elm$core$Platform$Cmd$none);
-	});
-var $author$project$Pages$Support$update = F2(
-	function (msg, model) {
-		var newModel = msg;
-		return _Utils_Tuple2(
-			_Utils_update(
-				newModel,
-				{vl: model.vl}),
-			$elm$core$Platform$Cmd$none);
-	});
-var $author$project$Pages$Wallet$Errored = 2;
-var $author$project$Pages$Wallet$GotXmrNewSubaddress = function (a) {
+var $author$project$Pages$Funds$Errored = 2;
+var $author$project$Pages$Funds$GotXmrNewSubaddress = function (a) {
 	return {$: 2, a: a};
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrNewSubaddressRequest = {};
@@ -8704,7 +8616,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Have
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$encodeGetXmrNewSubaddressRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetXmrNewSubaddressRequest;
 var $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getXmrNewSubaddress = {sC: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetXmrNewSubaddressReply, sP: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetXmrNewSubaddressRequest, uc: 'io.haveno.protobuffer', uD: 'GetXmrNewSubaddress', uM: 'Wallets'};
-var $author$project$Pages$Wallet$gotNewSubAddress = function () {
+var $author$project$Pages$Funds$gotNewSubAddress = function () {
 	var grpcRequest = A2(
 		$anmolitor$elm_grpc$Grpc$setHost,
 		'http://localhost:8080',
@@ -8713,13 +8625,13 @@ var $author$project$Pages$Wallet$gotNewSubAddress = function () {
 			'password',
 			'apitest',
 			A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getXmrNewSubaddress, $author$project$Proto$Io$Haveno$Protobuffer$defaultGetXmrNewSubaddressRequest)));
-	return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Wallet$GotXmrNewSubaddress, grpcRequest);
+	return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Funds$GotXmrNewSubaddress, grpcRequest);
 }();
-var $author$project$Pages$Wallet$update = F2(
+var $author$project$Pages$Funds$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 3:
-				return _Utils_Tuple2(model, $author$project$Pages$Wallet$gotNewSubAddress);
+				return _Utils_Tuple2(model, $author$project$Pages$Funds$gotNewSubAddress);
 			case 1:
 				if (!msg.a.$) {
 					var primaryAddresponse = msg.a.a;
@@ -8777,6 +8689,42 @@ var $author$project$Pages$Wallet$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Pages$Market$update = F2(
+	function (msg, model) {
+		var newModel = msg;
+		return _Utils_Tuple2(
+			_Utils_update(
+				newModel,
+				{vl: model.vl}),
+			$elm$core$Platform$Cmd$none);
+	});
+var $author$project$Pages$Portfolio$update = F2(
+	function (msg, model) {
+		var newModel = msg;
+		return _Utils_Tuple2(
+			_Utils_update(
+				newModel,
+				{vl: model.vl}),
+			$elm$core$Platform$Cmd$none);
+	});
+var $author$project$Pages$Sell$update = F2(
+	function (msg, model) {
+		var newModel = msg;
+		return _Utils_Tuple2(
+			_Utils_update(
+				newModel,
+				{vl: model.vl}),
+			$elm$core$Platform$Cmd$none);
+	});
+var $author$project$Pages$Support$update = F2(
+	function (msg, model) {
+		var newModel = msg;
+		return _Utils_Tuple2(
+			_Utils_update(
+				newModel,
+				{vl: model.vl}),
+			$elm$core$Platform$Cmd$none);
+	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -8799,22 +8747,22 @@ var $author$project$Main$update = F2(
 						return A2($author$project$Main$updateUrl, url, model);
 					}
 				}
-			case 10:
+			case 9:
 				var url = msg.a;
 				return A2($author$project$Main$updateUrl, url, model);
-			case 17:
+			case 16:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{dA: !model.dA}),
 					$elm$core$Platform$Cmd$none);
-			case 16:
+			case 15:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{nn: true}),
 					$elm$core$Platform$Cmd$none);
-			case 15:
+			case 14:
 				if (!msg.a.$) {
 					var versionResp = msg.a.a;
 					var verResp = function () {
@@ -8822,7 +8770,7 @@ var $author$project$Main$update = F2(
 						return version;
 					}();
 					var newDashBoardModel = function () {
-						var _v3 = model.O;
+						var _v3 = model.Y;
 						if (!_v3.$) {
 							var dashboard = _v3.a;
 							return _Utils_update(
@@ -8837,7 +8785,7 @@ var $author$project$Main$update = F2(
 							model,
 							{
 								fh: true,
-								O: $author$project$Main$DashboardPage(newDashBoardModel),
+								Y: $author$project$Main$DashboardPage(newDashBoardModel),
 								bd: verResp
 							}),
 						$elm$core$Platform$Cmd$none);
@@ -8848,17 +8796,17 @@ var $author$project$Main$update = F2(
 							{fh: false, bE: false, bd: 'Error obtaining version'}),
 						$elm$core$Platform$Cmd$none);
 				}
-			case 13:
+			case 12:
 				var rawJsonMessage = msg.a;
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			case 11:
+			case 10:
 				var newTime = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{gt: newTime}),
 					A2($elm$core$Task$perform, $author$project$Main$AdjustTimeZone, $elm$time$Time$here));
-			case 12:
+			case 11:
 				var newZone = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -8869,7 +8817,7 @@ var $author$project$Main$update = F2(
 					$elm$core$Platform$Cmd$none);
 			case 1:
 				var dashboardMsg = msg.a;
-				var _v5 = model.O;
+				var _v5 = model.Y;
 				if (!_v5.$) {
 					var dashboard = _v5.a;
 					var updatedDashboardModel = _Utils_update(
@@ -8884,7 +8832,7 @@ var $author$project$Main$update = F2(
 				}
 			case 2:
 				var sellMsg = msg.a;
-				var _v6 = model.O;
+				var _v6 = model.Y;
 				if (_v6.$ === 1) {
 					var sell = _v6.a;
 					return A2(
@@ -8896,8 +8844,8 @@ var $author$project$Main$update = F2(
 				}
 			case 3:
 				var blankMsg = msg.a;
-				var _v7 = model.O;
-				if (_v7.$ === 8) {
+				var _v7 = model.Y;
+				if (_v7.$ === 7) {
 					var blank = _v7.a;
 					return A2(
 						$author$project$Main$toBlank,
@@ -8908,7 +8856,7 @@ var $author$project$Main$update = F2(
 				}
 			case 4:
 				var termsMsg = msg.a;
-				var _v8 = model.O;
+				var _v8 = model.Y;
 				if (_v8.$ === 2) {
 					var terms = _v8.a;
 					return A2(
@@ -8920,21 +8868,31 @@ var $author$project$Main$update = F2(
 				}
 			case 5:
 				var privacyMsg = msg.a;
-				var _v9 = model.O;
+				var _v9 = model.Y;
 				if (_v9.$ === 3) {
 					var privacy = _v9.a;
-					return A2(
-						$author$project$Main$toFunds,
-						model,
-						A2($author$project$Pages$Funds$update, privacyMsg, privacy));
+					if (privacyMsg.$ === 3) {
+						var newFundsModel = _Utils_update(
+							privacy,
+							{sy: 2, uW: 1});
+						return A2(
+							$author$project$Main$toFunds,
+							model,
+							A2($author$project$Pages$Funds$update, privacyMsg, newFundsModel));
+					} else {
+						return A2(
+							$author$project$Main$toFunds,
+							model,
+							A2($author$project$Pages$Funds$update, privacyMsg, privacy));
+					}
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 6:
 				var supportMsg = msg.a;
-				var _v10 = model.O;
-				if (_v10.$ === 4) {
-					var support = _v10.a;
+				var _v11 = model.Y;
+				if (_v11.$ === 4) {
+					var support = _v11.a;
 					return A2(
 						$author$project$Main$toSupport,
 						model,
@@ -8944,9 +8902,9 @@ var $author$project$Main$update = F2(
 				}
 			case 7:
 				var pricingMsg = msg.a;
-				var _v11 = model.O;
-				if (_v11.$ === 5) {
-					var pricing = _v11.a;
+				var _v12 = model.Y;
+				if (_v12.$ === 5) {
+					var pricing = _v12.a;
 					return A2(
 						$author$project$Main$toPricing,
 						model,
@@ -8956,35 +8914,13 @@ var $author$project$Main$update = F2(
 				}
 			case 8:
 				var aboutMsg = msg.a;
-				var _v12 = model.O;
-				if (_v12.$ === 6) {
-					var about = _v12.a;
+				var _v13 = model.Y;
+				if (_v13.$ === 6) {
+					var about = _v13.a;
 					return A2(
 						$author$project$Main$toMarket,
 						model,
 						A2($author$project$Pages$Market$update, aboutMsg, about));
-				} else {
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				}
-			case 9:
-				var walletMsg = msg.a;
-				var _v13 = model.O;
-				if (_v13.$ === 7) {
-					var wallet = _v13.a;
-					if (walletMsg.$ === 3) {
-						var newWalletModel = _Utils_update(
-							wallet,
-							{sy: 2, uW: 1});
-						return A2(
-							$author$project$Main$toWallet,
-							model,
-							A2($author$project$Pages$Wallet$update, walletMsg, newWalletModel));
-					} else {
-						return A2(
-							$author$project$Main$toWallet,
-							model,
-							A2($author$project$Pages$Wallet$update, walletMsg, wallet));
-					}
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
@@ -9124,7 +9060,7 @@ var $author$project$Main$indicatorContainer = function (model) {
 };
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
-var $author$project$Main$ToggleMenu = {$: 17};
+var $author$project$Main$ToggleMenu = {$: 16};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -9149,7 +9085,7 @@ var $elm$html$Html$Attributes$classList = function (classes) {
 };
 var $author$project$Main$isActive = function (_v0) {
 	var link = _v0.px;
-	var page = _v0.O;
+	var page = _v0.Y;
 	var _v1 = _Utils_Tuple2(link, page);
 	switch (_v1.a) {
 		case 0:
@@ -9168,8 +9104,8 @@ var $author$project$Main$isActive = function (_v0) {
 				var _v5 = _v1.a;
 				return false;
 			}
-		case 8:
-			if (_v1.b.$ === 8) {
+		case 7:
+			if (_v1.b.$ === 7) {
 				var _v6 = _v1.a;
 				return true;
 			} else {
@@ -9208,20 +9144,12 @@ var $author$project$Main$isActive = function (_v0) {
 				var _v15 = _v1.a;
 				return false;
 			}
-		case 6:
+		default:
 			if (_v1.b.$ === 6) {
 				var _v16 = _v1.a;
 				return true;
 			} else {
 				var _v17 = _v1.a;
-				return false;
-			}
-		default:
-			if (_v1.b.$ === 7) {
-				var _v18 = _v1.a;
-				return true;
-			} else {
-				var _v19 = _v1.a;
 				return false;
 			}
 	}
@@ -9295,7 +9223,7 @@ var $author$project$Main$navLinks = function (page) {
 								_Utils_Tuple2(
 								'active',
 								$author$project$Main$isActive(
-									{px: route, O: page})),
+									{px: route, Y: page})),
 								_Utils_Tuple2('navLink', true)
 							]))
 					]),
@@ -9338,7 +9266,7 @@ var $author$project$Main$navLinks = function (page) {
 					])),
 				A2(
 				navLink,
-				8,
+				7,
 				{dk: '', dv: '/'}),
 				A2(
 				navLink,
@@ -9346,8 +9274,8 @@ var $author$project$Main$navLinks = function (page) {
 				{dk: 'Dashboard', dv: 'dashboard'}),
 				A2(
 				navLink,
-				7,
-				{dk: 'Wallet', dv: 'wallet'}),
+				3,
+				{dk: 'Funds', dv: 'funds'}),
 				A2(
 				navLink,
 				6,
@@ -9419,7 +9347,7 @@ var $author$project$Main$menu = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$author$project$Main$navLinks(model.O)
+						$author$project$Main$navLinks(model.Y)
 					]))
 			])) : (model.mD ? A2(
 		$elm$html$Html$div,
@@ -9540,13 +9468,13 @@ var $mdgriffith$elm_ui$Internal$Model$Unkeyed = function (a) {
 };
 var $mdgriffith$elm_ui$Internal$Model$AsColumn = 1;
 var $mdgriffith$elm_ui$Internal$Model$asColumn = 1;
-var $mdgriffith$elm_ui$Internal$Style$classes = {rJ: 'a', nS: 'atv', rN: 'ab', rO: 'cx', rP: 'cy', rQ: 'acb', rR: 'accx', rS: 'accy', rT: 'acr', n0: 'al', n1: 'ar', rU: 'at', m2: 'ah', m3: 'av', rX: 's', r4: 'bh', r5: 'b', r9: 'w7', sb: 'bd', sc: 'bdt', mj: 'bn', sd: 'bs', mn: 'cpe', sn: 'cp', so: 'cpx', sp: 'cpy', dy: 'c', mq: 'ctr', mr: 'cb', ms: 'ccx', dz: 'ccy', hJ: 'cl', mt: 'cr', sv: 'ct', sz: 'cptr', sA: 'ctxt', sZ: 'fcs', oX: 'focus-within', s2: 'fs', ta: 'g', nh: 'hbh', nj: 'hc', o8: 'he', nk: 'hf', o9: 'hfp', th: 'hv', tl: 'ic', tn: 'fr', mB: 'lbl', tr: 'iml', ts: 'imlf', tt: 'imlp', tu: 'implw', tv: 'it', tB: 'i', px: 'lnk', fB: 'nb', pU: 'notxt', t1: 'ol', t2: 'or', d2: 'oq', ub: 'oh', O: 'pg', p4: 'p', ud: 'ppe', qC: 'ui', qE: 'r', uF: 'sb', uG: 'sbx', uH: 'sby', uI: 'sbt', uO: 'e', uQ: 'cap', uR: 'sev', u$: 'sk', gs: 't', u6: 'tc', u7: 'w8', u8: 'w2', u9: 'w9', va: 'tj', mZ: 'tja', vb: 'tl', vc: 'w3', vd: 'w5', ve: 'w4', vf: 'tr', vg: 'w6', vh: 'w1', vi: 'tun', rl: 'ts', eg: 'clr', vs: 'u', nI: 'wc', rC: 'we', nJ: 'wf', rD: 'wfp', nL: 'wrp'};
+var $mdgriffith$elm_ui$Internal$Style$classes = {rJ: 'a', nS: 'atv', rN: 'ab', rO: 'cx', rP: 'cy', rQ: 'acb', rR: 'accx', rS: 'accy', rT: 'acr', n0: 'al', n1: 'ar', rU: 'at', m2: 'ah', m3: 'av', rX: 's', r4: 'bh', r5: 'b', r9: 'w7', sb: 'bd', sc: 'bdt', mj: 'bn', sd: 'bs', mn: 'cpe', sn: 'cp', so: 'cpx', sp: 'cpy', dy: 'c', mq: 'ctr', mr: 'cb', ms: 'ccx', dz: 'ccy', hJ: 'cl', mt: 'cr', sv: 'ct', sz: 'cptr', sA: 'ctxt', sZ: 'fcs', oX: 'focus-within', s2: 'fs', ta: 'g', nh: 'hbh', nj: 'hc', o8: 'he', nk: 'hf', o9: 'hfp', th: 'hv', tl: 'ic', tn: 'fr', mB: 'lbl', tr: 'iml', ts: 'imlf', tt: 'imlp', tu: 'implw', tv: 'it', tB: 'i', px: 'lnk', fB: 'nb', pU: 'notxt', t1: 'ol', t2: 'or', d2: 'oq', ub: 'oh', Y: 'pg', p4: 'p', ud: 'ppe', qC: 'ui', qE: 'r', uF: 'sb', uG: 'sbx', uH: 'sby', uI: 'sbt', uO: 'e', uQ: 'cap', uR: 'sev', u$: 'sk', gs: 't', u6: 'tc', u7: 'w8', u8: 'w2', u9: 'w9', va: 'tj', mZ: 'tja', vb: 'tl', vc: 'w3', vd: 'w5', ve: 'w4', vf: 'tr', vg: 'w6', vh: 'w1', vi: 'tun', rl: 'ts', eg: 'clr', vs: 'u', nI: 'wc', rC: 'we', nJ: 'wf', rD: 'wfp', nL: 'wrp'};
 var $mdgriffith$elm_ui$Internal$Model$Generic = {$: 0};
 var $mdgriffith$elm_ui$Internal$Model$div = $mdgriffith$elm_ui$Internal$Model$Generic;
 var $mdgriffith$elm_ui$Internal$Model$NoNearbyChildren = {$: 0};
 var $mdgriffith$elm_ui$Internal$Model$columnClass = $mdgriffith$elm_ui$Internal$Style$classes.rX + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.dy);
 var $mdgriffith$elm_ui$Internal$Model$gridClass = $mdgriffith$elm_ui$Internal$Style$classes.rX + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.ta);
-var $mdgriffith$elm_ui$Internal$Model$pageClass = $mdgriffith$elm_ui$Internal$Style$classes.rX + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.O);
+var $mdgriffith$elm_ui$Internal$Model$pageClass = $mdgriffith$elm_ui$Internal$Style$classes.rX + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.Y);
 var $mdgriffith$elm_ui$Internal$Model$paragraphClass = $mdgriffith$elm_ui$Internal$Style$classes.rX + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.p4);
 var $mdgriffith$elm_ui$Internal$Model$rowClass = $mdgriffith$elm_ui$Internal$Style$classes.rX + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.qE);
 var $mdgriffith$elm_ui$Internal$Model$singleClass = $mdgriffith$elm_ui$Internal$Style$classes.rX + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.uO);
@@ -11283,7 +11211,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 					])),
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.O),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.Y),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'display', 'block'),
@@ -12350,7 +12278,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 				var wrappedRow = '.' + ($mdgriffith$elm_ui$Internal$Style$classes.nL + row);
 				var right = '.' + $mdgriffith$elm_ui$Internal$Style$classes.n1;
 				var paragraph = '.' + $mdgriffith$elm_ui$Internal$Style$classes.p4;
-				var page = '.' + $mdgriffith$elm_ui$Internal$Style$classes.O;
+				var page = '.' + $mdgriffith$elm_ui$Internal$Style$classes.Y;
 				var left = '.' + $mdgriffith$elm_ui$Internal$Style$classes.n0;
 				var halfY = $elm$core$String$fromFloat(y / 2) + 'px';
 				var halfX = $elm$core$String$fromFloat(x / 2) + 'px';
@@ -15563,87 +15491,297 @@ var $author$project$Pages$Dashboard$view = function (model) {
 				}()
 				])));
 };
-var $author$project$Pages$Funds$htmlContent = A2(
-	$elm$html$Html$section,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$id('page'),
-			$elm$html$Html$Attributes$class('section-background'),
-			$elm$html$Html$Attributes$class('text-center'),
-			$elm$html$Html$Attributes$class('split')
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$div,
+var $author$project$Pages$Funds$ClickedGotNewSubaddress = {$: 3};
+var $eriktim$elm_protocol_buffers$Internal$Int64$toInts = function (_v0) {
+	var higher = _v0.cd;
+	var lower = _v0.bF;
+	return _Utils_Tuple2(higher, lower);
+};
+var $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts = $eriktim$elm_protocol_buffers$Internal$Int64$toInts;
+var $author$project$Pages$Funds$btcBalanceAsString = function (balInfo) {
+	if (!balInfo.$) {
+		var blInfo = balInfo.a;
+		var _v1 = blInfo.sf;
+		if (_v1.$ === 1) {
+			return '0.00';
+		} else {
+			var btcbalinfo = _v1.a;
+			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(btcbalinfo.n8);
+			var firstInt = _v2.a;
+			var secondInt = _v2.b;
+			return $elm$core$String$fromInt(firstInt) + ('.' + $elm$core$String$fromInt(secondInt));
+		}
+	} else {
+		return '';
+	}
+};
+var $author$project$Utils$MyUtils$infoBtn = F2(
+	function (label, msg) {
+		return A2(
+			$elm$html$Html$button,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('split-col')
+					$elm$html$Html$Attributes$class('info-button'),
+					$elm$html$Html$Events$onClick(msg)
 				]),
 			_List_fromArray(
 				[
-					A2(
-					$elm$html$Html$h1,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('')
-						]))
-				])),
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('split-col')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$h1,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Funds')
-						])),
-					$author$project$Buttons$Default$defaultButton('hardware')
-				])),
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('split-col')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$h1,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('')
-						]))
-				]))
-		]));
-var $author$project$Pages$Funds$content = A2(
+					$elm$html$Html$text(label)
+				]));
+	});
+var $author$project$Pages$Funds$reservedOfferBalanceAsString = function (balInfo) {
+	if (!balInfo.$) {
+		var blInfo = balInfo.a;
+		var _v1 = blInfo.vB;
+		if (_v1.$ === 1) {
+			return '0.00';
+		} else {
+			var xmrbalinfo = _v1.a;
+			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(xmrbalinfo.uu);
+			var firstInt = _v2.a;
+			var secondInt = _v2.b;
+			return $elm$core$String$fromInt(firstInt) + ('.' + $elm$core$String$fromInt(secondInt));
+		}
+	} else {
+		return '';
+	}
+};
+var $author$project$Pages$Funds$xmrBalanceAsString = function (balInfo) {
+	if (!balInfo.$) {
+		var blInfo = balInfo.a;
+		var _v1 = blInfo.vB;
+		if (_v1.$ === 1) {
+			return '0.00';
+		} else {
+			var xmrbalinfo = _v1.a;
+			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(xmrbalinfo.n8);
+			var firstInt = _v2.a;
+			var secondInt = _v2.b;
+			return $elm$core$String$fromInt(firstInt) + ('.' + $elm$core$String$fromInt(secondInt));
+		}
+	} else {
+		return '0.00';
+	}
+};
+var $author$project$Pages$Funds$custodialFundsView = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('wallet-container'),
+				$elm$html$Html$Attributes$id('custodialFundsView')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$h1,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('wallet-title')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Funds')
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$id('currentaddress'),
+						$elm$html$Html$Attributes$class('address-text')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Current address: ' + model.ul)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$id('xmrbalance'),
+						$elm$html$Html$Attributes$class('balance-text')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						'Available Balance: ' + ($author$project$Pages$Funds$xmrBalanceAsString(model.r2) + ' XMR'))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$id('btcbalance'),
+						$elm$html$Html$Attributes$class('balance-text')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						'Available BTC Balance: ' + ($author$project$Pages$Funds$btcBalanceAsString(model.r2) + ' BTC'))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$id('reservedOfferBalance'),
+						$elm$html$Html$Attributes$class('balance-text')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						'Reserved Offer Balance: ' + ($author$project$Pages$Funds$reservedOfferBalanceAsString(model.r2) + ' XMR'))
+					])),
+				A2($author$project$Utils$MyUtils$infoBtn, 'New Sub Address', $author$project$Pages$Funds$ClickedGotNewSubaddress)
+			]));
+};
+var $author$project$Pages$Funds$errorView = A2(
 	$elm$html$Html$div,
 	_List_fromArray(
 		[
-			$elm$html$Html$Attributes$id('page')
+			$elm$html$Html$Attributes$class('wallet-container')
 		]),
 	_List_fromArray(
 		[
 			A2(
+			$elm$html$Html$h1,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('wallet-title')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Wallet')
+				])),
+			A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$id('content'),
-					$elm$html$Html$Attributes$class('col3-column')
+					$elm$html$Html$Attributes$class('error-message'),
+					$elm$html$Html$Attributes$id('wallet-error-message')
 				]),
 			_List_fromArray(
-				[$author$project$Pages$Funds$htmlContent]))
+				[
+					$elm$html$Html$text('Error: Unable to retrieve relevant data. Please try again later.')
+				]))
 		]));
-var $author$project$Pages$Funds$view = function (_v0) {
-	return $author$project$Pages$Funds$content;
+var $author$project$Pages$Funds$subAddressView = function (newSubaddress) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('wallet-container')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$h1,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('wallet-title')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Wallet')
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('address-text'),
+						$elm$html$Html$Attributes$id('newSubaddress')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('New Subaddress: ' + newSubaddress)
+					]))
+			]));
+};
+var $author$project$Pages$Funds$view = function (model) {
+	return A2(
+		$elm$html$Html$section,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$id('page'),
+				$elm$html$Html$Attributes$class('section-background'),
+				$elm$html$Html$Attributes$class('text-center')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('split')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('split-col')
+							]),
+						_List_Nil),
+						function () {
+						var _v0 = model.uW;
+						switch (_v0) {
+							case 0:
+								return A2(
+									$elm$html$Html$div,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$div,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('spinner')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('Loading ...')
+												]))
+										]));
+							case 2:
+								return A2(
+									$elm$html$Html$div,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('split-col')
+										]),
+									_List_fromArray(
+										[$author$project$Pages$Funds$errorView]));
+							default:
+								return A2(
+									$elm$html$Html$div,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('split-col')
+										]),
+									_List_fromArray(
+										[
+											function () {
+											var _v1 = model.sy;
+											switch (_v1) {
+												case 0:
+													return $author$project$Pages$Funds$custodialFundsView(model);
+												case 2:
+													return $author$project$Pages$Funds$subAddressView(model.u0);
+												default:
+													return $author$project$Pages$Funds$errorView;
+											}
+										}()
+										]));
+						}
+					}(),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('split-col')
+							]),
+						_List_Nil)
+					]))
+			]));
 };
 var $elm$html$Html$h3 = _VirtualDom_node('h3');
 var $elm$html$Html$h6 = _VirtualDom_node('h6');
@@ -15943,301 +16081,9 @@ var $author$project$Pages$Support$content = A2(
 var $author$project$Pages$Support$view = function (_v0) {
 	return $author$project$Pages$Support$content;
 };
-var $author$project$Pages$Wallet$ClickedGotNewSubaddress = {$: 3};
-var $eriktim$elm_protocol_buffers$Internal$Int64$toInts = function (_v0) {
-	var higher = _v0.cd;
-	var lower = _v0.bF;
-	return _Utils_Tuple2(higher, lower);
-};
-var $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts = $eriktim$elm_protocol_buffers$Internal$Int64$toInts;
-var $author$project$Pages$Wallet$btcBalanceAsString = function (balInfo) {
-	if (!balInfo.$) {
-		var blInfo = balInfo.a;
-		var _v1 = blInfo.sf;
-		if (_v1.$ === 1) {
-			return '0.00';
-		} else {
-			var btcbalinfo = _v1.a;
-			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(btcbalinfo.n8);
-			var firstInt = _v2.a;
-			var secondInt = _v2.b;
-			return $elm$core$String$fromInt(firstInt) + ('.' + $elm$core$String$fromInt(secondInt));
-		}
-	} else {
-		return '';
-	}
-};
-var $author$project$Utils$MyUtils$infoBtn = F2(
-	function (label, msg) {
-		return A2(
-			$elm$html$Html$button,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('info-button'),
-					$elm$html$Html$Events$onClick(msg)
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(label)
-				]));
-	});
-var $author$project$Pages$Wallet$reservedOfferBalanceAsString = function (balInfo) {
-	if (!balInfo.$) {
-		var blInfo = balInfo.a;
-		var _v1 = blInfo.vB;
-		if (_v1.$ === 1) {
-			return '0.00';
-		} else {
-			var xmrbalinfo = _v1.a;
-			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(xmrbalinfo.uu);
-			var firstInt = _v2.a;
-			var secondInt = _v2.b;
-			return $elm$core$String$fromInt(firstInt) + ('.' + $elm$core$String$fromInt(secondInt));
-		}
-	} else {
-		return '';
-	}
-};
-var $author$project$Pages$Wallet$xmrBalanceAsString = function (balInfo) {
-	if (!balInfo.$) {
-		var blInfo = balInfo.a;
-		var _v1 = blInfo.vB;
-		if (_v1.$ === 1) {
-			return '0.00';
-		} else {
-			var xmrbalinfo = _v1.a;
-			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(xmrbalinfo.n8);
-			var firstInt = _v2.a;
-			var secondInt = _v2.b;
-			return $elm$core$String$fromInt(firstInt) + ('.' + $elm$core$String$fromInt(secondInt));
-		}
-	} else {
-		return '0.00';
-	}
-};
-var $author$project$Pages$Wallet$custodialWalletView = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('wallet-container'),
-				$elm$html$Html$Attributes$id('custodialWalletView')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$h1,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('wallet-title')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Wallet')
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$id('currentaddress'),
-						$elm$html$Html$Attributes$class('address-text')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Current address: ' + model.ul)
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$id('xmrbalance'),
-						$elm$html$Html$Attributes$class('balance-text')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						'Available Balance: ' + ($author$project$Pages$Wallet$xmrBalanceAsString(model.r2) + ' XMR'))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$id('btcbalance'),
-						$elm$html$Html$Attributes$class('balance-text')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						'Available BTC Balance: ' + ($author$project$Pages$Wallet$btcBalanceAsString(model.r2) + ' BTC'))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$id('reservedOfferBalance'),
-						$elm$html$Html$Attributes$class('balance-text')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						'Reserved Offer Balance: ' + ($author$project$Pages$Wallet$reservedOfferBalanceAsString(model.r2) + ' XMR'))
-					])),
-				A2($author$project$Utils$MyUtils$infoBtn, 'New Sub Address', $author$project$Pages$Wallet$ClickedGotNewSubaddress)
-			]));
-};
-var $author$project$Pages$Wallet$errorView = A2(
-	$elm$html$Html$div,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('wallet-container')
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$h1,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('wallet-title')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Wallet')
-				])),
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('error-message'),
-					$elm$html$Html$Attributes$id('wallet-error-message')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Error: Unable to retrieve relevant data. Please try again later.')
-				]))
-		]));
-var $author$project$Pages$Wallet$subAddressView = function (newSubaddress) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('wallet-container')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$h1,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('wallet-title')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Wallet')
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('address-text'),
-						$elm$html$Html$Attributes$id('newSubaddress')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('New Subaddress: ' + newSubaddress)
-					]))
-			]));
-};
-var $author$project$Pages$Wallet$view = function (model) {
-	return A2(
-		$elm$html$Html$section,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$id('page'),
-				$elm$html$Html$Attributes$class('section-background'),
-				$elm$html$Html$Attributes$class('text-center')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('split')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('split-col')
-							]),
-						_List_Nil),
-						function () {
-						var _v0 = model.uW;
-						switch (_v0) {
-							case 0:
-								return A2(
-									$elm$html$Html$div,
-									_List_Nil,
-									_List_fromArray(
-										[
-											A2(
-											$elm$html$Html$div,
-											_List_fromArray(
-												[
-													$elm$html$Html$Attributes$class('spinner')
-												]),
-											_List_fromArray(
-												[
-													$elm$html$Html$text('Loading ...')
-												]))
-										]));
-							case 2:
-								return A2(
-									$elm$html$Html$div,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('split-col')
-										]),
-									_List_fromArray(
-										[$author$project$Pages$Wallet$errorView]));
-							default:
-								return A2(
-									$elm$html$Html$div,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('split-col')
-										]),
-									_List_fromArray(
-										[
-											function () {
-											var _v1 = model.sy;
-											switch (_v1) {
-												case 0:
-													return $author$project$Pages$Wallet$custodialWalletView(model);
-												case 2:
-													return $author$project$Pages$Wallet$subAddressView(model.u0);
-												default:
-													return $author$project$Pages$Wallet$errorView;
-											}
-										}()
-										]));
-						}
-					}(),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('split-col')
-							]),
-						_List_Nil)
-					]))
-			]));
-};
 var $author$project$Main$view = function (model) {
 	var contentByPage = function () {
-		var _v0 = model.O;
+		var _v0 = model.Y;
 		switch (_v0.$) {
 			case 0:
 				var dashboard = _v0.a;
@@ -16245,7 +16091,7 @@ var $author$project$Main$view = function (model) {
 					$elm$html$Html$map,
 					$author$project$Main$GotDashboardMsg,
 					$author$project$Pages$Dashboard$view(dashboard));
-			case 8:
+			case 7:
 				var dashboard = _v0.a;
 				return A2(
 					$elm$html$Html$map,
@@ -16281,18 +16127,12 @@ var $author$project$Main$view = function (model) {
 					$elm$html$Html$map,
 					$author$project$Main$GotBuyMsg,
 					$author$project$Pages$Buy$view(buy));
-			case 6:
+			default:
 				var market = _v0.a;
 				return A2(
 					$elm$html$Html$map,
 					$author$project$Main$GotMarketMsg,
 					$author$project$Pages$Market$view(market));
-			default:
-				var wallet = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotWalletMsg,
-					$author$project$Pages$Wallet$view(wallet));
 		}
 	}();
 	return {

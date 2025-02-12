@@ -28,7 +28,7 @@ import Pages.Market
 import Pages.Portfolio
 import Pages.Sell
 import Pages.Support
-import Pages.Wallet
+
 import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
@@ -202,7 +202,7 @@ type Msg
     | GotSupportMsg Pages.Support.Msg
     | GotBuyMsg Pages.Buy.Msg
     | GotMarketMsg Pages.Market.Msg
-    | GotWalletMsg Pages.Wallet.Msg
+  
     | ChangedUrl Url.Url
     | Tick Time.Posix
     | AdjustTimeZone Time.Zone
@@ -334,9 +334,20 @@ update msg model =
                     ( model, Cmd.none )
 
         GotFundsMsg privacyMsg ->
+            
+
             case model.page of
                 FundsPage privacy ->
-                    toFunds model (Pages.Funds.update privacyMsg privacy)
+                    case privacyMsg of
+                        Pages.Funds.ClickedGotNewSubaddress ->
+                            let
+                                newFundsModel =
+                                    { privacy | currentView = Pages.Funds.SubAddressView, status = Pages.Funds.Loaded }
+                            in
+                            toFunds model (Pages.Funds.update privacyMsg newFundsModel)
+
+                        _ ->
+                            toFunds model (Pages.Funds.update privacyMsg privacy)
 
                 _ ->
                     ( model, Cmd.none )
@@ -371,22 +382,8 @@ update msg model =
         -- Wallet.init can then be run to init the page and the page can, through toHardware, be added
         -- to the model in Main (as the current page).
         -- NOTE: Make changes to the Wallet model, cmds etc. in toHardware (more options)
-        GotWalletMsg walletMsg ->
-            case model.page of
-                WalletPage wallet ->
-                    case walletMsg of
-                        Pages.Wallet.ClickedGotNewSubaddress ->
-                            let
-                                newWalletModel =
-                                    { wallet | currentView = Pages.Wallet.SubAddressView, status = Pages.Wallet.Loaded }
-                            in
-                            toWallet model (Pages.Wallet.update walletMsg newWalletModel)
-
-                        _ ->
-                            toWallet model (Pages.Wallet.update walletMsg wallet)
-
-                _ ->
-                    ( model, Cmd.none )
+        
+            
 
         NoOp ->
             ( model, Cmd.none )
@@ -413,6 +410,7 @@ view model =
                            these new messages inside update .
 
                            We're actually using Pages.Dashboard.view
+                           -- NOTE: Html.map is essential to wrap the Dashboard.elm view and convert Dashboard.Msg into Main.Msg
                         -}
                         |> Html.map GotDashboardMsg
 
@@ -444,10 +442,7 @@ view model =
                     Pages.Market.view market
                         |> Html.map GotMarketMsg
 
-                WalletPage wallet ->
-                    -- NOTE: Html.map is essential to wrap the Wallet.elm view and convert Wallet.Msg into Main.Msg
-                    Pages.Wallet.view wallet
-                        |> Html.map GotWalletMsg
+                
     in
     -- NAV : View Page Content
     -- TODO: Make this content's naming conventions closely match the
@@ -489,11 +484,11 @@ type Route
     = DashboardRoute
     | SellRoute
     | PortfolioRoute
-    | Funds
+    | FundsRoute
     | Support
     | Buy
     | Market
-    | WalletRoute
+   
     | BlankRoute
 
 
@@ -512,7 +507,7 @@ type
     | SupportPage Pages.Support.Model
     | BuyPage Pages.Buy.Model
     | MarketPage Pages.Market.Model
-    | WalletPage Pages.Wallet.Model
+  
     | BlankPage Pages.Blank.Model
 
 
@@ -582,11 +577,11 @@ urlAsPageParser =
         , Url.Parser.map DashboardRoute (Url.Parser.s "dashboard")
         , Url.Parser.map SellRoute (Url.Parser.s "sell")
         , Url.Parser.map PortfolioRoute (Url.Parser.s "portfolio")
-        , Url.Parser.map Funds (Url.Parser.s "funds")
+        , Url.Parser.map FundsRoute (Url.Parser.s "funds")
         , Url.Parser.map Support (Url.Parser.s "support")
         , Url.Parser.map Buy (Url.Parser.s "buy")
         , Url.Parser.map Market (Url.Parser.s "market")
-        , Url.Parser.map WalletRoute (Url.Parser.s "wallet")
+       
         ]
 
 
@@ -650,8 +645,8 @@ updateUrl url model =
             Pages.Portfolio.init ()
                 |> toPortfolio model
 
-        Just Funds ->
-            Pages.Funds.init ()
+        Just FundsRoute ->
+            Pages.Funds.init ""
                 |> toFunds model
 
         Just Support ->
@@ -666,15 +661,35 @@ updateUrl url model =
             Pages.Market.init ()
                 |> toMarket model
 
-        Just WalletRoute ->
-            -- HACK: Temp until we receive the address from the hw device
-            Pages.Wallet.init ""
-                --"BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" --model.xmrWalletAddress
-                |> toWallet model
+        
 
         Nothing ->
             Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
                 |> toDashboard model
+
+-- NOTE: This is where we can update Pages's model
+{- Let's break down the `toPages` function step by step in simple terms:
+
+   1. **Function Name and Purpose**:
+      - Its job is to translate information from the `Pages` module into a format that the main application (`Main`) can understand.
+
+   2. **Input Parameters**:
+      - It takes two inputs:
+        - `model`: Information about the current state of the application in Main's model.
+        - `(Pages, cmd)`: Information from the `Pages` module, including Pages data and commands.
+
+   3. **What it Does**:
+      - It takes the existing Main `model` and updates it to include the `Pages` data, indicating that the current page is the "Pages" page.
+      - It translates the commands (`cmd`) coming from the `Pages` module to a format that `Main` understands.
+
+   4. **Output**:
+      - It produces two things:
+        - An updated Main `model` that now includes the `Pages` data and indicates the current page is the "Pages" page.
+        - Commands that have been translated to a format that `Main` can use.
+
+   In simpler terms, this function helps the main part of the app (`Main`) understand and work with the Pages information provided by the `Pages` module.
+   It's like translating a message into a language that both parts of the app can understand and use effectively.
+-}
 
 
 toDashboard : Model -> ( Pages.Dashboard.Model, Cmd Pages.Dashboard.Msg ) -> ( Model, Cmd Msg )
@@ -712,7 +727,11 @@ toPortfolio model ( portfolio, cmd ) =
 
 toFunds : Model -> ( Pages.Funds.Model, Cmd Pages.Funds.Msg ) -> ( Model, Cmd Msg )
 toFunds model ( funds, cmd ) =
-    ( { model | page = FundsPage funds }
+    let
+        newFundsModel =
+            { funds | primaryaddress = model.xmrWalletAddress }
+    in
+    ( { model | page = FundsPage newFundsModel }
     , Cmd.map GotFundsMsg cmd
     )
 
@@ -737,42 +756,6 @@ toMarket model ( market, cmd ) =
     , Cmd.map GotMarketMsg cmd
     )
 
-
-
--- NOTE: This is where we can update Wallet's model
-{- Let's break down the `toWallet` function step by step in simple terms:
-
-   1. **Function Name and Purpose**:
-      - Its job is to translate information from the `Wallet` module into a format that the main application (`Main`) can understand.
-
-   2. **Input Parameters**:
-      - It takes two inputs:
-        - `model`: Information about the current state of the application in Main's model.
-        - `(Wallet, cmd)`: Information from the `Wallet` module, including Wallet data and commands.
-
-   3. **What it Does**:
-      - It takes the existing Main `model` and updates it to include the `Wallet` data, indicating that the current page is the "Wallet" page.
-      - It translates the commands (`cmd`) coming from the `Wallet` module to a format that `Main` understands.
-
-   4. **Output**:
-      - It produces two things:
-        - An updated Main `model` that now includes the `Wallet` data and indicates the current page is the "Wallet" page.
-        - Commands that have been translated to a format that `Main` can use.
-
-   In simpler terms, this function helps the main part of the app (`Main`) understand and work with the Wallet information provided by the `Wallet` module.
-   It's like translating a message into a language that both parts of the app can understand and use effectively.
--}
-
-
-toWallet : Model -> ( Pages.Wallet.Model, Cmd Pages.Wallet.Msg ) -> ( Model, Cmd Msg )
-toWallet model ( wallet, cmd ) =
-    let
-        newWalletModel =
-            { wallet | primaryaddress = model.xmrWalletAddress }
-    in
-    ( { model | page = WalletPage newWalletModel }
-    , Cmd.map GotWalletMsg cmd
-    )
 
 
 
@@ -906,6 +889,7 @@ subscriptions _ =
 
 -- NAV: Ports - once defined here they can be used in js with app.ports.
 -- <portname>.send/subscribe(<data>)
+-- WARN: Use the port somewhere in the code or it won't initialize on document load
 
 
 port sendMessageToJs : String -> Cmd msg
@@ -1031,7 +1015,7 @@ navLinks page =
                 [ li [ class "logoInNavLinks" ] [ a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "topLogoShrink" ] [ topLogo ] ]
                 , navLink BlankRoute { url = "/", caption = "" }
                 , navLink DashboardRoute { url = "dashboard", caption = "Dashboard" }
-                , navLink WalletRoute { url = "wallet", caption = "Wallet" }
+                , navLink FundsRoute { url = "funds", caption = "Funds" }
                 , navLink Market { url = "market", caption = "Market" }
                 , navLink Support { url = "support", caption = "Support" }
                 , navLink SellRoute { url = "sell", caption = "Sell" }
@@ -1251,10 +1235,10 @@ isActive { link, page } =
         ( PortfolioRoute, _ ) ->
             False
 
-        ( Funds, FundsPage _ ) ->
+        ( FundsRoute, FundsPage _ ) ->
             True
 
-        ( Funds, _ ) ->
+        ( FundsRoute, _ ) ->
             False
 
         ( Support, SupportPage _ ) ->
@@ -1275,11 +1259,7 @@ isActive { link, page } =
         ( Market, _ ) ->
             False
 
-        ( WalletRoute, WalletPage _ ) ->
-            True
-
-        ( WalletRoute, _ ) ->
-            False
+      
 
 
 {-| -- NOTE: Render dismissable errors. We use this all over the place!
