@@ -20,6 +20,13 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 body {
   font-family: var(--ff-primary);
   font-weight: 400;
@@ -28,8 +35,9 @@ body {
   /* line-height: 1.6; */
 }
 
-
-
+.main-content {
+  flex: 1;
+}
 
 body,
 h1,
@@ -48,7 +56,6 @@ h3 {
   font-weight: 900;
   line-height: 1;
   color: var(--clr-primary-400);
-
 }
 
 h1,
@@ -59,11 +66,9 @@ p {
 }
 
 h1 {
-  
   padding: 0.5em;
   /* padding-top: 4em; */
 }
-
 
 /* h1, h2, h3 {padding: 2rem;} */
 
@@ -74,10 +79,10 @@ img {
   /* NOTE: Img starts to shrink proportionally as move below 100% of it's width,
   but won't stretch if over 100% */
   max-width: 100%;
-  
 }
 
-.default-button{ background-color: var( --clr-primary-400-half-opacity);
+.default-button {
+  background-color: var(--clr-primary-400-half-opacity);
   border: none;
   color: white;
   padding: 15px 32px;
@@ -92,13 +97,17 @@ img {
 }
 
 .default-button:hover {
-  background-color: var(--clr-primary-400) 
+  background-color: var(--clr-primary-400);
 }
 
 /* NOTE: Avoid gaps at top of lists */
-ul{margin: 0;}
+ul {
+  margin: 0;
+}
 
-ul.availabilityList{padding-left: 0px;}
+ul.availabilityList {
+  padding-left: 0px;
+}
 
 .logo {
   display: block;
@@ -111,21 +120,23 @@ ul.availabilityList{padding-left: 0px;}
   color: white;
 }
 
-
 .banner {
   display: block;
-  
 }
 
-
-.text-center {display: block;
+.text-center {
+  display: block;
   text-align: center;
 }
 
-.footer {
+.footerContent{
   display: block;
   padding: 20px;
   font-size: 8px;
+  background-color: var(--clr-neutral-900);
+  color: var(--clr-neutral-100);
+  text-align: center;
+  margin-top: auto; /* Ensure footer stays at the bottom */
 }
 
 .data-removal-notice {
@@ -139,7 +150,7 @@ ul.availabilityList{padding-left: 0px;}
   display: block;
   margin-inline: auto;
   /* NOTE: This is where the responsiveness is implemented: */
-  width: min(90%, 70.5)
+  width: min(90%, 70.5);
 }
 
 /* NOTE: Make wide enough to fully display homepage imgs if there's space: */
@@ -153,7 +164,7 @@ ul.availabilityList{padding-left: 0px;}
 /* NOTE: .split refers to the text/img columns */
 .split {
   /* NOTE: This displays as columns: */
-  display: flex; 
+  display: flex;
   /* NOTE: This helps if you re-set margins (?): */
   flex-direction: column;
 }
@@ -164,11 +175,10 @@ ul.availabilityList{padding-left: 0px;}
   padding: 1rem;
   line-height: 1.6;
   overflow: hidden;
-  
+
   /* Ensure the content is not obscured */
   margin-top: 1rem; /* Adjust based on the height of your menu button */
 }
-
 
 .split img {
   align-self: center;
