@@ -1,4 +1,4 @@
-port module Data.Hardware exposing (HardwareDevice, connect, disconnect, signTransaction)
+module Data.Hardware exposing (HardwareDevice, signTransaction)
 
 -- Internal type not exposed to other modules
 
@@ -37,7 +37,7 @@ type alias Transaction =
     }
 
 
-connect : HardwareDevice -> Cmd msg
+{- connect : HardwareDevice -> Cmd msg
 connect (HardwareDevice device) =
     if device.status == Disconnected then
         -- Command to connect to the hardware, possibly interacting with a JavaScript port
@@ -62,7 +62,7 @@ disconnect (HardwareDevice device) =
             "disconnectLNS"
 
     else
-        Cmd.none
+        Cmd.none -}
 
 
 
@@ -85,4 +85,4 @@ signTransaction (HardwareDevice device) transaction =
 -- Device is not connected, so do nothing
 
 
-port sendMessageToJs : String -> Cmd msg
+--port sendMessageToJs : String -> Cmd msg
