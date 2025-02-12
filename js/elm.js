@@ -16312,6 +16312,16 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
+						$elm$html$Html$Attributes$class('indicator-container')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$indicatorContainer(model)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
 						$elm$html$Html$Attributes$class('topLogoContainer')
 					]),
 				_List_fromArray(
@@ -16324,16 +16334,6 @@ var $author$project$Main$view = function (model) {
 					]),
 				_List_fromArray(
 					[contentByPage])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('indicator-container')
-					]),
-				_List_fromArray(
-					[
-						$author$project$Main$indicatorContainer(model)
-					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(

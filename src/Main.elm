@@ -456,9 +456,9 @@ view model =
     { title = "Haveno-Web"
     , body =
         [ div [ Attr.class "main-nav-flex-container" ] [ menu model ]
+        , div [ Attr.class "indicator-container" ] [ indicatorContainer model ]
         , div [ Attr.class "topLogoContainer" ] [ topLogo ]
         , div [ Attr.class "contentByPage" ] [ contentByPage ]
-        , div [ Attr.class "indicator-container" ] [ indicatorContainer model ]
         , div [ Attr.class "footerContent" ] [ footerContent model ]
         ]
     }
