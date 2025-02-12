@@ -1,7 +1,8 @@
 import { Elm } from "./elm.js";
 import { handleMessageFromElm } from "./handleElmMessages.js";
 
-// WARN: Use Playwright to test. Vitest runs in Node.js, so it cannot execute Elm code directly. 
+// WARN: Use Playwright to test. Vitest runs in Node.js, so it cannot execute Elm code directly.
+// NOTE: Try to use browser debugger if possible.
 
 function detectEnvironment() {
   const protocol = window.location.protocol;
@@ -52,13 +53,11 @@ function setupMenuButton() {
 }
 
 function handleElmMessages(eapp) {
-  console.log("in handleElmMessages - eapp:", eapp.ports.sendMessageToJs);
   if (eapp.ports && eapp.ports.sendMessageToJs) {
     eapp.ports.sendMessageToJs.subscribe((message) => {
-      console.log("Message sent to js:", message);
       handleMessageFromElm(message, eapp);
 
-      if (message === "ElmReady") {
+      if (message === "msgFromElm") {
         setupMenuButton();
       } else {
         console.warn("Elm initialization message not recognized:", message);

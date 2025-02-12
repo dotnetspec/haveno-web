@@ -1,5 +1,4 @@
-import { checkDeviceConnection } from "./hardware/checkDeviceConnect.js";
-import { getMoneroAddress } from "./hardware/xmrHardwareInterop.js";
+
 // NOTE: This is the main file for communicating with Elm. It receives messages from Elm and
 // then calls the relevant function in the relevant .js file to communicate with the hardware device
 // NOTE: This file is imported in setupElm.mjs
@@ -15,36 +14,11 @@ export async function handleMessageFromElm(message, app) {
   //NOTE: Switch on the message label (element[0]), then handle the , separated params
 
   switch (messageArr[0]) {
-    case "connectLNS":
+    case "msgFromElm":
       try {
-        //connectLNS(app);
-        // Perform further actions with the device
-        console.log("about to checkDeviceConnection : ", app);
-        await checkDeviceConnection(app);
+        console.log("Message from Elm : ", messageArr[0]);
       } catch (error) {
-        console.error("Device connection error:", error);
-      }
-      break;
-
-    case "getMoneroAddress":
-      //connectLNS(app)
-
-      try {
-        // Perform further actions with the device
-        getMoneroAddress();
-      } catch (error) {
-        console.error("Device connection error:", error);
-      }
-      break;
-
-    case "initiateXMRToBTCTrans":
-      //connectLNS(app)
-
-      try {
-        // Perform further actions with the device
-        hwinterop.initiateXMRToBTCTrans(messageArr[1]);
-      } catch (error) {
-        console.error("Device connection error:", error);
+        console.error("Error Receiving Message from Elm: ", error);
       }
       break;
 

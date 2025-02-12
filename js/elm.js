@@ -8076,7 +8076,7 @@ var $author$project$Main$toDashboard = F2(
 						A2($elm$core$Platform$Cmd$map, $author$project$Main$GotDashboardMsg, cmd),
 						$author$project$Main$sendVersionRequest($author$project$Proto$Io$Haveno$Protobuffer$defaultGetVersionRequest),
 						A2($elm$core$Task$perform, $author$project$Main$AdjustTimeZone, $elm$time$Time$here),
-						$author$project$Main$sendMessageToJs('connectLNS')
+						$author$project$Main$sendMessageToJs('msgFromElm')
 					])));
 	});
 var $author$project$Main$FundsPage = function (a) {
