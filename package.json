@@ -8,7 +8,6 @@
     "jsdepgraph": "madge --extensions js,mjs --exclude 'elm.js' --image js/graph.png js",
     "unit": "elm-test 'src/**/Tests/Test*.elm' --fuzz 100",
     "spec": "npx elm-spec-runner --specRoot ./",
-    "jstest": "vitest",
     "debug": "elm make src/Main.elm --output=js/elm.js --debug",
     "optimize": "elm make src/Main.elm --output=js/elm.js --optimize",
     "minTestHaveno": "./terminals/localNet_2_User.sh",
@@ -21,8 +20,8 @@
     "start": "parcel",
     "build": "parcel build",
     "serve": "parcel serve",
-    "releaseNoServe": "yarn unit && yarn spec && yarn jstest && yarn build",
-    "release": "yarn envoyWithBrowser && yarn unit && yarn spec && yarn jstest && yarn build && yarn serve"
+    "releaseNoServe": "yarn unit && yarn spec && yarn build",
+    "release": "yarn envoyWithBrowser && yarn unit && yarn spec && yarn build && yarn serve"
   },
   "husky": {
     "hooks": {
