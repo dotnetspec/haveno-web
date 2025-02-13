@@ -100,7 +100,7 @@ runSpecTests =
                     , it "displays the Funds page correctly"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ Spec.Markup.Selector.id "wallet-error-message" ]
+                            << by [ Spec.Markup.Selector.id "funds-error-message" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|

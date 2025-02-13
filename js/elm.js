@@ -9083,6 +9083,7 @@ var $elm$html$Html$Attributes$classList = function (classes) {
 				$elm$core$Tuple$first,
 				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
 };
+var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
 var $author$project$Main$isActive = function (_v0) {
 	var link = _v0.px;
 	var page = _v0.Y;
@@ -9332,7 +9333,8 @@ var $author$project$Main$menu = function (model) {
 								_Utils_Tuple2('menu-btn', true),
 								_Utils_Tuple2('open', model.dW)
 							])),
-						$elm$html$Html$Events$onClick($author$project$Main$ToggleMenu)
+						$elm$html$Html$Events$onClick($author$project$Main$ToggleMenu),
+						$elm$html$Html$Attributes$name('menubutton')
 					]),
 				_List_fromArray(
 					[
@@ -15556,7 +15558,7 @@ var $author$project$Pages$Funds$custodialFundsView = function (model) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('wallet-container'),
+				$elm$html$Html$Attributes$class('funds-container'),
 				$elm$html$Html$Attributes$id('custodialFundsView')
 			]),
 		_List_fromArray(
@@ -15565,7 +15567,7 @@ var $author$project$Pages$Funds$custodialFundsView = function (model) {
 				$elm$html$Html$h1,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('wallet-title')
+						$elm$html$Html$Attributes$class('funds-title')
 					]),
 				_List_fromArray(
 					[
@@ -15625,7 +15627,7 @@ var $author$project$Pages$Funds$errorView = A2(
 	$elm$html$Html$div,
 	_List_fromArray(
 		[
-			$elm$html$Html$Attributes$class('wallet-container')
+			$elm$html$Html$Attributes$class('funds-container')
 		]),
 	_List_fromArray(
 		[
@@ -15633,18 +15635,18 @@ var $author$project$Pages$Funds$errorView = A2(
 			$elm$html$Html$h1,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('wallet-title')
+					$elm$html$Html$Attributes$class('funds-title')
 				]),
 			_List_fromArray(
 				[
-					$elm$html$Html$text('Wallet')
+					$elm$html$Html$text('Funds')
 				])),
 			A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
 					$elm$html$Html$Attributes$class('error-message'),
-					$elm$html$Html$Attributes$id('wallet-error-message')
+					$elm$html$Html$Attributes$id('funds-error-message')
 				]),
 			_List_fromArray(
 				[
@@ -15656,7 +15658,7 @@ var $author$project$Pages$Funds$subAddressView = function (newSubaddress) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('wallet-container')
+				$elm$html$Html$Attributes$class('funds-container')
 			]),
 		_List_fromArray(
 			[
@@ -15664,11 +15666,11 @@ var $author$project$Pages$Funds$subAddressView = function (newSubaddress) {
 				$elm$html$Html$h1,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('wallet-title')
+						$elm$html$Html$Attributes$class('funds-title')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Wallet')
+						$elm$html$Html$text('Funds')
 					])),
 				A2(
 				$elm$html$Html$div,

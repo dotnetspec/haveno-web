@@ -2744,9 +2744,9 @@ elm-spec-runner@^2.5.1:
     mustache "^4.2.0"
     playwright "^1.11.1"
 
-elm@^0.19.1-5:
+elm@^0.19.1-6:
   version "0.19.1-6"
-  resolved "https://registry.npmjs.org/elm/-/elm-0.19.1-6.tgz"
+  resolved "https://registry.yarnpkg.com/elm/-/elm-0.19.1-6.tgz#b6f51d0add8877de70592097a8f6efc4588c476a"
   integrity sha512-mKYyierHICPdMx/vhiIacdPmTPnh889gjHOZ75ZAoCxo3lZmSWbGP8HMw78wyctJH0HwvTmeKhlYSWboQNYPeQ==
   optionalDependencies:
     "@elm_binaries/darwin_arm64" "0.19.1-0"

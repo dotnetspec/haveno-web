@@ -962,6 +962,7 @@ menu model =
         [ button
             [ classList [ ("menu-btn", True), ("open", model.isMenuOpen) ]
             , onClick ToggleMenu
+            , Attr.name "menubutton"
             ]
             [ text (if model.isMenuOpen then "✖" else "☰") ]
         , div
