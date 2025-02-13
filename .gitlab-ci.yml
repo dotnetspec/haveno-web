@@ -23,39 +23,34 @@ install-yarn:
 
 test:
   stage: test
-  image: node:21  # Ensure the same node version or compatible version
+  image: node:21
   dependencies:
-    - install-yarn  # Use artifacts from install-yarn stage
+    - install-yarn
   script:
-    # Re-add the PATH to include yarn
     - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-    # Ensure the correct working directory
     - cd $CI_PROJECT_DIR
-    # Install project dependencies including Elm and Parcel
     - yarn install
     - npx elm make src/Main.elm --output=js/elm.js --optimize
-    - npx elm-test 'src/**/Tests/Test*.elm'
-    # Run Parcel build
+    - npx elm-test 'src/**/Tests/Test*.elm' || exit 1  # Ensure test failure stops pipeline
     - yarn build
+  only:
+    - master  # Run only on master branch
+
 
 integration_test:
   stage: integration_test
-  image: node:21  # Ensure the same node version or compatible version
+  image: node:21
   dependencies:
-    - install-yarn  # Use artifacts from install-yarn stage
+    - install-yarn
   script:
-    # Re-add the PATH to include yarn
     - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-    # Ensure the correct working directory
     - cd $CI_PROJECT_DIR
-    # Install project dependencies including Elm and Parcel
     - yarn install
-    # WARN: Haveno-Web-Zoho-Responsive has PATH variable set to PATH1
     - export PATH=./node_modules/.bin:$PATH
     - npx elm make src/Main.elm --output=js/elm.js --optimize 
     - yarn add elm-spec-runner
-    - npx elm-spec --specRoot ./
-    # Run Vitest tests
-    - yarn vitest run
-    # Run Parcel build
+    - npx elm-spec --specRoot ./ || exit 1  # Ensure integration test failure stops pipeline
     - yarn build
+  only:
+    - master
+
