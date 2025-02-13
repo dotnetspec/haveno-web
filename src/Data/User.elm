@@ -48,7 +48,6 @@ module Data.User exposing (..)
    )
 -}
 
-
 import Json.Decode as D
 import Json.Decode.Pipeline as P
 import Time exposing (Month(..))
@@ -113,8 +112,6 @@ type alias UserInfo =
     , mobileValidationError : String
     , datestamp : Int
     , active : Bool
-
- 
     , updatetext : String
     , description : Description
 
@@ -171,7 +168,7 @@ emptyUserInfo : UserInfo
 emptyUserInfo =
     -- NOTE: Using UserInfo as a constructor function for the alias type.
     -- REVIEW: the exposure implications. Also, random number gen in docs for Anon.
-    UserInfo "" "" "" Nothing "" False "" 40 Male Nothing False "" Nothing False "" 0 False  "" emptyDescription 0 ""
+    UserInfo "" "" "" Nothing "" False "" 40 Male Nothing False "" Nothing False "" 0 False "" emptyDescription 0 ""
 
 
 emptyDescription : Description
@@ -211,9 +208,9 @@ userInfoDecoder =
         |> P.optional "isMobileInputFocused" D.bool False
         |> P.optional "mobileValidationError" D.string ""
         -- NOTE: user number decoder?
-        |> P.required "datestamp" D.int --(D.field "$numberInt" stringToIntDecoder)
+        |> P.required "datestamp" D.int
+        --(D.field "$numberInt" stringToIntDecoder)
         |> P.required "active" D.bool
-       
         |> P.optional "updatetext" D.string ""
         -- NOTE: The base type decoders are defined in the decoder
         |> P.required "description" descriptionDecoder
@@ -225,20 +222,35 @@ userInfoDecoder =
 idDecoder : D.Decoder String
 idDecoder =
     D.field "$oid" D.string
-        
+
+
 stringToIntDecoder : D.Decoder Int
 stringToIntDecoder =
     D.string
-        |> D.andThen (\str -> case String.toInt str of
-            Just num -> D.succeed num
-            Nothing -> D.fail "Expected an integer")
+        |> D.andThen
+            (\str ->
+                case String.toInt str of
+                    Just num ->
+                        D.succeed num
+
+                    Nothing ->
+                        D.fail "Expected an integer"
+            )
+
 
 numberDecoder : D.Decoder Int
 numberDecoder =
     D.field "$numberInt" D.string
-        |> D.andThen (\str -> case String.toInt str of
-            Just num -> D.succeed num
-            Nothing -> D.fail "Expected an integer")
+        |> D.andThen
+            (\str ->
+                case String.toInt str of
+                    Just num ->
+                        D.succeed num
+
+                    Nothing ->
+                        D.fail "Expected an integer"
+            )
+
 
 
 -- NOTE: Decode a custom type:
@@ -267,12 +279,6 @@ genderDecoder =
 -- so we can just use OwnedRanking as pattern for decoder.
 -- NOTE: Ranking is a record, so we provide a custom decoder
 -- NOTE: userRankingsDecoder is for Global data:
-
-
-
-
-
-
 -- NOTE: Description is a record, so we provide a custom decoder
 
 
@@ -321,9 +327,6 @@ updatedNickName user str =
 deactivate : UserInfo -> UserInfo
 deactivate userInfo =
     { userInfo | active = False }
-
-
-
 
 
 updatedLevel : User -> String -> User
@@ -430,20 +433,3 @@ gotUserInfo user =
 
         _ ->
             emptyUserInfo
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

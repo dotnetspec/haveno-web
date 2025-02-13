@@ -958,43 +958,16 @@ topLogo =
 
 menu : Model -> Html Msg
 menu model =
-    if model.isNavMenuActive == True && model.isMenuOpen == True then
-        div []
-            [ button
-                [ class "menu-btn"
-                , onClick ToggleMenu
-                ]
-                [ text
-                    (if model.isMenuOpen then
-                        "✖"
-
-                     else
-                        "☰"
-                    )
-                ]
-            , div
-                [ classList [ ( "menu", True ), ( "open", model.isMenuOpen ) ] ]
-                [ navLinks model.page ]
+    div []
+        [ button
+            [ classList [ ("menu-btn", True), ("open", model.isMenuOpen) ]
+            , onClick ToggleMenu
             ]
-
-    else if model.isNavMenuActive == True then
-        div []
-            [ button
-                [ class "menu-btn"
-                , onClick ToggleMenu
-                ]
-                [ text
-                    (if model.isMenuOpen then
-                        "✖"
-
-                     else
-                        "☰"
-                    )
-                ]
-            ]
-
-    else
-        div [] []
+            [ text (if model.isMenuOpen then "✖" else "☰") ]
+        , div
+            [ classList [ ( "menu", True ), ( "open", model.isMenuOpen ) ] ]
+            [ navLinks model.page ]
+        ]
 
 
 navLinks : Page -> Html msg

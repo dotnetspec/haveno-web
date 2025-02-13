@@ -14,6 +14,55 @@ body {
   cursor: pointer;
   z-index: 1100;
   font-size: 24px; /* Increased font size for the burger and x icons */
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  transition: all 1s ease-in-out; /* Increased transition time */
+}
+
+.menu-btn_burger {
+  position: relative; /* Crucial for pseudo-elements */
+  width: 50px;
+  height: 6px;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 9, 92, 0.8);
+  transition: all 1s ease-in-out; /* Increased transition time */
+  margin-left: 10px; /* Adjust this value for more/less space */
+}
+
+.menu-btn_burger::before,
+.menu-btn_burger::after {
+  content: '';
+  position: absolute; /* Positioned relative to .menu-btn_burger */
+  width: 50px;
+  height: 6px;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 9, 92, 0.8);
+  transition: all 1s ease-in-out; /* Increased transition time */
+}
+
+.menu-btn_burger::before {
+  transform: translateY(-16px); /* Position above the main line */
+}
+
+.menu-btn_burger::after {
+  transform: translateY(16px); /* Position below the main line */
+}
+
+/* Animation for the open state */
+.menu-btn.open .menu-btn_burger {
+  background: transparent;
+  box-shadow: none;
+}
+
+.menu-btn.open .menu-btn_burger::before {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menu-btn.open .menu-btn_burger::after {
+  transform: rotate(-45deg) translate(5px, -5px);
 }
 
 .menu {
@@ -24,7 +73,7 @@ body {
   height: 100%;
   background-color: #333;
   color: white;
-  transition: left 0.3s ease; /* Smooth slide-in effect */
+  transition: left 0.6s ease; /* Increased transition time */
   z-index: 1000;
   overflow-y: auto; /* Add scrolling for long menus */
 }
