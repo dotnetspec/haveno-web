@@ -21,7 +21,8 @@
     "build": "parcel build",
     "serve": "parcel serve",
     "relns": "yarn unit && yarn spec && yarn build",
-    "rel": "yarn envoyWithBrowser && yarn unit && yarn spec && yarn build && yarn serve"
+    "relnoe": "yarn unit && yarn spec && yarn build && yarn serve",
+    "rel": "yarn eb && yarn unit && yarn spec && yarn build && yarn serve"
   },
   "husky": {
     "hooks": {
@@ -46,7 +47,6 @@
   },
   "devDependencies": {
     "@parcel/transformer-elm": "2.13.0",
-    "@playwright/test": "^1.50.1",
     "@types/node": "^22.13.2",
     "elm": "^0.19.1-5",
     "elm-spec-runner": "^2.5.1",
