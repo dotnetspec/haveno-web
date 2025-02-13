@@ -26,49 +26,17 @@ function initializeElmApp(jsonUrl) {
   return eapp;
 }
 
-function setupMenuButton() {
-  console.log("Elm initialization complete. Setting up menu button.");
-
-  // Add a delay to ensure Elm has rendered the `.menu-btn`
-  setTimeout(() => {
-    console.log("Before querySelector.");
-    const menubtn = document.querySelector(".menu-btn");
-    console.log("After - querySelector", menubtn);
-    if (menubtn) {
-      let menuOpen = false;
-      menubtn.addEventListener("click", () => {
-        if (!menuOpen) {
-          menubtn.classList.add("open");
-          menuOpen = true;
-        } else {
-          menubtn.classList.remove("open");
-          menuOpen = false;
-        }
-        console.log("Set up menu button - Complete.");
-      });
-    } else {
-      console.warn("Menu button not found. Skipping event listener setup.");
-    }
-  }, 0);
-}
-
 function handleElmMessages(eapp) {
   if (eapp.ports && eapp.ports.sendMessageToJs) {
     eapp.ports.sendMessageToJs.subscribe((message) => {
       handleMessageFromElm(message, eapp);
-
-      if (message === "msgFromElm") {
-        setupMenuButton();
-      } else {
-        console.warn("Elm initialization message not recognized:", message);
-      }
     });
   } else {
     console.error("sendMessageToJs port is not defined on eapp.ports");
   }
 }
 
-function initializeApp() {
+function initializeBrowserEnvironment() {
   try {
     const environmentInfo = detectEnvironment();
     console.log("Protocol:", environmentInfo.protocol);
@@ -85,4 +53,4 @@ function initializeApp() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", initializeApp);
+document.addEventListener("DOMContentLoaded", initializeBrowserEnvironment);
