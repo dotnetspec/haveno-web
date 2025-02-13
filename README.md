@@ -29,7 +29,9 @@ Only a BDD/TDD with CI/CD pipeline approach is recommended/required for any furt
 
 # Pre-Production checks:
 Update semver version number
-Production build: `yarn release` or `yarn releaseMinusPlaywright` (tests build separately)
+Close all current running services in terminals
+Test scripts: `yarn relns+plw`
+Full test: `yarn rel`
 Local reality check - 1 full trade (if possible)
 Negate the trade
 Commit with AI/manual comment
@@ -37,7 +39,9 @@ Push to Origin
 
 
 # Production:
-`yarn release`
+Close all current running services in terminals
+Test scripts: `yarn relns+plw`
+Full test: `yarn rel`
 Source Control: `Sync Changes`
 (Unverified - Will upload contents of ./dist folder and ./resources (whole) folder to production environment 
 -- NOTE: Problem with a resource (eg. logo display) may need to manually upload)
