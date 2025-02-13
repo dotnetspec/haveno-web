@@ -10,15 +10,23 @@ test('has title', async ({ page, browserName }) => {
   await expect(page).toHaveTitle(/Haveno-Web/);
 });
 
-test('get started link', async ({ page }) => {
+test('get funds link', async ({ page }) => {
   await page.goto('http://localhost:1234/');
 
-   // Click the menu button.
-   await page.getByRole('button', { name: 'menubutton' }).click();
+  // Open menu if needed
+  await page.waitForSelector('button.menu-btn', { state: 'visible' });
+  await page.getByTestId('menu-button').click();
 
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Funds' }).click();
+  // Ensure "Funds" link is visible before clicking
+  await page.waitForSelector('a:has-text("Funds")', { state: 'visible' });
+  await page.getByRole('link', { name: /Funds/i }).click();
 
-  // Expects page to have a heading with the name of Installation.
+
+  console.log("Current URL:", page.url());
+
+
+  // Verify navigation to "Funds" page
   await expect(page.getByRole('heading', { name: 'Funds' })).toBeVisible();
 });
+
+
