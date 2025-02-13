@@ -20,7 +20,8 @@
     "start": "parcel",
     "build": "parcel build",
     "serve": "parcel serve",
-    "release": "yarn unit && yarn spec && yarn jstest && yarn build"
+    "releaseNoServe": "yarn unit && yarn spec && yarn jstest && yarn build",
+    "release": "yarn envoyWithBrowser && yarn unit && yarn spec && yarn jstest && yarn build && yarn serve"
   },
   "husky": {
     "hooks": {
