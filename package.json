@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@parcel/transformer-elm": "2.13.0",
+    "@playwright/test": "^1.50.1",
     "@types/node": "^22.13.2",
     "elm": "^0.19.1-6",
     "elm-spec-runner": "^2.5.1",
