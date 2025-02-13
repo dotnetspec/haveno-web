@@ -21,4 +21,8 @@ dist/*
 package-lock.json
 .parcel-cache
 
-
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

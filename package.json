@@ -12,16 +12,16 @@
     "optimize": "elm make src/Main.elm --output=js/elm.js --optimize",
     "minTestHaveno": "./terminals/localNet_2_User.sh",
     "fullTestHaveno": "./terminals/openAll.sh",
-    "envoyWithBrowser": "./terminals/oneUserEnvoy.sh",
-    "closeTerminals": "./terminals/closeAll.sh",
+    "eb": "./terminals/oneUserEnvoy.sh",
+    "ct": "./terminals/closeAll.sh",
     "yarnClean": "yarn cache clean",
     "prepareToManageGit": "husky install",
     "parcelClean": "rm -rf dist .parcel-cache && parcel build",
     "start": "parcel",
     "build": "parcel build",
     "serve": "parcel serve",
-    "releaseNoServe": "yarn unit && yarn spec && yarn build",
-    "release": "yarn envoyWithBrowser && yarn unit && yarn spec && yarn build && yarn serve"
+    "relns": "yarn unit && yarn spec && yarn build",
+    "rel": "yarn envoyWithBrowser && yarn unit && yarn spec && yarn build && yarn serve"
   },
   "husky": {
     "hooks": {
@@ -46,12 +46,15 @@
   },
   "devDependencies": {
     "@parcel/transformer-elm": "2.13.0",
+    "@playwright/test": "^1.50.1",
+    "@types/node": "^22.13.2",
     "elm": "^0.19.1-5",
     "elm-spec-runner": "^2.5.1",
     "husky": "^9.1.4",
     "lint-staged": "^15.2.9",
     "madge": "^8.0.0",
     "parcel": "^2.12.0",
+    "playwright": "^1.50.1",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
     "vitest": "^2.1.3"
