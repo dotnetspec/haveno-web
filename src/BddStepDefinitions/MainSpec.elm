@@ -165,11 +165,7 @@ runSpecTests =
                                         Claim.isStringContaining 1 "1.0.7"
                                 )
                         )
-                    , it "e. should be possible to use the Menu"
-                        (Observer.observeModel .isNavMenuActive
-                            |> Spec.expect
-                                Claim.isTrue
-                        )
+                   
                     ]
             )
         , --Runner.skip <|
@@ -237,12 +233,7 @@ runSpecTests =
                       ]
                    -}
                    |> Spec.observeThat
-                       [ it "a. should be possible to use the Menu"
-                           (Observer.observeModel .isNavMenuActive
-                               |> Spec.expect
-                                   Claim.isTrue
-                           )
-                       , it "b.is on the Sell page"
+                       [ it "b.is on the Sell page"
                            -- NOTE: Cos connected with valid XMR address
                            (Observer.observeModel .page
                                |> Spec.expect (Claim.isEqual Debug.toString <| Main.SellPage Sell.initialModel)
@@ -287,12 +278,7 @@ runSpecTests =
                       ]
                    -}
                    |> Spec.observeThat
-                       [ it "should be possible to use the Menu"
-                           (Observer.observeModel .isNavMenuActive
-                               |> Spec.expect
-                                   Claim.isTrue
-                           )
-                       , it "should display the menu"
+                       [ it "should display the menu"
                            (Markup.observeElement
                                |> Markup.query
                                << by [ tag "button" ]

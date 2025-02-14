@@ -104,7 +104,7 @@ init flag _ key =
             -- HACK: Temp until we receive the address from the hw device
             -- NOTE: This is actually the only place in the app that is currently affecting the notification mesage
             , xmrWalletAddress = "" --""
-            , isNavMenuActive = True
+            
             , isApiConnected = False
             , version = "No Haveno version available"
             , currentJsMessage = ""
@@ -135,7 +135,7 @@ type alias Model =
     , isXMRWalletConnected : Bool
     , xmrHardwareWalletAddressError : Maybe XmrHardwareWalletAddressError
     , xmrWalletAddress : String
-    , isNavMenuActive : Bool
+ 
     , isApiConnected : Bool
     , version : String
     , currentJsMessage : String
