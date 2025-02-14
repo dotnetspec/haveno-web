@@ -15576,12 +15576,12 @@ var $author$project$Pages$Funds$custodialFundsView = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$id('currentaddress'),
+						$elm$html$Html$Attributes$id('primaryaddress'),
 						$elm$html$Html$Attributes$class('address-text')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Current address: ' + model.ug)
+						$elm$html$Html$text('Primary address: ' + model.ug)
 					])),
 				A2(
 				$elm$html$Html$div,

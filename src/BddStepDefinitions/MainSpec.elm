@@ -265,7 +265,7 @@ runSpecTests =
                            }
                        -- NOTE: Currently believe this is equivalent to the user clicking a link
                        |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
-                       |> Stub.serve [ TestData.successfulWalletWithBalancesFetch ]
+                       |> Stub.serve [ TestData.successfullBalancesFetch ]
                        |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch ]
                    )
                    |> when "the user navigates to another navLink in the menu"
@@ -325,18 +325,7 @@ runSpecTests =
                                            Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
                                    )
                            )
-                       , it "should display the current address from the wallet page model"
-                           (Markup.observeElement
-                               |> Markup.query
-                               << by [ Spec.Markup.Selector.id "currentaddress" ]
-                               |> Spec.expect
-                                   (Claim.isSomethingWhere <|
-                                       Markup.text <|
-                                           Claim.isStringContaining 1 <|
-                                               "Current address: "
-                                                   ++ TestData.subAddress
-                                   )
-                           )
+                      
                        ]
                )
         -}

@@ -80,19 +80,18 @@ init fromMainToHardware =
                 Url fromMainToHardware.flagUrl.protocol fromMainToHardware.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
 
         newUrl =
-            Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
+            Url Http "localhost" (Just 1234) "/accounts" Nothing Nothing
     in
     -- NOTE: these api's are in mongodbMW.js currently - mabye they will be sent through from elm at a later point
     -- Use the refresh token to obtain a new access token
     ( Model Loaded
-        "Hardware"
-        (Hardware { name = "Loading..." })
+        "Accounts"
+        (Accounts { name = "Loading..." })
         newUrl
         -- NOTE: Datetime updated in Main
         (Maybe.withDefault Nothing (Just fromMainToHardware.time))
         apiSpecsPlaceHolder
         LoggedInUser
-        False
         False
         False
         False
@@ -113,7 +112,7 @@ init fromMainToHardware =
 type alias Model =
     { status : Status
     , title : String
-    , root : Hardware
+    , root : Accounts
     , flagUrl : Url
 
     -- NOTE: Use a Maybe so that can specify Nothing in init
@@ -141,15 +140,14 @@ type alias Model =
 initialModel : Model
 initialModel =
     { status = Loaded
-    , title = "Hardware"
-    , root = Hardware { name = "Loading..." }
-    , flagUrl = Url Http "localhost" (Just 1234) "/hardware" Nothing Nothing
+    , title = "Accounts"
+    , root = Accounts { name = "Loading..." }
+    , flagUrl = Url Http "localhost" (Just 1234) "/accounts" Nothing Nothing
     , datetimeFromMain = Nothing
     , apiSpecifics = { maxResults = "", accessToken = Nothing }
     , queryType = LoggedInUser
     , isValidNewAccessToken = False
     , isHardwareLNSConnected = False
-
     , isXMRWalletConnected = False
     , xmrWalletAddress = ""
     , errors = []
@@ -376,7 +374,7 @@ update msg model =
         -- NOTE: All the branching here is configuring the model according to
         -- the json being returned from mondodb and the .js files
         -- NOTE: receivedJson is always a D.Value
-        -- REVIEW: This data logic is already processed in Main - why do it again here? So that the hardware model is also updated.
+        -- REVIEW: This data logic is already processed in Main - why do it again here? So that the accounts model is also updated.
         ResponseDataFromMain receivedJson ->
             let
                 -- NOTE: You can only see the rawJsonMessage in the console if you use JE.encode 2
@@ -416,7 +414,6 @@ update msg model =
                   --, queryType = updatedquerytype
                   --,
                   isHardwareLNSConnected = updatedIsLNSConnected
-               
                 , isXMRWalletConnected = updatedIsXMRConnected
                 , xmrWalletAddress = decodedHardwareDeviceMsg
 
@@ -1047,8 +1044,8 @@ type JsonData
     | JsonObj D.Value
 
 
-type Hardware
-    = Hardware
+type Accounts
+    = Accounts
         { name : String
         }
 
@@ -1596,7 +1593,7 @@ lnsConnectRequest model =
                 { body = Http.emptyBody
                 , method = "POST"
                 , headers = []
-                , url = "http://localhost:1234/hardware"
+                , url = "http://localhost:1234/accounts"
                 , expect = Http.expectJson LNSConnectResponse lnsResponseDecoder
                 , timeout = Nothing
                 , tracker = Nothing
@@ -1868,15 +1865,14 @@ infoBtn label msg =
         }
 
 
+
 {- displayLoginBtns : Model -> Element Msg
-displayLoginBtns model =
-    Element.column Grid.section <|
-        [ Element.el [] <| Element.text " Please login, register or view \n search rankings as a spectator (below):"
-        , infoBtn "Connect Wallet" <| ClickedHardwareDeviceConnect
-        ] -}
-
-
-
+   displayLoginBtns model =
+       Element.column Grid.section <|
+           [ Element.el [] <| Element.text " Please login, register or view \n search rankings as a spectator (below):"
+           , infoBtn "Connect Wallet" <| ClickedHardwareDeviceConnect
+           ]
+-}
 -- NOTE: Start of original Haveno-Web-blahblah-Zoho helpers
 
 

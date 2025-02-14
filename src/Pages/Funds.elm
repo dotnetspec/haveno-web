@@ -17,6 +17,7 @@ import Url exposing (Protocol(..), Url)
 import Utils.MyUtils as MyUtils
 
 
+-- NAV: Model
 type alias Model =
     { status : Status
     , pagetitle : String
@@ -160,8 +161,8 @@ custodialFundsView : Model -> Html Msg
 custodialFundsView model =
     Html.div [ Attr.class "funds-container", Attr.id "custodialFundsView" ]
         [ Html.h1 [ Attr.class "funds-title" ] [ Html.text "Funds" ]
-        , Html.div [ Attr.id "currentaddress", Attr.class "address-text" ]
-            [ Html.text ("Current address: " ++ model.primaryaddress) ]
+        , Html.div [ Attr.id "primaryaddress", Attr.class "address-text" ]
+            [ Html.text ("Primary address: " ++ model.primaryaddress) ]
         , Html.div [ Attr.id "xmrbalance", Attr.class "balance-text" ]
             [ Html.text ("Available Balance: " ++ xmrBalanceAsString model.balances ++ " XMR") ]
         , Html.div [ Attr.id "btcbalance", Attr.class "balance-text" ]
