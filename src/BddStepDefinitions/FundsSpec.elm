@@ -87,6 +87,10 @@ runSpecTests =
                         (Observer.observeModel .pagetitle
                             |> Spec.expect (equals "Funds")
                         )
+                    , it "should receive primary address"
+                        (Observer.observeModel .primaryaddress
+                            |> Spec.expect (equals "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32")
+                        )
                     , it "should display currentaddress"
                         (Markup.observeElement
                             |> Markup.query
@@ -97,6 +101,16 @@ runSpecTests =
                                         Claim.isStringContaining 1 "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
                                 )
                         )
+                    {- , it "should display xmrbalance"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "xmrbalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "10000 XMR"
+                                )
+                        ) -}
                     ]
             )
         , --Runner.skip <|

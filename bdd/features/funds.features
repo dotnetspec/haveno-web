@@ -9,12 +9,16 @@ As per main.features:
 
 ---
 
-#### **Scenario 1: Accessing the Funds page**
+#### **Scenario 1: Accessing the Funds page with primary Xmr wallet address and balance data**
 
 **Given** the Funds page is open
 **When** balances are fetched
 **Then** it has status as Loaded
-**And** 
+**And** pagetitle is Funds
+**And** it should display primary Xmr address
+**And** it should display xmrbalance
+**And** it should display btcbalance
+**And** it should display reservedOfferBalance 
 
 ---
 

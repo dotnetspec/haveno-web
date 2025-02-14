@@ -97,7 +97,7 @@ init flag _ key =
             , time = Time.millisToPosix 0
             , zone = Nothing -- Replace with the actual time zone if available
             , errors = []
-            , isHardwareDeviceConnected = False
+           
 
             -- REVIEW: Should it be impossible to nav without hw device connection?
             -- HACK: Making these next 2 True, so we can get to the wallet page, fails 10 tests:
@@ -135,7 +135,6 @@ type alias Model =
     , time : Time.Posix
     , zone : Maybe Time.Zone
     , errors : List String
-    , isHardwareDeviceConnected : Bool
     , isXMRWalletConnected : Bool
     , xmrHardwareWalletAddressError : Maybe XmrHardwareWalletAddressError
     , xmrWalletAddress : String
@@ -1020,40 +1019,6 @@ navLinks page =
 -- NAV: Main Persistent
 
 
-isHWDeviceConnectedIndicator : Model -> Html msg
-isHWDeviceConnectedIndicator model =
-    span []
-        [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
-            [ span []
-                [ span
-                    [ Attr.class
-                        (if model.isHardwareDeviceConnected then
-                            "indicator green"
-
-                         else if model.isPopUpVisible then
-                            "indicator white"
-
-                         else
-                            "indicator red"
-                        )
-                    , Attr.id "hwdeviceconnection"
-                    ]
-                    [ text
-                        (if model.isHardwareDeviceConnected then
-                            "✔"
-
-                         else if model.isPopUpVisible then
-                            "_"
-
-                         else
-                            "✖"
-                        )
-                    ]
-                ]
-            ]
-        ]
-
-
 isXMRWalletConnectedIndicator : Model -> Html msg
 isXMRWalletConnectedIndicator model =
     span []
@@ -1168,7 +1133,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.3.31" ]
+                , p [] [ text "Version 0.3.32" ]
                 , text "Haveno Version"
                 , p [ id "havenofooterver" ]
                     [ text
