@@ -107,7 +107,7 @@ init flag _ key =
             , isApiConnected = False
             , version = "No Haveno version available"
             , currentJsMessage = ""
-            , xmrHardwareWalletAddressError = Nothing
+     
             , initialized = False
             , isMenuOpen = False
             }
@@ -131,7 +131,7 @@ type alias Model =
     , zone : Maybe Time.Zone
     , errors : List String
     , isXMRWalletConnected : Bool
-    , xmrHardwareWalletAddressError : Maybe XmrHardwareWalletAddressError
+  
     , xmrWalletAddress : String
     , isApiConnected : Bool
     , version : String
@@ -745,13 +745,6 @@ toMarket model ( market, cmd ) =
 -- NAV : Types
 
 
-type XmrHardwareWalletAddressError
-    = NoDevice
-    | DeviceNeedsPermission
-    | DeviceLocked
-    | DeviceUnlocked_XMRWalletClosed
-    | DeviceUnlocked_XMRWalletOpen
-
 
 
 -- NAV: Type aliases
@@ -789,37 +782,6 @@ sendVersionRequest request =
 
 
 -- NAV: Helper functions
-
-
-getDeviceResponseMsg : String -> Maybe XmrHardwareWalletAddressError
-getDeviceResponseMsg errorString =
-    {-
-       -- NOTE: If need this it clashes with "No device selected" and we need to sort out the order of the checks
-       if String.contains "No device" errorString then
-           Just NoDevice
-
-       else
-    -}
-    if String.contains "navigator.usb is undefined" errorString then
-        Just NoDevice
-
-    else if String.contains "No device selected" errorString then
-        Just DeviceNeedsPermission
-
-    else if String.contains "Must be handling a user gesture to show a permission request" errorString then
-        Just DeviceNeedsPermission
-
-    else if String.contains "Access denied to use Ledger device" errorString then
-        Just DeviceLocked
-
-    else if String.contains "UNKNOWN_APDU" errorString then
-        Just DeviceUnlocked_XMRWalletClosed
-
-    else if String.contains "CLA_NOT_SUPPORTED" errorString then
-        Just DeviceUnlocked_XMRWalletOpen
-
-    else
-        Nothing
 
 
 setDashboardHavenoVersion : Pages.Dashboard.Model -> Model -> Pages.Dashboard.Model
