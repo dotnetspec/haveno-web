@@ -7797,7 +7797,7 @@ var $author$project$Pages$Funds$initialModel = {
 	r2: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
 	sy: 0,
 	oK: _List_Nil,
-	mM: 'Haveno Web Funds',
+	mM: 'Funds',
 	ul: '',
 	uW: 0,
 	u0: ''

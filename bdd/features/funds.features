@@ -1,12 +1,10 @@
 ### **Feature: Haveno-Web Funds**
 
 #### **Background:**
-These scenarios cover the essential wallet operations for the Haveno-Web application, providing a comprehensive outline of the functionality related to balance management, address handling, wallet security, transaction creation, and viewing.
+These scenarios cover the essential funds operations for the Haveno-Web application, providing a comprehensive outline of the functionality related to balance management, address handling, wallet security, transaction creation, and viewing.
 
 As per main.features:
-**And** the app is open on the Funds (initial) page
-**And** the hardware device is connected
-**And** the current XMR wallet address is displayed
+**And** the app is already open on the Funds (initial) page
 **And** the application is connected to the Haveno api (running either on the device or server (Envoy))
 
 ---
@@ -14,8 +12,9 @@ As per main.features:
 #### **Scenario 1: Accessing the Funds page**
 
 **Given** the Funds page is open
-**When** the user navigates to the Funds page
-**Then** the Funds page is visible to the user
+**When** balances are fetched
+**Then** it has status as Loaded
+**And** 
 
 ---
 

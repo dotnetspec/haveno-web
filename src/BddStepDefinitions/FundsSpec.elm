@@ -47,6 +47,14 @@ gotXmrBalance balances =
 
 
 -- NAV: Test scenarios
+{- Html.div [ Attr.id "currentaddress", Attr.class "address-text" ]
+       [ Html.text ("Current address: " ++ model.primaryaddress) ]
+   , Html.div [ Attr.id "xmrbalance", Attr.class "balance-text" ]
+       [ Html.text ("Available Balance: " ++ xmrBalanceAsString model.balances ++ " XMR") ]
+   , Html.div [ Attr.id "btcbalance", Attr.class "balance-text" ]
+       [ Html.text ("Available BTC Balance: " ++ btcBalanceAsString model.balances ++ " BTC") ]
+   , Html.div [ Attr.id "reservedOfferBalance", Attr.class "balance-text" ]
+-}
 
 
 runSpecTests : Spec Funds.Model Funds.Msg
@@ -61,22 +69,32 @@ runSpecTests =
                     |> Spec.Setup.withView Funds.view
                     |> Spec.Setup.withUpdate Funds.update
                     |> Spec.Setup.withLocation placeholderUrl
+                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch ]
+                    |> Stub.serve [ TestData.successfulWalletWithBalancesFetch ]
                 )
-                |> when "the user has already clicked the Continue button and triggered the Funds page"
-                    [ Spec.Command.send (Spec.Command.fake <| Funds.GotBalances (Ok Protobuf.defaultGetBalancesReply)) ]
+                {- |> when "balances are fetched"
+                   [ Spec.Command.send (Spec.Command.fake <| Funds.GotBalances (Ok Protobuf.defaultGetBalancesReply)) ]
+                -}
+                |> Spec.when "we log the http requests"
+                    [ Spec.Http.logRequests
+                    ]
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
                             |> Spec.expect (equals Funds.Loaded)
                         )
-                    , it "displays the Funds page correctly"
+                    , it "pagetitle is Funds"
+                        (Observer.observeModel .pagetitle
+                            |> Spec.expect (equals "Funds")
+                        )
+                    , it "should display currentaddress"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ tag "h1" ]
+                            << by [ Spec.Markup.Selector.id "currentaddress" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Funds"
+                                        Claim.isStringContaining 1 "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
                                 )
                         )
                     ]
@@ -488,8 +506,6 @@ getSubAddrInitModel =
     { status = Funds.Loaded
     , pagetitle = "Haveno Web Funds"
     , balances = Just Protobuf.defaultBalancesInfo
-
-   
     , primaryaddress = ""
     , errors = []
     , subaddress = ""

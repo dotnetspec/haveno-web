@@ -18,6 +18,13 @@ import Spec.Http.Stub as Stub
 import Time exposing (Posix, millisToPosix, utc)
 import Url exposing (Protocol(..), Url)
 
+primaryAddress : String
+primaryAddress =
+    "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+
+subAddress : String
+subAddress =
+    "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
 
 grpcsetGetVersionURL : String
 grpcsetGetVersionURL =
@@ -124,7 +131,7 @@ successfulWalletWithBalancesFetch =
 
 successfullXmrPrimaryAddressFetch : Stub.HttpResponseStub
 successfullXmrPrimaryAddressFetch =
-    Stub.for (Route.post <| protoBufferWalletBaseUrl ++ "GetSubAddresses")
+    Stub.for (Route.post <| protoBufferWalletBaseUrl ++ "GetXmrPrimaryAddress")
         |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
         |> Stub.withBody (Stub.withBytes <| encodeGrpcMessage getXmrPrimaryAddressEncodedResponse)
 
@@ -200,9 +207,9 @@ getXmrPrimaryAddressEncodedResponse =
         
         primAddrReply : Protobuf.GetXmrPrimaryAddressReply
         primAddrReply =
-        -- HACK: This is a placeholder address, and might be a subAddress
+        -- HACK: This is a placeholder address
         -- NOTE: Used compiler messages to determine the structure of this message
-            { primaryAddress = "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32" }
+            { primaryAddress = primaryAddress }
 
         -- Encode to bytes
         encodedResponse : Bytes
@@ -227,6 +234,4 @@ getSubAddressesEncodedResponse =
     in
     encodedResponse
 
-subAddress : String
-subAddress =
-    "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+

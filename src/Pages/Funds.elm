@@ -31,7 +31,7 @@ type alias Model =
 initialModel : Model
 initialModel =
     { status = Loading
-    , pagetitle = "Haveno Web Funds"
+    , pagetitle = "Funds"
     , balances = Just Protobuf.defaultBalancesInfo
 
     -- HACK: Hardcoding the address for now
@@ -60,7 +60,6 @@ type View
 
 init : String -> ( Model, Cmd Msg )
 init _ =
-    
     ( initialModel
     , Cmd.batch [ gotAvailableBalances, gotNewPrimaryAddress ]
     )
@@ -91,8 +90,6 @@ update msg model =
 
         GotXmrNewSubaddress (Err error) ->
             ( { model | status = Errored }, Cmd.none )
-
-        
 
         GotBalances (Ok response) ->
             ( { model | balances = response.balances, status = Loaded }, Cmd.none )
@@ -264,6 +261,7 @@ gotAvailableBalances =
                 |> Grpc.setHost "http://localhost:8080"
     in
     Grpc.toCmd GotBalances grpcRequest
+
 
 gotNewPrimaryAddress : Cmd Msg
 gotNewPrimaryAddress =
