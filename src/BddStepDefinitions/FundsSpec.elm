@@ -1,4 +1,4 @@
-module BddStepDefinitions.WalletSpec exposing (..)
+module BddStepDefinitions.FundsSpec exposing (..)
 
 import BddStepDefinitions.Extra exposing (..)
 import BddStepDefinitions.Runner as Runner exposing (..)

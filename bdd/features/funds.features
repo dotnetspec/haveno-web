@@ -1,29 +1,29 @@
-### **Feature: Haveno-Web Wallet**
+### **Feature: Haveno-Web Funds**
 
 #### **Background:**
 These scenarios cover the essential wallet operations for the Haveno-Web application, providing a comprehensive outline of the functionality related to balance management, address handling, wallet security, transaction creation, and viewing.
 
 As per main.features:
-**And** the app is open on the Wallet (initial) page
+**And** the app is open on the Funds (initial) page
 **And** the hardware device is connected
 **And** the current XMR wallet address is displayed
 **And** the application is connected to the Haveno api (running either on the device or server (Envoy))
 
 ---
 
-#### **Scenario 1: Accessing the Wallet page**
+#### **Scenario 1: Accessing the Funds page**
 
-**Given** the Wallet page is open
-**When** the user navigates to the Wallet page
-**Then** the Wallet page is visible to the user
+**Given** the Funds page is open
+**When** the user navigates to the Funds page
+**Then** the Funds page is visible to the user
 
 ---
 
 #### **Scenario 2: Show available balance and reserved balance correctly in the UI**
 
-**Given** the Wallet page is open  
+**Given** the Funds page is open  
 **When** the app retrieves the current balance information  
-**Then** the Wallet page displays the Available, Pending, and Reserved Balances  
+**Then** the Funds page displays the Available, Pending, and Reserved Balances  
 
 ---
 
@@ -38,10 +38,10 @@ As per main.features:
 
 #### **Scenario 4: Retrieving the Primary Address**
 
-**Given** the Wallet page is open  
+**Given** the Funds page is open  
 **And** the hardware device is connected  
 **When** the app retrieves the primary Monero address using `Wallet.GotPrimaryAddress`  
-**Then** the primary address is displayed on the Wallet page  
+**Then** the primary address is displayed on the Funds page  
 
 ---
 
@@ -49,54 +49,54 @@ As per main.features:
 
 **Given** a Monero address is available  
 **When** the app queries the balance for the address using `Wallet.GotAddressBalance`  
-**Then** the balance for the specific address is displayed on the Wallet page  
+**Then** the balance for the specific address is displayed on the Funds page  
 
 ---
 
 #### **Scenario 6: Viewing Funding Addresses**
 
-**Given** the Wallet page is open  
+**Given** the Funds page is open  
 **When** the app retrieves available funding addresses using `Wallet.GotFundingAddresses`  
-**Then** all funding addresses are displayed on the Wallet page  
+**Then** all funding addresses are displayed on the Funds page  
 
 ---
 
 #### **Scenario 7: Unlocking the Wallet**
 
-**Given** the Wallet page is open  
+**Given** the Funds page is open  
 **And** the wallet is currently locked  
 **When** the user attempts to unlock the wallet  
 **Then** the app sends an `Wallet.GotUnlockWallet` request  
-**And** the Wallet page updates to reflect the unlocked state  
+**And** the Funds page updates to reflect the unlocked state  
 
 ---
 
 #### **Scenario 8: Locking the Wallet**
 
-**Given** the Wallet page is open  
+**Given** the Funds page is open  
 **And** the wallet is currently unlocked  
 **When** the user requests to lock the wallet  
 **Then** the app sends a `Wallet.GotLockWallet` request  
-**And** the Wallet page updates to reflect the locked state  
+**And** the Funds page updates to reflect the locked state  
 
 ---
 
 #### **Scenario 9: Setting a Wallet Password**
 
-**Given** the Wallet page is open  
+**Given** the Funds page is open  
 **When** the user sets a password for the wallet  
 **Then** the app sends a `Wallet.GotSetWalletPassword` request  
-**And** the Wallet page confirms that the password was successfully set  
+**And** the Funds page confirms that the password was successfully set  
 
 ---
 
 #### **Scenario 10: Removing the Wallet Password**
 
-**Given** the Wallet page is open  
+**Given** the Funds page is open  
 **And** the wallet has a password set  
 **When** the user removes the wallet password  
 **Then** the app sends a `Wallet.GotRemoveWalletPassword` request  
-**And** the Wallet page confirms the password was successfully removed  
+**And** the Funds page confirms the password was successfully removed  
 
 ---
 
@@ -111,25 +111,25 @@ As per main.features:
 
 #### **Scenario 12: Creating a New Monero Transaction**
 
-**Given** the Wallet page is open  
+**Given** the Funds page is open  
 **When** the user initiates a new transaction  
 **Then** the app sends a `Wallet.GotCreateTransaction` request with transaction details  
-**And** the Wallet page displays the pending transaction status  
+**And** the Funds page displays the pending transaction status  
 
 ---
 
 #### **Scenario 13: Viewing Monero Transactions**
 
-**Given** the Wallet page is open  
+**Given** the Funds page is open  
 **When** the user requests to view recent transactions  
 **Then** the app retrieves the transactions using `Wallet.GotXmrTxs`  
-**And** the transaction history is displayed on the Wallet page  
+**And** the transaction history is displayed on the Funds page  
 
 ---
 
 #### **Scenario 14: Retrieving Wallet Seed**
 
-**Given** the Wallet page is open  
+**Given** the Funds page is open  
 **When** the user requests to view the wallet seed  
 **Then** the app sends a `Wallet.GotXmrSeed` request  
 **And** the wallet seed is securely displayed to the user
