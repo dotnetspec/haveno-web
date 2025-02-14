@@ -231,6 +231,10 @@ update msg model =
 
                 -- NOTE: simpleMenu has internal hrefs, so updates here
                 Browser.Internal url ->
+                    let
+                        modelWithMenuClosed = { model | isMenuOpen = False }
+                    in
+                    
                     -- NOTE: If site isn't explicitly branched like
                     -- this, it is parsed as an internal link. We
                     -- need to load it as if it were an external link
@@ -238,12 +242,12 @@ update msg model =
                     -- this isn't currently used and points nowhere
                     case Url.toString url of
                         "https://haveno-web-dev.netlify.app//" ->
-                            ( model, Nav.load (Url.toString url) )
+                            ( modelWithMenuClosed, Nav.load (Url.toString url) )
 
                         -- NOTE: Nav.pushUrl only manipulates the address bar
                         -- and triggers ChangedUrl
                         _ ->
-                            updateUrl url model
+                            updateUrl url modelWithMenuClosed
 
         -- NOTE: translate URL (e.g. Back btn) into a Page and store it in our Model
         -- this is the place to handle transitions. This is where we can get more fancy
@@ -1164,7 +1168,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.3.30" ]
+                , p [] [ text "Version 0.3.31" ]
                 , text "Haveno Version"
                 , p [ id "havenofooterver" ]
                     [ text

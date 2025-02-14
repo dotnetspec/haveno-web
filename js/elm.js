@@ -7863,7 +7863,7 @@ var $author$project$Pages$Support$init = function (_v0) {
 };
 var $elm$url$Url$Parser$State = F5(
 	function (visited, unvisited, params, frag, value) {
-		return {dT: frag, d3: params, dF: unvisited, al: value, ej: visited};
+		return {dU: frag, d3: params, dG: unvisited, al: value, ej: visited};
 	});
 var $elm$url$Url$Parser$getFirstMatch = function (states) {
 	getFirstMatch:
@@ -7873,7 +7873,7 @@ var $elm$url$Url$Parser$getFirstMatch = function (states) {
 		} else {
 			var state = states.a;
 			var rest = states.b;
-			var _v1 = state.dF;
+			var _v1 = state.dG;
 			if (!_v1.b) {
 				return $elm$core$Maybe$Just(state.al);
 			} else {
@@ -8188,9 +8188,9 @@ var $elm$url$Url$Parser$Parser = $elm$core$Basics$identity;
 var $elm$url$Url$Parser$mapState = F2(
 	function (func, _v0) {
 		var visited = _v0.ej;
-		var unvisited = _v0.dF;
+		var unvisited = _v0.dG;
 		var params = _v0.d3;
-		var frag = _v0.dT;
+		var frag = _v0.dU;
 		var value = _v0.al;
 		return A5(
 			$elm$url$Url$Parser$State,
@@ -8205,9 +8205,9 @@ var $elm$url$Url$Parser$map = F2(
 		var parseArg = _v0;
 		return function (_v1) {
 			var visited = _v1.ej;
-			var unvisited = _v1.dF;
+			var unvisited = _v1.dG;
 			var params = _v1.d3;
-			var frag = _v1.dT;
+			var frag = _v1.dU;
 			var value = _v1.al;
 			return A2(
 				$elm$core$List$map,
@@ -8246,9 +8246,9 @@ var $elm$url$Url$Parser$oneOf = function (parsers) {
 var $elm$url$Url$Parser$s = function (str) {
 	return function (_v0) {
 		var visited = _v0.ej;
-		var unvisited = _v0.dF;
+		var unvisited = _v0.dG;
 		var params = _v0.d3;
-		var frag = _v0.dT;
+		var frag = _v0.dU;
 		var value = _v0.al;
 		if (!unvisited.b) {
 			return _List_Nil;
@@ -8414,7 +8414,7 @@ var $author$project$Main$init = F3(
 			nm: false,
 			fh: false,
 			mC: false,
-			dW: false,
+			dA: false,
 			pp: true,
 			bE: true,
 			mD: false,
@@ -8737,14 +8737,17 @@ var $author$project$Main$update = F2(
 						$elm$browser$Browser$Navigation$load(href));
 				} else {
 					var url = urlRequest.a;
+					var modelWithMenuClosed = _Utils_update(
+						model,
+						{dA: false});
 					var _v2 = $elm$url$Url$toString(url);
 					if (_v2 === 'https://haveno-web-dev.netlify.app//') {
 						return _Utils_Tuple2(
-							model,
+							modelWithMenuClosed,
 							$elm$browser$Browser$Navigation$load(
 								$elm$url$Url$toString(url)));
 					} else {
-						return A2($author$project$Main$updateUrl, url, model);
+						return A2($author$project$Main$updateUrl, url, modelWithMenuClosed);
 					}
 				}
 			case 9:
@@ -8754,7 +8757,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{dW: !model.dW}),
+						{dA: !model.dA}),
 					$elm$core$Platform$Cmd$none);
 			case 15:
 				return _Utils_Tuple2(
@@ -8995,7 +8998,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.3.30')
+										$elm$html$Html$text('Version 0.3.31')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
@@ -9339,7 +9342,7 @@ var $author$project$Main$menu = function (model) {
 						_List_fromArray(
 							[
 								_Utils_Tuple2('menu-btn', true),
-								_Utils_Tuple2('open', model.dW)
+								_Utils_Tuple2('open', model.dA)
 							])),
 						$elm$html$Html$Events$onClick($author$project$Main$ToggleMenu),
 						$elm$html$Html$Attributes$name('menubutton'),
@@ -9348,7 +9351,7 @@ var $author$project$Main$menu = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						model.dW ? '✖' : '☰')
+						model.dA ? '✖' : '☰')
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -9358,7 +9361,7 @@ var $author$project$Main$menu = function (model) {
 						_List_fromArray(
 							[
 								_Utils_Tuple2('menu', true),
-								_Utils_Tuple2('open', model.dW)
+								_Utils_Tuple2('open', model.dA)
 							]))
 					]),
 				_List_fromArray(
@@ -11752,7 +11755,7 @@ var $elm$core$String$concat = function (strings) {
 var $mdgriffith$elm_ui$Internal$Style$Intermediate = $elm$core$Basics$identity;
 var $mdgriffith$elm_ui$Internal$Style$emptyIntermediate = F2(
 	function (selector, closing) {
-		return {mo: closing, ay: _List_Nil, dC: _List_Nil, cV: selector};
+		return {mo: closing, ay: _List_Nil, dD: _List_Nil, cV: selector};
 	});
 var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 	function (_v0, rulesToRender) {
@@ -11766,10 +11769,10 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 						return _Utils_update(
 							rendered,
 							{
-								dC: A2(
+								dD: A2(
 									$elm$core$List$cons,
 									_Utils_Tuple2(name, val),
-									rendered.dC)
+									rendered.dD)
 							});
 					case 3:
 						var _v2 = rule.a;
@@ -11781,7 +11784,7 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 							{
 								ay: A2(
 									$elm$core$List$cons,
-									{mo: '\n}', ay: _List_Nil, dC: props, cV: '@supports (' + (prop + (':' + (value + (') {' + parent.cV))))},
+									{mo: '\n}', ay: _List_Nil, dD: props, cV: '@supports (' + (prop + (':' + (value + (') {' + parent.cV))))},
 									rendered.ay)
 							});
 					case 5:
@@ -11873,11 +11876,11 @@ var $mdgriffith$elm_ui$Internal$Style$renderCompact = function (styleClasses) {
 				values));
 	};
 	var renderClass = function (rule) {
-		var _v2 = rule.dC;
+		var _v2 = rule.dD;
 		if (!_v2.b) {
 			return '';
 		} else {
-			return rule.cV + ('{' + (renderValues(rule.dC) + (rule.mo + '}')));
+			return rule.cV + ('{' + (renderValues(rule.dD) + (rule.mo + '}')));
 		}
 	};
 	var renderIntermediate = function (_v0) {
@@ -13325,9 +13328,9 @@ var $mdgriffith$elm_ui$Internal$Model$createElement = F3(
 				return $mdgriffith$elm_ui$Internal$Model$Unstyled(
 					A5(
 						$mdgriffith$elm_ui$Internal$Model$finalizeNode,
-						rendered.dV,
+						rendered.dW,
 						rendered.pV,
-						rendered.dJ,
+						rendered.dK,
 						$mdgriffith$elm_ui$Internal$Model$Keyed(
 							A3($mdgriffith$elm_ui$Internal$Model$addKeyedChildren, 'nearby-element-pls', keyed, rendered.sk)),
 						$mdgriffith$elm_ui$Internal$Model$NoStyleSheet));
@@ -13337,9 +13340,9 @@ var $mdgriffith$elm_ui$Internal$Model$createElement = F3(
 					{
 						tj: A4(
 							$mdgriffith$elm_ui$Internal$Model$finalizeNode,
-							rendered.dV,
+							rendered.dW,
 							rendered.pV,
-							rendered.dJ,
+							rendered.dK,
 							$mdgriffith$elm_ui$Internal$Model$Keyed(
 								A3($mdgriffith$elm_ui$Internal$Model$addKeyedChildren, 'nearby-element-pls', keyed, rendered.sk))),
 						q7: allStyles
@@ -13359,9 +13362,9 @@ var $mdgriffith$elm_ui$Internal$Model$createElement = F3(
 				return $mdgriffith$elm_ui$Internal$Model$Unstyled(
 					A5(
 						$mdgriffith$elm_ui$Internal$Model$finalizeNode,
-						rendered.dV,
+						rendered.dW,
 						rendered.pV,
-						rendered.dJ,
+						rendered.dK,
 						$mdgriffith$elm_ui$Internal$Model$Unkeyed(
 							A2($mdgriffith$elm_ui$Internal$Model$addChildren, unkeyed, rendered.sk)),
 						$mdgriffith$elm_ui$Internal$Model$NoStyleSheet));
@@ -13371,9 +13374,9 @@ var $mdgriffith$elm_ui$Internal$Model$createElement = F3(
 					{
 						tj: A4(
 							$mdgriffith$elm_ui$Internal$Model$finalizeNode,
-							rendered.dV,
+							rendered.dW,
 							rendered.pV,
-							rendered.dJ,
+							rendered.dK,
 							$mdgriffith$elm_ui$Internal$Model$Unkeyed(
 								A2($mdgriffith$elm_ui$Internal$Model$addChildren, unkeyed, rendered.sk))),
 						q7: allStyles
@@ -13917,24 +13920,24 @@ var $mdgriffith$elm_ui$Internal$Model$gatherAttrRecursive = F8(
 				var _v1 = $mdgriffith$elm_ui$Internal$Model$transformClass(transform);
 				if (_v1.$ === 1) {
 					return {
-						dJ: A2(
+						dK: A2(
 							$elm$core$List$cons,
 							$elm$html$Html$Attributes$class(classes),
 							attrs),
 						sk: children,
-						dV: has,
+						dW: has,
 						pV: node,
 						q7: styles
 					};
 				} else {
 					var _class = _v1.a;
 					return {
-						dJ: A2(
+						dK: A2(
 							$elm$core$List$cons,
 							$elm$html$Html$Attributes$class(classes + (' ' + _class)),
 							attrs),
 						sk: children,
-						dV: has,
+						dW: has,
 						pV: node,
 						q7: A2(
 							$elm$core$List$cons,

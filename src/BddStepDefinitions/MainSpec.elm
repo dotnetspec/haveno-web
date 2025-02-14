@@ -21,8 +21,8 @@ import Json.Encode as E
 import Main exposing (Model, Msg, Page(..), Route(..), init, navigate, subscriptions, update, view)
 import Pages.Blank
 import Pages.Dashboard as Dashboard exposing (..)
-import Pages.Sell as Sell exposing (..)
 import Pages.Funds as Funds exposing (..)
+import Pages.Sell as Sell exposing (..)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.Internals_
 import Protobuf.Decode
@@ -166,73 +166,54 @@ runSpecTests =
                                 )
                         )
                     , it "e. should be possible to use the Menu"
-                           (Observer.observeModel .isNavMenuActive
-                               |> Spec.expect
-                                   Claim.isTrue
-                           )
+                        (Observer.observeModel .isNavMenuActive
+                            |> Spec.expect
+                                Claim.isTrue
+                        )
+                    ]
+            )
+        , --Runner.skip <|
+          --Runner.pick <|
+          scenario "11: Menu Closes After Using NavLink"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                )
+                |> when "the user opens the menu"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            Main.ToggleMenu
+                    ]
+                |> when "the user clicks the Funds navLink in the burger menu"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/funds" Nothing Nothing))
+                    ]
+                |> Spec.observeThat
+                    [ it "a.is on the Funds page"
+                        (Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.FundsPage <|
+                                        Funds.initialModel
+                                )
+                        )
+                    , it "b. the menu should be closed"
+                        (Observer.observeModel .isMenuOpen
+                            |> Spec.expect
+                                Claim.isFalse
+                        )
                     ]
             )
 
         {-
-           , --Runner.skip <|
-             Runner.pick <|
-               scenario "11: Checking the Menu is active on the Wallet page"
-                   (given
-                       (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
-                           |> Spec.Setup.withDocument Main.view
-                           |> Spec.Setup.withUpdate Main.update
-                           |> Spec.Setup.withSubscriptions Main.subscriptions
-                           |> Spec.Setup.forNavigation
-                               { onUrlRequest = Main.ClickedLink
-                               , onUrlChange = Main.ChangedUrl
-                               }
-                           -- NOTE: Currently believe this is equivalent to the user clicking a link
-                           |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
-                           |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch ]
-                       )
-                       -- Simulate user clicking the Wallet navLink in the burger menu
-                       -- NOTE: This causes 'Error: Uncaught [TypeError: First argument to DataView constructor must be an ArrayBuffer]
-                       -- in the test runner, but the test still completes
-                       |> when "the user clicks the Wallet navLink in the burger menu"
-                           [ Spec.Command.send <|
-                               Spec.Command.fake
-                                   (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing))
-                           ]
-                       |> Spec.when "we log the http requests"
-                           [ Spec.Http.logRequests
-                           ]
-                       |> Spec.observeThat
-                           [ it "a. should be possible to use the Menu"
-                               (Observer.observeModel .isNavMenuActive
-                                   |> Spec.expect
-                                       Claim.isTrue
-                               )
-                           , it "b. should have an address in the model"
-                               (Observer.observeModel .xmrWalletAddress
-                                   |> Spec.expect
-                                       (Claim.isEqual Debug.toString <| TestData.subAddress)
-                               )
-                           , it "f.is on the Wallet page"
-                               (Observer.observeModel .page
-                                   |> Spec.expect
-                                       (Claim.isEqual Debug.toString <|
-                                           Main.WalletPage <|
-                                               Wallet.initialModel
-                                       )
-                               )
-                           , it "should display the menu"
-                               (Markup.observeElement
-                                   |> Markup.query
-                                   << by [ tag "button" ]
-                                   |> Spec.expect
-                                       (Claim.isSomethingWhere <|
-                                           Markup.attribute "class" <|
-                                               Claim.isSomethingWhere <|
-                                                   Claim.isStringContaining 1 "menu-btn"
-                                       )
-                               )
-                           ]
-                   )
            , --Runner.skip <|
              --Runner.pick <|
              scenario "13: Checking the Menu nav links work"
