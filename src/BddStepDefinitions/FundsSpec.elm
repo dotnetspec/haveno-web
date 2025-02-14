@@ -101,10 +101,10 @@ runSpecTests =
                                 )
                         )
                    
-                    {- , it "should have balances in the model"
+                    , it "should have balances in the model"
                         (Observer.observeModel .balances
                             |> Spec.expect (equals <| Just { btc = Nothing, xmr = Just { balance = fromInts 10000 0, availableBalance = fromInts 10000 0, pendingBalance = fromInts 2000 0, reservedOfferBalance = fromInts 5000 0, reservedTradeBalance = fromInts 3000 0 } })
-                        ) -}
+                        )
 
                     {- , it "should display xmrbalance"
                        (Markup.observeElement

@@ -18,33 +18,30 @@ import Spec.Http.Stub as Stub
 import Time exposing (Posix, millisToPosix, utc)
 import Url exposing (Protocol(..), Url)
 
+
 primaryAddress : String
 primaryAddress =
     "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+
 
 subAddress : String
 subAddress =
     "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
 
-grpcsetGetVersionURL : String
-grpcsetGetVersionURL =
-    "http://localhost:8080/io.haveno.protobuffer.GetVersion/GetVersion"
+
+getVersionBaseURL : String
+getVersionBaseURL =
+    "http://localhost:8080/io.haveno.protobuffer.GetVersion/"
 
 
-grpcsetGetBalancesURL : String
-grpcsetGetBalancesURL =
-    "http://localhost:8080/io.haveno.protobuffer.Wallets/GetBalances"
-
-
-protoBufferWalletBaseUrl : String
-protoBufferWalletBaseUrl =
+walletsBaseUrl : String
+walletsBaseUrl =
     "http://localhost:8080/io.haveno.protobuffer.Wallets/"
 
 
 placeholderUrl : Url
 placeholderUrl =
     Url Http "localhost" (Just 1234) "/" Nothing Nothing
-
 
 
 toBytes : String -> Maybe Bytes
@@ -60,7 +57,6 @@ toBytes string =
 successfullVersionFetch : Stub.HttpResponseStub
 successfullVersionFetch =
     let
-        
         base64Response =
             "AAAAAAcKBTEuMC43gAAAAA9ncnBjLXN0YXR1czowDQo="
 
@@ -72,28 +68,17 @@ successfullVersionFetch =
                 Nothing ->
                     BytesEncode.encode (BytesEncode.unsignedInt8 0)
     in
-    Stub.for (Route.post grpcsetGetVersionURL)
+    Stub.for (Route.post <| getVersionBaseURL ++ "GetVersion")
         |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
         |> Stub.withBody (Stub.withBytes decodedBytes)
 
 
 unsuccessfullVersionFetch : Stub.HttpResponseStub
 unsuccessfullVersionFetch =
-    let
-        base64Response =
-            ""
-
-        decodedBytes =
-            case toBytes base64Response of
-                Just bytes ->
-                    bytes
-
-                Nothing ->
-                    BytesEncode.encode (BytesEncode.unsignedInt8 0)
-    in
-    Stub.for (Route.post grpcsetGetVersionURL)
+    Stub.for (Route.post <| getVersionBaseURL ++ "GetVersion")
         |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
         |> Stub.withBody (Stub.withBytes <| BytesEncode.encode (BytesEncode.unsignedInt8 0))
+
 
 
 -- NAV: LNS tests
@@ -101,20 +86,21 @@ unsuccessfullVersionFetch =
 
 successfullBalancesFetch : Stub.HttpResponseStub
 successfullBalancesFetch =
-    Stub.for (Route.post <| protoBufferWalletBaseUrl ++ "GetBalances")
+    Stub.for (Route.post <| walletsBaseUrl ++ "GetBalances")
         |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
-        |> Stub.withBody (Stub.withBytes <| encodeGrpcMessage getBalanceEncodedResponse)
+        |> Stub.withBody (Stub.withBytes <| encodeGrpcMessage getBalancesEncodedResponse)
 
 
 successfullXmrPrimaryAddressFetch : Stub.HttpResponseStub
 successfullXmrPrimaryAddressFetch =
-    Stub.for (Route.post <| protoBufferWalletBaseUrl ++ "GetXmrPrimaryAddress")
+    Stub.for (Route.post <| walletsBaseUrl ++ "GetXmrPrimaryAddress")
         |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
         |> Stub.withBody (Stub.withBytes <| encodeGrpcMessage getXmrPrimaryAddressEncodedResponse)
 
+
 successfullSubAddressFetch : Stub.HttpResponseStub
 successfullSubAddressFetch =
-    Stub.for (Route.post <| protoBufferWalletBaseUrl ++ "GetSubAddresses")
+    Stub.for (Route.post <| walletsBaseUrl ++ "GetSubAddresses")
         |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
         |> Stub.withBody (Stub.withBytes <| encodeGrpcMessage getSubAddressesEncodedResponse)
 
@@ -137,8 +123,8 @@ encodeGrpcMessage payload =
 -- NAV: Helper functions
 
 
-getBalanceEncodedResponse : Bytes
-getBalanceEncodedResponse =
+getBalancesEncodedResponse : Bytes
+getBalancesEncodedResponse =
     let
         -- Create a XmrBalanceInfo message with the desired balances
         xmrBalanceInfo : Protobuf.XmrBalanceInfo
@@ -178,14 +164,14 @@ getBalanceEncodedResponse =
     in
     encodedResponse
 
+
 getXmrPrimaryAddressEncodedResponse : Bytes
 getXmrPrimaryAddressEncodedResponse =
     let
-        
         primAddrReply : Protobuf.GetXmrPrimaryAddressReply
         primAddrReply =
-        -- HACK: This is a placeholder address
-        -- NOTE: Used compiler messages to determine the structure of this message
+            -- HACK: This is a placeholder address
+            -- NOTE: Used compiler messages to determine the structure of this message
             { primaryAddress = primaryAddress }
 
         -- Encode to bytes
@@ -199,7 +185,6 @@ getXmrPrimaryAddressEncodedResponse =
 getSubAddressesEncodedResponse : Bytes
 getSubAddressesEncodedResponse =
     let
-        
         subAddrReply : Protobuf.GetXmrNewSubaddressReply
         subAddrReply =
             { subaddress = subAddress }
@@ -210,5 +195,3 @@ getSubAddressesEncodedResponse =
             Encode.encode (Protobuf.encodeGetXmrNewSubaddressReply subAddrReply)
     in
     encodedResponse
-
-
