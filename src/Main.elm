@@ -104,12 +104,10 @@ init flag _ key =
             -- HACK: Temp until we receive the address from the hw device
             -- NOTE: This is actually the only place in the app that is currently affecting the notification mesage
             , xmrWalletAddress = "" --""
-            
             , isApiConnected = False
             , version = "No Haveno version available"
             , currentJsMessage = ""
             , xmrHardwareWalletAddressError = Nothing
-            , deviceModel = Nothing
             , initialized = False
             , isMenuOpen = False
             }
@@ -135,11 +133,9 @@ type alias Model =
     , isXMRWalletConnected : Bool
     , xmrHardwareWalletAddressError : Maybe XmrHardwareWalletAddressError
     , xmrWalletAddress : String
- 
     , isApiConnected : Bool
     , version : String
     , currentJsMessage : String
-    , deviceModel : Maybe DeviceModel
     , initialized : Bool
     , isMenuOpen : Bool
     }
@@ -755,11 +751,6 @@ type XmrHardwareWalletAddressError
     | DeviceLocked
     | DeviceUnlocked_XMRWalletClosed
     | DeviceUnlocked_XMRWalletOpen
-
-
-type DeviceModel
-    = NanoS
-    | NanoX
 
 
 
