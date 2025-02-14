@@ -28,7 +28,6 @@ import Pages.Market
 import Pages.Portfolio
 import Pages.Sell
 import Pages.Support
-
 import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
@@ -97,7 +96,6 @@ init flag _ key =
             , time = Time.millisToPosix 0
             , zone = Nothing -- Replace with the actual time zone if available
             , errors = []
-           
 
             -- REVIEW: Should it be impossible to nav without hw device connection?
             -- HACK: Making these next 2 True, so we can get to the wallet page, fails 10 tests:
@@ -106,7 +104,6 @@ init flag _ key =
             -- HACK: Temp until we receive the address from the hw device
             -- NOTE: This is actually the only place in the app that is currently affecting the notification mesage
             , xmrWalletAddress = "" --""
-            , isPopUpVisible = True
             , isNavMenuActive = True
             , isApiConnected = False
             , version = "No Haveno version available"
@@ -138,7 +135,6 @@ type alias Model =
     , isXMRWalletConnected : Bool
     , xmrHardwareWalletAddressError : Maybe XmrHardwareWalletAddressError
     , xmrWalletAddress : String
-    , isPopUpVisible : Bool
     , isNavMenuActive : Bool
     , isApiConnected : Bool
     , version : String
@@ -201,7 +197,6 @@ type Msg
     | GotSupportMsg Pages.Support.Msg
     | GotBuyMsg Pages.Buy.Msg
     | GotMarketMsg Pages.Market.Msg
-  
     | ChangedUrl Url.Url
     | Tick Time.Posix
     | AdjustTimeZone Time.Zone
@@ -231,9 +226,9 @@ update msg model =
                 -- NOTE: simpleMenu has internal hrefs, so updates here
                 Browser.Internal url ->
                     let
-                        modelWithMenuClosed = { model | isMenuOpen = False }
+                        modelWithMenuClosed =
+                            { model | isMenuOpen = False }
                     in
-                    
                     -- NOTE: If site isn't explicitly branched like
                     -- this, it is parsed as an internal link. We
                     -- need to load it as if it were an external link
@@ -281,7 +276,7 @@ update msg model =
             ( { model | isApiConnected = True, version = verResp, page = DashboardPage newDashBoardModel }, Cmd.none )
 
         GotVersion (Err _) ->
-            ( { model | version = "Error obtaining version", isApiConnected = False, isPopUpVisible = False }, Cmd.none )
+            ( { model | version = "Error obtaining version", isApiConnected = False }, Cmd.none )
 
         -- NAV: Recv rawJsonMessage
         -- NOTE: This is updated when a message from js is received
@@ -337,8 +332,6 @@ update msg model =
                     ( model, Cmd.none )
 
         GotFundsMsg privacyMsg ->
-            
-
             case model.page of
                 FundsPage privacy ->
                     case privacyMsg of
@@ -385,9 +378,6 @@ update msg model =
         -- Wallet.init can then be run to init the page and the page can, through toHardware, be added
         -- to the model in Main (as the current page).
         -- NOTE: Make changes to the Wallet model, cmds etc. in toHardware (more options)
-        
-            
-
         NoOp ->
             ( model, Cmd.none )
 
@@ -444,8 +434,6 @@ view model =
                 MarketPage market ->
                     Pages.Market.view market
                         |> Html.map GotMarketMsg
-
-                
     in
     -- NAV : View Page Content
     -- TODO: Make this content's naming conventions closely match the
@@ -491,7 +479,6 @@ type Route
     | Support
     | Buy
     | Market
-   
     | BlankRoute
 
 
@@ -510,7 +497,6 @@ type
     | SupportPage Pages.Support.Model
     | BuyPage Pages.Buy.Model
     | MarketPage Pages.Market.Model
-  
     | BlankPage Pages.Blank.Model
 
 
@@ -584,7 +570,6 @@ urlAsPageParser =
         , Url.Parser.map Support (Url.Parser.s "support")
         , Url.Parser.map Buy (Url.Parser.s "buy")
         , Url.Parser.map Market (Url.Parser.s "market")
-       
         ]
 
 
@@ -664,11 +649,11 @@ updateUrl url model =
             Pages.Market.init ()
                 |> toMarket model
 
-        
-
         Nothing ->
             Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
                 |> toDashboard model
+
+
 
 -- NOTE: This is where we can update Pages's model
 {- Let's break down the `toPages` function step by step in simple terms:
@@ -758,7 +743,6 @@ toMarket model ( market, cmd ) =
     ( { model | page = MarketPage market }
     , Cmd.map GotMarketMsg cmd
     )
-
 
 
 
@@ -963,12 +947,19 @@ menu : Model -> Html Msg
 menu model =
     div []
         [ button
-            [ classList [ ("menu-btn", True), ("open", model.isMenuOpen) ]
+            [ classList [ ( "menu-btn", True ), ( "open", model.isMenuOpen ) ]
             , onClick ToggleMenu
             , Attr.name "menubutton"
             , Attr.attribute "data-testid" "menu-button"
             ]
-            [ text (if model.isMenuOpen then "✖" else "☰") ]
+            [ text
+                (if model.isMenuOpen then
+                    "✖"
+
+                 else
+                    "☰"
+                )
+            ]
         , div
             [ classList [ ( "menu", True ), ( "open", model.isMenuOpen ) ] ]
             [ navLinks model.page ]
@@ -1029,9 +1020,6 @@ isXMRWalletConnectedIndicator model =
                         (if model.isXMRWalletConnected then
                             "indicator green"
 
-                         else if model.isPopUpVisible then
-                            "indicator white"
-
                          else
                             "indicator red"
                         )
@@ -1040,9 +1028,6 @@ isXMRWalletConnectedIndicator model =
                     [ text
                         (if model.isXMRWalletConnected then
                             "✔"
-
-                         else if model.isPopUpVisible then
-                            "_"
 
                          else
                             "✖"
@@ -1063,9 +1048,6 @@ hasReceivedXMRAddrIndicator model =
                         (if not (model.xmrWalletAddress == "") then
                             "indicator green"
 
-                         else if model.isPopUpVisible then
-                            "indicator white"
-
                          else
                             "indicator red"
                         )
@@ -1074,9 +1056,6 @@ hasReceivedXMRAddrIndicator model =
                     [ text
                         (if not (model.xmrWalletAddress == "") then
                             "✔"
-
-                         else if model.isPopUpVisible then
-                            "_"
 
                          else
                             "✖"
@@ -1097,9 +1076,6 @@ apiConnectionStatusIndicator model =
                         (if model.isApiConnected then
                             "indicator green"
 
-                         else if model.isPopUpVisible then
-                            "indicator white"
-
                          else
                             "indicator red"
                         )
@@ -1108,9 +1084,6 @@ apiConnectionStatusIndicator model =
                     [ text
                         (if model.isApiConnected then
                             "✔"
-
-                         else if model.isPopUpVisible then
-                            "_"
 
                          else
                             "✖"
@@ -1202,8 +1175,6 @@ isActive { link, page } =
 
         ( Market, _ ) ->
             False
-
-      
 
 
 {-| -- NOTE: Render dismissable errors. We use this all over the place!
