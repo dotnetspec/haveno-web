@@ -3,14 +3,12 @@
 # Start a monerod instance
 gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/haveno-dex/haveno && make monerod1-local; exec bash"
 
-
-
-# Optional: Send the start_mining command to the tmux session
-# Ensure the tmux session is running
-#tmux new-session -d -s mysession
-#tmux new-session -d -s mysession 'start_mining 9tsUiG9bwcU7oTbAdBwBk2PzxFtysge5qcEsHEpetmEKgerHQa1fDqH7a4FiquZmms7yM22jdifVAD7jAb2e63GSJMuhY75 1'
-
-# Start the Haveno user1 seednode
+# Start the Haveno user1 seednode (discover other Haveno nodes)
+#In your testnet:
+    #If only one Haveno instance is running, the seed node has no other peers to report.
+    #If you start two or more Haveno nodes, they will discover each other through the seed node.
+    #The seed node does not actually simulate trades—it just allows connection bootstrapping.
+    
 gnome-terminal -- bash -c "cd ~/Documents/Development/Monero/haveno-dex/haveno && make seednode-local; exec bash"
 
 # Start the Haveno user1 daemon
