@@ -2,7 +2,7 @@ module Proto.Tests.Test_GetBalances exposing (..)
 
 import Bytes exposing (Bytes)
 import Expect
-import Extras.TestData exposing (getBalanceEncodedResponse, encodeGrpcMessage, successfullBalancesFetch)
+import Extras.TestData exposing (getBalancesEncodedResponse, encodeGrpcMessage, successfullBalancesFetch)
 import Fuzz exposing (Fuzzer)
 import Parser exposing (run)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (GetBalancesReply, decodeGetBalancesReply, encodeGetBalancesReply)
@@ -20,7 +20,7 @@ testEncodeGetBalancesReply =
                 -- Decode the bytes back to GetBalancesReply
                 decodedResponse : Maybe Protobuf.GetBalancesReply
                 decodedResponse =
-                    Decode.decode Protobuf.decodeGetBalancesReply getBalanceEncodedResponse
+                    Decode.decode Protobuf.decodeGetBalancesReply getBalancesEncodedResponse
             in
             case decodedResponse of
                 Just decoded ->

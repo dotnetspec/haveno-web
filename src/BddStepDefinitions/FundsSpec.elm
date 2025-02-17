@@ -45,6 +45,26 @@ gotXmrBalance balances =
             ( 0, 0 )
 
 
+testBalanceInfo =
+    Just
+        { btc =
+            Just
+                { availableBalance = fromInts 10000 0
+                , lockedBalance = fromInts 10000 0
+                , reservedBalance = fromInts 10000 0
+                , totalAvailableBalance = fromInts 10000 0
+                }
+        , xmr =
+            Just
+                { balance = fromInts 10000 0
+                , availableBalance = fromInts 10000 0
+                , pendingBalance = fromInts 2000 0
+                , reservedOfferBalance = fromInts 5000 0
+                , reservedTradeBalance = fromInts 3000 0
+                }
+        }
+
+
 
 -- NAV: Test scenarios
 {-
@@ -68,12 +88,9 @@ runSpecTests =
                     |> Spec.Setup.withView Funds.view
                     |> Spec.Setup.withUpdate Funds.update
                     |> Spec.Setup.withLocation placeholderUrl
-                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch ]
-                    |> Stub.serve [ TestData.successfullBalancesFetch ]
+                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
-                {- |> when "balances are fetched"
-                   [ Spec.Command.send (Spec.Command.fake <| Funds.GotBalances (Ok Protobuf.defaultGetBalancesReply)) ] -}
-               
+                
                 |> Spec.when "we log the http requests"
                     [ Spec.Http.logRequests
                     ]
@@ -85,6 +102,10 @@ runSpecTests =
                     , it "pagetitle is Funds"
                         (Observer.observeModel .pagetitle
                             |> Spec.expect (equals "Funds")
+                        )
+                    , it "should have balances in the model"
+                        (Observer.observeModel .balances
+                            |> Spec.expect (equals <| testBalanceInfo)
                         )
                     , it "should receive primary address"
                         (Observer.observeModel .primaryaddress
@@ -99,11 +120,6 @@ runSpecTests =
                                     Markup.text <|
                                         Claim.isStringContaining 1 "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
                                 )
-                        )
-                   
-                    , it "should have balances in the model"
-                        (Observer.observeModel .balances
-                            |> Spec.expect (equals <| Just { btc = Nothing, xmr = Just { balance = fromInts 10000 0, availableBalance = fromInts 10000 0, pendingBalance = fromInts 2000 0, reservedOfferBalance = fromInts 5000 0, reservedTradeBalance = fromInts 3000 0 } })
                         )
 
                     {- , it "should display xmrbalance"
@@ -156,13 +172,25 @@ runSpecTests =
                     |> Spec.Setup.withView Funds.view
                     |> Spec.Setup.withUpdate Funds.update
                     |> Spec.Setup.withLocation placeholderUrl
-                    |> Stub.serve [ TestData.successfullBalancesFetch ]
+                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch  ]
                 )
-                |> Spec.when "we log the http requests"
+                {- |> Spec.when "we log the http requests"
                     [ Spec.Http.logRequests
-                    ]
+                    ] -}
                 |> Spec.observeThat
-                    [ it "displays the available balance correctly"
+                    [ it "has status as Loaded"
+                        (Observer.observeModel .status
+                            |> Spec.expect (equals Funds.Loaded)
+                        )
+                    , it "pagetitle is Funds"
+                        (Observer.observeModel .pagetitle
+                            |> Spec.expect (equals "Funds")
+                        )
+                    , it "should have balances in the model"
+                        (Observer.observeModel .balances
+                            |> Spec.expect (equals <| testBalanceInfo)
+                        )
+                    , it "displays the available balance correctly"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ id "xmrbalance" ]

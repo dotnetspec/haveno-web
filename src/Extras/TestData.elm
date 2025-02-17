@@ -52,6 +52,7 @@ toBytes string =
 
 -- NOTE: This stub causes an error in the test runner, but the test still passes
 -- REF: https://github.com/brian-watkins/elm-spec/issues/75
+-- NAV: Response Stubs
 
 
 successfullVersionFetch : Stub.HttpResponseStub
@@ -78,10 +79,6 @@ unsuccessfullVersionFetch =
     Stub.for (Route.post <| getVersionBaseURL ++ "GetVersion")
         |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
         |> Stub.withBody (Stub.withBytes <| BytesEncode.encode (BytesEncode.unsignedInt8 0))
-
-
-
--- NAV: LNS tests
 
 
 successfullBalancesFetch : Stub.HttpResponseStub
@@ -127,7 +124,7 @@ getBalancesEncodedResponse : Bytes
 getBalancesEncodedResponse =
     let
         -- Create a XmrBalanceInfo message with the desired balances
-        xmrBalanceInfo : Protobuf.XmrBalanceInfo
+        xmrBalanceInfo : XmrBalanceInfo
         xmrBalanceInfo =
             { balance = fromInts 10000 0 -- Example balance in atomic units (e.g., piconero)
             , availableBalance = fromInts 10000 0 -- Example available balance in atomic units
@@ -137,7 +134,7 @@ getBalancesEncodedResponse =
             }
 
         -- Create a BtcBalanceInfo message with the desired balances
-        btcBalanceInfo : Protobuf.BtcBalanceInfo
+        btcBalanceInfo : BtcBalanceInfo
         btcBalanceInfo =
             { availableBalance = fromInts 10000 0 -- Example available balance in satoshis
             , reservedBalance = fromInts 10000 0 -- Example reserved balance in satoshis
@@ -146,18 +143,53 @@ getBalancesEncodedResponse =
             }
 
         -- Create a BalancesInfo message with the BTC and XMR balances
-        balancesInfo : Protobuf.BalancesInfo
+        balancesInfo : BalancesInfo
         balancesInfo =
             { btc = Just btcBalanceInfo
             , xmr = Just xmrBalanceInfo
             }
 
         -- Create a GetBalancesReply message with the BalancesInfo
-        balancesReply : Protobuf.GetBalancesReply
+        balancesReply : GetBalancesReply
         balancesReply =
             { balances = Just balancesInfo }
 
         -- Encode the GetBalancesReply message to bytes
+        encodedResponse : Bytes
+        encodedResponse =
+            Encode.encode (encodeGetBalancesReply balancesReply)
+    in
+    encodedResponse
+
+
+getBalancesResponse : Bytes
+getBalancesResponse =
+    let
+        balancesReply : Protobuf.GetBalancesReply
+        balancesReply =
+            -- HACK: This is a placeholder address
+            -- NOTE: Used compiler messages to determine the structure of this message
+            { balances =
+                Just
+                    { btc =
+                        Just
+                            { availableBalance = fromInts 10000 0
+                            , lockedBalance = fromInts 10000 0
+                            , totalAvailableBalance = fromInts 10000 0
+                            , reservedBalance = fromInts 10000 0
+                            }
+                    , xmr =
+                        Just
+                            { availableBalance = fromInts 10000 0
+                            , balance = fromInts 10000 0
+                            , pendingBalance = fromInts 2000 0
+                            , reservedOfferBalance = fromInts 5000 0
+                            , reservedTradeBalance = fromInts 3000 0
+                            }
+                    }
+            }
+
+        -- Encode to bytes
         encodedResponse : Bytes
         encodedResponse =
             Encode.encode (Protobuf.encodeGetBalancesReply balancesReply)

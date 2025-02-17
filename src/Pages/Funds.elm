@@ -17,7 +17,10 @@ import Url exposing (Protocol(..), Url)
 import Utils.MyUtils as MyUtils
 
 
+
 -- NAV: Model
+
+
 type alias Model =
     { status : Status
     , pagetitle : String
@@ -62,7 +65,7 @@ type View
 init : String -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
-    , Cmd.batch [ gotAvailableBalances, gotNewPrimaryAddress ]
+    , Cmd.batch [ gotNewPrimaryAddress, gotAvailableBalances  ]
     )
 
 
