@@ -4,7 +4,7 @@ import Expect
 import Extras.Constants exposing (xmrConversionConstant)
 import Fuzz
 import Pages.Funds exposing (formatXmrBalance)
-import Test exposing (Test, describe, fuzz2)
+import Test exposing (Test, describe, fuzz2, test)
 import UInt64
 
 
@@ -33,4 +33,14 @@ tests =
                             |> String.fromFloat
                 in
                 Expect.equal actual expected
+        , test "formats 449917 higher and -542150938 lower correctly" <|
+            \_ ->
+                let
+                    balance =
+                        { higher = 449917, lower = -542150938 }
+
+                    actual =
+                        formatXmrBalance balance
+                in
+                Expect.equal actual "1932.38255373079"
         ]
