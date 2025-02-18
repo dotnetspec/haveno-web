@@ -7,6 +7,7 @@
     "dependencies": {
         "direct": {
             "AdrianRibao/elm-derberos-date": "1.2.3",
+            "MartinSStewart/elm-uint64": "2.0.0",
             "NoRedInk/elm-json-decode-pipeline": "1.0.1",
             "Orasund/elm-ui-framework": "1.6.1",
             "Orasund/elm-ui-widgets": "3.4.0",
@@ -29,6 +30,8 @@
             "elm-community/string-extra": "4.0.1",
             "elm-explorations/test": "2.2.0",
             "eriktim/elm-protocol-buffers": "1.2.0",
+            "folkertdev/elm-int64": "1.0.0",
+            "ianmackenzie/elm-float-extra": "1.1.0",
             "icidasset/elm-binary": "2.1.0",
             "justinmimbs/time-extra": "1.2.0",
             "jxxcarlson/hex": "4.0.1",
@@ -49,6 +52,7 @@
             "fredcy/elm-parseint": "2.0.1",
             "justinmimbs/date": "4.1.0",
             "noahzgordon/elm-color-extra": "1.0.2",
+            "rtfeldman/elm-hex": "1.0.0",
             "rtfeldman/elm-iso8601-date-strings": "1.1.4",
             "turboMaCk/queue": "1.1.0",
             "zwilias/elm-utf-tools": "2.0.1"

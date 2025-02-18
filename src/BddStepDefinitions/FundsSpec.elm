@@ -109,7 +109,7 @@ runSpecTests =
                         )
                     , it "should receive primary address"
                         (Observer.observeModel .primaryaddress
-                            |> Spec.expect (equals "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32")
+                            |> Spec.expect (equals TestData.primaryAddress)
                         )
                     , it "should display primaryaddress"
                         (Markup.observeElement
@@ -118,7 +118,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+                                        Claim.isStringContaining 1 TestData.primaryAddress
                                 )
                         )
 

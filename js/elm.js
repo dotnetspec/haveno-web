@@ -8865,23 +8865,23 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 5:
-				var privacyMsg = msg.a;
+				var fundsMsg = msg.a;
 				var _v9 = model.Y;
 				if (_v9.$ === 3) {
-					var privacy = _v9.a;
-					if (privacyMsg.$ === 3) {
+					var fundsModel = _v9.a;
+					if (fundsMsg.$ === 3) {
 						var newFundsModel = _Utils_update(
-							privacy,
+							fundsModel,
 							{sA: 2, uT: 1});
 						return A2(
 							$author$project$Main$toFunds,
 							model,
-							A2($author$project$Pages$Funds$update, privacyMsg, newFundsModel));
+							A2($author$project$Pages$Funds$update, fundsMsg, newFundsModel));
 					} else {
 						return A2(
 							$author$project$Main$toFunds,
 							model,
-							A2($author$project$Pages$Funds$update, privacyMsg, privacy));
+							A2($author$project$Pages$Funds$update, fundsMsg, fundsModel));
 					}
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);

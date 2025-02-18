@@ -327,19 +327,19 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        GotFundsMsg privacyMsg ->
+        GotFundsMsg fundsMsg ->
             case model.page of
-                FundsPage privacy ->
-                    case privacyMsg of
+                FundsPage fundsModel ->
+                    case fundsMsg of
                         Pages.Funds.ClickedGotNewSubaddress ->
                             let
                                 newFundsModel =
-                                    { privacy | currentView = Pages.Funds.SubAddressView, status = Pages.Funds.Loaded }
+                                    { fundsModel | currentView = Pages.Funds.SubAddressView, status = Pages.Funds.Loaded }
                             in
-                            toFunds model (Pages.Funds.update privacyMsg newFundsModel)
+                            toFunds model (Pages.Funds.update fundsMsg newFundsModel)
 
                         _ ->
-                            toFunds model (Pages.Funds.update privacyMsg privacy)
+                            toFunds model (Pages.Funds.update fundsMsg fundsModel)
 
                 _ ->
                     ( model, Cmd.none )

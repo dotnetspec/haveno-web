@@ -15,6 +15,8 @@ import Spec.Markup exposing (log)
 import Types.DateType as DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 import Utils.MyUtils as MyUtils
+import UInt64.Digits exposing (Digits)
+import UInt64 exposing (UInt64)
 
 
 
@@ -65,7 +67,7 @@ type View
 init : String -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
-    , Cmd.batch [ gotNewPrimaryAddress, gotAvailableBalances  ]
+    , Cmd.batch [ gotNewPrimaryAddress, gotAvailableBalances ]
     )
 
 
@@ -75,6 +77,10 @@ type Msg
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | ClickedGotNewSubaddress
     | ChangeView View
+
+
+
+-- NAV: Update
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -289,3 +295,49 @@ gotNewSubAddress =
                 |> Grpc.setHost "http://localhost:8080"
     in
     Grpc.toCmd GotXmrNewSubaddress grpcRequest
+
+
+
+-- NAV: Helper functions
+
+
+formatXmrBalance : { higher : Int, lower : Int } -> String
+formatXmrBalance int64 =
+    let
+        -- Convert from { higher, lower } to a full 64-bit unsigned integer
+        fullUInt64 : UInt64.UInt64
+        fullUInt64 =
+            UInt64.fromInt32s int64.higher int64.lower
+
+        -- Define divisor for piconero to XMR conversion (1 XMR = 10^12 piconero)
+        divisor : UInt64.UInt64
+        divisor =
+            UInt64.fromInt 1000000000000
+
+        -- Get the whole XMR part via integer division
+        wholePartUInt : UInt64.UInt64
+        wholePartUInt =
+            UInt64.div fullUInt64 divisor
+
+        -- Get remainder (piconero fraction)
+        remainderUInt : UInt64.UInt64
+        remainderUInt =
+            UInt64.mod fullUInt64 divisor
+
+        -- Properly scale remainder to get 12 decimal places
+        scaledRemainderUInt : UInt64.UInt64
+        scaledRemainderUInt =
+            UInt64.div (UInt64.mul remainderUInt (UInt64.fromInt 1000000000000)) divisor
+
+        -- Convert whole part to string
+        wholePart : String
+        wholePart =
+            UInt64.toString wholePartUInt
+
+        -- Convert scaled remainder to string and pad to 12 digits
+        decimalPart : String
+        decimalPart =
+            String.padLeft 12 '0' (UInt64.toString scaledRemainderUInt)
+    in
+    wholePart ++ "." ++ decimalPart
+
