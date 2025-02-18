@@ -1,11 +1,12 @@
 module Pages.Tests.Test_FundsPage exposing (..)
 
 import Expect
-import Test exposing (Test, describe, fuzz, fuzz2)
+import Test exposing (Test, describe, fuzz2)
 import Fuzz
-import UInt64 exposing (UInt64)
+import UInt64
+import Extras.Constants exposing (xmrConversionConstant)
 
-xmrConversionConstant = 4294967296
+
 
 
 formatXmrBalance : { higher : Int, lower : Int } -> String

@@ -9,6 +9,9 @@ import Http exposing (..)
 
 -- NOTE: Constants for testing, must match the code
 
+xmrConversionConstant : number
+xmrConversionConstant = 4294967296
+
 
 localhostForElmSpecProxyURL : Url
 localhostForElmSpecProxyURL =
