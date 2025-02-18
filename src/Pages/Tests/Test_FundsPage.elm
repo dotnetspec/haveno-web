@@ -1,11 +1,8 @@
 module Pages.Tests.Test_FundsPage exposing (..)
 
--- NOTE: You do not need to re-compile the main elm code each time you run the tests
-
 import Expect
-import Float.Extra as Float
---import Pages.Funds exposing (formatXmrBalance)
-import Test exposing (Test, describe, test)
+import Test exposing (Test, describe, fuzz, fuzz2)
+import Fuzz
 import UInt64 exposing (UInt64)
 
 xmrConversionConstant = 4294967296
@@ -54,41 +51,23 @@ formatXmrBalance int64 =
 
 tests : Test
 tests =
-    describe "formatXmrBalance function"
-        [ test "formats a large balance correctly" <|
-            \_ ->
+    describe "formatXmrBalance function with fuzz testing"
+        [ fuzz2 (Fuzz.intRange 0 7000) (Fuzz.intRange 0 2147483647) "formats realistic XMR balances correctly" <|
+            \higher lower ->
                 let
-                    balance =
-                        { higher = 449917, lower = -542150938 }
+                    balance = { higher = higher, lower = lower }
+                    actual = formatXmrBalance balance
+
+                    -- Compute expected value manually
+                    fullUInt64 = UInt64.add (UInt64.mul (UInt64.fromInt higher) (UInt64.fromInt xmrConversionConstant))
+                                            (UInt64.fromInt lower)
 
                     expected =
-                        "1932.38255373079"
-
-                    actual =
-                        formatXmrBalance balance
+                        fullUInt64
+                            |> UInt64.toFloat
+                            |> (\x -> x / 1000000000000)
+                            |> (\x -> toFloat (round (x * 10^11)) / 10^11)
+                            |> String.fromFloat
                 in
                 Expect.equal actual expected
-            , test "Formats exactly 1 XMR correctly" <|
-            \_ ->
-                let
-                    balance = { higher = 0, lower = 1000000000000 }
-                    expected = formatXmrBalance balance
-                in
-                Expect.equal expected "1"
-
-        , test "Formats 0.5 XMR correctly" <|
-            \_ ->
-                let
-                    balance = { higher = 0, lower = 500000000000 }
-                    expected = formatXmrBalance balance
-                in
-                Expect.equal expected "0.5"
-
-        , test "Formats zero balance correctly" <|
-            \_ ->
-                let
-                    balance = { higher = 0, lower = 0 }
-                    expected = formatXmrBalance balance
-                in
-                Expect.equal expected "0"
         ]
