@@ -67,13 +67,6 @@ testBalanceInfo =
 
 
 -- NAV: Test scenarios
-{-
-   , Html.div [ Attr.id "xmrbalance", Attr.class "balance-text" ]
-       [ Html.text ("Available Balance: " ++ xmrBalanceAsString model.balances ++ " XMR") ]
-   , Html.div [ Attr.id "btcbalance", Attr.class "balance-text" ]
-       [ Html.text ("Available BTC Balance: " ++ btcBalanceAsString model.balances ++ " BTC") ]
-   , Html.div [ Attr.id "reservedOfferBalance", Attr.class "balance-text" ]
--}
 
 
 runSpecTests : Spec Funds.Model Funds.Msg

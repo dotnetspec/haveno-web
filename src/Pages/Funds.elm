@@ -17,6 +17,7 @@ import Url exposing (Protocol(..), Url)
 import Utils.MyUtils as MyUtils
 import UInt64.Digits exposing (Digits)
 import UInt64 exposing (UInt64)
+import Extras.Constants exposing (xmrConversionConstant)
 
 
 
@@ -213,7 +214,8 @@ xmrBalanceAsString balInfo =
                         ( firstInt, secondInt ) =
                             toInts xmrbalinfo.availableBalance
                     in
-                    String.fromInt firstInt ++ "." ++ String.fromInt secondInt
+                    --String.fromInt firstInt ++ "." ++ String.fromInt secondInt
+                    formatXmrBalance { higher = firstInt, lower = secondInt }
 
         Nothing ->
             "0.00"
@@ -300,44 +302,42 @@ gotNewSubAddress =
 
 -- NAV: Helper functions
 
-
 formatXmrBalance : { higher : Int, lower : Int } -> String
 formatXmrBalance int64 =
     let
-        -- Convert from { higher, lower } to a full 64-bit unsigned integer
+        -- Convert higher and lower into a full 64-bit integer
         fullUInt64 : UInt64.UInt64
         fullUInt64 =
-            UInt64.fromInt32s int64.higher int64.lower
+            let
+                highPart =
+                    UInt64.fromInt int64.higher |> UInt64.mul (UInt64.fromInt xmrConversionConstant)
 
-        -- Define divisor for piconero to XMR conversion (1 XMR = 10^12 piconero)
-        divisor : UInt64.UInt64
-        divisor =
-            UInt64.fromInt 1000000000000
+                lowPart =
+                    if int64.lower < 0 then
+                        UInt64.fromInt (int64.lower + xmrConversionConstant)
 
-        -- Get the whole XMR part via integer division
-        wholePartUInt : UInt64.UInt64
-        wholePartUInt =
-            UInt64.div fullUInt64 divisor
+                    else
+                        UInt64.fromInt int64.lower
+            in
+            UInt64.add highPart lowPart
 
-        -- Get remainder (piconero fraction)
-        remainderUInt : UInt64.UInt64
-        remainderUInt =
-            UInt64.mod fullUInt64 divisor
+        -- Convert UInt64 to Float
+        fullFloat : Float
+        fullFloat =
+            UInt64.toFloat fullUInt64
 
-        -- Properly scale remainder to get 12 decimal places
-        scaledRemainderUInt : UInt64.UInt64
-        scaledRemainderUInt =
-            UInt64.div (UInt64.mul remainderUInt (UInt64.fromInt 1000000000000)) divisor
+        -- Convert piconero to XMR
+        xmrAmount : Float
+        xmrAmount =
+            fullFloat / 1000000000000
 
-        -- Convert whole part to string
-        wholePart : String
-        wholePart =
-            UInt64.toString wholePartUInt
+        -- Ensure proper rounding to 11 decimal places
+        scale : Float
+        scale =
+            toFloat (10 ^ 11)
 
-        -- Convert scaled remainder to string and pad to 12 digits
-        decimalPart : String
-        decimalPart =
-            String.padLeft 12 '0' (UInt64.toString scaledRemainderUInt)
+        roundedXmr : Float
+        roundedXmr =
+            toFloat (round (xmrAmount * scale)) / scale
     in
-    wholePart ++ "." ++ decimalPart
-
+    String.fromFloat roundedXmr
