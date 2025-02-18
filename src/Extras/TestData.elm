@@ -21,7 +21,7 @@ import Url exposing (Protocol(..), Url)
 
 primaryAddress : String
 primaryAddress =
-    "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
+    "9yLbftcD2cMDA5poVPBJQ5KuwADFRXhe28AtqfeTExaubeMAyiEGBYJ8a8T3kwzoqi6ZuScziHxKqBCToa2m3wuZScc2gJh"
 
 
 subAddress : String
@@ -90,9 +90,21 @@ successfullBalancesFetch =
 
 successfullXmrPrimaryAddressFetch : Stub.HttpResponseStub
 successfullXmrPrimaryAddressFetch =
+    let
+        base64Response =
+            "AAAAAGEKXzl5TGJmdGNEMmNNREE1cG9WUEJKUTVLdXdBREZSWGhlMjhBdHFmZVRFeGF1YmVNQXlpRUdCWUo4YThUM2t3em9xaTZadVNjemlIeEtxQkNUb2EybTN3dVpTY2MyZ0pogAAAAA9ncnBjLXN0YXR1czowDQo"
+
+        decodedBytes =
+            case toBytes base64Response of
+                Just bytes ->
+                    bytes
+
+                Nothing ->
+                    BytesEncode.encode (BytesEncode.unsignedInt8 0)
+    in
     Stub.for (Route.post <| walletsBaseUrl ++ "GetXmrPrimaryAddress")
         |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
-        |> Stub.withBody (Stub.withBytes <| encodeGrpcMessage getXmrPrimaryAddressEncodedResponse)
+        |> Stub.withBody (Stub.withBytes decodedBytes)
 
 
 successfullSubAddressFetch : Stub.HttpResponseStub
@@ -197,21 +209,23 @@ getBalancesResponse =
     encodedResponse
 
 
-getXmrPrimaryAddressEncodedResponse : Bytes
-getXmrPrimaryAddressEncodedResponse =
-    let
-        primAddrReply : Protobuf.GetXmrPrimaryAddressReply
-        primAddrReply =
-            -- HACK: This is a placeholder address
-            -- NOTE: Used compiler messages to determine the structure of this message
-            { primaryAddress = primaryAddress }
 
-        -- Encode to bytes
-        encodedResponse : Bytes
-        encodedResponse =
-            Encode.encode (Protobuf.encodeGetXmrPrimaryAddressReply primAddrReply)
-    in
-    encodedResponse
+{- getXmrPrimaryAddressEncodedResponse : Bytes
+   getXmrPrimaryAddressEncodedResponse =
+       let
+           primAddrReply : Protobuf.GetXmrPrimaryAddressReply
+           primAddrReply =
+               -- HACK: This is a placeholder address
+               -- NOTE: Used compiler messages to determine the structure of this message
+               { primaryAddress = primaryAddress }
+
+           -- Encode to bytes
+           encodedResponse : Bytes
+           encodedResponse =
+               Encode.encode (Protobuf.encodeGetXmrPrimaryAddressReply primAddrReply)
+       in
+       encodedResponse
+-}
 
 
 getSubAddressesEncodedResponse : Bytes

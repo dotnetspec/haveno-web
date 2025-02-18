@@ -100,14 +100,9 @@ init flag _ key =
             -- REVIEW: Should it be impossible to nav without hw device connection?
             -- HACK: Making these next 2 True, so we can get to the wallet page, fails 10 tests:
             , isXMRWalletConnected = False
-
-            -- HACK: Temp until we receive the address from the hw device
-            -- NOTE: This is actually the only place in the app that is currently affecting the notification mesage
-            , xmrWalletAddress = "" --""
             , isApiConnected = False
             , version = "No Haveno version available"
             , currentJsMessage = ""
-     
             , initialized = False
             , isMenuOpen = False
             }
@@ -131,8 +126,6 @@ type alias Model =
     , zone : Maybe Time.Zone
     , errors : List String
     , isXMRWalletConnected : Bool
-  
-    , xmrWalletAddress : String
     , isApiConnected : Bool
     , version : String
     , currentJsMessage : String
@@ -711,11 +704,7 @@ toPortfolio model ( portfolio, cmd ) =
 
 toFunds : Model -> ( Pages.Funds.Model, Cmd Pages.Funds.Msg ) -> ( Model, Cmd Msg )
 toFunds model ( funds, cmd ) =
-    let
-        newFundsModel =
-            { funds | primaryaddress = model.xmrWalletAddress }
-    in
-    ( { model | page = FundsPage newFundsModel }
+    ( { model | page = FundsPage funds }
     , Cmd.map GotFundsMsg cmd
     )
 
@@ -743,10 +732,6 @@ toMarket model ( market, cmd ) =
 
 
 -- NAV : Types
-
-
-
-
 -- NAV: Type aliases
 
 
@@ -991,34 +976,6 @@ isXMRWalletConnectedIndicator model =
         ]
 
 
-hasReceivedXMRAddrIndicator : Model -> Html msg
-hasReceivedXMRAddrIndicator model =
-    span []
-        [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
-            [ span []
-                [ span
-                    [ Attr.class
-                        (if not (model.xmrWalletAddress == "") then
-                            "indicator green"
-
-                         else
-                            "indicator red"
-                        )
-                    , Attr.id "xmraddressreceived"
-                    ]
-                    [ text
-                        (if not (model.xmrWalletAddress == "") then
-                            "✔"
-
-                         else
-                            "✖"
-                        )
-                    ]
-                ]
-            ]
-        ]
-
-
 apiConnectionStatusIndicator : Model -> Html msg
 apiConnectionStatusIndicator model =
     span []
@@ -1059,7 +1016,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.3.35" ]
+                , p [] [ text "Version 0.3.36" ]
                 , text "Haveno Version"
                 , p [ id "havenofooterver" ]
                     [ text
