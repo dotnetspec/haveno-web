@@ -190,7 +190,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "Available Balance: 10000.0 XMR"
+                                        Claim.isStringContaining 1 "Available Balance: 42.94967296 XMR"
                                 )
                         )
                     , it "displays the reserved balance correctly"
