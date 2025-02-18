@@ -2,6 +2,7 @@ module Pages.Funds exposing (..)
 
 import Buttons.Default exposing (defaultButton)
 import Debug exposing (log)
+import Extras.Constants exposing (xmrConversionConstant)
 import Grpc exposing (..)
 import Html exposing (Html, div, section, text)
 import Html.Attributes as Attr exposing (class, id)
@@ -13,11 +14,10 @@ import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import Protobuf.Types.Int64 exposing (toInts)
 import Spec.Markup exposing (log)
 import Types.DateType as DateType exposing (DateTime(..))
+import UInt64 exposing (UInt64)
+import UInt64.Digits exposing (Digits)
 import Url exposing (Protocol(..), Url)
 import Utils.MyUtils as MyUtils
-import UInt64.Digits exposing (Digits)
-import UInt64 exposing (UInt64)
-import Extras.Constants exposing (xmrConversionConstant)
 
 
 
@@ -215,7 +215,7 @@ xmrBalanceAsString balInfo =
                             toInts xmrbalinfo.availableBalance
                     in
                     --String.fromInt firstInt ++ "." ++ String.fromInt secondInt
-                    formatXmrBalance { higher = firstInt, lower = secondInt }
+                    formatBalance { higher = firstInt, lower = secondInt }
 
         Nothing ->
             "0.00"
@@ -234,7 +234,7 @@ btcBalanceAsString balInfo =
                         ( firstInt, secondInt ) =
                             toInts btcbalinfo.availableBalance
                     in
-                    String.fromInt firstInt ++ "." ++ String.fromInt secondInt
+                    formatBalance { higher = firstInt, lower = secondInt }
 
         Nothing ->
             ""
@@ -302,8 +302,9 @@ gotNewSubAddress =
 
 -- NAV: Helper functions
 
-formatXmrBalance : { higher : Int, lower : Int } -> String
-formatXmrBalance int64 =
+
+formatBalance : { higher : Int, lower : Int } -> String
+formatBalance int64 =
     let
         -- Convert higher and lower into a full 64-bit integer
         fullUInt64 : UInt64.UInt64

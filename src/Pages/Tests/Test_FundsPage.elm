@@ -3,14 +3,14 @@ module Pages.Tests.Test_FundsPage exposing (..)
 import Expect
 import Extras.Constants exposing (xmrConversionConstant)
 import Fuzz
-import Pages.Funds exposing (formatXmrBalance)
+import Pages.Funds exposing (formatBalance)
 import Test exposing (Test, describe, fuzz2, test)
 import UInt64
 
 
 tests : Test
 tests =
-    describe "formatXmrBalance function with fuzz testing"
+    describe "formatBalance function with fuzz testing"
         [ fuzz2 (Fuzz.intRange 0 7000) (Fuzz.intRange 0 2147483647) "formats realistic XMR balances correctly" <|
             \higher lower ->
                 let
@@ -18,7 +18,7 @@ tests =
                         { higher = higher, lower = lower }
 
                     actual =
-                        formatXmrBalance balance
+                        formatBalance balance
 
                     -- Compute expected value manually
                     fullUInt64 =
@@ -40,7 +40,7 @@ tests =
                         { higher = 449917, lower = -542150938 }
 
                     actual =
-                        formatXmrBalance balance
+                        formatBalance balance
                 in
                 Expect.equal actual "1932.38255373079"
         ]
