@@ -135,7 +135,7 @@ view model =
                         [ div
                             [ class "spinner"
                             ]
-                            [ Html.text "Loading ..." ]
+                            [  ]
                         ]
 
                 Errored ->

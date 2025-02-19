@@ -196,8 +196,14 @@ nav a:hover {
   border-radius: 50%;
   border-top: 4px solid #3498db;
   animation: spin 1s ease-in-out infinite;
-  margin-top: 20px;
+
+  /* Centering */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
+
 
 @keyframes spin {
   0% { transform: rotate(0deg); }

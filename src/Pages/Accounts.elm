@@ -888,7 +888,7 @@ view model =
                         [ div
                             [ class "spinner"
                             ]
-                            [ text "Loading ..." ]
+                            [ ]
                         ]
 
                 Errored ->

@@ -8989,7 +8989,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.3.37')
+										$elm$html$Html$text('Version 0.3.38')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
@@ -15804,10 +15804,7 @@ var $author$project$Pages$Funds$view = function (model) {
 												[
 													$elm$html$Html$Attributes$class('spinner')
 												]),
-											_List_fromArray(
-												[
-													$elm$html$Html$text('Loading ...')
-												]))
+											_List_Nil)
 										]));
 							case 2:
 								return A2(
