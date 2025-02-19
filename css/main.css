@@ -243,3 +243,24 @@ nav a:hover {
   border-radius: 4px;
   cursor: pointer;
 }
+
+.address-text {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+  background: #f4f4f4;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.address-label {
+  font-family: inherit; /* Keeps original font */
+  font-weight: bold; /* Optionally make it stand out */
+}
+
+.address-value {
+  font-family: monospace; /* Makes address easier to read */
+}
+
+
+

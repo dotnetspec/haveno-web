@@ -547,6 +547,7 @@ getSubAddrInitModel =
     { status = Funds.Loaded
     , pagetitle = "Haveno Web Funds"
     , balances = Just Protobuf.defaultBalancesInfo
+    , isAddressVisible = False
     , primaryaddress = ""
     , errors = []
     , subaddress = ""

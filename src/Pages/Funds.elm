@@ -2,10 +2,11 @@ module Pages.Funds exposing (..)
 
 import Buttons.Default exposing (defaultButton)
 import Debug exposing (log)
-import Extras.Constants exposing (xmrConversionConstant)
+import Extras.Constants as Constants exposing (xmrConversionConstant)
 import Grpc exposing (..)
 import Html exposing (Html, div, section, text)
 import Html.Attributes as Attr exposing (class, id)
+import Html.Events
 import Http exposing (..)
 import Json.Encode as E exposing (..)
 import Maybe exposing (withDefault)
@@ -28,6 +29,7 @@ type alias Model =
     { status : Status
     , pagetitle : String
     , balances : Maybe Protobuf.BalancesInfo
+    , isAddressVisible : Bool
     , primaryaddress : String
     , errors : List String
     , subaddress : String
@@ -40,8 +42,7 @@ initialModel =
     { status = Loading
     , pagetitle = "Funds"
     , balances = Just Protobuf.defaultBalancesInfo
-
-    -- HACK: Hardcoding the address for now
+    , isAddressVisible = False
     , primaryaddress = ""
     , errors = []
     , subaddress = ""
@@ -72,12 +73,17 @@ init _ =
     )
 
 
+
+-- NAV: Msg
+
+
 type Msg
     = GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | ClickedGotNewSubaddress
     | ChangeView View
+    | ToggleAddressVisibility
 
 
 
@@ -87,6 +93,9 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ToggleAddressVisibility ->
+            ( { model | isAddressVisible = not model.isAddressVisible }, Cmd.none )
+
         ClickedGotNewSubaddress ->
             ( model, gotNewSubAddress )
 
@@ -135,7 +144,7 @@ view model =
                         [ div
                             [ class "spinner"
                             ]
-                            [  ]
+                            []
                         ]
 
                 Errored ->
@@ -171,16 +180,37 @@ custodialFundsView : Model -> Html Msg
 custodialFundsView model =
     Html.div [ Attr.class "funds-container", Attr.id "custodialFundsView" ]
         [ Html.h1 [ Attr.class "funds-title" ] [ Html.text "Funds" ]
-        , Html.div [ Attr.id "primaryaddress", Attr.class "address-text" ]
-            [ Html.text ("Primary address: " ++ model.primaryaddress) ]
-        , Html.div [ Attr.id "xmrbalance", Attr.class "balance-text" ]
-            [ Html.text ("Available Balance: " ++ xmrBalanceAsString model.balances ++ " XMR") ]
+        , primaryAddressView model
+        , xmrBalView model
         , Html.div [ Attr.id "btcbalance", Attr.class "balance-text" ]
             [ Html.text ("Available BTC Balance: " ++ btcBalanceAsString model.balances ++ " BTC") ]
         , Html.div [ Attr.id "reservedOfferBalance", Attr.class "balance-text" ]
             [ Html.text ("Reserved Offer Balance: " ++ reservedOfferBalanceAsString model.balances ++ " XMR") ]
         , MyUtils.infoBtn "New Sub Address" <| ClickedGotNewSubaddress
         ]
+
+
+primaryAddressView : Model -> Html Msg
+primaryAddressView model =
+    Html.div [ Attr.id "primaryaddress", Attr.class "address-container" ]
+        [ MyUtils.infoBtn
+            (if model.isAddressVisible then "Hide" else "Show")
+            ToggleAddressVisibility
+        , Html.div [ Attr.class "address-text" ]
+            [ Html.span [ Attr.class "address-label" ] [ Html.text "Primary address: " ]
+            , Html.span [ Attr.class "address-value" ]
+                [ Html.text (if model.isAddressVisible then model.primaryaddress else Constants.blankAddress) ]
+            ]
+        ]
+
+
+
+
+
+xmrBalView : Model -> Html Msg
+xmrBalView model =
+    Html.div [ Attr.id "xmrbalViewance", Attr.class "balance-text" ]
+        [ Html.text ("Available Balance: " ++ xmrBalViewanceAsString model.balances ++ " XMR") ]
 
 
 errorView : Html Msg
@@ -201,18 +231,18 @@ subAddressView newSubaddress =
         ]
 
 
-xmrBalanceAsString : Maybe Protobuf.BalancesInfo -> String
-xmrBalanceAsString balInfo =
+xmrBalViewanceAsString : Maybe Protobuf.BalancesInfo -> String
+xmrBalViewanceAsString balInfo =
     case balInfo of
         Just blInfo ->
             case blInfo.xmr of
                 Nothing ->
                     "0.00"
 
-                Just xmrbalinfo ->
+                Just xmrbalViewinfo ->
                     let
                         ( firstInt, secondInt ) =
-                            toInts xmrbalinfo.availableBalance
+                            toInts xmrbalViewinfo.availableBalance
                     in
                     --String.fromInt firstInt ++ "." ++ String.fromInt secondInt
                     formatBalance { higher = firstInt, lower = secondInt }
@@ -248,10 +278,10 @@ reservedOfferBalanceAsString balInfo =
                 Nothing ->
                     "0.00"
 
-                Just xmrbalinfo ->
+                Just xmrbalViewinfo ->
                     let
                         ( firstInt, secondInt ) =
-                            toInts xmrbalinfo.reservedOfferBalance
+                            toInts xmrbalViewinfo.reservedOfferBalance
                     in
                     String.fromInt firstInt ++ "." ++ String.fromInt secondInt
 

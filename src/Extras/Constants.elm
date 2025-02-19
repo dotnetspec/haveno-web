@@ -9,6 +9,10 @@ import Http exposing (..)
 
 -- NOTE: Constants for testing, must match the code
 
+blankAddress : String
+blankAddress =
+    "************************"
+
 xmrConversionConstant : number
 xmrConversionConstant = 4294967296
 
