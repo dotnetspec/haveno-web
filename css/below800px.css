@@ -14,3 +14,9 @@
   max-width: 100px;
   height: auto;
 }
+
+.address-text {
+  word-wrap: break-word;  /* Ensures long words wrap */
+  overflow-wrap: break-word;
+  white-space: normal;  /* Allows text to wrap normally */
+}
