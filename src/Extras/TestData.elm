@@ -45,6 +45,27 @@ placeholderUrl : Url
 placeholderUrl =
     Url Http "localhost" (Just 1234) "/" Nothing Nothing
 
+testBalanceInfo : Maybe Protobuf.BalancesInfo
+testBalanceInfo =
+    Just
+        { btc =
+            Just
+                { availableBalance = fromInts 10000 0
+                , lockedBalance = fromInts 10000 0
+                , reservedBalance = fromInts 10000 0
+                , totalAvailableBalance = fromInts 10000 0
+                }
+        , xmr =
+            Just
+                { balance = fromInts 10000 0
+                , availableBalance = fromInts 10000 0
+                , pendingBalance = fromInts 2000 0
+                , reservedOfferBalance = fromInts 5000 0
+                , reservedTradeBalance = fromInts 3000 0
+                }
+        }
+
+
 
 toBytes : String -> Maybe Bytes
 toBytes string =

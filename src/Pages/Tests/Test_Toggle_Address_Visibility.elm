@@ -38,7 +38,7 @@ tests =
                         { initialModel | status = Pages.Funds.Loaded, isAddressVisible = False, primaryaddress = TestData.primaryAddress }
 
                     ( newModel, _ ) =
-                        update ToggleAddressVisibility updatedModel
+                        update ToggleVisibility updatedModel
 
                     rendered =
                         view newModel |> Query.fromHtml
@@ -55,7 +55,7 @@ tests =
                         { initialModel | status = Pages.Funds.Loaded, isAddressVisible = True, primaryaddress = TestData.primaryAddress }
 
                     ( newModel, _ ) =
-                        update ToggleAddressVisibility updatedModel
+                        update ToggleVisibility updatedModel
 
                     rendered =
                         view newModel |> Query.fromHtml

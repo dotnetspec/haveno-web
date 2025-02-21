@@ -45,24 +45,6 @@ gotXmrBalance balances =
             ( 0, 0 )
 
 
-testBalanceInfo =
-    Just
-        { btc =
-            Just
-                { availableBalance = fromInts 10000 0
-                , lockedBalance = fromInts 10000 0
-                , reservedBalance = fromInts 10000 0
-                , totalAvailableBalance = fromInts 10000 0
-                }
-        , xmr =
-            Just
-                { balance = fromInts 10000 0
-                , availableBalance = fromInts 10000 0
-                , pendingBalance = fromInts 2000 0
-                , reservedOfferBalance = fromInts 5000 0
-                , reservedTradeBalance = fromInts 3000 0
-                }
-        }
 
 
 
@@ -83,6 +65,8 @@ runSpecTests =
                     |> Spec.Setup.withLocation placeholderUrl
                     |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
+                |> when "the user shows the hidden details"
+                    [ Spec.Command.send (Spec.Command.fake <| Funds.ToggleVisibility) ]
                 
                 |> Spec.when "we log the http requests"
                     [ Spec.Http.logRequests
@@ -167,6 +151,8 @@ runSpecTests =
                     |> Spec.Setup.withLocation placeholderUrl
                     |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch  ]
                 )
+                {- |> when "the user shows the hidden details"
+                    [ Spec.Command.send (Spec.Command.fake <| Funds.ToggleVisibility) ] -}
                 {- |> Spec.when "we log the http requests"
                     [ Spec.Http.logRequests
                     ] -}
@@ -186,7 +172,7 @@ runSpecTests =
                     , it "displays the available balance correctly"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ id "xmrbalance" ]
+                            << by [ id "xmrAvailableBalance" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
