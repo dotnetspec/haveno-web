@@ -66,7 +66,7 @@ type View
 -- NAV: Init
 
 
-init : String -> ( Model, Cmd Msg )
+init : () -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
     , Cmd.batch [ gotNewPrimaryAddress, gotAvailableBalances ]

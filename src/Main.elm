@@ -28,6 +28,7 @@ import Pages.Market
 import Pages.Portfolio
 import Pages.Sell
 import Pages.Support
+import Pages.Accounts
 import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
@@ -186,6 +187,7 @@ type Msg
     | GotSupportMsg Pages.Support.Msg
     | GotBuyMsg Pages.Buy.Msg
     | GotMarketMsg Pages.Market.Msg
+    | GotAccountsMsg Pages.Accounts.Msg
     | ChangedUrl Url.Url
     | Tick Time.Posix
     | AdjustTimeZone Time.Zone
@@ -361,6 +363,14 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        GotAccountsMsg aboutMsg ->
+            case model.page of
+                AccountsPage about ->
+                    toAccounts model (Pages.Accounts.update aboutMsg about)
+
+                _ ->
+                    ( model, Cmd.none )
+
         -- NOTE: GotWalletMsg is triggered by toHardware, which is triggered by updateUrl
         -- which is triggered by init. updateUrl is sent the url and uses the parser to parse it.
         -- The parser outputs the Wallet page so that the case in updateUrl can branch on Wallet.
@@ -423,6 +433,10 @@ view model =
                 MarketPage market ->
                     Pages.Market.view market
                         |> Html.map GotMarketMsg
+
+                AccountsPage accounts ->
+                    Pages.Accounts.view accounts
+                        |> Html.map GotAccountsMsg
     in
     -- NAV : View Page Content
     -- TODO: Make this content's naming conventions closely match the
@@ -469,6 +483,7 @@ type Route
     | Buy
     | Market
     | BlankRoute
+    | AccountsRoute
 
 
 
@@ -487,6 +502,7 @@ type
     | BuyPage Pages.Buy.Model
     | MarketPage Pages.Market.Model
     | BlankPage Pages.Blank.Model
+    | AccountsPage Pages.Accounts.Model
 
 
 
@@ -559,6 +575,7 @@ urlAsPageParser =
         , Url.Parser.map Support (Url.Parser.s "support")
         , Url.Parser.map Buy (Url.Parser.s "buy")
         , Url.Parser.map Market (Url.Parser.s "market")
+        , Url.Parser.map AccountsRoute (Url.Parser.s "accounts")
         ]
 
 
@@ -637,6 +654,10 @@ updateUrl url model =
         Just Market ->
             Pages.Market.init ()
                 |> toMarket model
+
+        Just AccountsRoute ->
+            Pages.Accounts.init ()
+                |> toAccounts model
 
         Nothing ->
             Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
@@ -727,6 +748,12 @@ toMarket : Model -> ( Pages.Market.Model, Cmd Pages.Market.Msg ) -> ( Model, Cmd
 toMarket model ( market, cmd ) =
     ( { model | page = MarketPage market }
     , Cmd.map GotMarketMsg cmd
+    )
+
+toAccounts : Model -> ( Pages.Accounts.Model, Cmd Pages.Accounts.Msg ) -> ( Model, Cmd Msg )
+toAccounts model ( accounts, cmd ) =
+    ( { model | page = AccountsPage accounts }
+    , Cmd.map GotAccountsMsg cmd
     )
 
 
@@ -928,6 +955,7 @@ navLinks page =
                 , navLink SellRoute { url = "sell", caption = "Sell" }
                 , navLink Buy { url = "buy", caption = "Buy" }
                 , navLink PortfolioRoute { url = "portfolio", caption = "Portfolio" }
+                , navLink AccountsRoute { url = "accounts", caption = "Accounts" }
                 ]
     in
     links
@@ -1016,7 +1044,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.3.39" ]
+                , p [] [ text "Version 0.3.40"]
                 , text "Haveno Version"
                 , p [ id "havenofooterver" ]
                     [ text
@@ -1084,6 +1112,12 @@ isActive { link, page } =
             True
 
         ( Market, _ ) ->
+            False
+
+        ( AccountsRoute, AccountsPage _ ) ->
+            True
+
+        ( AccountsRoute, _ ) ->
             False
 
 

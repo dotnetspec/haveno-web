@@ -42,7 +42,7 @@ runSpecTests =
           --Runner.pick <|
           scenario "1: Accessing the Accounts page with valid balance data"
             (given
-                (Spec.Setup.init (Accounts.init "http://localhost:1234")
+                (Spec.Setup.init (Accounts.init ())
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                     |> Spec.Setup.withLocation placeholderUrl
@@ -79,50 +79,39 @@ runSpecTests =
                                         Claim.isStringContaining 1 "Add New Account"
                                 )
                         )
-
-                    {- , it "should display xmrbalance"
-                       (Markup.observeElement
-                           |> Markup.query
-                           << by [ Spec.Markup.Selector.id "xmrbalance" ]
-                           |> Spec.expect
-                               (Claim.isSomethingWhere <|
-                                   Markup.text <|
-                                       Claim.isStringContaining 1 "10000 XMR"
-                               )
-                       )
-                    -}
+                    ]
+            )
+        , --Runner.skip <|
+          --Runner.pick <|
+          scenario "2: Handling the Accounts page with INvalid balance data"
+            (given
+                (Spec.Setup.init (Accounts.init ())
+                    |> Spec.Setup.withView Accounts.view
+                    |> Spec.Setup.withUpdate Accounts.update
+                    |> Spec.Setup.withLocation placeholderUrl
+                )
+                |> when "the page attempts to load Balances"
+                    [ Spec.Command.send (Spec.Command.fake <| Accounts.GotBalances (Result.Err <| Grpc.UnknownGrpcStatus "unknown")) ]
+               
+                |> Spec.observeThat
+                    [ it "has status as Loaded"
+                        (Observer.observeModel .status
+                            |> Spec.expect (equals Accounts.Errored)
+                        )
+                    , it "displays the Accounts page correctly"
+                        (Markup.observeElement
+                            |> Markup.query
+                            << by [ Spec.Markup.Selector.id "accounts-error-message" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Markup.text <|
+                                        Claim.isStringContaining 1 "Error: Unable to retrieve relevant data. Please try again later."
+                                )
+                        )
                     ]
             )
 
-        {- , --Runner.skip <|
-             --Runner.pick <|
-             scenario "2: Handling the Accounts page with INvalid balance data"
-               (given
-                   (Spec.Setup.init (Accounts.init "http://localhost:1234")
-                       |> Spec.Setup.withView Accounts.view
-                       |> Spec.Setup.withUpdate Accounts.update
-                       |> Spec.Setup.withLocation placeholderUrl
-                   )
-                   |> when "the user has already clicked the Continue button and triggered the Accounts page"
-                       [ Spec.Command.send (Spec.Command.fake <| Accounts.GotBalances (Result.Err <| Grpc.UnknownGrpcStatus "unknown")) ]
-                   |> Spec.observeThat
-                       [ it "has status as Loaded"
-                           (Observer.observeModel .status
-                               |> Spec.expect (equals Accounts.Errored)
-                           )
-                       , it "displays the Accounts page correctly"
-                           (Markup.observeElement
-                               |> Markup.query
-                               << by [ Spec.Markup.Selector.id "Accounts-error-message" ]
-                               |> Spec.expect
-                                   (Claim.isSomethingWhere <|
-                                       Markup.text <|
-                                           Claim.isStringContaining 1 "Error: Unable to retrieve relevant data. Please try again later."
-                                   )
-                           )
-                       ]
-               )
-
+        {-
            --, --Runner.skip <|
            --Runner.pick <|
            , scenario "2a: Show available balance and reserved balance correctly in the UI"
@@ -175,7 +164,8 @@ runSpecTests =
                )
         -}
         ]
+
+
 main : Program Flags (Spec.Model Accounts.Model Accounts.Msg) (Spec.Msg Accounts.Msg)
 main =
     Runner.browserProgram [ runSpecTests ]
-
