@@ -10,7 +10,7 @@
     "spec": "npx elm-spec-runner --specRoot ./",
     "debug": "elm make src/Main.elm --output=js/elm.js --debug",
     "optimize": "elm make src/Main.elm --output=js/elm.js --optimize",
-    "minTestHaveno": "./terminals/localNet_2_User.sh",
+    "mth": "./terminals/localNet_2_User.sh",
     "fullTestHaveno": "./terminals/openAll.sh",
     "eb": "./terminals/oneUserEnvoy.sh",
     "ct": "./terminals/closeAll.sh",

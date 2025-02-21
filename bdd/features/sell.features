@@ -1,0 +1,26 @@
+### **Feature: Haveno-Web Funds**
+
+#### **Background:**
+These scenarios cover the essential funds operations for the Haveno-Web application, providing a comprehensive outline of the functionality related to balance management, address handling, wallet security, transaction creation, and viewing.
+
+As per main.features:
+**And** the app is already open on the Sell (initial) page
+**And** the application is connected to the Haveno api (running either on the device or server (Envoy))
+
+---
+
+#### **Scenario 1: Accessing the Sell page with primary Xmr wallet address and balance data**
+
+**Given** the Sell page is open
+**When** balances are fetched
+**Then** it has status as Loaded
+**And** pagetitle is Sell
+**And** it should display 'Create New Offer To Sell BTC' button
+
+---
+
+#### **Scenario 2: Show available balance and reserved balance correctly in the UI**
+
+**Given** the Sell page is open  
+**When** the app retrieves the current balance information  
+**Then** the Sell page displays the Available, Pending, and Reserved Balances  

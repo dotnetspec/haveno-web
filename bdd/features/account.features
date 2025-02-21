@@ -1,0 +1,26 @@
+### **Feature: Haveno-Web Funds**
+
+#### **Background:**
+These scenarios cover the essential funds operations for the Haveno-Web application, providing a comprehensive outline of the functionality related to balance management, address handling, wallet security, transaction creation, and viewing.
+
+As per main.features:
+**And** the app is already open on the Account (initial) page
+**And** the application is connected to the Haveno api (running either on the device or server (Envoy))
+
+---
+
+#### **Scenario 1: Accessing the Account page with Add New Account button**
+
+**Given** the Account page is open
+**When** balances are fetched
+**Then** it has status as Loaded
+**And** pagetitle is Account
+**And** it should display an 'Add New Account' button
+
+---
+
+#### **Scenario 2: Show available balance and reserved balance correctly in the UI**
+
+**Given** the Account page is open  
+**When** the app retrieves the current balance information  
+**Then** the Account page displays the Available, Pending, and Reserved Balances  
