@@ -59,7 +59,7 @@ type Status
 type View
     = AccountsView
     | ErrorView
-    | SubAddressView
+    | ManageAccountsView
 
 
 
@@ -81,7 +81,7 @@ type Msg
     = GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
-    | ClickedGotNewSubaddress
+    | AddNewAccount
     | ChangeView View
     | ToggleVisibility
 
@@ -96,8 +96,8 @@ update msg model =
         ToggleVisibility ->
             ( { model | isAddressVisible = not model.isAddressVisible }, Cmd.none )
 
-        ClickedGotNewSubaddress ->
-            ( model, gotNewSubAddress )
+        AddNewAccount ->
+            ( { model | currentView = ManageAccountsView }, Cmd.none )
 
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = AccountsView }, Cmd.none )
@@ -106,7 +106,7 @@ update msg model =
             ( { model | status = Errored }, Cmd.none )
 
         GotXmrNewSubaddress (Ok subAddresponse) ->
-            ( { model | subaddress = subAddresponse.subaddress, status = Loaded, currentView = SubAddressView }, Cmd.none )
+            ( { model | subaddress = subAddresponse.subaddress, status = Loaded, currentView = ManageAccountsView }, Cmd.none )
 
         GotXmrNewSubaddress (Err error) ->
             ( { model | status = Errored }, Cmd.none )
@@ -158,8 +158,8 @@ view model =
                             AccountsView ->
                                 custodialAccountsView model
 
-                            SubAddressView ->
-                                subAddressView model.subaddress
+                            ManageAccountsView ->
+                                manageAccountsView "whatever the new account is"
 
                             ErrorView ->
                                 errorView
@@ -186,7 +186,8 @@ custodialAccountsView model =
             [ Html.text ("Available BTC Balance: " ++ btcBalanceAsString model.balances ++ " BTC") ]
         , Html.div [ Attr.id "reservedOfferBalance", Attr.class "balance-text" ]
             [ Html.text ("Reserved Offer Balance: " ++ reservedOfferBalanceAsString model.balances ++ " XMR") ]
-        , MyUtils.infoBtn "New Sub Address" <| ClickedGotNewSubaddress
+     
+        , Html.button [ class "info-button", Html.Events.onClick AddNewAccount, Attr.id "addnewaccountbutton" ] [ text "Add New Account"  ]
         ]
 
 
@@ -222,12 +223,12 @@ errorView =
         ]
 
 
-subAddressView : String -> Html Msg
-subAddressView newSubaddress =
+manageAccountsView : String -> Html Msg
+manageAccountsView newAccount =
     Html.div [ Attr.class "accounts-container" ]
         [ Html.h1 [ Attr.class "accounts-title" ] [ Html.text "Accounts" ]
-        , Html.div [ Attr.class "address-text", Attr.id "newSubaddress" ]
-            [ Html.text ("New Subaddress: " ++ newSubaddress) ]
+        , Html.div [ Attr.class "address-text", Attr.id "newAccount" ]
+            [ Html.text ("New Account: " ++ newAccount) ]
         ]
 
 
