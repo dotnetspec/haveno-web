@@ -180,38 +180,8 @@ custodialAccountsView : Model -> Html Msg
 custodialAccountsView model =
     Html.div [ Attr.class "accounts-container", Attr.id "custodialAccountsView" ]
         [ Html.h1 [ Attr.class "accounts-title" ] [ Html.text "Accounts" ]
-        , primaryAddressView model
-        , xmrBalView model
-        , Html.div [ Attr.id "btcbalance", Attr.class "balance-text" ]
-            [ Html.text ("Available BTC Balance: " ++ btcBalanceAsString model.balances ++ " BTC") ]
-        , Html.div [ Attr.id "reservedOfferBalance", Attr.class "balance-text" ]
-            [ Html.text ("Reserved Offer Balance: " ++ reservedOfferBalanceAsString model.balances ++ " XMR") ]
-     
-        , Html.button [ class "info-button", Html.Events.onClick AddNewAccount, Attr.id "addnewaccountbutton" ] [ text "Add New Account"  ]
+        , Html.button [ class "info-button", Html.Events.onClick AddNewAccount, Attr.id "addnewaccountbutton" ] [ text "Add New Account" ]
         ]
-
-
-primaryAddressView : Model -> Html Msg
-primaryAddressView model =
-    Html.div [ Attr.id "primaryaddress", Attr.class "address-container" ]
-        [ MyUtils.infoBtn
-            (if model.isAddressVisible then "Hide" else "Show")
-            ToggleVisibility
-        , Html.div [ Attr.class "address-text" ]
-            [ Html.span [ Attr.class "address-label" ] [ Html.text "Primary address: " ]
-            , Html.span [ Attr.class "address-value" ]
-                [ Html.text (if model.isAddressVisible then model.primaryaddress else Constants.blankAddress) ]
-            ]
-        ]
-
-
-
-
-
-xmrBalView : Model -> Html Msg
-xmrBalView model =
-    Html.div [ Attr.id "xmrAvailableBalance", Attr.class "balance-text" ]
-        [ Html.text ("Available Balance: " ++ xmrAvailableBalanceAsString model.balances ++ " XMR") ]
 
 
 errorView : Html Msg
@@ -230,64 +200,6 @@ manageAccountsView newAccount =
         , Html.div [ Attr.class "address-text", Attr.id "newAccount" ]
             [ Html.text ("New Account: " ++ newAccount) ]
         ]
-
-
-xmrAvailableBalanceAsString : Maybe Protobuf.BalancesInfo -> String
-xmrAvailableBalanceAsString balInfo =
-    case balInfo of
-        Just blInfo ->
-            case blInfo.xmr of
-                Nothing ->
-                    "0.00"
-
-                Just xmrbalViewinfo ->
-                    let
-                        ( firstInt, secondInt ) =
-                            toInts xmrbalViewinfo.availableBalance
-                    in
-                    --String.fromInt firstInt ++ "." ++ String.fromInt secondInt
-                    formatBalance { higher = firstInt, lower = secondInt }
-
-        Nothing ->
-            "0.00"
-
-
-btcBalanceAsString : Maybe Protobuf.BalancesInfo -> String
-btcBalanceAsString balInfo =
-    case balInfo of
-        Just blInfo ->
-            case blInfo.btc of
-                Nothing ->
-                    "0.00"
-
-                Just btcbalinfo ->
-                    let
-                        ( firstInt, secondInt ) =
-                            toInts btcbalinfo.availableBalance
-                    in
-                    formatBalance { higher = firstInt, lower = secondInt }
-
-        Nothing ->
-            ""
-
-
-reservedOfferBalanceAsString : Maybe Protobuf.BalancesInfo -> String
-reservedOfferBalanceAsString balInfo =
-    case balInfo of
-        Just blInfo ->
-            case blInfo.xmr of
-                Nothing ->
-                    "0.00"
-
-                Just xmrbalViewinfo ->
-                    let
-                        ( firstInt, secondInt ) =
-                            toInts xmrbalViewinfo.reservedOfferBalance
-                    in
-                    String.fromInt firstInt ++ "." ++ String.fromInt secondInt
-
-        Nothing ->
-            ""
 
 
 
