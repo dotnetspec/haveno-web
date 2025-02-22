@@ -13,6 +13,10 @@ blankAddress : String
 blankAddress =
     "************************"
 
+donationAddress : String
+donationAddress =
+    "86F2Vbx6QRL3jfxeACFUsPTAh2x264dDNdgmt8m96zSQd8rwGrsw4th7XrmdhQkFXf32timtpWupQMWokagkXYfiPKYGvpt"
+
 xmrConversionConstant : number
 xmrConversionConstant = 4294967296
 
