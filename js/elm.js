@@ -16039,17 +16039,27 @@ var $author$project$Pages$Donate$manageDonateView = A2(
 				]),
 			_List_fromArray(
 				[
-					$elm$html$Html$text('Thank you for your support. Every bit helps. Please send your donation to: ')
-				])),
-			A2(
-			$elm$html$Html$p,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$id('donationaddress')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text($author$project$Extras$Constants$donationAddress)
+					A2(
+					$elm$html$Html$span,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('address-label')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Thank you for your support. Every bit helps. Please send your donation to: ')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$id('donationaddress'),
+							$elm$html$Html$Attributes$class('address-value')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text($author$project$Extras$Constants$donationAddress)
+						]))
 				]))
 		]));
 var $author$project$Pages$Donate$view = function (model) {

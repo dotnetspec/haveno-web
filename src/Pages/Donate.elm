@@ -198,8 +198,9 @@ manageDonateView =
     Html.div [ Attr.class "accounts-container" ]
         [ Html.h1 [ Attr.class "accounts-title" ] [ Html.text "Donate" ]
         , Html.div [ Attr.class "address-text" ]
-            [ Html.text ("Thank you for your support. Every bit helps. Please send your donation to: " ) ]
-            , Html.p [Attr.id "donationaddress"][ Html.text (Consts.donationAddress ) ]
+            [ Html.span [ Attr.class "address-label" ] [ Html.text "Thank you for your support. Every bit helps. Please send your donation to: " ]
+            , Html.p [ Attr.id "donationaddress", Attr.class "address-value" ] [ Html.text Consts.donationAddress ]
+            ]
         ]
 
 
@@ -245,5 +246,3 @@ gotNewSubAddress =
 
 
 -- NAV: Helper functions
-
-
