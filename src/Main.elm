@@ -20,16 +20,17 @@ import Html.Attributes as Attr exposing (..)
 import Html.Events exposing (onClick)
 import Json.Decode as JD
 import Json.Encode as JE
+import Pages.Accounts
 import Pages.Blank
 import Pages.Buy
+import Pages.Connect exposing (Model, Msg(..), init, update, view)
 import Pages.Dashboard
+import Pages.Donate
 import Pages.Funds
 import Pages.Market
 import Pages.Portfolio
 import Pages.Sell
 import Pages.Support
-import Pages.Accounts
-import Pages.Donate
 import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
@@ -190,6 +191,7 @@ type Msg
     | GotMarketMsg Pages.Market.Msg
     | GotAccountsMsg Pages.Accounts.Msg
     | GotDonateMsg Pages.Donate.Msg
+    | GotConnectMsg Pages.Connect.Msg
     | ChangedUrl Url.Url
     | Tick Time.Posix
     | AdjustTimeZone Time.Zone
@@ -198,6 +200,10 @@ type Msg
     | GotVersion (Result Grpc.Error GetVersionReply)
     | InitComplete
     | ToggleMenu
+    | RetryWalletConnection
+    | RetryHavenoConnection
+    | SetCustomMoneroNode String
+    | ApplyCustomMoneroNode String
 
 
 
@@ -250,6 +256,22 @@ update msg model =
         InitComplete ->
             ( { model | initialized = True }, Cmd.none )
 
+        RetryWalletConnection ->
+            ( { model | isXMRWalletConnected = False }, Cmd.none )
+
+        -- Replace with actual retry logic
+        RetryHavenoConnection ->
+            ( { model | isApiConnected = False }, Cmd.none )
+
+        -- Replace with actual retry logic
+        SetCustomMoneroNode node ->
+            ( model, Cmd.none )
+
+        -- Store the input somewhere if needed
+        ApplyCustomMoneroNode node ->
+            ( { model | isXMRWalletConnected = True }, Cmd.none )
+
+        -- Assume success after applying
         -- NOTE: GotVersion also used as an API Connection indicator
         GotVersion (Ok versionResp) ->
             let
@@ -381,6 +403,14 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        GotConnectMsg connectMsg ->
+            case model.page of
+                ConnectPage connect ->
+                    toConnect model (Pages.Connect.update connectMsg connect)
+
+                _ ->
+                    ( model, Cmd.none )
+
         -- NOTE: GotWalletMsg is triggered by toHardware, which is triggered by updateUrl
         -- which is triggered by init. updateUrl is sent the url and uses the parser to parse it.
         -- The parser outputs the Wallet page so that the case in updateUrl can branch on Wallet.
@@ -451,6 +481,25 @@ view model =
                 DonatePage donate ->
                     Pages.Donate.view donate
                         |> Html.map GotDonateMsg
+
+                ConnectPage _ ->
+                    {- -- NOTE: Advantages of This Approach: ✅ Keeps Main.elm responsible for global state but avoids redundancy.
+                       ✅ Ensures Connect.elm always receives the latest connection status.
+                       ✅ Still allows Pages.Connect to manage its own additional state (like retry attempts).
+                    -}
+                    let
+                        connectModel =
+                            { moneroNode = "default.node.address:18081"
+                            , customMoneroNode = ""
+                            , havenoConnected = model.isApiConnected
+                            , walletConnected = model.isXMRWalletConnected
+                            , retryingWallet = False
+                            , retryingHaveno = False
+                            , connectionAttempts = 0
+                            }
+                    in
+                    Pages.Connect.view connectModel
+                        |> Html.map GotConnectMsg
     in
     -- NAV : View Page Content
     -- TODO: Make this content's naming conventions closely match the
@@ -458,8 +507,8 @@ view model =
     -- NOTE: 'pagetitle' or 'title' in pages is not the same as 'title' in the document
     { title = "Haveno-Web"
     , body =
-        [ div [ Attr.class "main-nav-flex-container" ] [ menu model ]
-        , div [ Attr.class "indicator-container" ] [ indicatorContainer model ]
+        [ connectionStatusView model
+        , div [ Attr.class "main-nav-flex-container" ] [ menu model ]
         , div [ Attr.class "topLogoContainer" ] [ topLogo ]
         , div [ Attr.class "contentByPage" ] [ contentByPage ]
         , div [ Attr.class "footerContent" ] [ footerContent model ]
@@ -499,6 +548,7 @@ type Route
     | BlankRoute
     | AccountsRoute
     | DonateRoute
+    | ConnectRoute
 
 
 
@@ -519,6 +569,7 @@ type
     | BlankPage Pages.Blank.Model
     | AccountsPage Pages.Accounts.Model
     | DonatePage Pages.Donate.Model
+    | ConnectPage Pages.Connect.Model
 
 
 
@@ -680,6 +731,10 @@ updateUrl url model =
             Pages.Donate.init ()
                 |> toDonate model
 
+        Just ConnectRoute ->
+            Pages.Connect.init ()
+                |> toConnect model
+
         Nothing ->
             Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
                 |> toDashboard model
@@ -771,16 +826,25 @@ toMarket model ( market, cmd ) =
     , Cmd.map GotMarketMsg cmd
     )
 
+
 toAccounts : Model -> ( Pages.Accounts.Model, Cmd Pages.Accounts.Msg ) -> ( Model, Cmd Msg )
 toAccounts model ( accounts, cmd ) =
     ( { model | page = AccountsPage accounts }
     , Cmd.map GotAccountsMsg cmd
     )
 
+
 toDonate : Model -> ( Pages.Donate.Model, Cmd Pages.Donate.Msg ) -> ( Model, Cmd Msg )
 toDonate model ( donate, cmd ) =
     ( { model | page = DonatePage donate }
     , Cmd.map GotDonateMsg cmd
+    )
+
+
+toConnect : Model -> ( Pages.Connect.Model, Cmd Pages.Connect.Msg ) -> ( Model, Cmd Msg )
+toConnect model ( connect, cmd ) =
+    ( { model | page = ConnectPage connect }
+    , Cmd.map GotConnectMsg cmd
     )
 
 
@@ -821,6 +885,34 @@ sendVersionRequest request =
 
 
 -- NAV: Helper functions
+
+
+connectionStatusView : Model -> Html Msg
+connectionStatusView model =
+    div [ class "connection-status" ]
+        [ div
+            [ class
+                (if model.isXMRWalletConnected && model.isApiConnected then
+                    "status-dot green"
+
+                 else
+                    "status-dot red"
+                )
+            ]
+            []
+        , text <|
+            if model.isXMRWalletConnected && model.isApiConnected then
+                "Connected"
+
+            else if not model.isXMRWalletConnected then
+                "Wallet not connected"
+
+            else
+                "Haveno node not connected"
+
+        -- Link to Connect Page
+        , a [ Attr.href "/connect", class "status-link" ] [ text "Fix" ]
+        ]
 
 
 setDashboardHavenoVersion : Pages.Dashboard.Model -> Model -> Pages.Dashboard.Model
@@ -1072,7 +1164,7 @@ footerContent model =
                 , br []
                     []
                 , text "Open source code & design"
-                , p [] [ text "Version 0.3.41"]
+                , p [] [ text "Version 0.3.42" ]
                 , text "Haveno Version"
                 , p [ id "havenofooterver" ]
                     [ text
@@ -1152,6 +1244,12 @@ isActive { link, page } =
             True
 
         ( DonateRoute, _ ) ->
+            False
+
+        ( ConnectRoute, ConnectPage _ ) ->
+            True
+
+        ( ConnectRoute, _ ) ->
             False
 
 

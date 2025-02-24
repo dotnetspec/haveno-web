@@ -283,4 +283,33 @@ nav a:hover {
 }
 
 
+/* Connection status indicator */
+.connection-status {
+  position: fixed;
+  top: 5px;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  background-color: var(--clr-neutral-900-with-opacity);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  z-index: 100;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-dot.green {
+  background-color: green;
+}
+
+.status-dot.red {
+  background-color: red;
+}
 

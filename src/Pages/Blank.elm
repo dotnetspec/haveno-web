@@ -55,7 +55,7 @@ update msg model =
 
 -- NOTE: Our view will be Html msg, not Document
 -- as we won't use 'title' etc. cos we have our own formatting
-
+-- NAV: View
 
 view : Model -> Html msg
 view _ =

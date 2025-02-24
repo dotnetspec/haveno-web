@@ -90,16 +90,3 @@ main =
     -- , how the view is rendered, how updates are handled, and how subscriptions and browser events are managed during test execution
     --Runner.browserProgram { flags = \_ -> (), init = App.init, update = App.update, subscriptions = App.subscriptions, view = App.view }
     Runner.browserProgram [ runSpecTests ]
-
-
-
--- NAV: Helper functions:
-{- viewToHtml : Main.Model -> Html Main.Msg
-   viewToHtml model =
-       let
-
-           document =
-               Main.view model
-       in
-       Html.div [] document.body
--}
