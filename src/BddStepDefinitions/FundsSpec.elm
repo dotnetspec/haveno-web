@@ -1,33 +1,32 @@
 module BddStepDefinitions.FundsSpec exposing (..)
 
-import BddStepDefinitions.Extra exposing (..)
-import BddStepDefinitions.Runner as Runner exposing (..)
-import Browser
-import Browser.Navigation as Nav exposing (Key)
-import Expect exposing (equal)
-import Extras.TestData as TestData exposing (..)
+import BddStepDefinitions.Extra exposing (equals)
+import BddStepDefinitions.Runner exposing (browserProgram, pick, skip)
+
+import Browser.Navigation
+import Expect
+import Extras.TestData as TestData
 import Grpc
-import Html exposing (Html, div, i)
+import Html
 import Json.Encode as E
-import Pages.Dashboard as Dashboard exposing (..)
-import Pages.Funds as Funds exposing (Model, Msg, init, update, view)
+import Pages.Dashboard
+import Pages.Funds as Funds
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (BalancesInfo)
-import Protobuf.Types.Int64 exposing (fromInts)
-import Spec exposing (..)
-import Spec.Claim as Claim exposing (Claim, Verdict)
-import Spec.Command exposing (send)
+import Protobuf.Types.Int64
+import Spec exposing (describe, scenario, given, when, it)
+import Spec.Claim as Claim
+import Spec.Command
 import Spec.Http
 import Spec.Http.Stub as Stub
 import Spec.Markup as Markup
 import Spec.Markup.Selector exposing (..)
-import Spec.Navigator as Navigator exposing (Navigator)
-import Spec.Observer as Observer exposing (Observer)
+import Spec.Navigator
+import Spec.Observer as Observer
 import Spec.Port exposing (..)
-import Spec.Report exposing (note)
-import Spec.Setup exposing (Setup, init, withSubscriptions, withUpdate, withView)
-import Spec.Step exposing (log)
-import Spec.Time
-import Url exposing (Protocol(..), Url)
+import Spec.Report
+import Spec.Setup
+import Spec.Step
+import Url exposing (Protocol(..))
 
 
 gotXmrBalance : Maybe BalancesInfo -> ( Int, Int )
@@ -51,9 +50,9 @@ gotXmrBalance balances =
 -- NAV: Test scenarios
 
 
-runSpecTests : Spec Funds.Model Funds.Msg
+runSpecTests : Spec.Spec Funds.Model Funds.Msg
 runSpecTests =
-    describe
+    Spec.describe
         "Haveno Web App Funds Tests"
         [ --Runner.skip <|
           --Runner.pick <|
@@ -62,7 +61,7 @@ runSpecTests =
                 (Spec.Setup.init (Funds.init "http://localhost:1234")
                     |> Spec.Setup.withView Funds.view
                     |> Spec.Setup.withUpdate Funds.update
-                    |> Spec.Setup.withLocation placeholderUrl
+                    |> Spec.Setup.withLocation TestData.placeholderUrl
                     |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
                 |> when "the user shows the hidden details"
@@ -82,7 +81,7 @@ runSpecTests =
                         )
                     , it "should have balances in the model"
                         (Observer.observeModel .balances
-                            |> Spec.expect (equals <| testBalanceInfo)
+                            |> Spec.expect (equals <| TestData.testBalanceInfo)
                         )
                     , it "should receive primary address"
                         (Observer.observeModel .primaryaddress
@@ -119,7 +118,7 @@ runSpecTests =
                 (Spec.Setup.init (Funds.init "http://localhost:1234")
                     |> Spec.Setup.withView Funds.view
                     |> Spec.Setup.withUpdate Funds.update
-                    |> Spec.Setup.withLocation placeholderUrl
+                    |> Spec.Setup.withLocation TestData.placeholderUrl
                 )
                 |> when "the user has already clicked the Continue button and triggered the Funds page"
                     [ Spec.Command.send (Spec.Command.fake <| Funds.GotBalances (Result.Err <| Grpc.UnknownGrpcStatus "unknown")) ]
@@ -148,7 +147,7 @@ runSpecTests =
                 (Spec.Setup.init (Funds.init "http://localhost:1234")
                     |> Spec.Setup.withView Funds.view
                     |> Spec.Setup.withUpdate Funds.update
-                    |> Spec.Setup.withLocation placeholderUrl
+                    |> Spec.Setup.withLocation TestData.placeholderUrl
                     |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch  ]
                 )
                 {- |> when "the user shows the hidden details"
@@ -167,7 +166,7 @@ runSpecTests =
                         )
                     , it "should have balances in the model"
                         (Observer.observeModel .balances
-                            |> Spec.expect (equals <| testBalanceInfo)
+                            |> Spec.expect (equals <| TestData.testBalanceInfo)
                         )
                     , it "displays the available balance correctly"
                         (Markup.observeElement
@@ -199,7 +198,7 @@ runSpecTests =
                     --(Funds.init "http://localhost:1234")
                     |> Spec.Setup.withView Funds.view
                     |> Spec.Setup.withUpdate Funds.update
-                    |> Spec.Setup.withLocation placeholderUrl
+                    |> Spec.Setup.withLocation TestData.placeholderUrl
                     |> Stub.serve [ TestData.successfullSubAddressFetch ]
                 )
                 |> Spec.when "we log the http requests"
@@ -247,7 +246,7 @@ runSpecTests =
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
                        |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation placeholderUrl
+                       |> Spec.Setup.withLocation TestData.placeholderUrl
                    )
                    |> when "the app retrieves the primary address"
                        [ Spec.Command.send (Spec.Command.fake <| Wallet.GotPrimaryAddress (Ok "Primary Address")) ]
@@ -270,7 +269,7 @@ runSpecTests =
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
                        |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation placeholderUrl
+                       |> Spec.Setup.withLocation TestData.placeholderUrl
                    )
                    |> when "the app queries the address balance"
                        [ Spec.Command.send (Spec.Command.fake <| Wallet.GotAddressBalance (Ok "Address Balance: 0.0 XMR")) ]
@@ -293,7 +292,7 @@ runSpecTests =
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
                        |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation placeholderUrl
+                       |> Spec.Setup.withLocation TestData.placeholderUrl
                    )
                    |> when "the app retrieves the funding addresses"
                        [ Spec.Command.send (Spec.Command.fake <| Wallet.GotFundingAddresses (Ok "Funding Address")) ]
@@ -316,7 +315,7 @@ runSpecTests =
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
                        |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation placeholderUrl
+                       |> Spec.Setup.withLocation TestData.placeholderUrl
                    )
                    |> when "the user attempts to unlock the wallet"
                        [ Spec.Command.send (Spec.Command.fake <| Wallet.GotUnlockWallet (Ok "Wallet Unlocked")) ]
@@ -339,7 +338,7 @@ runSpecTests =
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
                        |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation placeholderUrl
+                       |> Spec.Setup.withLocation TestData.placeholderUrl
                    )
                    |> when "the user requests to lock the wallet"
                        [ Spec.Command.send (Spec.Command.fake <| Wallet.GotLockWallet (Ok "Wallet Locked")) ]
@@ -362,7 +361,7 @@ runSpecTests =
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
                        |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation placeholderUrl
+                       |> Spec.Setup.withLocation TestData.placeholderUrl
                    )
                    |> when "the user sets a password for the wallet"
                        [ Spec.Command.send (Spec.Command.fake <| Wallet.GotSetWalletPassword (Ok "Password successfully set")) ]
@@ -385,7 +384,7 @@ runSpecTests =
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
                        |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation placeholderUrl
+                       |> Spec.Setup.withLocation TestData.placeholderUrl
                    )
                    |> when "the user removes the wallet password"
                        [ Spec.Command.send (Spec.Command.fake <| Wallet.GotRemoveWalletPassword (Ok "Password successfully removed")) ]
@@ -408,7 +407,7 @@ runSpecTests =
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
                        |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation placeholderUrl
+                       |> Spec.Setup.withLocation TestData.placeholderUrl
                    )
                    |> when "the user requests to relay a transaction"
                        [ Spec.Command.send (Spec.Command.fake <| Wallet.GotRelayTransaction (Ok "Transaction Relayed")) ]
@@ -431,7 +430,7 @@ runSpecTests =
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
                        |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation placeholderUrl
+                       |> Spec.Setup.withLocation TestData.placeholderUrl
                    )
                    |> when "the user initiates a new transaction"
                        [ Spec.Command.send (Spec.Command.fake <| Wallet.GotCreateTransaction (Ok "Transaction Pending")) ]
@@ -454,7 +453,7 @@ runSpecTests =
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
                        |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation placeholderUrl
+                       |> Spec.Setup.withLocation TestData.placeholderUrl
                    )
                    |> when "the user initiates a transaction"
                        [ Spec.Command.send (Spec.Command.fake <| Wallet.GotTransactionInitiated (Ok "Transaction Initiated")) ]
@@ -479,7 +478,7 @@ runSpecTests =
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
                        |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation placeholderUrl
+                       |> Spec.Setup.withLocation TestData.placeholderUrl
                    )
                    |> when "the user attempts to send more than the available balance"
                        [ Spec.Command.send (Spec.Command.fake <| Wallet.GotExceedsAvailableBalance (Ok "Insufficient funds")) ]
@@ -502,7 +501,7 @@ runSpecTests =
                    (Spec.Setup.init (Wallet.init "http://localhost:1234")
                        |> Spec.Setup.withView Wallet.view
                        |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation placeholderUrl
+                       |> Spec.Setup.withLocation TestData.placeholderUrl
                    )
                    |> when "the user successfully deposits funds into the wallet"
                        [ Spec.Command.send (Spec.Command.fake <| Wallet.GotDepositSuccess (Ok "Available Balance: 200.0 XMR")) ]
@@ -675,6 +674,6 @@ jsonDepositSuccess =
         ]
 
 
-main : Program Flags (Spec.Model Funds.Model Funds.Msg) (Spec.Msg Funds.Msg)
+main : Program Spec.Flags (Spec.Model Funds.Model Funds.Msg) (Spec.Msg Funds.Msg)
 main =
-    Runner.browserProgram [ runSpecTests ]
+    browserProgram [ runSpecTests ]
