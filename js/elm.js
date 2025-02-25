@@ -9479,7 +9479,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.3.42')
+										$elm$html$Html$text('Version 0.3.43')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
@@ -10121,6 +10121,7 @@ var $author$project$Pages$Connect$RetryWalletConnection = {$: 0};
 var $author$project$Pages$Connect$SetCustomMoneroNode = function (a) {
 	return {$: 2, a: a};
 };
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
@@ -10173,7 +10174,7 @@ var $author$project$Pages$Connect$view = function (model) {
 						$elm$html$Html$text('Connection Issues')
 					])),
 				A2(
-				$elm$html$Html$p,
+				$elm$html$Html$h2,
 				_List_Nil,
 				_List_fromArray(
 					[
@@ -10252,7 +10253,10 @@ var $author$project$Pages$Connect$view = function (model) {
 					[
 						A2(
 						$elm$html$Html$p,
-						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$id('havenoNodeNotConnected')
+							]),
 						_List_fromArray(
 							[
 								$elm$html$Html$text('⚠ Haveno Node not connected.')
@@ -16377,6 +16381,16 @@ var $author$project$Pages$Donate$manageDonateView = A2(
 					_List_fromArray(
 						[
 							$elm$html$Html$text($author$project$Extras$Constants$donationAddress)
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('address-label')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Thank you. It is much appreciated')
 						]))
 				]))
 		]));

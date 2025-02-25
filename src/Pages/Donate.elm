@@ -200,6 +200,7 @@ manageDonateView =
         , Html.div [ Attr.class "address-text" ]
             [ Html.span [ Attr.class "address-label" ] [ Html.text "Thank you for your support. Every bit helps. Please send your donation to: " ]
             , Html.p [ Attr.id "donationaddress", Attr.class "address-value" ] [ Html.text Consts.donationAddress ]
+            , Html.p [Attr.class "address-label" ] [ Html.text "Thank you. It is much appreciated"]
             ]
         ]
 
