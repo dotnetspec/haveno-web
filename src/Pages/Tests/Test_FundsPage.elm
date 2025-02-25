@@ -1,4 +1,4 @@
-module Pages.Tests.Test_FundsPage exposing (..)
+module Pages.Tests.Test_FundsPage exposing (tests)
 
 import Expect
 import Extras.Constants exposing (xmrConversionConstant)

@@ -1,4 +1,4 @@
-module Types.DateType exposing (..)
+module Types.DateType exposing (DateTime(..), convertPosixTimeToCurrentDateTime, convertSelectedStringDateToPosix8AMThatDay, convertStringDateTimeToDateRecord, convertToPosixTopOfTheHour, createPosixWithHour, dayInDigital, extractDay, extractForConfirmationDay, extractForConfirmationHour, extractForConfirmationHourForDateRecord, extractForConfirmationMonth, extractForConfirmationMonthForDateRecord, extractForConfirmationYear, extractHour, extractMonth, extractYear, format12Hour, monthInDigital, namedMonth, posixDateOnlyForAvailUI, posixTimeDateForQueryString, posixTimeDateForUI, removeDateAndParseTime, removeTimeAndParseDate, reorderTimeList, stringNamedMonthToDigital)
 
 import Derberos.Date.Core as DD
 import String exposing (split)
@@ -16,8 +16,11 @@ type DateTime
 
 
 convertPosixTimeToCurrentDateTime : Time.Posix -> DateTime
-convertPosixTimeToCurrentDateTime time = 
+convertPosixTimeToCurrentDateTime time =
     CurrentDateTime time Time.utc
+
+
+
 -- Function to extract the hour from the TIME (not datetime) string
 
 
@@ -61,14 +64,16 @@ extractHour timeString =
             "Invalid time format"
 
 
+
 -- Function to extract the year from a date-time string
+
+
 extractForConfirmationYear : String -> String
 extractForConfirmationYear timeString =
     case String.split " " timeString of
         [ datePart, _ ] ->
             case String.split "-" datePart of
                 [ _, _, year ] ->
-                    
                     year
 
                 _ ->
@@ -82,7 +87,7 @@ extractForConfirmationMonth : String -> String
 extractForConfirmationMonth timeString =
     case split "-" timeString of
         [ _, month, _ ] ->
-             month
+            month
 
         _ ->
             "Invalid time format"
@@ -98,15 +103,16 @@ extractForConfirmationDay timeString =
             "Invalid time format"
 
 
+
 -- Function to extract the hour from a date-time string
+
+
 extractForConfirmationHour : String -> String
 extractForConfirmationHour timeString =
     case String.split " " timeString of
         [ _, timePart ] ->
             case String.split ":" timePart of
                 [ hour, _, _ ] ->
-                    
-                    
                     format12Hour (Maybe.withDefault 0 (String.toInt hour))
 
                 _ ->
@@ -114,6 +120,7 @@ extractForConfirmationHour timeString =
 
         _ ->
             "Invalid date-time format"
+
 
 extractForConfirmationHourForDateRecord : String -> Int
 extractForConfirmationHourForDateRecord timeString =
@@ -128,6 +135,7 @@ extractForConfirmationHourForDateRecord timeString =
 
         _ ->
             0
+
 
 extractForConfirmationMonthForDateRecord : String -> Int
 extractForConfirmationMonthForDateRecord timeString =
@@ -372,8 +380,6 @@ format12Hour hour =
 
             else
                 hour
-
-        
     in
     String.fromInt formattedHour
         ++ " "

@@ -2,25 +2,20 @@ module Utils.MyUtils exposing
     ( convertListOfMaybeToList
     , gotGrpcErr
     , gotHttpErr
+    , infoBtn
     , removeNothingFromList
     , stringFromBool
-    ,  stringFromMaybeString
-    , infoBtn
-
+    , stringFromMaybeString
     )
 
-import Bytes
-import Bytes.Decode as DE
-import Bytes.Encode as BE
 import Grpc
-import Http
-import Proto.Io.Haveno.Protobuffer as Protobuf exposing (BalancesInfo, BtcBalanceInfo, GetBalancesReply, GetBalancesRequest, XmrBalanceInfo, encodeGetBalancesReply, encodeGetBalancesRequest)
-import Protobuf.Decode
-import Protobuf.Types.Int64 exposing (Int64, fromInts, toInts)
 import Html exposing (Html, button, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
-
+import Http
+import Proto.Io.Haveno.Protobuffer as Protobuf exposing (GetBalancesReply)
+import Protobuf.Decode
+import Protobuf.Types.Int64 exposing (toInts)
 
 
 removeNothingFromList : List (Maybe a) -> List a

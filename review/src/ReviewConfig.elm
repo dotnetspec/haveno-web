@@ -11,9 +11,21 @@ when inside the directory containing this file.
 
 -}
 
-import Review.Rule exposing (Rule)
 
+
+import Review.Rule exposing (Rule)
+import NoUnused.Variables
+import NoUnused.CustomTypeConstructors
+import NoUnused.Modules
+import NoExposingEverything  -- ✅ Prevents `exposing (..)`
+import Review.Rule exposing (Rule)
 
 config : List Rule
 config =
-    []
+    [ NoUnused.Variables.rule
+    , NoUnused.CustomTypeConstructors.rule []
+    , NoUnused.Modules.rule
+    , NoExposingEverything.rule  -- ✅ Prevents `exposing (..)`
+ 
+    ]
+

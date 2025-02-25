@@ -1,7 +1,7 @@
 module Pages.Connect exposing (Model, Msg, init, update, view)
 
-import Html exposing (Html, a, button, div, h1, h2, input, p, text)
-import Html.Attributes exposing (class, placeholder, id)
+import Html exposing (Html, button, div, h1, h2, input, p, text)
+import Html.Attributes exposing (class, id, placeholder)
 import Html.Events exposing (onClick, onInput)
 
 
@@ -120,7 +120,7 @@ view model =
         -- Haveno Node Status
         , if not model.havenoConnected then
             div []
-                [ p [id "havenoNodeNotConnected"] [ text "⚠ Haveno Node not connected." ]
+                [ p [ id "havenoNodeNotConnected" ] [ text "⚠ Haveno Node not connected." ]
                 , button [ onClick RetryHavenoConnection ] [ text "Retry Haveno Connection" ]
                 ]
 

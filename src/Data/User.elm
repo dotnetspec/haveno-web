@@ -50,7 +50,6 @@ module Data.User exposing (..)
 
 import Json.Decode as D
 import Json.Decode.Pipeline as P
-import Time exposing (Month(..))
 import Utils.Validation.Validate as V
 
 

@@ -1,4 +1,4 @@
-module Pages.Tests.Test_Toggle_Address_Visibility exposing (..)
+module Pages.Tests.Test_Toggle_Address_Visibility exposing (tests)
 
 import Extras.Constants as Constants
 import Extras.TestData as TestData

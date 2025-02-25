@@ -1,34 +1,43 @@
 module Extras.Constants exposing (..)
 
+import Http
 import Json.Encode as E
-import Time exposing (..)
+import Time
 import Url exposing (Protocol(..), Url)
-import Http exposing (..)
 
 
 
 -- NOTE: Constants for testing, must match the code
 
+
 blankAddress : String
 blankAddress =
     "************************"
+
 
 donationAddress : String
 donationAddress =
     "86F2Vbx6QRL3jfxeACFUsPTAh2x264dDNdgmt8m96zSQd8rwGrsw4th7XrmdhQkFXf32timtpWupQMWokagkXYfiPKYGvpt"
 
+
 xmrConversionConstant : number
-xmrConversionConstant = 4294967296
+xmrConversionConstant =
+    4294967296
 
 
 localhostForElmSpecProxyURL : Url
 localhostForElmSpecProxyURL =
     Url Http "localhost" (Just 3000) "/proxy" Nothing Nothing
 
+
+
 -- NOTE: Potential point of failure when switching between dev and prod
+
+
 localorproductionServerAutoCheck : String
 localorproductionServerAutoCheck =
     "haveno-web.squashpassion"
+
 
 placeholderUrl : Url
 placeholderUrl =
@@ -203,19 +212,17 @@ mongoCloudHost =
     "cloud.mongodb.com"
 
 
+
 {- mongoAtlasAPISearchIndexPath : String
-mongoAtlasAPISearchIndexPath =
-    "api/atlas/v1.0/orgs/" ++ mongoOrdId ++ "/clusters/" ++ mongoClusterName ++ "/fts/indexes/" ++ mongoSearchIndexName
- -}
-
-
+   mongoAtlasAPISearchIndexPath =
+       "api/atlas/v1.0/orgs/" ++ mongoOrdId ++ "/clusters/" ++ mongoClusterName ++ "/fts/indexes/" ++ mongoSearchIndexName
+-}
 --https://cloud.mongodb.com/api/atlas/v1.0/orgs/{ORG-ID}/clusters/{CLUSTER-NAME}/fts/indexes/{INDEX-NAME}/search
 -- NOTE: When you're accessing the actual API base is:
-
-
 {- mongodbSearchURL : Url
-mongodbSearchURL =
-    Url Https mongoCloudHost Nothing (mongoAtlasAPISearchIndexPath ++ "/search") Nothing Nothing -}
+   mongodbSearchURL =
+       Url Https mongoCloudHost Nothing (mongoAtlasAPISearchIndexPath ++ "/search") Nothing Nothing
+-}
 
 
 zohoAccountsPath : String
@@ -268,8 +275,8 @@ pipelineRequest =
         identity
         -- REVIEW: It may be worth RF ing some of these to functions like jsonKeyValue
         [ E.object
-            [ ( "$match", E.object [ ( "_id", E.object [ ( jsonKeyValue "$oid" "651fa006b15a534c69b119ef" ) ] ) ] ) ]
-        , E.object [ ( "$lookup", E.object [ ( jsonKeyValue "from" "rankings" ), ( "localField", E.string "ownerOf" ), ( "foreignField", E.string "_id" ), ( "as", E.string "ownedRankings" ) ] ) ]
+            [ ( "$match", E.object [ ( "_id", E.object [ jsonKeyValue "$oid" "651fa006b15a534c69b119ef" ] ) ] ) ]
+        , E.object [ ( "$lookup", E.object [ jsonKeyValue "from" "rankings", ( "localField", E.string "ownerOf" ), ( "foreignField", E.string "_id" ), ( "as", E.string "ownedRankings" ) ] ) ]
         , E.object [ ( "$lookup", E.object [ ( "from", E.string "rankings" ), ( "localField", E.string "memberOf" ), ( "foreignField", E.string "_id" ), ( "as", E.string "memberRankings" ) ] ) ]
         , E.object [ ( "$lookup", E.object [ ( "from", E.string "users" ), ( "localField", E.string "memberRankings.owner_id" ), ( "foreignField", E.string "_id" ), ( "as", E.string "memberRankingsWithOwnerName" ) ] ) ]
         , E.object
@@ -294,8 +301,7 @@ pipelineRequest =
                             , ( "ranking", numIntObject "1" )
                             , ( "player_count", numIntObject "1" )
                             , ( "name", numIntObject "1" )
-                              
-                            , (jsonKeyValue "owner_name" "$nickname")
+                            , jsonKeyValue "owner_name" "$nickname"
                             ]
                       )
                     , ( "memberRankings"
@@ -320,13 +326,16 @@ pipelineRequest =
             ]
         ]
 
-jsonKeyValue : String -> String -> (String, E.Value)
+
+jsonKeyValue : String -> String -> ( String, E.Value )
 jsonKeyValue key value =
-    ( key, E.string value ) 
+    ( key, E.string value )
+
 
 numIntObject : String -> E.Value
 numIntObject str =
     E.object [ ( "$numberInt", E.string str ) ]
+
 
 callRequestJson : E.Value
 callRequestJson =
@@ -348,6 +357,7 @@ callRequestJson =
 
         --]
         ]
+
 
 httpErrorToString : Http.Error -> String
 httpErrorToString err =

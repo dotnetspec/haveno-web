@@ -1,24 +1,12 @@
-module Pages.Donate exposing (..)
+module Pages.Donate exposing (Model, Msg(..), Status(..), View(..), custodialDonateView, errorView, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageDonateView, update, view)
 
-import Buttons.Default exposing (defaultButton)
-import Debug exposing (log)
-import Extras.Constants as Consts exposing (donationAddress)
-import Grpc exposing (..)
+import Extras.Constants as Consts
+import Grpc
 import Html exposing (Html, div, section, text)
-import Html.Attributes as Attr exposing (class, id)
+import Html.Attributes as Attr exposing (class)
 import Html.Events
-import Http exposing (..)
-import Json.Encode as E exposing (..)
-import Maybe exposing (withDefault)
-import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
+import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
-import Protobuf.Types.Int64 exposing (toInts)
-import Spec.Markup exposing (log)
-import Types.DateType as DateType exposing (DateTime(..))
-import UInt64 exposing (UInt64)
-import UInt64.Digits exposing (Digits)
-import Url exposing (Protocol(..), Url)
-import Utils.MyUtils as MyUtils
 
 
 
@@ -200,7 +188,7 @@ manageDonateView =
         , Html.div [ Attr.class "address-text" ]
             [ Html.span [ Attr.class "address-label" ] [ Html.text "Thank you for your support. Every bit helps. Please send your donation to: " ]
             , Html.p [ Attr.id "donationaddress", Attr.class "address-value" ] [ Html.text Consts.donationAddress ]
-            , Html.p [Attr.class "address-label" ] [ Html.text "Thank you. It is much appreciated"]
+            , Html.p [ Attr.class "address-label" ] [ Html.text "Thank you. It is much appreciated" ]
             ]
         ]
 

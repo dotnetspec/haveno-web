@@ -1,24 +1,14 @@
-module Extras.TestData exposing (..)
+module Extras.TestData exposing (encodeGrpcMessage, getBalancesEncodedResponse, getBalancesResponse, getSubAddressesEncodedResponse, getVersionBaseURL, placeholderUrl, primaryAddress, subAddress, successfullBalancesFetch, successfullSubAddressFetch, successfullVersionFetch, successfullXmrPrimaryAddressFetch, testBalanceInfo, toBytes, unsuccessfullVersionFetch, walletsBaseUrl)
 
 import Base64
-import Binary
 import Bytes exposing (Bytes, Endianness(..))
-import Bytes.Decode as DE
-import Bytes.Encode as BytesEncode exposing (bytes)
-import Char.Extra
-import Extras.Constants as Consts exposing (..)
-import Hex.Convert as HexConvert exposing (..)
-import Json.Encode as E
-import List.Split exposing (chunksOfLeft)
-import Proto.Io.Haveno.Protobuffer as Protobuf exposing (BalancesInfo, BtcBalanceInfo, GetBalancesReply, GetBalancesRequest, XmrBalanceInfo, encodeGetBalancesReply, encodeGetBalancesRequest)
+import Bytes.Encode as BytesEncode
+import Proto.Io.Haveno.Protobuffer as Protobuf exposing (BalancesInfo, BtcBalanceInfo, GetBalancesReply, XmrBalanceInfo, encodeGetBalancesReply)
 import Protobuf.Encode as Encode
-import Protobuf.Types.Int64 exposing (Int64, fromInts)
-import Spec.Http.Route as Route exposing (HttpRoute)
+import Protobuf.Types.Int64 exposing (fromInts)
+import Spec.Http.Route as Route
 import Spec.Http.Stub as Stub
-import Time exposing (Posix, millisToPosix, utc)
 import Url exposing (Protocol(..), Url)
-
-
 
 
 primaryAddress : String
@@ -45,6 +35,7 @@ placeholderUrl : Url
 placeholderUrl =
     Url Http "localhost" (Just 1234) "/" Nothing Nothing
 
+
 testBalanceInfo : Maybe Protobuf.BalancesInfo
 testBalanceInfo =
     Just
@@ -64,7 +55,6 @@ testBalanceInfo =
                 , reservedTradeBalance = fromInts 3000 0
                 }
         }
-
 
 
 toBytes : String -> Maybe Bytes

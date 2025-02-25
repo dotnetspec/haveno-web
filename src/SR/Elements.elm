@@ -26,7 +26,6 @@ module SR.Elements exposing
 -- WARN: expose all here?
 -- NOTE: Exposing Element gives us access to the rgb colors:
 
-
 import Data.User as U
 import Element exposing (..)
 import Element.Background as Background
@@ -35,8 +34,7 @@ import Element.Font as Font
 import Framework.Card as Card
 import Framework.Color as Color
 import Framework.Heading as Heading
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html.Attributes
 import Utils.Validation.Validate as V
 
 

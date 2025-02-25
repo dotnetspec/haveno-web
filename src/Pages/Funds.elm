@@ -1,23 +1,13 @@
-module Pages.Funds exposing (..)
+module Pages.Funds exposing (Model, Msg(..), Status(..), View(..), btcBalanceAsString, custodialFundsView, errorView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, primaryAddressView, reservedOfferBalanceAsString, subAddressView, update, view, xmrAvailableBalanceAsString, xmrBalView)
 
-import Buttons.Default exposing (defaultButton)
-import Debug exposing (log)
 import Extras.Constants as Constants exposing (xmrConversionConstant)
-import Grpc exposing (..)
-import Html exposing (Html, div, section, text)
-import Html.Attributes as Attr exposing (class, id)
-import Html.Events
-import Http exposing (..)
-import Json.Encode as E exposing (..)
-import Maybe exposing (withDefault)
-import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
+import Grpc
+import Html exposing (Html, div, section)
+import Html.Attributes as Attr exposing (class)
+import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import Protobuf.Types.Int64 exposing (toInts)
-import Spec.Markup exposing (log)
-import Types.DateType as DateType exposing (DateTime(..))
-import UInt64 exposing (UInt64)
-import UInt64.Digits exposing (Digits)
-import Url exposing (Protocol(..), Url)
+import UInt64
 import Utils.MyUtils as MyUtils
 
 
@@ -194,17 +184,26 @@ primaryAddressView : Model -> Html Msg
 primaryAddressView model =
     Html.div [ Attr.id "primaryaddress", Attr.class "address-container" ]
         [ MyUtils.infoBtn
-            (if model.isAddressVisible then "Hide" else "Show")
+            (if model.isAddressVisible then
+                "Hide"
+
+             else
+                "Show"
+            )
             ToggleVisibility
         , Html.div [ Attr.class "address-text" ]
             [ Html.span [ Attr.class "address-label" ] [ Html.text "Primary address: " ]
             , Html.span [ Attr.class "address-value" ]
-                [ Html.text (if model.isAddressVisible then model.primaryaddress else Constants.blankAddress) ]
+                [ Html.text
+                    (if model.isAddressVisible then
+                        model.primaryaddress
+
+                     else
+                        Constants.blankAddress
+                    )
+                ]
             ]
         ]
-
-
-
 
 
 xmrBalView : Model -> Html Msg

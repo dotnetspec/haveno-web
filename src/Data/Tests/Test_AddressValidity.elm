@@ -1,12 +1,12 @@
-module Data.Tests.Test_AddressValidity exposing (..)
+module Data.Tests.Test_AddressValidity exposing (alphanumericChar, alphanumericString, fuzzTestValidXMRAddressParser, parseValidXMRAddressKey, simpleTestValidXMRAddress, tests)
 
 import Char exposing (isAlphaNum)
 import Data.AddressValidity exposing (validXMRAddressParser)
 import Expect
+import Extras.TestData as TestData
 import Fuzz exposing (Fuzzer)
 import Parser exposing (run)
 import Test exposing (..)
-import Extras.TestData as TestData
 
 
 tests : Test

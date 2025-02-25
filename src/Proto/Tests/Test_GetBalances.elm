@@ -1,14 +1,10 @@
-module Proto.Tests.Test_GetBalances exposing (..)
+module Proto.Tests.Test_GetBalances exposing (gotXmrBalance, testEncodeGetBalancesReply)
 
-import Bytes exposing (Bytes)
 import Expect
-import Extras.TestData exposing (getBalancesEncodedResponse, encodeGrpcMessage, successfullBalancesFetch)
-import Fuzz exposing (Fuzzer)
-import Parser exposing (run)
-import Proto.Io.Haveno.Protobuffer as Protobuf exposing (GetBalancesReply, decodeGetBalancesReply, encodeGetBalancesReply)
+import Extras.TestData exposing (getBalancesEncodedResponse)
+import Proto.Io.Haveno.Protobuffer as Protobuf
 import Protobuf.Decode as Decode
-import Protobuf.Encode as Encode
-import Protobuf.Types.Int64 as Int64 exposing (Int64, fromInts)
+import Protobuf.Types.Int64 as Int64
 import Test exposing (..)
 
 

@@ -20,13 +20,11 @@ import Framework.Color as Color
 import Framework.Grid as Grid
 import Framework.Heading as Heading
 import Framework.Input as Input
-import Grpc exposing (..)
 import Html exposing (Html, div, section, text)
 import Html.Attributes as Attr exposing (class, id)
 import Http exposing (..)
 import Json.Decode as D exposing (..)
 import Json.Decode.Pipeline exposing (optional, required)
-import Json.Encode as E exposing (..)
 import Maybe exposing (withDefault)
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
@@ -116,7 +114,6 @@ type Msg
 
 
 
-
 -- NAV: Update
 
 
@@ -126,8 +123,6 @@ update msg model =
         {- -- NOTE: This was originally setup to work with an Http Result (branch on OK and Err)
            but we're just handling the initialModel - not really doing much
         -}
-        
-
         GotInitialModel newModel ->
             ( { newModel | pagetitle = model.pagetitle }, Cmd.none )
 
@@ -194,7 +189,6 @@ view model =
             [ Element.el Heading.h1 <|
                 Element.text "Dashboard"
             , Element.text "\n"
-           
             , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "versiondisplay") ]
                 (Element.text ("Your version is: " ++ model.version))
             , Element.text "\n"
