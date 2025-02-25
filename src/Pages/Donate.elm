@@ -220,8 +220,8 @@ gotAvailableBalances =
     Grpc.toCmd GotBalances grpcRequest
 
 
-gotNewPrimaryAddress : Cmd Msg
-gotNewPrimaryAddress =
+gotPrimaryAddress : Cmd Msg
+gotPrimaryAddress =
     let
         grpcRequest =
             Grpc.new Wallets.getXmrPrimaryAddress Protobuf.defaultGetXmrPrimaryAddressRequest

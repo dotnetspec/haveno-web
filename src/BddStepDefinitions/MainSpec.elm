@@ -66,21 +66,31 @@ runSpecTests =
                         { onUrlRequest = Main.ClickedLink
                         , onUrlChange = Main.ChangedUrl
                         }
-                    |> Stub.serve [ TestData.successfullVersionFetch ]
+                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.successfullVersionFetch, TestData.successfullBalancesFetch   ]
+                   
+                    
+
+
                 )
-                {- |> Spec.when "we log the http requests"
-                   [ Spec.Http.logRequests
-                   ]
-                -}
+                
+               
                 |> Spec.observeThat
-                    [ it "should display a message indicating whether the connection to the Haveno API was successful or not"
+                    [ it "a. primaryaddress obtained"
+                        (Observer.observeModel .primaryaddress
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    TestData.primaryAddress
+                                )
+                        )
+                        ,
+                        it "should display a message indicating whether the connection to the Haveno API was successful or not"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ Spec.Markup.Selector.id "apiConnectionStatus" ]
+                            << by [ Spec.Markup.Selector.id "connectionStatus" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "✔"
+                                        Claim.isStringContaining 1 "Connected"
                                 )
                         )
                     ]
@@ -97,7 +107,7 @@ runSpecTests =
                         { onUrlRequest = Main.ClickedLink
                         , onUrlChange = Main.ChangedUrl
                         }
-                    |> Stub.serve [ TestData.unsuccessfullVersionFetch ]
+                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.unsuccessfullVersionFetch ]
                 )
                 {- |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
@@ -107,11 +117,11 @@ runSpecTests =
                     [ it "should display a message indicating whether the connection to the Haveno API was successful or not"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ Spec.Markup.Selector.id "apiConnectionStatus" ]
+                            << by [ Spec.Markup.Selector.id "connectionStatus" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
-                                        Claim.isStringContaining 1 "✖"
+                                        Claim.isStringContaining 1 "Haveno node not connected"
                                 )
                         )
                     ]

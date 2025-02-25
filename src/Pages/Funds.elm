@@ -69,7 +69,7 @@ type View
 init : String -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
-    , Cmd.batch [ gotNewPrimaryAddress, gotAvailableBalances ]
+    , Cmd.batch [ gotPrimaryAddress, gotAvailableBalances ]
     )
 
 
@@ -305,8 +305,8 @@ gotAvailableBalances =
     Grpc.toCmd GotBalances grpcRequest
 
 
-gotNewPrimaryAddress : Cmd Msg
-gotNewPrimaryAddress =
+gotPrimaryAddress : Cmd Msg
+gotPrimaryAddress =
     let
         grpcRequest =
             Grpc.new Wallets.getXmrPrimaryAddress Protobuf.defaultGetXmrPrimaryAddressRequest

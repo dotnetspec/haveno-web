@@ -41,6 +41,8 @@ import Types.DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 import Url.Parser exposing ((</>), (<?>), oneOf, s)
 import Url.Parser.Query as Query exposing (..)
+import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
+import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 
 
 placeholderUrl =
@@ -100,17 +102,19 @@ init flag _ key =
             , zone = Nothing -- Replace with the actual time zone if available
             , errors = []
 
-            -- REVIEW: Should it be impossible to nav without hw device connection?
-            -- HACK: Making these next 2 True, so we can get to the wallet page, fails 10 tests:
-            , isXMRWalletConnected = False
+            
+           
             , isApiConnected = False
             , version = "No Haveno version available"
             , currentJsMessage = ""
             , initialized = False
             , isMenuOpen = False
-            }
-    in
-    updateUrl urlWithDashboardPath updatedModel
+            , balances = Just Protobuf.defaultBalancesInfo
+   
+            , primaryaddress = ""
+                    }
+            in
+            updateUrl urlWithDashboardPath updatedModel
 
 
 
@@ -128,12 +132,13 @@ type alias Model =
     , time : Time.Posix
     , zone : Maybe Time.Zone
     , errors : List String
-    , isXMRWalletConnected : Bool
     , isApiConnected : Bool
     , version : String
     , currentJsMessage : String
     , initialized : Bool
     , isMenuOpen : Bool
+    , balances : Maybe Protobuf.BalancesInfo
+    , primaryaddress : String
     }
 
 
@@ -204,6 +209,8 @@ type Msg
     | RetryHavenoConnection
     | SetCustomMoneroNode String
     | ApplyCustomMoneroNode String
+    | GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
+    | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
 
 
 
@@ -217,6 +224,20 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        GotXmrPrimaryAddress (Ok primaryAddresponse) ->
+            ( { model | primaryaddress = primaryAddresponse.primaryAddress}, Cmd.none )
+
+        GotXmrPrimaryAddress (Err error) ->
+            ( model, Cmd.none )
+
+        
+
+        GotBalances (Ok response) ->
+            ( { model | balances = response.balances }, Cmd.none )
+
+        GotBalances (Err error) ->
+            ( model, Cmd.none )
+
         ClickedLink urlRequest ->
             case urlRequest of
                 Browser.External href ->
@@ -257,7 +278,7 @@ update msg model =
             ( { model | initialized = True }, Cmd.none )
 
         RetryWalletConnection ->
-            ( { model | isXMRWalletConnected = False }, Cmd.none )
+            ( model, Cmd.none )
 
         -- Replace with actual retry logic
         RetryHavenoConnection ->
@@ -269,7 +290,7 @@ update msg model =
 
         -- Store the input somewhere if needed
         ApplyCustomMoneroNode node ->
-            ( { model | isXMRWalletConnected = True }, Cmd.none )
+            ( model, Cmd.none )
 
         -- Assume success after applying
         -- NOTE: GotVersion also used as an API Connection indicator
@@ -492,7 +513,7 @@ view model =
                             { moneroNode = "default.node.address:18081"
                             , customMoneroNode = ""
                             , havenoConnected = model.isApiConnected
-                            , walletConnected = model.isXMRWalletConnected
+                            , walletConnected = isXMRWalletConnected model
                             , retryingWallet = False
                             , retryingHaveno = False
                             , connectionAttempts = 0
@@ -516,11 +537,7 @@ view model =
     }
 
 
-indicatorContainer : Model -> Html msg
-indicatorContainer model =
-    div []
-        [ apiConnectionStatusIndicator model
-        ]
+
 
 
 
@@ -771,7 +788,7 @@ toDashboard model ( dashboard, cmd ) =
     ( { model | page = DashboardPage dashboard }
       -- NOTE: Cmd.map is a way to manipulate the result of a command
       -- WARN: sendMessageToJs "msgFromElm" is redundant here but if it isn't actually used somewhere the port won't be recognized on document load
-    , Cmd.batch [ Cmd.map GotDashboardMsg cmd, sendVersionRequest Protobuf.defaultGetVersionRequest, Task.perform AdjustTimeZone Time.here, sendMessageToJs "msgFromElm" ]
+    , Cmd.batch [ Cmd.map GotDashboardMsg cmd, sendVersionRequest Protobuf.defaultGetVersionRequest, gotAvailableBalances, gotPrimaryAddress , Task.perform AdjustTimeZone Time.here, sendMessageToJs "msgFromElm" ]
     )
 
 
@@ -882,17 +899,47 @@ sendVersionRequest request =
     in
     Grpc.toCmd GotVersion grpcRequest
 
+gotAvailableBalances : Cmd Msg
+gotAvailableBalances =
+    let
+        grpcRequest =
+            Grpc.new Wallets.getBalances Protobuf.defaultGetBalancesRequest
+                |> Grpc.addHeader "password" "apitest"
+                -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
+                |> Grpc.setHost "http://localhost:8080"
+    in
+    Grpc.toCmd GotBalances grpcRequest
+
+
+gotPrimaryAddress : Cmd Msg
+gotPrimaryAddress =
+    let
+        grpcRequest =
+            Grpc.new Wallets.getXmrPrimaryAddress Protobuf.defaultGetXmrPrimaryAddressRequest
+                |> Grpc.addHeader "password" "apitest"
+                -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
+                |> Grpc.setHost "http://localhost:8080"
+    in
+    Grpc.toCmd GotXmrPrimaryAddress grpcRequest
+
 
 
 -- NAV: Helper functions
 
+isXMRWalletConnected : Model -> Bool
+isXMRWalletConnected model = 
+    if model.primaryaddress == "" then
+        True
+    else
+        False
+
 
 connectionStatusView : Model -> Html Msg
 connectionStatusView model =
-    div [ class "connection-status" ]
+    div [ class "connection-status", Attr.id "connectionStatus" ]
         [ div
             [ class
-                (if model.isXMRWalletConnected && model.isApiConnected then
+                (if (not <| isXMRWalletConnected model) && model.isApiConnected then
                     "status-dot green"
 
                  else
@@ -901,10 +948,10 @@ connectionStatusView model =
             ]
             []
         , text <|
-            if model.isXMRWalletConnected && model.isApiConnected then
+            if (not <| isXMRWalletConnected model) && model.isApiConnected then
                 "Connected"
 
-            else if not model.isXMRWalletConnected then
+            else if (isXMRWalletConnected model) then
                 "Wallet not connected"
 
             else
@@ -1096,60 +1143,10 @@ navLinks page =
 -- NAV: Main Persistent
 
 
-isXMRWalletConnectedIndicator : Model -> Html msg
-isXMRWalletConnectedIndicator model =
-    span []
-        [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
-            [ span []
-                [ span
-                    [ Attr.class
-                        (if model.isXMRWalletConnected then
-                            "indicator green"
-
-                         else
-                            "indicator red"
-                        )
-                    , Attr.id "xmrwalletconnection"
-                    ]
-                    [ text
-                        (if model.isXMRWalletConnected then
-                            "✔"
-
-                         else
-                            "✖"
-                        )
-                    ]
-                ]
-            ]
-        ]
 
 
-apiConnectionStatusIndicator : Model -> Html msg
-apiConnectionStatusIndicator model =
-    span []
-        [ div [ Attr.class "indicator", Attr.style "text-align" "center" ]
-            [ span []
-                [ span
-                    [ Attr.class
-                        (if model.isApiConnected then
-                            "indicator green"
 
-                         else
-                            "indicator red"
-                        )
-                    , Attr.id "apiConnectionStatus"
-                    ]
-                    [ text
-                        (if model.isApiConnected then
-                            "✔"
 
-                         else
-                            "✖"
-                        )
-                    ]
-                ]
-            ]
-        ]
 
 
 footerContent : Model -> Html msg
