@@ -12,13 +12,8 @@ gotAvailableBalances =
         |> Grpc.setHost "http://localhost:8080"
 
 
-
---Grpc.toCmd GotXmrPrimaryAddress grpcRequest
-
-
 gotPrimaryAddress : Grpc.RpcRequest Protobuf.GetXmrPrimaryAddressRequest Protobuf.GetXmrPrimaryAddressReply
 gotPrimaryAddress =
     Grpc.new Wallets.getXmrPrimaryAddress Protobuf.defaultGetXmrPrimaryAddressRequest
         |> Grpc.addHeader "password" "apitest"
-        -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
         |> Grpc.setHost "http://localhost:8080"
