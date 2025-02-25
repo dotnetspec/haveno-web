@@ -1,5 +1,5 @@
-module Pages.Blank exposing (..)
-import Buttons.Default exposing (defaultButton)
+module Pages.Blank exposing (Blank(..), Model, Msg(..), Status(..), content, init, initialModel, update, view)
+
 import Html exposing (..)
 import Html.Attributes as Attr exposing (..)
 
@@ -18,9 +18,7 @@ type Blank
 
 
 type Status
-    = Loading
-    | Loaded
-    | Errored
+    = Loaded
 
 
 initialModel : Model
@@ -57,6 +55,7 @@ update msg model =
 -- as we won't use 'title' etc. cos we have our own formatting
 -- NAV: View
 
+
 view : Model -> Html msg
 view _ =
     content
@@ -68,14 +67,13 @@ content =
         [ class "section-background"
         , Attr.id "page"
         ]
-        [ {- -- NOTE: Need an extra div here to set the class, to center the button -} 
-        -- NOTE: This is a placeholder for the Blank page
-        {- h1 [ classList [( "text-center", True), ( "testimonial", True)] ] [ Html.text "Blank" ]
-        , h4
-            [ class "text-center" ]
-            [ text "Blank your crypto here" 
-            {- -- HACK:style on the button  -}
-            , div[class "text-center", style "margin-top" "1rem"][defaultButton "hardware"] ]
+        [{- -- NOTE: Need an extra div here to set the class, to center the button -}
+         -- NOTE: This is a placeholder for the Blank page
+         {- h1 [ classList [( "text-center", True), ( "testimonial", True)] ] [ Html.text "Blank" ]
+            , h4
+                [ class "text-center" ]
+                [ text "Blank your crypto here"
+                {- -- HACK:style on the button  -}
+                , div[class "text-center", style "margin-top" "1rem"][defaultButton "hardware"] ]
          -}
-        
         ]

@@ -1,13 +1,6 @@
 module Types.Msg exposing (Msg(..))
 
-import Grpc
-import Proto.Io.Haveno.Protobuffer as Protobuf
 
 type Msg
-    = GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
-    | RequestBalances
-    | RetryWalletConnection
-    | RetryHavenoConnection
+    = RetryWalletConnection
     | SetCustomMoneroNode String
-    | ApplyCustomMoneroNode String
-    | NoOp

@@ -5,11 +5,10 @@ import BddStepDefinitions.Runner
 import Pages.Connect
 import Spec
 import Spec.Claim
-import Spec.Observer
-import Spec.Setup
-import Url exposing (Protocol(..))
 import Spec.Markup
 import Spec.Markup.Selector
+import Spec.Observer
+import Spec.Setup
 
 
 runSpecTests : Spec.Spec Pages.Connect.Model Pages.Connect.Msg

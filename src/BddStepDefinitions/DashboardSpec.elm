@@ -1,16 +1,13 @@
 module BddStepDefinitions.DashboardSpec exposing (main)
 
-import BddStepDefinitions.Runner exposing (browserProgram , pick, skip)
+import BddStepDefinitions.Runner
 import Pages.Dashboard
 import Spec exposing (Flags, Spec, describe, given, it, scenario)
 import Spec.Claim as Claim
-import Spec.Command exposing (..)
 import Spec.Http
 import Spec.Markup as Markup
 import Spec.Markup.Selector exposing (..)
 import Spec.Setup as Setup
-import Time exposing (..)
-import Url exposing (Protocol(..))
 
 
 runSpecTests : Spec Pages.Dashboard.Model Pages.Dashboard.Msg
@@ -64,4 +61,4 @@ runSpecTests =
 
 main : Program Flags (Spec.Model Pages.Dashboard.Model Pages.Dashboard.Msg) (Spec.Msg Pages.Dashboard.Msg)
 main =
-    BddStepDefinitions.Runner.browserProgram  [ runSpecTests ]
+    BddStepDefinitions.Runner.browserProgram [ runSpecTests ]

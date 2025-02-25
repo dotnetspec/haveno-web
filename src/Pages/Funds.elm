@@ -1,5 +1,6 @@
 module Pages.Funds exposing (Model, Msg(..), Status(..), View(..), btcBalanceAsString, custodialFundsView, errorView, formatBalance, gotNewSubAddress, init, initialModel, primaryAddressView, reservedOfferBalanceAsString, subAddressView, update, view, xmrAvailableBalanceAsString, xmrBalView)
 
+import Comms.CustomGrpc
 import Extras.Constants as Constants exposing (xmrConversionConstant)
 import Grpc
 import Html exposing (Html, div, section)
@@ -9,7 +10,6 @@ import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import Protobuf.Types.Int64 exposing (toInts)
 import UInt64
 import Utils.MyUtils as MyUtils
-import Comms.CustomGrpc
 
 
 
@@ -49,7 +49,6 @@ type Status
 
 type View
     = FundsView
-    | ErrorView
     | SubAddressView
 
 
@@ -60,7 +59,7 @@ type View
 init : String -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
-    , Cmd.batch [ Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress , Comms.CustomGrpc.gotAvailableBalances |> Grpc.toCmd GotBalances ]
+    , Cmd.batch [ Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress, Comms.CustomGrpc.gotAvailableBalances |> Grpc.toCmd GotBalances ]
     )
 
 
@@ -73,7 +72,6 @@ type Msg
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | ClickedGotNewSubaddress
-    | ChangeView View
     | ToggleVisibility
 
 
@@ -107,9 +105,6 @@ update msg model =
 
         GotBalances (Err error) ->
             ( { model | status = Errored }, Cmd.none )
-
-        ChangeView uiView ->
-            ( { model | currentView = uiView }, Cmd.none )
 
 
 
@@ -151,9 +146,6 @@ view model =
 
                             SubAddressView ->
                                 subAddressView model.subaddress
-
-                            ErrorView ->
-                                errorView
                         ]
             , div
                 [ class "split-col"
@@ -291,21 +283,17 @@ reservedOfferBalanceAsString balInfo =
 
 
 -- NAV: gRPC calls
-
-
 {- gotAvailableBalances : Cmd Msg
-gotAvailableBalances =
-    let
-        grpcRequest =
-            Grpc.new Wallets.getBalances Protobuf.defaultGetBalancesRequest
-                |> Grpc.addHeader "password" "apitest"
-                -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
-                |> Grpc.setHost "http://localhost:8080"
-    in
-    Grpc.toCmd GotBalances grpcRequest -}
-
-
-
+   gotAvailableBalances =
+       let
+           grpcRequest =
+               Grpc.new Wallets.getBalances Protobuf.defaultGetBalancesRequest
+                   |> Grpc.addHeader "password" "apitest"
+                   -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
+                   |> Grpc.setHost "http://localhost:8080"
+       in
+       Grpc.toCmd GotBalances grpcRequest
+-}
 
 
 gotNewSubAddress : Cmd Msg

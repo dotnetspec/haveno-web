@@ -1,4 +1,4 @@
-port module Main exposing (..)
+port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, gotPrimaryAddress, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setDashboardHavenoVersion, showVideoOrBanner, subscriptions, toAccounts, toBlank, toConnect, toDashboard, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- Main loads Blank initially.
@@ -7,12 +7,11 @@ port module Main exposing (..)
 -- just import Url
 
 import Browser
-import Browser.Navigation as Nav exposing (..)
+import Browser.Navigation as Nav
 import Data.AddressValidity as R
-
-import Erl exposing (..)
+import Erl
 import Extras.TestData exposing (placeholderUrl)
-import Grpc exposing (..)
+import Grpc
 import Html
 import Html.Attributes as Attr
 import Html.Events exposing (onClick)
@@ -21,7 +20,7 @@ import Json.Encode as JE
 import Pages.Accounts
 import Pages.Blank
 import Pages.Buy
-import Pages.Connect exposing (Model, Msg(..), init, update, view)
+import Pages.Connect exposing (Model)
 import Pages.Dashboard
 import Pages.Donate
 import Pages.Funds
@@ -35,10 +34,10 @@ import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import Task
 import Time
-import Types.DateType exposing (DateTime(..))
+import Types.DateType exposing (DateTime)
 import Url exposing (Protocol(..), Url)
-import Url.Parser exposing ((</>), (<?>), oneOf, s)
-import Url.Parser.Query as Query exposing (..)
+import Url.Parser exposing (oneOf, s)
+import Url.Parser.Query as Query
 
 
 
@@ -176,7 +175,6 @@ type Msg
       -- NOTE: the type of GotDashboardMsg is (Pages.Dashboard.Msg -> Msg)
     | GotDashboardMsg Pages.Dashboard.Msg
     | GotSellMsg Pages.Sell.Msg
-    | GotBlankMsg Pages.Blank.Msg
     | GotPortfolioMsg Pages.Portfolio.Msg
     | GotFundsMsg Pages.Funds.Msg
     | GotSupportMsg Pages.Support.Msg
@@ -186,17 +184,10 @@ type Msg
     | GotDonateMsg Pages.Donate.Msg
     | GotConnectMsg Pages.Connect.Msg
     | ChangedUrl Url.Url
-    | Tick Time.Posix
     | AdjustTimeZone Time.Zone
     | Recv JD.Value
-    | NoOp
     | GotVersion (Result Grpc.Error GetVersionReply)
-    | InitComplete
     | ToggleMenu
-    | RetryWalletConnection
-    | RetryHavenoConnection
-    | SetCustomMoneroNode String
-    | ApplyCustomMoneroNode String
     | GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
 
@@ -260,24 +251,6 @@ update msg model =
         ToggleMenu ->
             ( { model | isMenuOpen = not model.isMenuOpen }, Cmd.none )
 
-        InitComplete ->
-            ( { model | initialized = True }, Cmd.none )
-
-        RetryWalletConnection ->
-            ( model, Cmd.none )
-
-        -- Replace with actual retry logic
-        RetryHavenoConnection ->
-            ( { model | isApiConnected = False }, Cmd.none )
-
-        -- Replace with actual retry logic
-        SetCustomMoneroNode node ->
-            ( model, Cmd.none )
-
-        -- Store the input somewhere if needed
-        ApplyCustomMoneroNode node ->
-            ( model, Cmd.none )
-
         -- Assume success after applying
         -- NOTE: GotVersion also used as an API Connection indicator
         GotVersion (Ok versionResp) ->
@@ -305,13 +278,6 @@ update msg model =
         Recv rawJsonMessage ->
             ( model, Cmd.none )
 
-        Tick newTime ->
-            ( { model
-                | time = newTime
-              }
-            , Task.perform AdjustTimeZone Time.here
-            )
-
         AdjustTimeZone newZone ->
             ( { model | zone = Just newZone }
             , Cmd.none
@@ -333,14 +299,6 @@ update msg model =
             case model.page of
                 SellPage sell ->
                     toSell model (Pages.Sell.update sellMsg sell)
-
-                _ ->
-                    ( model, Cmd.none )
-
-        GotBlankMsg blankMsg ->
-            case model.page of
-                BlankPage blank ->
-                    toBlank model (Pages.Blank.update blankMsg blank)
 
                 _ ->
                     ( model, Cmd.none )
@@ -418,15 +376,6 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        -- NOTE: GotWalletMsg is triggered by toHardware, which is triggered by updateUrl
-        -- which is triggered by init. updateUrl is sent the url and uses the parser to parse it.
-        -- The parser outputs the Wallet page so that the case in updateUrl can branch on Wallet.
-        -- Wallet.init can then be run to init the page and the page can, through toHardware, be added
-        -- to the model in Main (as the current page).
-        -- NOTE: Make changes to the Wallet model, cmds etc. in toHardware (more options)
-        NoOp ->
-            ( model, Cmd.none )
-
 
 
 -- NAV: View
@@ -452,10 +401,6 @@ view model =
                            -- NOTE: Html.map is essential to wrap the Dashboard.elm view and convert Dashboard.Msg into Main.Msg
                         -}
                         |> Html.map GotDashboardMsg
-
-                BlankPage dashboard ->
-                    Pages.Blank.view dashboard
-                        |> Html.map GotBlankMsg
 
                 SellPage dashboard ->
                     Pages.Sell.view dashboard
@@ -548,7 +493,6 @@ type Route
     | BlankRoute
     | AccountsRoute
     | DonateRoute
-    | ConnectRoute
 
 
 
@@ -566,7 +510,6 @@ type
     | SupportPage Pages.Support.Model
     | BuyPage Pages.Buy.Model
     | MarketPage Pages.Market.Model
-    | BlankPage Pages.Blank.Model
     | AccountsPage Pages.Accounts.Model
     | DonatePage Pages.Donate.Model
     | ConnectPage Pages.Connect.Model
@@ -730,10 +673,6 @@ updateUrl url model =
         Just DonateRoute ->
             Pages.Donate.init ()
                 |> toDonate model
-
-        Just ConnectRoute ->
-            Pages.Connect.init ()
-                |> toConnect model
 
         Nothing ->
             Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
@@ -1141,7 +1080,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.4.43" ]
+                , Html.p [] [ Html.text "Version 0.4.44" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text
@@ -1174,9 +1113,6 @@ isActive { link, page } =
 
         ( SellRoute, _ ) ->
             False
-
-        ( BlankRoute, BlankPage _ ) ->
-            True
 
         ( BlankRoute, _ ) ->
             False
@@ -1221,12 +1157,6 @@ isActive { link, page } =
             True
 
         ( DonateRoute, _ ) ->
-            False
-
-        ( ConnectRoute, ConnectPage _ ) ->
-            True
-
-        ( ConnectRoute, _ ) ->
             False
 
 

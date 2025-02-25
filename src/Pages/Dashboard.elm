@@ -6,32 +6,18 @@ module Pages.Dashboard exposing (Model, Msg, init, initialModel, update, view)
 --import Html exposing (..)
 --import Html.Attributes as Attr exposing (..)
 
-import Buttons.Default exposing (defaultButton)
 import Comms.CustomGrpc
-import Debug exposing (log)
-import Element exposing (Element, el)
-import Element.Font as Font
-import Element.Input as Input
+import Element
 import Element.Region as Region
-import Extras.Constants as Consts
 import Framework
-import Framework.Button as Button
-import Framework.Card as Card
-import Framework.Color as Color
 import Framework.Grid as Grid
 import Framework.Heading as Heading
-import Framework.Input as Input
 import Grpc
-import Html exposing (Html, div, section, text)
-import Html.Attributes as Attr exposing (class, id)
+import Html exposing (Html)
+import Html.Attributes as Attr
 import Http exposing (..)
-import Json.Decode as D exposing (..)
-import Json.Decode.Pipeline exposing (optional, required)
-import Maybe exposing (withDefault)
 import Proto.Io.Haveno.Protobuffer as Protobuf
-import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
-import Spec.Markup exposing (log)
-import Types.DateType as DateType exposing (DateTime(..))
+import Types.DateType exposing (DateTime)
 import Url exposing (Protocol(..), Url)
 
 
@@ -64,7 +50,7 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { status = Loaded
+    { status = Loading
     , pagetitle = "Dashboard"
     , root = Dashboard { name = "Loading..." }
     , balances = Nothing
@@ -89,8 +75,6 @@ type Status
 
 
 
--- | Loaded
--- | Errored
 {- -- NOTE: by calling (from Main) Tuple.first (Dashboard.init ()) , we’ll end up with
    the Dashboard.Model value we seek. () means we don't really care what goes in, we just
    want the output (in this case the model (slightly modified))
@@ -110,6 +94,7 @@ init fromMainToDashboard =
     ( newModel
     , Cmd.batch [ Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress, Comms.CustomGrpc.gotAvailableBalances |> Grpc.toCmd BalanceResponse ]
     )
+
 
 type Msg
     = BalanceResponse (Result Grpc.Error Protobuf.GetBalancesReply)
@@ -164,14 +149,6 @@ view model =
 -- NAV: Type Aliases
 
 
-type alias SuccessfullBalanceResult =
-    { deployment_model : String
-    , location : String
-    , hostname : String
-    , ws_hostname : String
-    }
-
-
 type alias FromMainToDashboard =
     { time : Maybe DateTime
     , havenoVersion : String
@@ -195,17 +172,3 @@ type alias HavenoAPKHttpRequest =
 -- Function to create the GetVersionRequest
 -- Function to make the HTTP request
 -- NAV: Json Decoders
-
-
-versionDecoder : Decoder String
-versionDecoder =
-    field "version" D.string
-
-
-balanceDecoder : Decoder SuccessfullBalanceResult
-balanceDecoder =
-    D.map4 SuccessfullBalanceResult
-        (field "deployment_model" D.string)
-        (field "location" D.string)
-        (field "hostname" D.string)
-        (field "ws_hostname" D.string)

@@ -39,14 +39,12 @@ initialModel =
 
 
 type Status
-    = Loading
-    | Loaded
+    = Loaded
     | Errored
 
 
 type View
     = DonateView
-    | ErrorView
     | ManageDonateView
 
 
@@ -70,8 +68,6 @@ type Msg
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | AddNewAccount
-    | ChangeView View
-    | ToggleVisibility
 
 
 
@@ -81,9 +77,6 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ToggleVisibility ->
-            ( { model | isAddressVisible = not model.isAddressVisible }, Cmd.none )
-
         AddNewAccount ->
             ( { model | currentView = ManageDonateView }, Cmd.none )
 
@@ -105,9 +98,6 @@ update msg model =
         GotBalances (Err error) ->
             ( { model | status = Errored }, Cmd.none )
 
-        ChangeView uiView ->
-            ( { model | currentView = uiView }, Cmd.none )
-
 
 
 -- NAV: View
@@ -126,15 +116,6 @@ view model =
                 ]
                 []
             , case model.status of
-                Loading ->
-                    div
-                        []
-                        [ div
-                            [ class "spinner"
-                            ]
-                            []
-                        ]
-
                 Errored ->
                     div [ class "split-col" ] [ errorView ]
 
@@ -147,9 +128,6 @@ view model =
                                 manageDonateView
 
                             ManageDonateView ->
-                                manageDonateView
-
-                            ErrorView ->
                                 manageDonateView
                         ]
             , div

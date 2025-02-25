@@ -2,48 +2,19 @@ module BddStepDefinitions.FundsSpec exposing (main)
 
 import BddStepDefinitions.Extra exposing (equals)
 import BddStepDefinitions.Runner
-
-import Browser.Navigation
-import Expect
 import Extras.TestData as TestData
 import Grpc
-import Html
-import Json.Encode as E
-import Pages.Dashboard
 import Pages.Funds as Funds
-import Proto.Io.Haveno.Protobuffer as Protobuf exposing (BalancesInfo)
-import Protobuf.Types.Int64
-import Spec exposing (describe, scenario, given, when, it)
+import Proto.Io.Haveno.Protobuffer as Protobuf
+import Spec exposing (given, it, scenario, when)
 import Spec.Claim as Claim
 import Spec.Command
 import Spec.Http
 import Spec.Http.Stub as Stub
 import Spec.Markup as Markup
-import Spec.Markup.Selector exposing (id, by)
-import Spec.Navigator
+import Spec.Markup.Selector exposing (by, id)
 import Spec.Observer as Observer
-import Spec.Port
-import Spec.Report
 import Spec.Setup
-import Spec.Step
-import Url exposing (Protocol(..))
-
-
-gotXmrBalance : Maybe BalancesInfo -> ( Int, Int )
-gotXmrBalance balances =
-    case balances of
-        Just balancesInfo ->
-            case balancesInfo.xmr of
-                Just xmrrec ->
-                    Protobuf.Types.Int64.toInts xmrrec.balance
-
-                Nothing ->
-                    ( 0, 0 )
-
-        _ ->
-            ( 0, 0 )
-
-
 
 
 
@@ -66,7 +37,6 @@ runSpecTests =
                 )
                 |> when "the user shows the hidden details"
                     [ Spec.Command.send (Spec.Command.fake <| Funds.ToggleVisibility) ]
-                
                 |> Spec.when "we log the http requests"
                     [ Spec.Http.logRequests
                     ]
@@ -148,13 +118,15 @@ runSpecTests =
                     |> Spec.Setup.withView Funds.view
                     |> Spec.Setup.withUpdate Funds.update
                     |> Spec.Setup.withLocation TestData.placeholderUrl
-                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch  ]
+                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
                 {- |> when "the user shows the hidden details"
-                    [ Spec.Command.send (Spec.Command.fake <| Funds.ToggleVisibility) ] -}
+                   [ Spec.Command.send (Spec.Command.fake <| Funds.ToggleVisibility) ]
+                -}
                 {- |> Spec.when "we log the http requests"
-                    [ Spec.Http.logRequests
-                    ] -}
+                   [ Spec.Http.logRequests
+                   ]
+                -}
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
@@ -542,138 +514,14 @@ getSubAddrInitModel =
 
 
 -- JSON-like structure for creating a new transaction
-
-
-jsonCreateTransaction : E.Value
-jsonCreateTransaction =
-    E.object
-        [ ( "action", E.string "createTransaction" )
-        , ( "recipientAddress", E.string "45CFCVh6w2p7A...." ) -- The recipient's Monero address
-        , ( "amount", E.float 0.5 ) -- Amount in XMR
-        , ( "fee", E.float 0.001 ) -- Transaction fee in XMR
-        , ( "paymentId", E.string "abcd1234" ) -- Optional: Monero payment ID
-        , ( "priority", E.int 2 ) -- Optional: Priority of the transaction
-        ]
-
-
-
 -- JSON-like structure for navigating to the Funds page
-
-
-jsonNavigateToFundsPage : E.Value
-jsonNavigateToFundsPage =
-    E.object
-        [ ( "action", E.string "navigateToFundsPage" ) ]
-
-
-
 -- Action type to navigate
 -- JSON-like structure for requesting a new Monero subaddress
-
-
-jsonRequestNewSubaddress : E.Value
-jsonRequestNewSubaddress =
-    E.object
-        [ ( "action", E.string "requestNewSubaddress" ) ]
-
-
-
 -- Action type to request a new subaddress
 -- JSON-like structure for requesting the primary Monero address
-
-
-jsonRequestPrimaryAddress : E.Value
-jsonRequestPrimaryAddress =
-    E.object
-        [ ( "action", E.string "requestPrimaryAddress" ) ]
-
-
-
 -- Action type to request the primary Monero address
-
-
-jsonRequestAddressBalance : String -> E.Value
-jsonRequestAddressBalance address =
-    E.object
-        [ ( "action", E.string "requestAddressBalance" ) -- Action type to request the balance
-        , ( "address", E.string address ) -- The address for which balance is requested
-        ]
-
-
-jsonRequestFundingAddresses : E.Value
-jsonRequestFundingAddresses =
-    E.object
-        [ ( "action", E.string "requestFundingAddresses" ) -- Action type for requesting funding addresses
-        ]
-
-
-jsonUnlockWalletRequest : E.Value
-jsonUnlockWalletRequest =
-    E.object
-        [ ( "action", E.string "unlockWallet" ) -- Action type for unlocking the wallet
-        ]
-
-
-jsonLockWalletRequest : E.Value
-jsonLockWalletRequest =
-    E.object
-        [ ( "action", E.string "lockWallet" ) -- Action type for locking the wallet
-        ]
-
-
-jsonSetWalletPassword : E.Value
-jsonSetWalletPassword =
-    E.object
-        [ ( "action", E.string "setWalletPassword" ) -- Action type for setting the wallet password
-        ]
-
-
-jsonRemoveWalletPassword : E.Value
-jsonRemoveWalletPassword =
-    E.object
-        [ ( "action", E.string "removeWalletPassword" ) -- Action type for removing the wallet password
-        ]
-
-
-jsonRelayTransaction : E.Value
-jsonRelayTransaction =
-    E.object
-        [ ( "action", E.string "relayXmrTx" ) -- Action type for relaying a transaction
-        ]
-
-
-jsonTransactionInitiated : E.Value
-jsonTransactionInitiated =
-    E.object
-        [ ( "transactionStatus", E.string "initiated" ) ]
-
-
-jsonTransactionPending : E.Value
-jsonTransactionPending =
-    E.object
-        [ ( "pendingBalance", E.float 20.0 )
-        ]
-
-
-jsonExceedsAvailableBalance : E.Value
-jsonExceedsAvailableBalance =
-    E.object
-        [ ( "error", E.string "Insufficient funds" ) ]
-
-
-jsonNoWalletConnected : E.Value
-jsonNoWalletConnected =
-    E.object
-        [ ( "walletStatus", E.string "No Wallet Connected" ) ]
-
-
-jsonDepositSuccess : E.Value
-jsonDepositSuccess =
-    E.object
-        [ ( "availableBalance", E.float 200.0 )
-        ]
 
 
 main : Program Spec.Flags (Spec.Model Funds.Model Funds.Msg) (Spec.Msg Funds.Msg)
 main =
-    BddStepDefinitions.Runner.browserProgram  [ runSpecTests ]
+    BddStepDefinitions.Runner.browserProgram [ runSpecTests ]

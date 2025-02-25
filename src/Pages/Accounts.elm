@@ -1,24 +1,13 @@
-module Pages.Accounts exposing (..)
+module Pages.Accounts exposing (Model, Msg(..), Status(..), View(..), custodialAccountsView, errorView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, update, view)
 
-import Buttons.Default exposing (defaultButton)
-import Debug exposing (log)
-import Extras.Constants as Constants exposing (xmrConversionConstant)
-import Grpc exposing (..)
+import Extras.Constants exposing (xmrConversionConstant)
+import Grpc
 import Html exposing (Html, div, section, text)
-import Html.Attributes as Attr exposing (class, id)
+import Html.Attributes as Attr exposing (class)
 import Html.Events
-import Http exposing (..)
-import Json.Encode as E exposing (..)
-import Maybe exposing (withDefault)
-import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
+import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
-import Protobuf.Types.Int64 exposing (toInts)
-import Spec.Markup exposing (log)
-import Types.DateType as DateType exposing (DateTime(..))
-import UInt64 exposing (UInt64)
-import UInt64.Digits exposing (Digits)
-import Url exposing (Protocol(..), Url)
-import Utils.MyUtils as MyUtils
+import UInt64
 
 
 
@@ -58,7 +47,6 @@ type Status
 
 type View
     = AccountsView
-    | ErrorView
     | ManageAccountsView
 
 
@@ -82,8 +70,6 @@ type Msg
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | AddNewAccount
-    | ChangeView View
-    | ToggleVisibility
 
 
 
@@ -93,9 +79,6 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ToggleVisibility ->
-            ( { model | isAddressVisible = not model.isAddressVisible }, Cmd.none )
-
         AddNewAccount ->
             ( { model | currentView = ManageAccountsView }, Cmd.none )
 
@@ -116,9 +99,6 @@ update msg model =
 
         GotBalances (Err error) ->
             ( { model | status = Errored }, Cmd.none )
-
-        ChangeView uiView ->
-            ( { model | currentView = uiView }, Cmd.none )
 
 
 
@@ -160,9 +140,6 @@ view model =
 
                             ManageAccountsView ->
                                 manageAccountsView "whatever the new account is"
-
-                            ErrorView ->
-                                errorView
                         ]
             , div
                 [ class "split-col"

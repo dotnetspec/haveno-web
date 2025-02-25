@@ -8,35 +8,20 @@ module BddStepDefinitions.MainSpec exposing (main)
    -- Other modules like WalletSpec are MODULAR tests, limited to the given page alone.
 -}
 
-import BddStepDefinitions.Extra exposing (equals)
 import BddStepDefinitions.Runner
 import Browser
-import Browser.Navigation
-import Expect
 import Extras.TestData as TestData
-import Html
-
-import Json.Encode as E
 import Main
-
-import Pages.Dashboard
 import Pages.Funds as Funds
-import Pages.Sell
-import Proto.Io.Haveno.Protobuffer as Protobuf
-import Protobuf.Types.Int64
-import Spec exposing (describe, scenario, given, when, it)
+import Spec exposing (describe, given, it, scenario, when)
 import Spec.Claim as Claim
 import Spec.Command
-import Spec.Http
 import Spec.Http.Stub as Stub
 import Spec.Markup as Markup
-import Spec.Markup.Selector exposing (id, by)
+import Spec.Markup.Selector exposing (by)
 import Spec.Navigator
 import Spec.Observer
-import Spec.Port
-import Spec.Report
 import Spec.Setup
-import Spec.Step
 import Url exposing (Protocol(..), Url)
 
 
@@ -63,14 +48,8 @@ runSpecTests =
                         { onUrlRequest = Main.ClickedLink
                         , onUrlChange = Main.ChangedUrl
                         }
-                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.successfullVersionFetch, TestData.successfullBalancesFetch   ]
-                   
-                    
-
-
+                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.successfullVersionFetch, TestData.successfullBalancesFetch ]
                 )
-                
-               
                 |> Spec.observeThat
                     [ it "a. primaryaddress obtained"
                         (Spec.Observer.observeModel .primaryaddress
@@ -79,8 +58,7 @@ runSpecTests =
                                     TestData.primaryAddress
                                 )
                         )
-                        ,
-                        it "should display a message indicating whether the connection to the Haveno API was successful or not"
+                    , it "should display a message indicating whether the connection to the Haveno API was successful or not"
                         (Markup.observeElement
                             |> Markup.query
                             << by [ Spec.Markup.Selector.id "connectionStatus" ]
@@ -172,7 +150,6 @@ runSpecTests =
                                         Claim.isStringContaining 1 "1.0.7"
                                 )
                         )
-                   
                     ]
             )
         , --Runner.skip <|
@@ -332,7 +309,7 @@ runSpecTests =
                                            Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
                                    )
                            )
-                      
+
                        ]
                )
         -}
@@ -344,89 +321,8 @@ main =
     -- NOTE: By using the BddStepDefinitions.Runner.browserProgram  function, developers can specify configurations such as how the application's initial state is initialized
     -- , how the view is rendered, how updates are handled, and how subscriptions and browser events are managed during test execution
     --Runner.BddStepDefinitions.Runner.browserProgram  { flags = \_ -> (), init = App.init, update = App.update, subscriptions = App.subscriptions, view = App.view }
-    BddStepDefinitions.Runner.browserProgram  [ runSpecTests ]
+    BddStepDefinitions.Runner.browserProgram [ runSpecTests ]
 
 
 
 -- NAV: Helper functions:
-
-
-jsonNanoSDetected : E.Value
-jsonNanoSDetected =
-    E.object
-        [ ( "operationEventMsg", E.string "nanoS" )
-        ]
-
-
-jsonDeviceNeedsPermission : E.Value
-jsonDeviceNeedsPermission =
-    E.object
-        [ ( "operationEventMsg", E.string "Must be handling a user gesture to show a permission request" )
-        ]
-
-
-jsonXMRWalletClosed : E.Value
-jsonXMRWalletClosed =
-    E.object
-        [ ( "operationEventMsg", E.string "UNKNOWN_APDU" )
-        ]
-
-
-jsonNanoXDetected : E.Value
-jsonNanoXDetected =
-    E.object
-        [ ( "operationEventMsg", E.string "nanoX" )
-        ]
-
-
-jsonNoDeviceDetectedInFirefox : E.Value
-jsonNoDeviceDetectedInFirefox =
-    E.object
-        [ ( "operationEventMsg", E.string "navigator.usb is undefined" )
-        ]
-
-
-noDeviceSelectedInBrowser : E.Value
-noDeviceSelectedInBrowser =
-    E.object
-        [ ( "operationEventMsg", E.string "No device selected" )
-        ]
-
-
-validXMRWalletAddress : E.Value
-validXMRWalletAddress =
-    E.object
-        [ ( "operationEventMsg", E.string TestData.subAddress )
-        ]
-
-
-errorGettingXMRWalletAddress : E.Value
-errorGettingXMRWalletAddress =
-    E.object
-        [ ( "operationEventMsg", E.string "Error getting Monero address" )
-        ]
-
-
-documentToHtml : Browser.Document msg -> Html.Html msg
-documentToHtml document =
-    Html.div [] document.body
-
-
-expectedBalances : Protobuf.BalancesInfo
-expectedBalances =
-    { btc =
-        Just
-            { availableBalance = Protobuf.Types.Int64.fromInts 10000 0
-            , lockedBalance = Protobuf.Types.Int64.fromInts 10000 0
-            , reservedBalance = Protobuf.Types.Int64.fromInts 10000 0
-            , totalAvailableBalance = Protobuf.Types.Int64.fromInts 10000 0
-            }
-    , xmr =
-        Just
-            { availableBalance = Protobuf.Types.Int64.fromInts 10000 0
-            , balance = Protobuf.Types.Int64.fromInts 10000 0
-            , pendingBalance = Protobuf.Types.Int64.fromInts 2000 0
-            , reservedOfferBalance = Protobuf.Types.Int64.fromInts 5000 0
-            , reservedTradeBalance = Protobuf.Types.Int64.fromInts 3000 0
-            }
-    }

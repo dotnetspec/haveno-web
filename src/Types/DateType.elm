@@ -12,7 +12,6 @@ import Time
 
 type DateTime
     = CurrentDateTime Time.Posix Time.Zone
-    | SelectedDateTime Time.Posix Time.Zone
 
 
 convertPosixTimeToCurrentDateTime : Time.Posix -> DateTime

@@ -1,8 +1,8 @@
 module BddStepDefinitions.AccountsSpec exposing (main)
 
 import BddStepDefinitions.Extra exposing (equals)
-import BddStepDefinitions.Runner exposing (browserProgram , pick, skip)
-import Extras.TestData as TestData exposing (testBalanceInfo, placeholderUrl)
+import BddStepDefinitions.Runner
+import Extras.TestData as TestData exposing (placeholderUrl, testBalanceInfo)
 import Grpc
 import Pages.Accounts as Accounts
 import Spec exposing (Flags, Spec, describe, given, it, scenario, when)
@@ -13,7 +13,6 @@ import Spec.Markup as Markup
 import Spec.Markup.Selector exposing (by)
 import Spec.Observer as Observer
 import Spec.Setup
-import Url exposing (Protocol(..))
 
 
 
@@ -153,4 +152,4 @@ runSpecTests =
 
 main : Program Flags (Spec.Model Accounts.Model Accounts.Msg) (Spec.Msg Accounts.Msg)
 main =
-    BddStepDefinitions.Runner.browserProgram  [ runSpecTests ]
+    BddStepDefinitions.Runner.browserProgram [ runSpecTests ]
