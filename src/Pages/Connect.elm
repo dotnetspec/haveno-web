@@ -1,7 +1,7 @@
 module Pages.Connect exposing (Model, Msg, init, update, view)
 
-import Html exposing (Html, a, button, div, h1, input, p, text)
-import Html.Attributes exposing (class, placeholder)
+import Html exposing (Html, a, button, div, h1, h2, input, p, text)
+import Html.Attributes exposing (class, placeholder, id)
 import Html.Events exposing (onClick, onInput)
 
 
@@ -89,7 +89,7 @@ view : Model -> Html Msg
 view model =
     div [ class "connect-page" ]
         [ h1 [] [ text "Connection Issues" ]
-        , p [] [ text "Here you can resolve wallet and Haveno connection issues." ]
+        , h2 [] [ text "Here you can resolve wallet and Haveno connection issues." ]
 
         -- Monero Wallet Status
         , if not model.walletConnected then
@@ -120,7 +120,7 @@ view model =
         -- Haveno Node Status
         , if not model.havenoConnected then
             div []
-                [ p [] [ text "⚠ Haveno Node not connected." ]
+                [ p [id "havenoNodeNotConnected"] [ text "⚠ Haveno Node not connected." ]
                 , button [ onClick RetryHavenoConnection ] [ text "Retry Haveno Connection" ]
                 ]
 

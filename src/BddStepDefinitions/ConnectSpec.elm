@@ -32,7 +32,7 @@ runSpecTests : Spec Pages.Connect.Model Pages.Connect.Msg
 runSpecTests =
     describe
         "Scenarios for Haveno Web App Connection Page"
-        [ scenario "1. Accessing the Connect page"
+        [ scenario "1. Accessing the Connect page no wallet or node connection"
             (given
                 (Setup.init
                     (Pages.Connect.init ())
@@ -57,7 +57,7 @@ runSpecTests =
                     , it "displays a message about Haveno node connection"
                         (Markup.observeElement
                             |> Markup.query
-                            << by [ tag "p" ]
+                            << by [ id "havenoNodeNotConnected" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Markup.text <|
