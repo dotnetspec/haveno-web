@@ -1,7 +1,7 @@
 module BddStepDefinitions.FundsSpec exposing (main)
 
 import BddStepDefinitions.Extra exposing (equals)
-import BddStepDefinitions.Runner exposing (browserProgram, pick, skip)
+import BddStepDefinitions.Runner
 
 import Browser.Navigation
 import Expect
@@ -676,4 +676,4 @@ jsonDepositSuccess =
 
 main : Program Spec.Flags (Spec.Model Funds.Model Funds.Msg) (Spec.Msg Funds.Msg)
 main =
-    browserProgram [ runSpecTests ]
+    BddStepDefinitions.Runner.browserProgram  [ runSpecTests ]

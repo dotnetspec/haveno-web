@@ -1,7 +1,7 @@
 module BddStepDefinitions.DonateSpec exposing (main)
 
 import BddStepDefinitions.Extra exposing (equals)
-import BddStepDefinitions.Runner exposing (browserProgram, pick, skip)
+import BddStepDefinitions.Runner exposing (browserProgram , pick, skip)
 import Browser.Navigation
 
 import Extras.Constants as Consts exposing (..)
@@ -83,4 +83,4 @@ runSpecTests =
 main : Program Flags (Spec.Model Pages.Donate.Model Pages.Donate.Msg) (Spec.Msg Pages.Donate.Msg)
 main =
     
-    browserProgram [ runSpecTests ]
+    BddStepDefinitions.Runner.browserProgram  [ runSpecTests ]

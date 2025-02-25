@@ -9,14 +9,12 @@ port module Main exposing (..)
 import Browser
 import Browser.Navigation as Nav exposing (..)
 import Data.AddressValidity as R
-import Data.User as U exposing (User(..))
-import Debug exposing (log)
+
 import Erl exposing (..)
-import Extras.Constants as Constants exposing (yck_id)
-import Extras.TestData as TestData exposing (placeholderUrl)
+import Extras.TestData exposing (placeholderUrl)
 import Grpc exposing (..)
-import Html exposing (Html, a, br, button, div, footer, h2, h3, h4, h5, h6, header, i, img, input, label, li, nav, node, p, source, span, text, ul)
-import Html.Attributes as Attr exposing (..)
+import Html
+import Html.Attributes as Attr
 import Html.Events exposing (onClick)
 import Json.Decode as JD
 import Json.Encode as JE
@@ -31,22 +29,16 @@ import Pages.Market
 import Pages.Portfolio
 import Pages.Sell
 import Pages.Support
-import Parser exposing (Parser, andThen, chompWhile, end, getChompedString, map, run, succeed)
+import Parser
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
-import Protobuf.Decode
+import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import Task
 import Time
 import Types.DateType exposing (DateTime(..))
 import Url exposing (Protocol(..), Url)
 import Url.Parser exposing ((</>), (<?>), oneOf, s)
 import Url.Parser.Query as Query exposing (..)
-import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
-import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
-
-
-placeholderUrl =
-    Url.Url Http "localhost" (Just 1234) "/" Nothing Nothing
 
 
 
@@ -101,20 +93,16 @@ init flag _ key =
             , time = Time.millisToPosix 0
             , zone = Nothing -- Replace with the actual time zone if available
             , errors = []
-
-            
-           
             , isApiConnected = False
             , version = "No Haveno version available"
             , currentJsMessage = ""
             , initialized = False
             , isMenuOpen = False
             , balances = Just Protobuf.defaultBalancesInfo
-   
             , primaryaddress = ""
-                    }
-            in
-            updateUrl urlWithDashboardPath updatedModel
+            }
+    in
+    updateUrl urlWithDashboardPath updatedModel
 
 
 
@@ -225,12 +213,10 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
-            ( { model | primaryaddress = primaryAddresponse.primaryAddress}, Cmd.none )
+            ( { model | primaryaddress = primaryAddresponse.primaryAddress }, Cmd.none )
 
         GotXmrPrimaryAddress (Err error) ->
             ( model, Cmd.none )
-
-        
 
         GotBalances (Ok response) ->
             ( { model | balances = response.balances }, Cmd.none )
@@ -529,15 +515,12 @@ view model =
     { title = "Haveno-Web"
     , body =
         [ connectionStatusView model
-        , div [ Attr.class "main-nav-flex-container" ] [ menu model ]
-        , div [ Attr.class "topLogoContainer" ] [ topLogo ]
-        , div [ Attr.class "contentByPage" ] [ contentByPage ]
-        , div [ Attr.class "footerContent" ] [ footerContent model ]
+        , Html.div [ Attr.class "main-nav-flex-container" ] [ menu model ]
+        , Html.div [ Attr.class "topLogoContainer" ] [ topLogo ]
+        , Html.div [ Attr.class "contentByPage" ] [ contentByPage ]
+        , Html.div [ Attr.class "footerContent" ] [ footerContent model ]
         ]
     }
-
-
-
 
 
 
@@ -788,7 +771,7 @@ toDashboard model ( dashboard, cmd ) =
     ( { model | page = DashboardPage dashboard }
       -- NOTE: Cmd.map is a way to manipulate the result of a command
       -- WARN: sendMessageToJs "msgFromElm" is redundant here but if it isn't actually used somewhere the port won't be recognized on document load
-    , Cmd.batch [ Cmd.map GotDashboardMsg cmd, sendVersionRequest Protobuf.defaultGetVersionRequest, gotAvailableBalances, gotPrimaryAddress , Task.perform AdjustTimeZone Time.here, sendMessageToJs "msgFromElm" ]
+    , Cmd.batch [ Cmd.map GotDashboardMsg cmd, sendVersionRequest Protobuf.defaultGetVersionRequest, gotAvailableBalances, gotPrimaryAddress, Task.perform AdjustTimeZone Time.here, sendMessageToJs "msgFromElm" ]
     )
 
 
@@ -899,6 +882,7 @@ sendVersionRequest request =
     in
     Grpc.toCmd GotVersion grpcRequest
 
+
 gotAvailableBalances : Cmd Msg
 gotAvailableBalances =
     let
@@ -926,19 +910,21 @@ gotPrimaryAddress =
 
 -- NAV: Helper functions
 
+
 isXMRWalletConnected : Model -> Bool
-isXMRWalletConnected model = 
+isXMRWalletConnected model =
     if model.primaryaddress == "" then
         True
+
     else
         False
 
 
-connectionStatusView : Model -> Html Msg
+connectionStatusView : Model -> Html.Html Msg
 connectionStatusView model =
-    div [ class "connection-status", Attr.id "connectionStatus" ]
-        [ div
-            [ class
+    Html.div [ Attr.class "connection-status", Attr.id "connectionStatus" ]
+        [ Html.div
+            [ Attr.class
                 (if (not <| isXMRWalletConnected model) && model.isApiConnected then
                     "status-dot green"
 
@@ -947,18 +933,18 @@ connectionStatusView model =
                 )
             ]
             []
-        , text <|
+        , Html.text <|
             if (not <| isXMRWalletConnected model) && model.isApiConnected then
                 "Connected"
 
-            else if (isXMRWalletConnected model) then
+            else if isXMRWalletConnected model then
                 "Wallet not connected"
 
             else
                 "Haveno node not connected"
 
         -- Link to Connect Page
-        , a [ Attr.href "/connect", class "status-link" ] [ text "Fix" ]
+        , Html.a [ Attr.href "/connect", Attr.class "status-link" ] [ Html.text "Fix" ]
         ]
 
 
@@ -969,7 +955,7 @@ setDashboardHavenoVersion dashboardModel model =
 
 isValidXMRAddress : String -> Bool
 isValidXMRAddress str =
-    case run R.validXMRAddressParser str of
+    case Parser.run R.validXMRAddressParser str of
         Ok _ ->
             True
 
@@ -1038,26 +1024,26 @@ each page model and match against-}
 -- REF: Zoho-Responsive
 
 
-showVideoOrBanner : Page -> Html msg
+showVideoOrBanner : Page -> Html.Html msg
 showVideoOrBanner page =
-    img [ Attr.class "banner", src "assets/resources/images/Haveno-banner1918X494.png", alt "Haveno", width 1918, height 494, title "Haveno Banner" ]
+    Html.img [ Attr.class "banner", Attr.src "assets/resources/images/Haveno-banner1918X494.png", Attr.alt "Haveno", Attr.width 1918, Attr.height 494, Attr.title "Haveno Banner" ]
         []
 
 
 
-{- -- NOTE: This type can be Html msg instead
-   of Html Msg because footerContent
+{- -- NOTE: This type can be Html.Html msg instead
+   of Html.Html Msg because footerContent
    has no event handlers.
 -}
 
 
-topLogo : Html msg
+topLogo : Html.Html msg
 topLogo =
-    div
-        [ class "topLogoContainer"
+    Html.div
+        [ Attr.class "topLogoContainer"
         ]
-        [ div [ class "topLogo-content" ]
-            [ img
+        [ Html.div [ Attr.class "topLogo-content" ]
+            [ Html.img
                 [ Attr.src "assets/resources/images/logo-splash100X33.png"
 
                 -- NOTE: always define the width and height of images. This reduces flickering,
@@ -1066,24 +1052,24 @@ topLogo =
                 , Attr.height 33
                 , Attr.alt "Haveno Logo"
                 , Attr.title "Haveno Logo"
-                , id "topLogoId"
-                , class "topLogo"
+                , Attr.id "topLogoId"
+                , Attr.class "topLogo"
                 ]
                 []
             ]
         ]
 
 
-menu : Model -> Html Msg
+menu : Model -> Html.Html Msg
 menu model =
-    div []
-        [ button
-            [ classList [ ( "menu-btn", True ), ( "open", model.isMenuOpen ) ]
+    Html.div []
+        [ Html.button
+            [ Attr.classList [ ( "menu-btn", True ), ( "open", model.isMenuOpen ) ]
             , onClick ToggleMenu
             , Attr.name "menubutton"
-            , Attr.attribute "data-testid" "menu-button"
+            , Attr.attribute "data-testid" "menu-Html.button"
             ]
-            [ text
+            [ Html.text
                 (if model.isMenuOpen then
                     "✖"
 
@@ -1091,28 +1077,28 @@ menu model =
                     "☰"
                 )
             ]
-        , div
-            [ classList [ ( "menu", True ), ( "open", model.isMenuOpen ) ] ]
+        , Html.div
+            [ Attr.classList [ ( "menu", True ), ( "open", model.isMenuOpen ) ] ]
             [ navLinks model.page ]
         ]
 
 
-navLinks : Page -> Html msg
+navLinks : Page -> Html.Html msg
 navLinks page =
     let
-        -- NOTE: A key function in that it takes a Route and a { url, caption } and returns an Html msg
+        -- NOTE: A key function in that it takes a Route and a { url, caption } and returns an Html.Html msg
         -- which when clicked will send a message to the update function (ChangedUrl) with the relevant url
         -- Route and page are also there for isActive.
-        navLink : Route -> { url : String, caption : String } -> Html msg
+        navLink : Route -> { url : String, caption : String } -> Html.Html msg
         navLink route { url, caption } =
-            li [ classList [ ( "active", isActive { link = route, page = page } ), ( "navLink", True ) ] ]
-                [ a [ href url ] [ text caption ] ]
+            Html.li [ Attr.classList [ ( "active", isActive { link = route, page = page } ), ( "navLink", True ) ] ]
+                [ Html.a [ Attr.href url ] [ Html.text caption ] ]
 
         links =
-            ul
+            Html.ul
                 [-- NOTE: img is now managed separately so is can be shrunk etc. withouth affecting the links
                 ]
-                [ li [ class "logoInNavLinks" ] [ a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "topLogoShrink" ] [ topLogo ] ]
+                [ Html.li [ Attr.class "logoInNavLinks" ] [ Html.a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "topLogoShrink" ] [ topLogo ] ]
                 , navLink BlankRoute { url = "/", caption = "" }
                 , navLink DashboardRoute { url = "dashboard", caption = "Dashboard" }
                 , navLink FundsRoute { url = "funds", caption = "Funds" }
@@ -1143,28 +1129,22 @@ navLinks page =
 -- NAV: Main Persistent
 
 
-
-
-
-
-
-
-footerContent : Model -> Html msg
+footerContent : Model -> Html.Html msg
 footerContent model =
-    footer []
-        [ div [ Attr.class "footer", Attr.style "text-align" "center" ]
-            [ br []
+    Html.footer []
+        [ Html.div [ Attr.class "footer", Attr.style "text-align" "center" ]
+            [ Html.br []
                 []
-            , span []
-                [ text ""
-                , a [ href "https://github.com/haveno-dex/haveno" ] [ text "Haveno-Web" ]
-                , br []
+            , Html.span []
+                [ Html.text ""
+                , Html.a [ Attr.href "https://github.com/haveno-dex/haveno" ] [ Html.text "Haveno-Web" ]
+                , Html.br []
                     []
-                , text "Open source code & design"
-                , p [] [ text "Version 0.3.43" ]
-                , text "Haveno Version"
-                , p [ id "havenofooterver" ]
-                    [ text
+                , Html.text "Open source code & design"
+                , Html.p [] [ Html.text "Version 0.3.43" ]
+                , Html.text "Haveno Version"
+                , Html.p [ Attr.id "havenofooterver" ]
+                    [ Html.text
                         model.version
                     ]
                 ]
@@ -1259,24 +1239,24 @@ I think it needs a dismissErrors function to go with it ...
 -- NOTE: Did this as an example of currying and partial application:
 
 
-errorMessages : List String -> List (Html msg)
+errorMessages : List String -> List (Html.Html msg)
 errorMessages errors =
-    List.map (\error -> p [] [ text error ]) errors
+    List.map (\error -> Html.p [] [ Html.text error ]) errors
 
 
-okButton : msg -> Html msg
+okButton : msg -> Html.Html msg
 okButton dismissErrors =
-    button [ onClick dismissErrors ] [ text "Ok" ]
+    Html.button [ onClick dismissErrors ] [ Html.text "Ok" ]
 
 
-viewErrors : msg -> List String -> Html msg
+viewErrors : msg -> List String -> Html.Html msg
 viewErrors dismissErrors errors =
     if List.isEmpty errors then
         Html.text ""
 
     else
-        div
-            [ class "error-messages"
+        Html.div
+            [ Attr.class "error-messages"
             ]
         <|
             errorMessages errors

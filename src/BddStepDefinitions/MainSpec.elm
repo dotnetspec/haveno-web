@@ -9,7 +9,7 @@ module BddStepDefinitions.MainSpec exposing (main)
 -}
 
 import BddStepDefinitions.Extra exposing (equals)
-import BddStepDefinitions.Runner exposing (browserProgram, pick, skip)
+import BddStepDefinitions.Runner
 import Browser
 import Browser.Navigation
 import Expect
@@ -341,10 +341,10 @@ runSpecTests =
 
 main : Program Spec.Flags (Spec.Model Main.Model Main.Msg) (Spec.Msg Main.Msg)
 main =
-    -- NOTE: By using the browserProgram function, developers can specify configurations such as how the application's initial state is initialized
+    -- NOTE: By using the BddStepDefinitions.Runner.browserProgram  function, developers can specify configurations such as how the application's initial state is initialized
     -- , how the view is rendered, how updates are handled, and how subscriptions and browser events are managed during test execution
-    --Runner.browserProgram { flags = \_ -> (), init = App.init, update = App.update, subscriptions = App.subscriptions, view = App.view }
-    browserProgram [ runSpecTests ]
+    --Runner.BddStepDefinitions.Runner.browserProgram  { flags = \_ -> (), init = App.init, update = App.update, subscriptions = App.subscriptions, view = App.view }
+    BddStepDefinitions.Runner.browserProgram  [ runSpecTests ]
 
 
 

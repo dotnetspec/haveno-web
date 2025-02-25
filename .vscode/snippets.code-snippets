@@ -42,4 +42,21 @@
 		],
 		"description": "Let and log output to console"
 	}
+	,
+	"Pick a spec test": {
+		"scope": "elm",
+		"prefix": "pick",
+		"body": [
+			"BddStepDefinitions.Runner.pick <|"
+		],
+		"description": "Pick a spec test"
+	},
+	"Skip a spec test": {
+		"scope": "elm",
+		"prefix": "skip",
+		"body": [
+			"BddStepDefinitions.Runner.skip <|"
+		],
+		"description": "Skip a spec test"
+	}
 }

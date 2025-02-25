@@ -1,67 +1,58 @@
 module BddStepDefinitions.ConnectSpec exposing (main)
 
-import BddStepDefinitions.Extra exposing (equals)
-import BddStepDefinitions.Runner exposing (browserProgram, pick, skip)
-import Browser.Navigation
-import Extras.TestData as TestData
-import Html exposing (Html)
+import BddStepDefinitions.Extra
+import BddStepDefinitions.Runner
 import Pages.Connect
-import Spec exposing (Flags, Spec, describe, expect, given, it, scenario, when)
-import Spec.Claim as Claim 
-import Spec.Command exposing (..)
-
-import Spec.Markup as Markup
-
-import Spec.Markup.Selector exposing (..)
-import Spec.Observer as Observer
-import Spec.Report
-import Spec.Setup as Setup
-import Spec.Step 
-import Time exposing (..)
-import Url exposing (Protocol(..), Url)
+import Spec
+import Spec.Claim
+import Spec.Observer
+import Spec.Setup
+import Url exposing (Protocol(..))
+import Spec.Markup
+import Spec.Markup.Selector
 
 
-runSpecTests : Spec Pages.Connect.Model Pages.Connect.Msg
+runSpecTests : Spec.Spec Pages.Connect.Model Pages.Connect.Msg
 runSpecTests =
-    describe
+    Spec.describe
         "Scenarios for Haveno Web App Connection Page"
-        [ scenario "1. Accessing the Connect page no wallet or node connection"
-            (given
-                (Setup.init
+        [ Spec.scenario "1. Accessing the Connect page no wallet or node connection"
+            (Spec.given
+                (Spec.Setup.init
                     (Pages.Connect.init ())
-                    |> Setup.withView Pages.Connect.view
-                    |> Setup.withUpdate Pages.Connect.update
+                    |> Spec.Setup.withView Pages.Connect.view
+                    |> Spec.Setup.withUpdate Pages.Connect.update
                 )
                 |> Spec.observeThat
-                    [ it "has status as Initialized"
-                        (Observer.observeModel .walletConnected
-                            |> Spec.expect (equals False)
+                    [ Spec.it "has status as Initialized"
+                        (Spec.Observer.observeModel .walletConnected
+                            |> Spec.expect (BddStepDefinitions.Extra.equals False)
                         )
-                    , it "displays a message about wallet connection"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ tag "p" ]
+                    , Spec.it "displays a message about wallet connection"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << Spec.Markup.Selector.by [ Spec.Markup.Selector.tag "p" ]
                             |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Monero Wallet not connected."
+                                (Spec.Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Spec.Claim.isStringContaining 1 "Monero Wallet not connected."
                                 )
                         )
-                    , it "displays a message about Haveno node connection"
-                        (Markup.observeElement
-                            |> Markup.query
-                            << by [ id "havenoNodeNotConnected" ]
+                    , Spec.it "displays a message about Haveno node connection"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "havenoNodeNotConnected" ]
                             |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Markup.text <|
-                                        Claim.isStringContaining 1 "Haveno Node not connected."
+                                (Spec.Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Spec.Claim.isStringContaining 1 "Haveno Node not connected."
                                 )
                         )
                     ]
             )
         ]
 
-main : Program Flags (Spec.Model Pages.Connect.Model Pages.Connect.Msg) (Spec.Msg Pages.Connect.Msg)
+
+main : Program Spec.Flags (Spec.Model Pages.Connect.Model Pages.Connect.Msg) (Spec.Msg Pages.Connect.Msg)
 main =
-    
-    browserProgram [ runSpecTests ]
+    BddStepDefinitions.Runner.browserProgram [ runSpecTests ]
