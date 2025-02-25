@@ -1,4 +1,4 @@
-module Pages.Funds exposing (Model, Msg(..), Status(..), View(..), btcBalanceAsString, custodialFundsView, errorView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, primaryAddressView, reservedOfferBalanceAsString, subAddressView, update, view, xmrAvailableBalanceAsString, xmrBalView)
+module Pages.Funds exposing (Model, Msg(..), Status(..), View(..), btcBalanceAsString, custodialFundsView, errorView, formatBalance, gotNewSubAddress, gotPrimaryAddress, init, initialModel, primaryAddressView, reservedOfferBalanceAsString, subAddressView, update, view, xmrAvailableBalanceAsString, xmrBalView)
 
 import Extras.Constants as Constants exposing (xmrConversionConstant)
 import Grpc
@@ -9,6 +9,7 @@ import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import Protobuf.Types.Int64 exposing (toInts)
 import UInt64
 import Utils.MyUtils as MyUtils
+import Comms.CustomGrpc
 
 
 
@@ -59,7 +60,7 @@ type View
 init : String -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
-    , Cmd.batch [ gotPrimaryAddress, gotAvailableBalances ]
+    , Cmd.batch [ gotPrimaryAddress, Comms.CustomGrpc.gotAvailableBalances |> Grpc.toCmd GotBalances ]
     )
 
 
@@ -292,7 +293,7 @@ reservedOfferBalanceAsString balInfo =
 -- NAV: gRPC calls
 
 
-gotAvailableBalances : Cmd Msg
+{- gotAvailableBalances : Cmd Msg
 gotAvailableBalances =
     let
         grpcRequest =
@@ -301,7 +302,7 @@ gotAvailableBalances =
                 -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
                 |> Grpc.setHost "http://localhost:8080"
     in
-    Grpc.toCmd GotBalances grpcRequest
+    Grpc.toCmd GotBalances grpcRequest -}
 
 
 gotPrimaryAddress : Cmd Msg

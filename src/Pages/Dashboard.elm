@@ -47,7 +47,7 @@ type alias Model =
     { status : Status
     , pagetitle : String
     , root : Dashboard
-    , balance : String
+    , balances : Maybe Protobuf.BalancesInfo
     , flagUrl : Url
     , havenoAPKHttpRequest : Maybe HavenoAPKHttpRequest
     , version : String
@@ -64,7 +64,7 @@ initialModel =
     { status = Loaded
     , pagetitle = "Dashboard"
     , root = Dashboard { name = "Loading..." }
-    , balance = "0.00"
+    , balances = Nothing
     , flagUrl = Url Http "localhost" Nothing "/dashboard" Nothing Nothing
     , havenoAPKHttpRequest = Nothing
     , version = "No Haveno version available"
@@ -101,7 +101,7 @@ init fromMainToDashboard =
             Url Http "localhost" Nothing "/dashboard" Nothing Nothing
 
         newModel =
-            Model Loaded "Dashboard" (Dashboard { name = "Loading..." }) "0.00" newUrl Nothing fromMainToDashboard.havenoVersion []
+            Model Loaded "Dashboard" (Dashboard { name = "Loading..." }) Nothing newUrl Nothing fromMainToDashboard.havenoVersion []
     in
     ( newModel
     , Cmd.none
@@ -110,7 +110,7 @@ init fromMainToDashboard =
 
 type Msg
     = GotInitialModel Model
-    | BalanceResponse (Result Http.Error SuccessfullBalanceResult)
+    | GotBalances (Result Http.Error Protobuf.GetBalancesReply)
 
 
 
@@ -126,56 +126,11 @@ update msg model =
         GotInitialModel newModel ->
             ( { newModel | pagetitle = model.pagetitle }, Cmd.none )
 
-        BalanceResponse (Ok auth) ->
-            let
-                headers =
-                    -- NOTE: the 'Zoho-oauthtoken' sent at this point is the access token received after refresh
-                    [ Http.header "Authorization" ("Bearer " ++ withDefault "No access token 2" (Just auth.deployment_model)) ]
+        GotBalances (Ok response) ->
+            ( { model | balances = response.balances, status = Loaded }, Cmd.none )
 
-                -- incorporate new header with access token and update middleware port
-                flagUrlWithMongoDBMWAndPortUpdate =
-                    if String.contains Consts.localorproductionServerAutoCheck model.flagUrl.host then
-                        Url.toString <| Url model.flagUrl.protocol model.flagUrl.host Nothing Consts.middleWarePath Nothing Nothing
-
-                    else
-                        Url.toString <| Url.Url model.flagUrl.protocol model.flagUrl.host (Just 3000) Consts.middleWarePath Nothing Nothing
-
-                newHttpParams =
-                    HavenoAPKHttpRequest Consts.get headers flagUrlWithMongoDBMWAndPortUpdate Http.emptyBody Nothing Nothing
-
-                {- apiSpecs =
-                   model.apiSpecifics
-                -}
-                -- HACK:
-                newModel =
-                    { model
-                        | havenoAPKHttpRequest = Just newHttpParams
-
-                        --, queryType = LoggedInUser
-                    }
-            in
-            ( newModel
-            , -- NOTE: if you want to run a function based on the response can here:
-              Cmd.none
-              --loginRequest newModel
-              --sendPostDataToMongoDBMW newModel
-            )
-
-        BalanceResponse (Err responseErr) ->
-            let
-                respErr =
-                    Consts.httpErrorToString responseErr
-
-                {- apiSpecs =
-                       model.apiSpecifics
-
-                   newapiSpecs =
-                       { apiSpecs | accessToken = Nothing }
-                -}
-            in
-            ( { model | errors = model.errors ++ [ respErr ] }
-            , Cmd.none
-            )
+        GotBalances (Err error) ->
+            ( { model | status = Errored }, Cmd.none )
 
 
 
