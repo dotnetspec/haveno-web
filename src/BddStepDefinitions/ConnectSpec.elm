@@ -1,29 +1,22 @@
 module BddStepDefinitions.ConnectSpec exposing (main)
 
-import BddStepDefinitions.Extra exposing (..)
-import BddStepDefinitions.Runner as Runner exposing (..)
-import Browser.Navigation as Nav exposing (..)
-import Dict
+import BddStepDefinitions.Extra exposing (equals)
+import BddStepDefinitions.Runner exposing (browserProgram, pick, skip)
+import Browser.Navigation
 import Extras.TestData as TestData
 import Html exposing (Html)
-import Http
-import Json.Decode as D
-import Json.Encode as E
-import Main
 import Pages.Connect
 import Spec exposing (Flags, Spec, describe, expect, given, it, scenario, when)
-import Spec.Claim as Claim exposing (Claim, Verdict)
+import Spec.Claim as Claim 
 import Spec.Command exposing (..)
-import Spec.Http
-import Spec.Http.Stub as Stub
+
 import Spec.Markup as Markup
-import Spec.Markup.Event as Event
+
 import Spec.Markup.Selector exposing (..)
-import Spec.Observer as Observer exposing (Observer)
-import Spec.Report as Report exposing (Report)
+import Spec.Observer as Observer
+import Spec.Report
 import Spec.Setup as Setup
-import Spec.Step as Step exposing (Step)
-import Spec.Time
+import Spec.Step 
 import Time exposing (..)
 import Url exposing (Protocol(..), Url)
 
@@ -70,7 +63,5 @@ runSpecTests =
 
 main : Program Flags (Spec.Model Pages.Connect.Model Pages.Connect.Msg) (Spec.Msg Pages.Connect.Msg)
 main =
-    -- NOTE: By using the browserProgram function, developers can specify configurations such as how the application's initial state is initialized
-    -- , how the view is rendered, how updates are handled, and how subscriptions and browser events are managed during test execution
-    --Runner.browserProgram { flags = \_ -> (), init = App.init, update = App.update, subscriptions = App.subscriptions, view = App.view }
-    Runner.browserProgram [ runSpecTests ]
+    
+    browserProgram [ runSpecTests ]
