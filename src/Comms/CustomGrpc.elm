@@ -3,7 +3,6 @@ module Comms.CustomGrpc exposing (gotAvailableBalances, gotPrimaryAddress)
 import Grpc
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
-import Types.Msg exposing (Msg(..))
 
 
 gotAvailableBalances : Grpc.RpcRequest Protobuf.GetBalancesRequest Protobuf.GetBalancesReply
@@ -13,7 +12,10 @@ gotAvailableBalances =
         |> Grpc.setHost "http://localhost:8080"
 
 
-    --Grpc.toCmd GotXmrPrimaryAddress grpcRequest
+
+--Grpc.toCmd GotXmrPrimaryAddress grpcRequest
+
+
 gotPrimaryAddress : Grpc.RpcRequest Protobuf.GetXmrPrimaryAddressRequest Protobuf.GetXmrPrimaryAddressReply
 gotPrimaryAddress =
     Grpc.new Wallets.getXmrPrimaryAddress Protobuf.defaultGetXmrPrimaryAddressRequest
