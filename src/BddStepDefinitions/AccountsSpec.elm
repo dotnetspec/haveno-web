@@ -1,33 +1,19 @@
-module BddStepDefinitions.AccountsSpec exposing (..)
+module BddStepDefinitions.AccountsSpec exposing (main)
 
-import BddStepDefinitions.Extra exposing (..)
-import BddStepDefinitions.Runner as Runner exposing (..)
-import Browser
-import Browser.Navigation as Nav exposing (Key)
-import Expect exposing (equal)
-import Extras.TestData as TestData exposing (..)
+import BddStepDefinitions.Extra exposing (equals)
+import BddStepDefinitions.Runner exposing (browserProgram, pick, skip)
+import Extras.TestData as TestData exposing (testBalanceInfo, placeholderUrl)
 import Grpc
-import Html exposing (Html, div, i)
-import Json.Encode as E
-import Pages.Accounts as Accounts exposing (Model, Msg, init, update, view)
-import Pages.Dashboard as Dashboard exposing (..)
-import Proto.Io.Haveno.Protobuffer as Protobuf exposing (BalancesInfo)
-import Protobuf.Types.Int64 exposing (fromInts)
-import Spec exposing (..)
-import Spec.Claim as Claim exposing (Claim, Verdict)
-import Spec.Command exposing (send)
-import Spec.Http
+import Pages.Accounts as Accounts
+import Spec exposing (Flags, Spec, describe, given, it, scenario, when)
+import Spec.Claim as Claim
+import Spec.Command
 import Spec.Http.Stub as Stub
 import Spec.Markup as Markup
-import Spec.Markup.Selector exposing (..)
-import Spec.Navigator as Navigator exposing (Navigator)
-import Spec.Observer as Observer exposing (Observer)
-import Spec.Port exposing (..)
-import Spec.Report exposing (note)
-import Spec.Setup exposing (Setup, init, withSubscriptions, withUpdate, withView)
-import Spec.Step exposing (log)
-import Spec.Time
-import Url exposing (Protocol(..), Url)
+import Spec.Markup.Selector exposing (by)
+import Spec.Observer as Observer
+import Spec.Setup
+import Url exposing (Protocol(..))
 
 
 
@@ -38,8 +24,8 @@ runSpecTests : Spec Accounts.Model Accounts.Msg
 runSpecTests =
     describe
         "Haveno Web App Accounts Tests"
-        [ --Runner.skip <|
-          --Runner.pick <|
+        [ --skip <|
+          --pick <|
           scenario "1: Accessing the Accounts page with valid balance data"
             (given
                 (Spec.Setup.init (Accounts.init ())
@@ -81,8 +67,8 @@ runSpecTests =
                         )
                     ]
             )
-        , --Runner.skip <|
-          --Runner.pick <|
+        , --skip <|
+          --pick <|
           scenario "2: Handling the Accounts page with INvalid balance data"
             (given
                 (Spec.Setup.init (Accounts.init ())
@@ -92,7 +78,6 @@ runSpecTests =
                 )
                 |> when "the page attempts to load Balances"
                     [ Spec.Command.send (Spec.Command.fake <| Accounts.GotBalances (Result.Err <| Grpc.UnknownGrpcStatus "unknown")) ]
-               
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
@@ -112,8 +97,8 @@ runSpecTests =
             )
 
         {-
-           --, --Runner.skip <|
-           --Runner.pick <|
+           --, --skip <|
+           --pick <|
            , scenario "2a: Show available balance and reserved balance correctly in the UI"
                (given
                    (Spec.Setup.init (Accounts.init "http://localhost:1234")
@@ -168,4 +153,4 @@ runSpecTests =
 
 main : Program Flags (Spec.Model Accounts.Model Accounts.Msg) (Spec.Msg Accounts.Msg)
 main =
-    Runner.browserProgram [ runSpecTests ]
+    browserProgram [ runSpecTests ]
