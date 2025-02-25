@@ -1,4 +1,4 @@
-module BddStepDefinitions.MainSpec exposing (..)
+module BddStepDefinitions.MainSpec exposing (main)
 
 {- -- NOTE: 'Main' here refers to settings that hold throughout the app, e.g. isLNSConnected, not just on a given page, so the tests
    might switch to particular pages and check that 'global' settings (Main's model) are correct
@@ -8,38 +8,35 @@ module BddStepDefinitions.MainSpec exposing (..)
    -- Other modules like WalletSpec are MODULAR tests, limited to the given page alone.
 -}
 
-import BddStepDefinitions.Extra exposing (..)
-import BddStepDefinitions.Runner as Runner exposing (..)
+import BddStepDefinitions.Extra exposing (equals)
+import BddStepDefinitions.Runner exposing (browserProgram, pick, skip)
 import Browser
-import Browser.Navigation as Nav exposing (Key)
-import Data.User as U
-import Expect exposing (equal)
-import Extras.TestData as TestData exposing (..)
-import Html exposing (Html, div, i)
-import Json.Decode as D
+import Browser.Navigation
+import Expect
+import Extras.TestData as TestData
+import Html
+
 import Json.Encode as E
-import Main exposing (Model, Msg, Page(..), Route(..), init, navigate, subscriptions, update, view)
-import Pages.Blank
-import Pages.Dashboard as Dashboard exposing (..)
-import Pages.Funds as Funds exposing (..)
-import Pages.Sell as Sell exposing (..)
-import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
-import Proto.Io.Haveno.Protobuffer.Internals_
-import Protobuf.Decode
-import Protobuf.Types.Int64 exposing (Int64, fromInts, toInts)
-import Spec exposing (..)
-import Spec.Claim as Claim exposing (Claim, Verdict)
-import Spec.Command exposing (send)
+import Main
+
+import Pages.Dashboard
+import Pages.Funds as Funds
+import Pages.Sell
+import Proto.Io.Haveno.Protobuffer as Protobuf
+import Protobuf.Types.Int64
+import Spec exposing (describe, scenario, given, when, it)
+import Spec.Claim as Claim
+import Spec.Command
 import Spec.Http
 import Spec.Http.Stub as Stub
 import Spec.Markup as Markup
-import Spec.Markup.Selector exposing (..)
-import Spec.Navigator as Navigator exposing (Navigator)
-import Spec.Observer as Observer exposing (Observer)
-import Spec.Port exposing (..)
-import Spec.Report exposing (note)
-import Spec.Setup exposing (Setup, init, withSubscriptions, withUpdate, withView)
-import Spec.Step exposing (log)
+import Spec.Markup.Selector exposing (id, by)
+import Spec.Navigator
+import Spec.Observer
+import Spec.Port
+import Spec.Report
+import Spec.Setup
+import Spec.Step
 import Url exposing (Protocol(..), Url)
 
 
@@ -49,7 +46,7 @@ import Url exposing (Protocol(..), Url)
 -- NOTE: Any test involving subscriptions will need to be specified here using withSubscriptions
 
 
-runSpecTests : Spec Main.Model Main.Msg
+runSpecTests : Spec.Spec Main.Model Main.Msg
 runSpecTests =
     describe
         "Scenarios based on a Haveno Web App MVP"
@@ -76,7 +73,7 @@ runSpecTests =
                
                 |> Spec.observeThat
                     [ it "a. primaryaddress obtained"
-                        (Observer.observeModel .primaryaddress
+                        (Spec.Observer.observeModel .primaryaddress
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
                                     TestData.primaryAddress
@@ -148,9 +145,9 @@ runSpecTests =
                 |> Spec.observeThat
                     [ it
                         "a. the app location should be dashboard "
-                        (Navigator.observe
+                        (Spec.Navigator.observe
                             |> Spec.expect
-                                (Navigator.location <|
+                                (Spec.Navigator.location <|
                                     Claim.isEqual Debug.toString
                                         "http://localhost:1234/dashboard"
                                 )
@@ -204,7 +201,7 @@ runSpecTests =
                     ]
                 |> Spec.observeThat
                     [ it "a.is on the Funds page"
-                        (Observer.observeModel .page
+                        (Spec.Observer.observeModel .page
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
                                     Main.FundsPage <|
@@ -212,7 +209,7 @@ runSpecTests =
                                 )
                         )
                     , it "b. the menu should be closed"
-                        (Observer.observeModel .isMenuOpen
+                        (Spec.Observer.observeModel .isMenuOpen
                             |> Spec.expect
                                 Claim.isFalse
                         )
@@ -342,21 +339,16 @@ runSpecTests =
         ]
 
 
-main : Program Flags (Spec.Model Main.Model Main.Msg) (Spec.Msg Main.Msg)
+main : Program Spec.Flags (Spec.Model Main.Model Main.Msg) (Spec.Msg Main.Msg)
 main =
     -- NOTE: By using the browserProgram function, developers can specify configurations such as how the application's initial state is initialized
     -- , how the view is rendered, how updates are handled, and how subscriptions and browser events are managed during test execution
     --Runner.browserProgram { flags = \_ -> (), init = App.init, update = App.update, subscriptions = App.subscriptions, view = App.view }
-    Runner.browserProgram [ runSpecTests ]
+    browserProgram [ runSpecTests ]
 
 
 
 -- NAV: Helper functions:
-
-
-equals : a -> Claim a
-equals =
-    Claim.isEqual Debug.toString
 
 
 jsonNanoSDetected : E.Value
@@ -415,9 +407,9 @@ errorGettingXMRWalletAddress =
         ]
 
 
-documentToHtml : Browser.Document msg -> Html msg
+documentToHtml : Browser.Document msg -> Html.Html msg
 documentToHtml document =
-    div [] document.body
+    Html.div [] document.body
 
 
 expectedBalances : Protobuf.BalancesInfo

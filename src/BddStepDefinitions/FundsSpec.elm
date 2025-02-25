@@ -1,4 +1,4 @@
-module BddStepDefinitions.FundsSpec exposing (..)
+module BddStepDefinitions.FundsSpec exposing (main)
 
 import BddStepDefinitions.Extra exposing (equals)
 import BddStepDefinitions.Runner exposing (browserProgram, pick, skip)
@@ -19,10 +19,10 @@ import Spec.Command
 import Spec.Http
 import Spec.Http.Stub as Stub
 import Spec.Markup as Markup
-import Spec.Markup.Selector exposing (..)
+import Spec.Markup.Selector exposing (id, by)
 import Spec.Navigator
 import Spec.Observer as Observer
-import Spec.Port exposing (..)
+import Spec.Port
 import Spec.Report
 import Spec.Setup
 import Spec.Step
