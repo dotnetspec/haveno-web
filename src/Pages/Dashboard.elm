@@ -7,6 +7,7 @@ module Pages.Dashboard exposing (Model, Msg, init, initialModel, update, view)
 --import Html.Attributes as Attr exposing (..)
 
 import Buttons.Default exposing (defaultButton)
+import Comms.CustomGrpc
 import Debug exposing (log)
 import Element exposing (Element, el)
 import Element.Font as Font
@@ -20,13 +21,14 @@ import Framework.Color as Color
 import Framework.Grid as Grid
 import Framework.Heading as Heading
 import Framework.Input as Input
+import Grpc
 import Html exposing (Html, div, section, text)
 import Html.Attributes as Attr exposing (class, id)
 import Http exposing (..)
 import Json.Decode as D exposing (..)
 import Json.Decode.Pipeline exposing (optional, required)
 import Maybe exposing (withDefault)
-import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
+import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
 import Spec.Markup exposing (log)
 import Types.DateType as DateType exposing (DateTime(..))
@@ -48,6 +50,7 @@ type alias Model =
     , pagetitle : String
     , root : Dashboard
     , balances : Maybe Protobuf.BalancesInfo
+    , primaryaddress : String
     , flagUrl : Url
     , havenoAPKHttpRequest : Maybe HavenoAPKHttpRequest
     , version : String
@@ -65,6 +68,7 @@ initialModel =
     , pagetitle = "Dashboard"
     , root = Dashboard { name = "Loading..." }
     , balances = Nothing
+    , primaryaddress = ""
     , flagUrl = Url Http "localhost" Nothing "/dashboard" Nothing Nothing
     , havenoAPKHttpRequest = Nothing
     , version = "No Haveno version available"
@@ -101,16 +105,15 @@ init fromMainToDashboard =
             Url Http "localhost" Nothing "/dashboard" Nothing Nothing
 
         newModel =
-            Model Loaded "Dashboard" (Dashboard { name = "Loading..." }) Nothing newUrl Nothing fromMainToDashboard.havenoVersion []
+            Model Loaded "Dashboard" (Dashboard { name = "Loading..." }) Nothing "" newUrl Nothing fromMainToDashboard.havenoVersion []
     in
     ( newModel
-    , Cmd.none
+    , Cmd.batch [ Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress, Comms.CustomGrpc.gotAvailableBalances |> Grpc.toCmd BalanceResponse ]
     )
 
-
 type Msg
-    = GotInitialModel Model
-    | GotBalances (Result Http.Error Protobuf.GetBalancesReply)
+    = BalanceResponse (Result Grpc.Error Protobuf.GetBalancesReply)
+    | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
 
 
 
@@ -120,16 +123,16 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        {- -- NOTE: This was originally setup to work with an Http Result (branch on OK and Err)
-           but we're just handling the initialModel - not really doing much
-        -}
-        GotInitialModel newModel ->
-            ( { newModel | pagetitle = model.pagetitle }, Cmd.none )
-
-        GotBalances (Ok response) ->
+        BalanceResponse (Ok response) ->
             ( { model | balances = response.balances, status = Loaded }, Cmd.none )
 
-        GotBalances (Err error) ->
+        BalanceResponse (Err error) ->
+            ( { model | status = Errored }, Cmd.none )
+
+        GotXmrPrimaryAddress (Ok primaryAddresponse) ->
+            ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded }, Cmd.none )
+
+        GotXmrPrimaryAddress (Err error) ->
             ( { model | status = Errored }, Cmd.none )
 
 

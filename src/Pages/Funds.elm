@@ -1,4 +1,4 @@
-module Pages.Funds exposing (Model, Msg(..), Status(..), View(..), btcBalanceAsString, custodialFundsView, errorView, formatBalance, gotNewSubAddress, gotPrimaryAddress, init, initialModel, primaryAddressView, reservedOfferBalanceAsString, subAddressView, update, view, xmrAvailableBalanceAsString, xmrBalView)
+module Pages.Funds exposing (Model, Msg(..), Status(..), View(..), btcBalanceAsString, custodialFundsView, errorView, formatBalance, gotNewSubAddress, init, initialModel, primaryAddressView, reservedOfferBalanceAsString, subAddressView, update, view, xmrAvailableBalanceAsString, xmrBalView)
 
 import Extras.Constants as Constants exposing (xmrConversionConstant)
 import Grpc
@@ -60,7 +60,7 @@ type View
 init : String -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
-    , Cmd.batch [ gotPrimaryAddress, Comms.CustomGrpc.gotAvailableBalances |> Grpc.toCmd GotBalances ]
+    , Cmd.batch [ Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress , Comms.CustomGrpc.gotAvailableBalances |> Grpc.toCmd GotBalances ]
     )
 
 
@@ -305,16 +305,7 @@ gotAvailableBalances =
     Grpc.toCmd GotBalances grpcRequest -}
 
 
-gotPrimaryAddress : Cmd Msg
-gotPrimaryAddress =
-    let
-        grpcRequest =
-            Grpc.new Wallets.getXmrPrimaryAddress Protobuf.defaultGetXmrPrimaryAddressRequest
-                |> Grpc.addHeader "password" "apitest"
-                -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
-                |> Grpc.setHost "http://localhost:8080"
-    in
-    Grpc.toCmd GotXmrPrimaryAddress grpcRequest
+
 
 
 gotNewSubAddress : Cmd Msg
