@@ -39,7 +39,7 @@ test:
 
 integration_test:
   stage: integration_test
-  image: node:21
+  image: node:20
   dependencies:
     - install-yarn
   script:
