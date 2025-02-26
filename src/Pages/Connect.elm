@@ -101,7 +101,7 @@ view model =
         -- Monero Wallet Status
         , if not model.walletConnected then
             div []
-                [ p [] [ text "⚠ Monero Wallet not connected." ]
+                [ p [id "walletNotConnectedWarning"] [ text "⚠ Monero Wallet not connected." ]
                 , button [ onClick (RetryWalletConnection (Err <| Grpc.UnknownGrpcStatus "")), id "retryWalletConnection" ] [ text "Retry Wallet Connection" ]
 
                 -- Display Current Monero Node
@@ -110,7 +110,7 @@ view model =
                 ]
 
           else
-            text ""
+            p [id "walletNotConnectedWarning"] [ text "" ]
 
         -- Input & Custom Monero Node (does not depend on gRPC)
         , div []
