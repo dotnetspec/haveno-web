@@ -8,6 +8,7 @@
     "jsdepgraph": "madge --extensions js,mjs --exclude 'elm.js' --image js/graph.png js",
     "unit": "elm-test 'src/**/Tests/Test*.elm' --fuzz 100",
     "spec": "npx elm-spec-runner --specRoot ./",
+    "review": "elm-review --fix",
     "debug": "elm make src/Main.elm --output=js/elm.js --debug",
     "optimize": "elm make src/Main.elm --output=js/elm.js --optimize",
     "mth": "./terminals/localNet_2_User.sh",

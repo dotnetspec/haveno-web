@@ -448,6 +448,7 @@ view model =
                             , retryingWallet = False
                             , retryingHaveno = False
                             , connectionAttempts = 0
+                            , primaryaddress = ""
                             }
                     in
                     Pages.Connect.view connectModel

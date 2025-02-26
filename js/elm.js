@@ -9352,7 +9352,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.4.43')
+										$elm$html$Html$text('Version 0.4.44')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
@@ -10042,7 +10042,8 @@ var $author$project$Pages$Connect$view = function (model) {
 						$elm$html$Html$button,
 						_List_fromArray(
 							[
-								$elm$html$Html$Events$onClick($author$project$Pages$Connect$RetryWalletConnection)
+								$elm$html$Html$Events$onClick($author$project$Pages$Connect$RetryWalletConnection),
+								$elm$html$Html$Attributes$id('retryWalletConnection')
 							]),
 						_List_fromArray(
 							[

@@ -1,8 +1,11 @@
 module Pages.Connect exposing (Model, Msg, init, update, view)
 
+import Comms.CustomGrpc exposing (gotAvailableBalances, gotPrimaryAddress)
+import Grpc
 import Html exposing (Html, button, div, h1, h2, input, p, text)
 import Html.Attributes exposing (class, id, placeholder)
 import Html.Events exposing (onClick, onInput)
+import Proto.Io.Haveno.Protobuffer as Protobuf
 
 
 
@@ -17,6 +20,7 @@ type alias Model =
     , retryingWallet : Bool
     , retryingHaveno : Bool
     , connectionAttempts : Int
+    , primaryaddress : String
     }
 
 
@@ -25,7 +29,7 @@ type alias Model =
 
 
 type Msg
-    = RetryWalletConnection
+    = RetryWalletConnection (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | RetryHavenoConnection
     | SetCustomMoneroNode String
     | ApplyCustomMoneroNode
@@ -47,6 +51,7 @@ init _ =
       , retryingWallet = False
       , retryingHaveno = False
       , connectionAttempts = 0
+      , primaryaddress = ""
       }
     , Cmd.none
     )
@@ -59,8 +64,11 @@ init _ =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        RetryWalletConnection ->
-            ( { model | retryingWallet = True, connectionAttempts = model.connectionAttempts + 1 }, Cmd.none )
+        RetryWalletConnection (Ok primaryAddresponse) ->
+            ( { model | retryingWallet = False, connectionAttempts = model.connectionAttempts, primaryaddress = primaryAddresponse.primaryAddress, walletConnected = True }, Cmd.none )
+
+        RetryWalletConnection (Err error) ->
+            ( { model | retryingWallet = True, connectionAttempts = model.connectionAttempts + 1 }, gotPrimaryAddress |> Grpc.toCmd RetryWalletConnection )
 
         RetryHavenoConnection ->
             ( { model | retryingHaveno = True }, Cmd.none )
@@ -84,7 +92,6 @@ update msg model =
 
 -- NAV: View
 
-
 view : Model -> Html Msg
 view model =
     div [ class "connect-page" ]
@@ -95,27 +102,27 @@ view model =
         , if not model.walletConnected then
             div []
                 [ p [] [ text "⚠ Monero Wallet not connected." ]
-                , button [ onClick RetryWalletConnection ] [ text "Retry Wallet Connection" ]
+                , button [ onClick (RetryWalletConnection (Err <| Grpc.UnknownGrpcStatus "")), id "retryWalletConnection" ] [ text "Retry Wallet Connection" ]
 
                 -- Display Current Monero Node
                 , p [] [ text "Current Monero Node:" ]
                 , p [ class "current-node" ] [ text model.moneroNode ]
-
-                -- Input for Custom Monero Node
-                , p [] [ text "Enter a custom Monero node:" ]
-                , input
-                    [ placeholder "Custom Monero Node"
-                    , onInput SetCustomMoneroNode
-                    , Html.Attributes.value model.customMoneroNode
-                    ]
-                    []
-
-                -- Apply Custom Monero Node
-                , button [ onClick ApplyCustomMoneroNode ] [ text "Use Custom Node" ]
                 ]
 
           else
             text ""
+
+        -- Input & Custom Monero Node (does not depend on gRPC)
+        , div []
+            [ p [] [ text "Enter a custom Monero node:" ]
+            , input
+                [ placeholder "Custom Monero Node"
+                , onInput SetCustomMoneroNode
+                , Html.Attributes.value model.customMoneroNode
+                ]
+                []
+            , button [ onClick ApplyCustomMoneroNode ] [ text "Use Custom Node" ]
+            ]
 
         -- Haveno Node Status
         , if not model.havenoConnected then
