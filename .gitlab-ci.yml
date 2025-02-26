@@ -23,7 +23,7 @@ install-yarn:
 
 test:
   stage: test
-  image: node:21
+  image: node:20
   dependencies:
     - install-yarn
   script:
