@@ -19,6 +19,7 @@ import NoUnused.CustomTypeConstructors
 import NoUnused.Modules
 import NoExposingEverything  -- ✅ Prevents `exposing (..)`
 import Review.Rule exposing (Rule)
+import Review.FilePattern
 
 config : List Rule
 config =
@@ -26,6 +27,6 @@ config =
     , NoUnused.CustomTypeConstructors.rule []
     , NoUnused.Modules.rule
     , NoExposingEverything.rule  -- ✅ Prevents `exposing (..)`
- 
     ]
+       |> List.map (Review.Rule.ignoreErrorsForDirectories [ "src/Proto" ])
 
