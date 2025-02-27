@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, gotPrimaryAddress, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setDashboardHavenoVersion, subscriptions, toAccounts, toBlank, toConnect, toDashboard, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setDashboardHavenoVersion, subscriptions, toAccounts, toBlank, toConnect, toDashboard, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- Main loads Blank initially.
@@ -38,6 +38,7 @@ import Types.DateType exposing (DateTime)
 import Url exposing (Protocol(..), Url)
 import Url.Parser exposing (oneOf, s)
 import Url.Parser.Query as Query
+import Comms.CustomGrpc
 
 
 
@@ -717,7 +718,10 @@ toDashboard model ( dashboard, cmd ) =
     ( { model | page = DashboardPage dashboard }
       -- NOTE: Cmd.map is a way to manipulate the result of a command
       -- WARN: sendMessageToJs "msgFromElm" is redundant here but if it isn't actually used somewhere the port won't be recognized on document load
-    , Cmd.batch [ Cmd.map GotDashboardMsg cmd, sendVersionRequest Protobuf.defaultGetVersionRequest, gotAvailableBalances, gotPrimaryAddress, Task.perform AdjustTimeZone Time.here, sendMessageToJs "msgFromElm" ]
+    , Cmd.batch [ Cmd.map GotDashboardMsg cmd, sendVersionRequest Protobuf.defaultGetVersionRequest
+    , gotAvailableBalances
+    , Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress
+    , Task.perform AdjustTimeZone Time.here, sendMessageToJs "msgFromElm" ]
     )
 
 
@@ -789,7 +793,7 @@ toDonate model ( donate, cmd ) =
 
 toConnect : Model -> ( Pages.Connect.Model, Cmd Pages.Connect.Msg ) -> ( Model, Cmd Msg )
 toConnect model ( connect, cmd ) =
-    ( { model | page = ConnectPage connect }
+    ( { model | page = ConnectPage {connect | havenoConnected = model.isApiConnected, walletConnected = isXMRWalletConnected model} }
     , Cmd.map GotConnectMsg cmd
     )
 
@@ -841,25 +845,14 @@ gotAvailableBalances =
     Grpc.toCmd GotBalances grpcRequest
 
 
-gotPrimaryAddress : Cmd Msg
-gotPrimaryAddress =
-    let
-        grpcRequest =
-            Grpc.new Wallets.getXmrPrimaryAddress Protobuf.defaultGetXmrPrimaryAddressRequest
-                |> Grpc.addHeader "password" "apitest"
-                -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
-                |> Grpc.setHost "http://localhost:8080"
-    in
-    Grpc.toCmd GotXmrPrimaryAddress grpcRequest
-
 
 
 -- NAV: Helper functions
 
-
+-- TODO: Improve the validation here:
 isXMRWalletConnected : Model -> Bool
 isXMRWalletConnected model =
-    if model.primaryaddress == "" then
+    if not <| model.primaryaddress == "" then
         True
 
     else
@@ -871,7 +864,7 @@ connectionStatusView model =
     Html.div [ Attr.class "connection-status", Attr.id "connectionStatus" ]
         [ Html.div
             [ Attr.class
-                (if (not <| isXMRWalletConnected model) && model.isApiConnected then
+                (if (isXMRWalletConnected model) && model.isApiConnected then
                     "status-dot green"
 
                  else
@@ -880,10 +873,10 @@ connectionStatusView model =
             ]
             []
         , Html.text <|
-            if (not <| isXMRWalletConnected model) && model.isApiConnected then
+            if (isXMRWalletConnected model) && model.isApiConnected then
                 "Connected"
 
-            else if isXMRWalletConnected model then
+            else if (not <| isXMRWalletConnected model) then
                 "Wallet not connected"
 
             else
@@ -1076,7 +1069,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.4.46" ]
+                , Html.p [] [ Html.text "Version 0.4.47" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text

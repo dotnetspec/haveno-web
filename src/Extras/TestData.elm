@@ -1,4 +1,4 @@
-module Extras.TestData exposing (encodeGrpcMessage, getBalancesEncodedResponse, getBalancesResponse, getSubAddressesEncodedResponse, getVersionBaseURL, placeholderUrl, primaryAddress, subAddress, successfullBalancesFetch, successfullSubAddressFetch, successfullVersionFetch, successfullXmrPrimaryAddressFetch, testBalanceInfo, toBytes, unsuccessfullVersionFetch, walletsBaseUrl)
+module Extras.TestData exposing (unSuccessfullXmrPrimaryAddressFetch, encodeGrpcMessage, getBalancesEncodedResponse, getBalancesResponse, getSubAddressesEncodedResponse, getVersionBaseURL, placeholderUrl, primaryAddress, subAddress, successfullBalancesFetch, successfullSubAddressFetch, successfullVersionFetch, successfullXmrPrimaryAddressFetch, testBalanceInfo, toBytes, unsuccessfullVersionFetch, walletsBaseUrl)
 
 import Base64
 import Bytes exposing (Bytes, Endianness(..))
@@ -106,6 +106,24 @@ successfullXmrPrimaryAddressFetch =
     let
         base64Response =
             "AAAAAGEKXzl5TGJmdGNEMmNNREE1cG9WUEJKUTVLdXdBREZSWGhlMjhBdHFmZVRFeGF1YmVNQXlpRUdCWUo4YThUM2t3em9xaTZadVNjemlIeEtxQkNUb2EybTN3dVpTY2MyZ0pogAAAAA9ncnBjLXN0YXR1czowDQo"
+
+        decodedBytes =
+            case toBytes base64Response of
+                Just bytes ->
+                    bytes
+
+                Nothing ->
+                    BytesEncode.encode (BytesEncode.unsignedInt8 0)
+    in
+    Stub.for (Route.post <| walletsBaseUrl ++ "GetXmrPrimaryAddress")
+        |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
+        |> Stub.withBody (Stub.withBytes decodedBytes)
+
+unSuccessfullXmrPrimaryAddressFetch : Stub.HttpResponseStub
+unSuccessfullXmrPrimaryAddressFetch =
+    let
+        base64Response =
+            ""
 
         decodedBytes =
             case toBytes base64Response of

@@ -57,6 +57,7 @@ initialModel =
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
+    --, Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd RetryWalletConnection
     , Cmd.none
     )
 
@@ -101,7 +102,8 @@ view model =
         , if not model.walletConnected then
             div []
                 [ p [ id "walletNotConnectedWarning" ] [ text "⚠ Monero Wallet not connected." ]
-                , p [ id "retryWalletConnectionButton" ] [ Utils.MyUtils.infoBtn "Retry Monero Wallet Connection" <| RetryWalletConnection (Err <| Grpc.UnknownGrpcStatus "") ]
+                , p []
+                    [ button [ class "info-button", id "retryWalletConnectionButton", onClick <| RetryWalletConnection (Err <| Grpc.UnknownGrpcStatus "") ] [ text "Retry Monero Wallet Connection" ] ]
                 , p [] [ text "Current Monero Node:" ]
                 , p [ class "current-node" ] [ text model.moneroNode ]
                 ]
@@ -118,7 +120,6 @@ view model =
                 , Html.Attributes.value model.customMoneroNode
                 ]
                 []
-            
             , p [ id "retryHavenoConnectionButton" ] [ Utils.MyUtils.infoBtn "Use Custom Node" <| ApplyCustomMoneroNode ]
             ]
 
