@@ -34,7 +34,6 @@ type Msg
     | RetryHavenoConnection
     | SetCustomMoneroNode String
     | ApplyCustomMoneroNode
-    | GoBack
 
 
 initialModel : Model
@@ -57,7 +56,6 @@ initialModel =
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
-    --, Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd RetryWalletConnection
     , Cmd.none
     )
 
@@ -83,9 +81,6 @@ update msg model =
 
         ApplyCustomMoneroNode ->
             ( { model | moneroNode = model.customMoneroNode, customMoneroNode = "" }, Cmd.none )
-
-        GoBack ->
-            ( model, Cmd.none )
 
 
 

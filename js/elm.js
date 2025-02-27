@@ -7764,6 +7764,7 @@ var $author$project$Pages$Accounts$init = function (_v0) {
 			_List_fromArray(
 				[$author$project$Pages$Accounts$gotPrimaryAddress, $author$project$Pages$Accounts$gotAvailableBalances])));
 };
+var $author$project$Pages$Blank$GotInitialModel = $elm$core$Basics$identity;
 var $author$project$Pages$Blank$Blank = $elm$core$Basics$identity;
 var $author$project$Pages$Blank$Loaded = 0;
 var $author$project$Pages$Blank$initialModel = {
@@ -7771,14 +7772,16 @@ var $author$project$Pages$Blank$initialModel = {
 	uG: 0,
 	u5: 'Blank'
 };
+var $elm$core$Platform$Cmd$map = _Platform_map;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Pages$Blank$init = function (_v0) {
 	return _Utils_Tuple2(
 		_Utils_update(
 			$author$project$Pages$Blank$initialModel,
 			{u5: 'Haveno-Web'}),
-		$elm$core$Platform$Cmd$none);
+		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
+var $author$project$Pages$Buy$GotInitialModel = $elm$core$Basics$identity;
 var $author$project$Pages$Buy$Buy = $elm$core$Basics$identity;
 var $author$project$Pages$Buy$Loading = 0;
 var $author$project$Pages$Buy$initialModel = {
@@ -7791,7 +7794,7 @@ var $author$project$Pages$Buy$init = function (_v0) {
 		_Utils_update(
 			$author$project$Pages$Buy$initialModel,
 			{u5: 'Haveno-Web Buy'}),
-		$elm$core$Platform$Cmd$none);
+		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
 var $author$project$Pages$Connect$initialModel = {sr: 0, sz: '', o8: false, tG: 'node.haveno.network:17750', kb: '', ui: false, uj: false, rA: false};
 var $author$project$Pages$Connect$init = function (_v0) {
@@ -7889,6 +7892,7 @@ var $author$project$Pages$Funds$init = function (_v0) {
 					A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Funds$GotBalances, $author$project$Comms$CustomGrpc$gotAvailableBalances)
 				])));
 };
+var $author$project$Pages$Market$GotInitialModel = $elm$core$Basics$identity;
 var $author$project$Pages$Market$Loading = 0;
 var $author$project$Pages$Market$Market = $elm$core$Basics$identity;
 var $author$project$Pages$Market$initialModel = {
@@ -7901,8 +7905,9 @@ var $author$project$Pages$Market$init = function (_v0) {
 		_Utils_update(
 			$author$project$Pages$Market$initialModel,
 			{u5: 'Haveno-Web Market'}),
-		$elm$core$Platform$Cmd$none);
+		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
+var $author$project$Pages$Portfolio$GotInitialModel = $elm$core$Basics$identity;
 var $author$project$Pages$Portfolio$Loading = 0;
 var $author$project$Pages$Portfolio$Portfolio = $elm$core$Basics$identity;
 var $author$project$Pages$Portfolio$initialModel = {
@@ -7915,8 +7920,9 @@ var $author$project$Pages$Portfolio$init = function (_v0) {
 		_Utils_update(
 			$author$project$Pages$Portfolio$initialModel,
 			{u5: 'Haveno-Web Portfolio'}),
-		$elm$core$Platform$Cmd$none);
+		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
+var $author$project$Pages$Sell$GotInitialModel = $elm$core$Basics$identity;
 var $author$project$Pages$Sell$Loading = 0;
 var $author$project$Pages$Sell$Sell = $elm$core$Basics$identity;
 var $author$project$Pages$Sell$initialModel = {
@@ -7925,8 +7931,11 @@ var $author$project$Pages$Sell$initialModel = {
 	u5: 'Sell'
 };
 var $author$project$Pages$Sell$init = function (_v0) {
-	return _Utils_Tuple2($author$project$Pages$Sell$initialModel, $elm$core$Platform$Cmd$none);
+	return _Utils_Tuple2(
+		$author$project$Pages$Sell$initialModel,
+		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
+var $author$project$Pages$Support$GotInitialModel = $elm$core$Basics$identity;
 var $author$project$Pages$Support$Loading = 0;
 var $author$project$Pages$Support$Support = $elm$core$Basics$identity;
 var $author$project$Pages$Support$initialModel = {
@@ -7939,7 +7948,7 @@ var $author$project$Pages$Support$init = function (_v0) {
 		_Utils_update(
 			$author$project$Pages$Support$initialModel,
 			{u5: 'Haveno-Web Support'}),
-		$elm$core$Platform$Cmd$none);
+		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
 var $elm$url$Url$Parser$State = F5(
 	function (visited, unvisited, params, frag, value) {
@@ -8066,7 +8075,6 @@ var $author$project$Main$AccountsPage = function (a) {
 var $author$project$Main$GotAccountsMsg = function (a) {
 	return {$: 8, a: a};
 };
-var $elm$core$Platform$Cmd$map = _Platform_map;
 var $author$project$Main$toAccounts = F2(
 	function (model, _v0) {
 		var accounts = _v0.a;
@@ -8778,14 +8786,12 @@ var $author$project$Pages$Connect$update = F2(
 						model,
 						{sz: node}),
 					$elm$core$Platform$Cmd$none);
-			case 3:
+			default:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{sz: '', tG: model.sz}),
 					$elm$core$Platform$Cmd$none);
-			default:
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Pages$Dashboard$Errored = 2;

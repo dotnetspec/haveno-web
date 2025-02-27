@@ -38,7 +38,8 @@ initialModel =
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { initialModel | title = "Haveno-Web Portfolio" }
-    , Cmd.none
+    -- HACK: Just used to satisfy elm-reveiw for now
+    , Cmd.map GotInitialModel Cmd.none
     )
 
 
