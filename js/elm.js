@@ -9974,7 +9974,6 @@ var $author$project$Pages$Buy$view = function (_v0) {
 	return $author$project$Pages$Buy$content;
 };
 var $author$project$Pages$Connect$ApplyCustomMoneroNode = {$: 3};
-var $author$project$Pages$Connect$GoBack = {$: 4};
 var $author$project$Pages$Connect$RetryHavenoConnection = {$: 1};
 var $author$project$Pages$Connect$SetCustomMoneroNode = function (a) {
 	return {$: 2, a: a};
@@ -9983,6 +9982,20 @@ var $anmolitor$elm_grpc$Grpc$UnknownGrpcStatus = function (a) {
 	return {$: 5, a: a};
 };
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $author$project$Utils$MyUtils$infoBtn = F2(
+	function (label, msg) {
+		return A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('info-button'),
+					$elm$html$Html$Events$onClick(msg)
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(label)
+				]));
+	});
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
@@ -10023,20 +10036,26 @@ var $author$project$Pages$Connect$view = function (model) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('connect-page')
+				$elm$html$Html$Attributes$class('funds-container')
 			]),
 		_List_fromArray(
 			[
 				A2(
 				$elm$html$Html$h1,
-				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('funds-title')
+					]),
 				_List_fromArray(
 					[
 						$elm$html$Html$text('Connection Issues')
 					])),
 				A2(
 				$elm$html$Html$h2,
-				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('funds-title')
+					]),
 				_List_fromArray(
 					[
 						$elm$html$Html$text('Here you can resolve wallet and Haveno connection issues.')
@@ -10057,18 +10076,19 @@ var $author$project$Pages$Connect$view = function (model) {
 								$elm$html$Html$text('⚠ Monero Wallet not connected.')
 							])),
 						A2(
-						$elm$html$Html$button,
+						$elm$html$Html$p,
 						_List_fromArray(
 							[
-								$elm$html$Html$Events$onClick(
-								$author$project$Pages$Connect$RetryWalletConnection(
-									$elm$core$Result$Err(
-										$anmolitor$elm_grpc$Grpc$UnknownGrpcStatus('')))),
-								$elm$html$Html$Attributes$id('retryWalletConnection')
+								$elm$html$Html$Attributes$id('retryWalletConnectionButton')
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Retry Wallet Connection')
+								A2(
+								$author$project$Utils$MyUtils$infoBtn,
+								'Retry Monero Wallet Connection',
+								$author$project$Pages$Connect$RetryWalletConnection(
+									$elm$core$Result$Err(
+										$anmolitor$elm_grpc$Grpc$UnknownGrpcStatus(''))))
 							])),
 						A2(
 						$elm$html$Html$p,
@@ -10119,14 +10139,14 @@ var $author$project$Pages$Connect$view = function (model) {
 							]),
 						_List_Nil),
 						A2(
-						$elm$html$Html$button,
+						$elm$html$Html$p,
 						_List_fromArray(
 							[
-								$elm$html$Html$Events$onClick($author$project$Pages$Connect$ApplyCustomMoneroNode)
+								$elm$html$Html$Attributes$id('retryHavenoConnectionButton')
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Use Custom Node')
+								A2($author$project$Utils$MyUtils$infoBtn, 'Use Custom Node', $author$project$Pages$Connect$ApplyCustomMoneroNode)
 							]))
 					])),
 				(!model.s5) ? A2(
@@ -10145,26 +10165,16 @@ var $author$project$Pages$Connect$view = function (model) {
 								$elm$html$Html$text('⚠ Haveno Node not connected.')
 							])),
 						A2(
-						$elm$html$Html$button,
+						$elm$html$Html$p,
 						_List_fromArray(
 							[
-								$elm$html$Html$Events$onClick($author$project$Pages$Connect$RetryHavenoConnection)
+								$elm$html$Html$Attributes$id('retryHavenoConnectionButton')
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Retry Haveno Connection')
+								A2($author$project$Utils$MyUtils$infoBtn, 'Retry Haveno Connection', $author$project$Pages$Connect$RetryHavenoConnection)
 							]))
-					])) : $elm$html$Html$text(''),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick($author$project$Pages$Connect$GoBack)
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Back')
-					]))
+					])) : $elm$html$Html$text('')
 			]));
 };
 var $mdgriffith$elm_ui$Internal$Model$Unkeyed = function (a) {
@@ -16450,20 +16460,6 @@ var $author$project$Pages$Funds$btcBalanceAsString = function (balInfo) {
 		return '';
 	}
 };
-var $author$project$Utils$MyUtils$infoBtn = F2(
-	function (label, msg) {
-		return A2(
-			$elm$html$Html$button,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('info-button'),
-					$elm$html$Html$Events$onClick(msg)
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(label)
-				]));
-	});
 var $author$project$Pages$Funds$ToggleVisibility = {$: 4};
 var $author$project$Extras$Constants$blankAddress = '************************';
 var $author$project$Pages$Funds$primaryAddressView = function (model) {

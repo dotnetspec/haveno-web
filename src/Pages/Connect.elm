@@ -1,4 +1,4 @@
-module Pages.Connect exposing (Model, Msg, init, update, view, initialModel)
+module Pages.Connect exposing (Model, Msg, init, initialModel, update, view)
 
 import Comms.CustomGrpc exposing (gotPrimaryAddress)
 import Grpc
@@ -6,6 +6,7 @@ import Html exposing (Html, button, div, h1, h2, input, p, text)
 import Html.Attributes exposing (class, id, placeholder)
 import Html.Events exposing (onClick, onInput)
 import Proto.Io.Haveno.Protobuffer as Protobuf
+import Utils.MyUtils
 
 
 
@@ -36,7 +37,6 @@ type Msg
     | GoBack
 
 
-
 initialModel : Model
 initialModel =
     { moneroNode = "node.haveno.network:17750"
@@ -48,6 +48,8 @@ initialModel =
     , connectionAttempts = 0
     , primaryaddress = ""
     }
+
+
 
 -- NAV: Init
 
@@ -91,17 +93,15 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [ class "connect-page" ]
-        [ h1 [] [ text "Connection Issues" ]
-        , h2 [] [ text "Here you can resolve wallet and Haveno connection issues." ]
+    div [ class "funds-container" ]
+        [ h1 [ class "funds-title" ] [ text "Connection Issues" ]
+        , h2 [ class "funds-title" ] [ text "Here you can resolve wallet and Haveno connection issues." ]
 
         -- Monero Wallet Status
         , if not model.walletConnected then
             div []
                 [ p [ id "walletNotConnectedWarning" ] [ text "⚠ Monero Wallet not connected." ]
-                , button [ onClick (RetryWalletConnection (Err <| Grpc.UnknownGrpcStatus "")), id "retryWalletConnection" ] [ text "Retry Wallet Connection" ]
-
-                -- Display Current Monero Node
+                , p [ id "retryWalletConnectionButton" ] [ Utils.MyUtils.infoBtn "Retry Monero Wallet Connection" <| RetryWalletConnection (Err <| Grpc.UnknownGrpcStatus "") ]
                 , p [] [ text "Current Monero Node:" ]
                 , p [ class "current-node" ] [ text model.moneroNode ]
                 ]
@@ -118,19 +118,34 @@ view model =
                 , Html.Attributes.value model.customMoneroNode
                 ]
                 []
-            , button [ onClick ApplyCustomMoneroNode ] [ text "Use Custom Node" ]
+            
+            , p [ id "retryHavenoConnectionButton" ] [ Utils.MyUtils.infoBtn "Use Custom Node" <| ApplyCustomMoneroNode ]
             ]
 
         -- Haveno Node Status
         , if not model.havenoConnected then
             div []
                 [ p [ id "havenoNodeNotConnected" ] [ text "⚠ Haveno Node not connected." ]
-                , button [ onClick RetryHavenoConnection ] [ text "Retry Haveno Connection" ]
+                , p [ id "retryHavenoConnectionButton" ] [ Utils.MyUtils.infoBtn "Retry Haveno Connection" <| RetryHavenoConnection ]
                 ]
 
           else
             text ""
-
-        -- Back Button
-        , button [ onClick GoBack ] [ text "Back" ]
         ]
+
+
+
+-- NAV: View helpers:
+{- custodialFundsView : Model -> Html Msg
+   custodialFundsView model =
+       Html.div [ class "funds-container", id "custodialFundsView" ]
+           [ Html.h1 [ class "funds-title" ] [ Html.text "Funds" ]
+           , primaryAddressView model
+           , xmrBalView model
+           , Html.div [ id "btcbalance", class "balance-text" ]
+               [ Html.text ("Available BTC Balance: " ++ btcBalanceAsString model.balances ++ " BTC") ]
+           , Html.div [ id "reservedOfferBalance", class "balance-text" ]
+               [ Html.text ("Reserved Offer Balance: " ++ reservedOfferBalanceAsString model.balances ++ " XMR") ]
+           , MyUtils.infoBtn "New Sub Address" <| ClickedGotNewSubaddress
+           ]
+-}
