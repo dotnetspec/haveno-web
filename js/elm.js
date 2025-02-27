@@ -8684,7 +8684,6 @@ var $author$project$Pages$Accounts$update = F2(
 							{su: 0, kb: primaryAddresponse.t7, uF: 1}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var error = msg.a.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8700,7 +8699,6 @@ var $author$project$Pages$Accounts$update = F2(
 							{su: 1, uF: 1, uL: subAddresponse.uL}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var error = msg.a.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8716,7 +8714,6 @@ var $author$project$Pages$Accounts$update = F2(
 							{ob: response.ob, uF: 1}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var error = msg.a.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8749,7 +8746,6 @@ var $author$project$Pages$Connect$update = F2(
 							{sp: model.sp, kb: primaryAddresponse.t7, ui: false, vc: true}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var error = msg.a.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8775,18 +8771,6 @@ var $author$project$Pages$Connect$update = F2(
 						model,
 						{sx: '', tF: model.sx}),
 					$elm$core$Platform$Cmd$none);
-			case 4:
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{s5: true, uh: false, ui: false, vc: true}),
-					$elm$core$Platform$Cmd$none);
-			case 5:
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{uh: false, ui: false}),
-					$elm$core$Platform$Cmd$none);
 			default:
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
@@ -8803,7 +8787,6 @@ var $author$project$Pages$Dashboard$update = F2(
 						{ob: response.ob, uF: 1}),
 					$elm$core$Platform$Cmd$none);
 			} else {
-				var error = msg.a.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -8819,7 +8802,6 @@ var $author$project$Pages$Dashboard$update = F2(
 						{kb: primaryAddresponse.t7, uF: 1}),
 					$elm$core$Platform$Cmd$none);
 			} else {
-				var error = msg.a.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -8848,7 +8830,6 @@ var $author$project$Pages$Donate$update = F2(
 							{su: 0, kb: primaryAddresponse.t7, uF: 0}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var error = msg.a.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8864,7 +8845,6 @@ var $author$project$Pages$Donate$update = F2(
 							{su: 1, uF: 0, uL: subAddresponse.uL}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var error = msg.a.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8880,7 +8860,6 @@ var $author$project$Pages$Donate$update = F2(
 							{ob: response.ob, uF: 0}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var error = msg.a.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8949,7 +8928,6 @@ var $author$project$Pages$Funds$update = F2(
 							{su: 0, kb: primaryAddresponse.t7, uF: 1}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var error = msg.a.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8965,7 +8943,6 @@ var $author$project$Pages$Funds$update = F2(
 							{su: 1, uF: 1, uL: subAddresponse.uL}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var error = msg.a.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -8981,7 +8958,6 @@ var $author$project$Pages$Funds$update = F2(
 							{ob: response.ob, uF: 1}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var error = msg.a.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
@@ -9038,7 +9014,6 @@ var $author$project$Main$update = F2(
 							{kb: primaryAddresponse.t7}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var error = msg.a.a;
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 16:
@@ -9050,7 +9025,6 @@ var $author$project$Main$update = F2(
 							{ob: response.ob}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					var error = msg.a.a;
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 0:
@@ -9119,7 +9093,6 @@ var $author$project$Main$update = F2(
 						$elm$core$Platform$Cmd$none);
 				}
 			case 13:
-				var rawJsonMessage = msg.a;
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			case 12:
 				var newZone = msg.a;
@@ -9712,7 +9685,7 @@ var $author$project$Main$menu = function (model) {
 };
 var $author$project$Pages$Accounts$AddNewAccount = {$: 3};
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $author$project$Pages$Accounts$custodialAccountsView = function (model) {
+var $author$project$Pages$Accounts$custodialAccountsView = function (_v0) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -9974,7 +9947,7 @@ var $author$project$Pages$Buy$view = function (_v0) {
 	return $author$project$Pages$Buy$content;
 };
 var $author$project$Pages$Connect$ApplyCustomMoneroNode = {$: 3};
-var $author$project$Pages$Connect$GoBack = {$: 6};
+var $author$project$Pages$Connect$GoBack = {$: 4};
 var $author$project$Pages$Connect$RetryHavenoConnection = {$: 1};
 var $author$project$Pages$Connect$SetCustomMoneroNode = function (a) {
 	return {$: 2, a: a};

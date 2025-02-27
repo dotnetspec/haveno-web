@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, gotPrimaryAddress, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setDashboardHavenoVersion, showVideoOrBanner, subscriptions, toAccounts, toBlank, toConnect, toDashboard, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, gotPrimaryAddress, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setDashboardHavenoVersion, subscriptions, toAccounts, toBlank, toConnect, toDashboard, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- Main loads Blank initially.
@@ -275,7 +275,7 @@ update msg model =
 
         -- NAV: Recv rawJsonMessage
         -- NOTE: This is updated when a message from js is received
-        Recv rawJsonMessage ->
+        Recv _ ->
             ( model, Cmd.none )
 
         AdjustTimeZone newZone ->
@@ -959,18 +959,6 @@ port receiveMessageFromJs : (JD.Value -> msg) -> Sub msg
      msg has a handle function that extracts it using a decoder
 
 -}
-{--HACK: Since only Dashboard page no banner, use below. But with more page etc. can add bool banner property to 
-each page model and match against-}
--- REF: Zoho-Responsive
-
-
-showVideoOrBanner : Page -> Html.Html msg
-showVideoOrBanner page =
-    Html.img [ Attr.class "banner", Attr.src "assets/resources/images/Haveno-banner1918X494.png", Attr.alt "Haveno", Attr.width 1918, Attr.height 494, Attr.title "Haveno Banner" ]
-        []
-
-
-
 {- -- NOTE: This type can be Html.Html msg instead
    of Html.Html Msg because footerContent
    has no event handlers.
@@ -1081,7 +1069,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.4.45" ]
+                , Html.p [] [ Html.text "Version 0.4.46" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text

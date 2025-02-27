@@ -32,18 +32,14 @@ testEncodeGetBalancesReply =
 
 gotXmrBalance : Protobuf.GetBalancesReply -> Maybe String
 gotXmrBalance reply =
-    case reply.balances of
-        Just balances ->
-            case balances.xmr of
-                Just xmr ->
+    reply.balances
+        |> Maybe.andThen (\balances ->
+            balances.xmr
+                |> Maybe.map (\xmr ->
                     let
-                        ( firstInt, secondInt ) =
+                        ( firstInt, _ ) =
                             Int64.toInts xmr.balance
                     in
-                    Just (String.fromInt <| firstInt)
-
-                Nothing ->
-                    Nothing
-
-        Nothing ->
-            Nothing
+                    String.fromInt firstInt
+                )
+        )

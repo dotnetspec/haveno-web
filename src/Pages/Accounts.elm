@@ -154,7 +154,7 @@ view model =
 
 
 custodialAccountsView : Model -> Html Msg
-custodialAccountsView model =
+custodialAccountsView _ =
     Html.div [ Attr.class "accounts-container", Attr.id "custodialAccountsView" ]
         [ Html.h1 [ Attr.class "accounts-title" ] [ Html.text "Accounts" ]
         , Html.button [ class "info-button", Html.Events.onClick AddNewAccount, Attr.id "addnewaccountbutton" ] [ text "Add New Account" ]

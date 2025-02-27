@@ -145,13 +145,13 @@ toStringGetBalancesReply reply =
         gotXmr =
             Maybe.withDefault Protobuf.defaultXmrBalanceInfo balInformation.xmr
 
-        ( available1, avail2 ) =
+        ( available1, _ ) =
             toInts gotXmr.availableBalance
 
-        ( pend1, pend2 ) =
+        ( pend1, _ ) =
             toInts gotXmr.pendingBalance
 
-        ( res1, res2 ) =
+        ( res1, _ ) =
             toInts gotXmr.reservedOfferBalance
     in
     -- Replace these fields with the actual fields in your GetBalancesReply type
