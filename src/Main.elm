@@ -494,6 +494,7 @@ type Route
     | BlankRoute
     | AccountsRoute
     | DonateRoute
+    | ConnectRoute
 
 
 
@@ -588,6 +589,7 @@ urlAsPageParser =
         , Url.Parser.map Market (Url.Parser.s "market")
         , Url.Parser.map AccountsRoute (Url.Parser.s "accounts")
         , Url.Parser.map DonateRoute (Url.Parser.s "donate")
+        , Url.Parser.map ConnectRoute (Url.Parser.s "connect")
         ]
 
 
@@ -674,6 +676,10 @@ updateUrl url model =
         Just DonateRoute ->
             Pages.Donate.init ()
                 |> toDonate model
+
+        Just ConnectRoute ->
+            Pages.Connect.init ()
+                |> toConnect model
 
         Nothing ->
             Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
@@ -1036,6 +1042,7 @@ navLinks page =
                 , navLink Buy { url = "buy", caption = "Buy" }
                 , navLink PortfolioRoute { url = "portfolio", caption = "Portfolio" }
                 , navLink AccountsRoute { url = "accounts", caption = "Accounts" }
+                , navLink ConnectRoute { url = "connect", caption = "Connect" }
                 , navLink DonateRoute { url = "donate", caption = "Donate" }
                 ]
     in
@@ -1146,6 +1153,12 @@ isActive { link, page } =
             True
 
         ( DonateRoute, _ ) ->
+            False
+
+        ( ConnectRoute, ConnectPage _ ) ->
+            True
+
+        ( ConnectRoute, _ ) ->
             False
 
 

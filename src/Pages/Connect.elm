@@ -1,4 +1,4 @@
-module Pages.Connect exposing (Model, Msg, init, update, view)
+module Pages.Connect exposing (Model, Msg, init, update, view, initialModel)
 
 import Comms.CustomGrpc exposing (gotPrimaryAddress)
 import Grpc
@@ -9,7 +9,7 @@ import Proto.Io.Haveno.Protobuffer as Protobuf
 
 
 
--- Model for connection management
+-- NAV: Model
 
 
 type alias Model =
@@ -37,20 +37,24 @@ type Msg
 
 
 
--- Initial model
+initialModel : Model
+initialModel =
+    { moneroNode = "node.haveno.network:17750"
+    , customMoneroNode = ""
+    , havenoConnected = False
+    , walletConnected = False
+    , retryingWallet = False
+    , retryingHaveno = False
+    , connectionAttempts = 0
+    , primaryaddress = ""
+    }
+
+-- NAV: Init
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { moneroNode = "default.node.address:18081"
-      , customMoneroNode = ""
-      , havenoConnected = False
-      , walletConnected = False
-      , retryingWallet = False
-      , retryingHaveno = False
-      , connectionAttempts = 0
-      , primaryaddress = ""
-      }
+    ( initialModel
     , Cmd.none
     )
 

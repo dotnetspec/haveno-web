@@ -4605,9 +4605,9 @@ var _Http_toTask = F3(function(router, toTask, request)
 		$elm$core$Maybe$isJust(request.u8) && _Http_track(router, xhr, request.u8.a);
 
 		try {
-			xhr.open(request.tB, request.bJ, true);
+			xhr.open(request.tB, request.bH, true);
 		} catch (e) {
-			return done($elm$http$Http$BadUrl_(request.bJ));
+			return done($elm$http$Http$BadUrl_(request.bH));
 		}
 
 		_Http_configureRequest(xhr, request);
@@ -4651,7 +4651,7 @@ function _Http_toResponse(toBody, xhr)
 function _Http_toMetadata(xhr)
 {
 	return {
-		bJ: xhr.responseURL,
+		bH: xhr.responseURL,
 		uG: xhr.status,
 		uH: xhr.statusText,
 		s7: _Http_parseHeaders(xhr.getAllResponseHeaders())
@@ -7614,7 +7614,7 @@ var $elm$http$Http$cmdMap = F2(
 					tB: r.tB,
 					u3: r.u3,
 					u8: r.u8,
-					bJ: r.bJ
+					bH: r.bH
 				});
 		}
 	});
@@ -7637,12 +7637,12 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{rU: false, r5: r.r5, sN: r.sN, s7: r.s7, tB: r.tB, u3: r.u3, u8: r.u8, bJ: r.bJ}));
+			{rU: false, r5: r.r5, sN: r.sN, s7: r.s7, tB: r.tB, u3: r.u3, u8: r.u8, bH: r.bH}));
 };
 var $elm$http$Http$riskyRequest = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{rU: true, r5: r.r5, sN: r.sN, s7: r.s7, tB: r.tB, u3: r.u3, u8: r.u8, bJ: r.bJ}));
+			{rU: true, r5: r.r5, sN: r.sN, s7: r.s7, tB: r.tB, u3: r.u3, u8: r.u8, bH: r.bH}));
 };
 var $anmolitor$elm_grpc$Grpc$rpcPath = function (_v0) {
 	var service = _v0.uw;
@@ -7673,7 +7673,7 @@ var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 				tB: 'POST',
 				u3: req.u3,
 				u8: req.u8,
-				bJ: _Utils_ap(
+				bH: _Utils_ap(
 					req.mD,
 					$anmolitor$elm_grpc$Grpc$rpcPath(req.kz))
 			});
@@ -7792,6 +7792,10 @@ var $author$project$Pages$Buy$init = function (_v0) {
 			$author$project$Pages$Buy$initialModel,
 			{u4: 'Haveno-Web Buy'}),
 		$elm$core$Platform$Cmd$none);
+};
+var $author$project$Pages$Connect$initialModel = {sp: 0, sx: '', s5: false, tF: 'node.haveno.network:17750', kb: '', uh: false, ui: false, vc: false};
+var $author$project$Pages$Connect$init = function (_v0) {
+	return _Utils_Tuple2($author$project$Pages$Connect$initialModel, $elm$core$Platform$Cmd$none);
 };
 var $author$project$Pages$Dashboard$BalanceResponse = function (a) {
 	return {$: 0, a: a};
@@ -8081,6 +8085,24 @@ var $author$project$Main$toBlank = F2(
 		var blankcmd = _v0.b;
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
+var $author$project$Main$ConnectPage = function (a) {
+	return {$: 9, a: a};
+};
+var $author$project$Main$GotConnectMsg = function (a) {
+	return {$: 10, a: a};
+};
+var $author$project$Main$toConnect = F2(
+	function (model, _v0) {
+		var connect = _v0.a;
+		var cmd = _v0.b;
+		return _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{
+					L: $author$project$Main$ConnectPage(connect)
+				}),
+			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotConnectMsg, cmd));
+	});
 var $author$project$Main$AdjustTimeZone = function (a) {
 	return {$: 12, a: a};
 };
@@ -8318,6 +8340,7 @@ var $author$project$Main$toSupport = F2(
 var $author$project$Main$AccountsRoute = 8;
 var $author$project$Main$BlankRoute = 7;
 var $author$project$Main$Buy = 5;
+var $author$project$Main$ConnectRoute = 10;
 var $author$project$Main$DashboardRoute = 0;
 var $author$project$Main$DonateRoute = 9;
 var $author$project$Main$FundsRoute = 3;
@@ -8456,7 +8479,11 @@ var $author$project$Main$urlAsPageParser = $elm$url$Url$Parser$oneOf(
 			A2(
 			$elm$url$Url$Parser$map,
 			9,
-			$elm$url$Url$Parser$s('donate'))
+			$elm$url$Url$Parser$s('donate')),
+			A2(
+			$elm$url$Url$Parser$map,
+			10,
+			$elm$url$Url$Parser$s('connect'))
 		]));
 var $author$project$Main$updateUrl = F2(
 	function (url, model) {
@@ -8523,12 +8550,18 @@ var $author$project$Main$updateUrl = F2(
 						$author$project$Main$toAccounts,
 						model,
 						$author$project$Pages$Accounts$init(0));
-				default:
+				case 9:
 					var _v10 = _v0.a;
 					return A2(
 						$author$project$Main$toDonate,
 						model,
 						$author$project$Pages$Donate$init(0));
+				default:
+					var _v11 = _v0.a;
+					return A2(
+						$author$project$Main$toConnect,
+						model,
+						$author$project$Pages$Connect$init(0));
 			}
 		} else {
 			return A2(
@@ -8601,24 +8634,6 @@ var $author$project$Pages$Funds$Loaded = 1;
 var $author$project$Pages$Funds$SubAddressView = 1;
 var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $elm$core$Basics$not = _Basics_not;
-var $author$project$Main$ConnectPage = function (a) {
-	return {$: 9, a: a};
-};
-var $author$project$Main$GotConnectMsg = function (a) {
-	return {$: 10, a: a};
-};
-var $author$project$Main$toConnect = F2(
-	function (model, _v0) {
-		var connect = _v0.a;
-		var cmd = _v0.b;
-		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{
-					L: $author$project$Main$ConnectPage(connect)
-				}),
-			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotConnectMsg, cmd));
-	});
 var $elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 1) {
@@ -9338,7 +9353,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.4.45')
+										$elm$html$Html$text('Version 0.4.46')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
@@ -9461,12 +9476,20 @@ var $author$project$Main$isActive = function (_v0) {
 				var _v18 = _v1.a;
 				return false;
 			}
-		default:
+		case 9:
 			if (_v1.b.$ === 8) {
 				var _v19 = _v1.a;
 				return true;
 			} else {
 				var _v20 = _v1.a;
+				return false;
+			}
+		default:
+			if (_v1.b.$ === 9) {
+				var _v21 = _v1.a;
+				return true;
+			} else {
+				var _v22 = _v1.a;
 				return false;
 			}
 	}
@@ -9528,8 +9551,8 @@ var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $author$project$Main$navLinks = function (page) {
 	var navLink = F2(
 		function (route, _v0) {
-			var url = _v0.bJ;
-			var caption = _v0.bH;
+			var url = _v0.bH;
+			var caption = _v0.bm;
 			return A2(
 				$elm$html$Html$li,
 				_List_fromArray(
@@ -9584,43 +9607,47 @@ var $author$project$Main$navLinks = function (page) {
 				A2(
 				navLink,
 				7,
-				{bH: '', bJ: '/'}),
+				{bm: '', bH: '/'}),
 				A2(
 				navLink,
 				0,
-				{bH: 'Dashboard', bJ: 'dashboard'}),
+				{bm: 'Dashboard', bH: 'dashboard'}),
 				A2(
 				navLink,
 				3,
-				{bH: 'Funds', bJ: 'funds'}),
+				{bm: 'Funds', bH: 'funds'}),
 				A2(
 				navLink,
 				6,
-				{bH: 'Market', bJ: 'market'}),
+				{bm: 'Market', bH: 'market'}),
 				A2(
 				navLink,
 				4,
-				{bH: 'Support', bJ: 'support'}),
+				{bm: 'Support', bH: 'support'}),
 				A2(
 				navLink,
 				1,
-				{bH: 'Sell', bJ: 'sell'}),
+				{bm: 'Sell', bH: 'sell'}),
 				A2(
 				navLink,
 				5,
-				{bH: 'Buy', bJ: 'buy'}),
+				{bm: 'Buy', bH: 'buy'}),
 				A2(
 				navLink,
 				2,
-				{bH: 'Portfolio', bJ: 'portfolio'}),
+				{bm: 'Portfolio', bH: 'portfolio'}),
 				A2(
 				navLink,
 				8,
-				{bH: 'Accounts', bJ: 'accounts'}),
+				{bm: 'Accounts', bH: 'accounts'}),
+				A2(
+				navLink,
+				10,
+				{bm: 'Connect', bH: 'connect'}),
 				A2(
 				navLink,
 				9,
-				{bH: 'Donate', bJ: 'donate'})
+				{bm: 'Donate', bH: 'donate'})
 			]));
 	return links;
 };

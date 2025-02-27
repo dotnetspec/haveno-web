@@ -13,6 +13,7 @@ import Browser
 import Extras.TestData as TestData
 import Main
 import Pages.Funds as Funds
+import Pages.Connect as Connect
 import Spec exposing (describe, given, it, scenario, when)
 import Spec.Claim as Claim
 import Spec.Command
@@ -152,8 +153,7 @@ runSpecTests =
                         )
                     ]
             )
-        , --Runner.skip <|
-          --Runner.pick <|
+        , 
           scenario "11: Menu Closes After Using NavLink"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
@@ -183,6 +183,45 @@ runSpecTests =
                                 (Claim.isEqual Debug.toString <|
                                     Main.FundsPage <|
                                         Funds.initialModel
+                                )
+                        )
+                    , it "b. the menu should be closed"
+                        (Spec.Observer.observeModel .isMenuOpen
+                            |> Spec.expect
+                                Claim.isFalse
+                        )
+                    ]
+            )
+            , 
+          scenario "12: Connect page exists and can be navigated to via menu"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                )
+                |> when "the user opens the menu"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            Main.ToggleMenu
+                    ]
+                |> when "the user clicks the Funds navLink in the burger menu"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/connect" Nothing Nothing))
+                    ]
+                |> Spec.observeThat
+                    [ it "a.is on the Connect page"
+                        (Spec.Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.ConnectPage <|
+                                        Connect.initialModel
                                 )
                         )
                     , it "b. the menu should be closed"
