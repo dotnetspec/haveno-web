@@ -111,13 +111,13 @@ update msg model =
         BalanceResponse (Ok response) ->
             ( { model | balances = response.balances, status = Loaded }, Cmd.none )
 
-        BalanceResponse (Err error) ->
+        BalanceResponse (Err _) ->
             ( { model | status = Errored }, Cmd.none )
 
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded }, Cmd.none )
 
-        GotXmrPrimaryAddress (Err error) ->
+        GotXmrPrimaryAddress (Err _) ->
             ( { model | status = Errored }, Cmd.none )
 
 

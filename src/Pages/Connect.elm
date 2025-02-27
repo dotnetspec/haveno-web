@@ -65,7 +65,7 @@ update msg model =
         RetryWalletConnection (Ok primaryAddresponse) ->
             ( { model | retryingWallet = False, connectionAttempts = model.connectionAttempts, primaryaddress = primaryAddresponse.primaryAddress, walletConnected = True }, Cmd.none )
 
-        RetryWalletConnection (Err error) ->
+        RetryWalletConnection (Err _) ->
             ( { model | retryingWallet = True, connectionAttempts = model.connectionAttempts + 1 }, gotPrimaryAddress |> Grpc.toCmd RetryWalletConnection )
 
         RetryHavenoConnection ->

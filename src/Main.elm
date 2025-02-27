@@ -206,13 +206,13 @@ update msg model =
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress }, Cmd.none )
 
-        GotXmrPrimaryAddress (Err error) ->
+        GotXmrPrimaryAddress (Err _) ->
             ( model, Cmd.none )
 
         GotBalances (Ok response) ->
             ( { model | balances = response.balances }, Cmd.none )
 
-        GotBalances (Err error) ->
+        GotBalances (Err _) ->
             ( model, Cmd.none )
 
         ClickedLink urlRequest ->

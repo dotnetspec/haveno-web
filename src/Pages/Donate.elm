@@ -83,19 +83,19 @@ update msg model =
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = DonateView }, Cmd.none )
 
-        GotXmrPrimaryAddress (Err error) ->
+        GotXmrPrimaryAddress (Err _) ->
             ( { model | status = Errored }, Cmd.none )
 
         GotXmrNewSubaddress (Ok subAddresponse) ->
             ( { model | subaddress = subAddresponse.subaddress, status = Loaded, currentView = ManageDonateView }, Cmd.none )
 
-        GotXmrNewSubaddress (Err error) ->
+        GotXmrNewSubaddress (Err _) ->
             ( { model | status = Errored }, Cmd.none )
 
         GotBalances (Ok response) ->
             ( { model | balances = response.balances, status = Loaded }, Cmd.none )
 
-        GotBalances (Err error) ->
+        GotBalances (Err _) ->
             ( { model | status = Errored }, Cmd.none )
 
 
