@@ -169,7 +169,7 @@ custodialFundsView model =
             [ Html.text ("Available BTC Balance: " ++ btcBalanceAsString model.balances ++ " BTC") ]
         , Html.div [ Attr.id "reservedOfferBalance", Attr.class "balance-text" ]
             [ Html.text ("Reserved Offer Balance: " ++ reservedOfferBalanceAsString model.balances ++ " XMR") ]
-        , MyUtils.infoBtn "New Sub Address" <| ClickedGotNewSubaddress
+        , MyUtils.infoBtn "New Sub Address" "" <| ClickedGotNewSubaddress
         ]
 
 
@@ -183,7 +183,7 @@ primaryAddressView model =
              else
                 "Show"
             )
-            ToggleVisibility
+            "" ToggleVisibility
         , Html.div [ Attr.class "address-text" ]
             [ Html.span [ Attr.class "address-label" ] [ Html.text "Primary address: " ]
             , Html.span [ Attr.class "address-value" ]

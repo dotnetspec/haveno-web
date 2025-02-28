@@ -2,12 +2,13 @@ module Pages.Accounts exposing (Model, Msg(..), Status(..), View(..), custodialA
 
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
-import Html exposing (Html, div, section, text)
-import Html.Attributes as Attr exposing (class)
+import Html exposing (Html, div, p, section, text)
+import Html.Attributes exposing (class, id)
 import Html.Events
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import UInt64
+import Utils.MyUtils
 
 
 
@@ -35,7 +36,7 @@ initialModel =
     , primaryaddress = ""
     , errors = []
     , subaddress = ""
-    , currentView = AccountsView
+    , currentView = ManageAccounts
     }
 
 
@@ -47,7 +48,12 @@ type Status
 
 type View
     = AccountsView
-    | ManageAccountsView
+    | ManageAccounts
+    | TraditionalCurrencyAccounts
+    | CryptocurrencyAccounts
+    | WalletPassword
+    | WalletSeed
+    | Backup
 
 
 
@@ -70,6 +76,7 @@ type Msg
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | AddNewAccount
+    | ChangeView View
 
 
 
@@ -80,25 +87,28 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         AddNewAccount ->
-            ( { model | currentView = ManageAccountsView }, Cmd.none )
+            ( { model | currentView = ManageAccounts }, Cmd.none )
 
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
-            ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = AccountsView }, Cmd.none )
+            ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
 
         GotXmrPrimaryAddress (Err _) ->
             ( { model | status = Errored }, Cmd.none )
 
         GotXmrNewSubaddress (Ok subAddresponse) ->
-            ( { model | subaddress = subAddresponse.subaddress, status = Loaded, currentView = ManageAccountsView }, Cmd.none )
+            ( { model | subaddress = subAddresponse.subaddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
 
         GotXmrNewSubaddress (Err _) ->
             ( { model | status = Errored }, Cmd.none )
 
         GotBalances (Ok response) ->
-            ( { model | balances = response.balances, status = Loaded }, Cmd.none )
+            ( { model | balances = response.balances, status = Loaded, currentView = ManageAccounts }, Cmd.none )
 
         GotBalances (Err _) ->
             ( { model | status = Errored }, Cmd.none )
+
+        ChangeView newView ->
+            ( { model | currentView = newView }, Cmd.none )
 
 
 
@@ -108,7 +118,7 @@ update msg model =
 view : Model -> Html Msg
 view model =
     section
-        [ Attr.id "page"
+        [ id "page"
         , class "section-background"
         , class "text-center"
         ]
@@ -138,8 +148,23 @@ view model =
                             AccountsView ->
                                 custodialAccountsView model
 
-                            ManageAccountsView ->
+                            ManageAccounts ->
                                 manageAccountsView "whatever the new account is"
+
+                            TraditionalCurrencyAccounts ->
+                                div [] [ text "Traditional Currency Accounts" ]
+
+                            CryptocurrencyAccounts ->
+                                div [] [ text "CryptocurrencyAccounts Accounts" ]
+
+                            WalletPassword ->
+                                div [] [ text "Wallet Password " ]
+
+                            WalletSeed ->
+                                div [] [ text "Seed " ]
+
+                            Backup ->
+                                div [] [ text "Backup " ]
                         ]
             , div
                 [ class "split-col"
@@ -155,27 +180,31 @@ view model =
 
 custodialAccountsView : Model -> Html Msg
 custodialAccountsView _ =
-    Html.div [ Attr.class "accounts-container", Attr.id "custodialAccountsView" ]
-        [ Html.h1 [ Attr.class "accounts-title" ] [ Html.text "Accounts" ]
-        , Html.button [ class "info-button", Html.Events.onClick AddNewAccount, Attr.id "addnewaccountbutton" ] [ text "Add New Account" ]
+    Html.div [ class "accounts-container", id "custodialAccountsView" ]
+        [ Html.h1 [ class "accounts-title" ] [ Html.text "Accounts" ]
+        , Html.button [ class "info-button", Html.Events.onClick AddNewAccount, id "addnewaccountbutton" ] [ text "Add New Account" ]
         ]
 
 
 errorView : Html Msg
 errorView =
-    Html.div [ Attr.class "accounts-container" ]
-        [ Html.h1 [ Attr.class "accounts-title" ] [ Html.text "Accounts" ]
-        , Html.div [ Attr.class "error-message", Attr.id "accounts-error-message" ]
+    Html.div [ class "accounts-container" ]
+        [ Html.h1 [ class "accounts-title" ] [ Html.text "Accounts" ]
+        , Html.div [ class "error-message", id "accounts-error-message" ]
             [ Html.text "Error: Unable to retrieve relevant data. Please try again later." ]
         ]
 
 
 manageAccountsView : String -> Html Msg
 manageAccountsView newAccount =
-    Html.div [ Attr.class "accounts-container" ]
-        [ Html.h1 [ Attr.class "accounts-title" ] [ Html.text "Accounts" ]
-        , Html.div [ Attr.class "address-text", Attr.id "newAccount" ]
-            [ Html.text ("New Account: " ++ newAccount) ]
+    Html.div [ class "accounts-container" ]
+        [ Html.h1 [ class "accounts-title" ] [ Html.text "Accounts" ]
+        , p [] [ Utils.MyUtils.infoBtn "Traditional Currency Accounts" "traditionalCurrencyAccountsButton" <| ChangeView TraditionalCurrencyAccounts ]
+        , p [] [ Utils.MyUtils.infoBtn "Crypto Currency Accounts" "cryptocurrencyAccountsButton" <| ChangeView CryptocurrencyAccounts ]
+        , p [] [ Utils.MyUtils.infoBtn "Wallet Password" "walletPasswordButton" <| ChangeView WalletPassword ]
+        , p [] [ Utils.MyUtils.infoBtn "Wallet Seed" "walletSeedButton" <| ChangeView WalletSeed ]
+        , p [] [ Utils.MyUtils.infoBtn "Backup" "backupButton" <| ChangeView Backup ]
+        , p [] [ Utils.MyUtils.infoBtn "Add New Account" "addnewaccountbutton" <| ChangeView ManageAccounts ]
         ]
 
 

@@ -9,7 +9,8 @@ import Spec exposing (Flags, Spec, describe, given, it, scenario, when)
 import Spec.Claim as Claim
 import Spec.Command
 import Spec.Http.Stub as Stub
-import Spec.Markup as Markup
+import Spec.Markup
+import Spec.Markup.Event
 import Spec.Markup.Selector exposing (by)
 import Spec.Observer as Observer
 import Spec.Setup
@@ -55,12 +56,12 @@ runSpecTests =
                             |> Spec.expect (equals TestData.primaryAddress)
                         )
                     , it "should display an 'Add New Account' button"
-                        (Markup.observeElement
-                            |> Markup.query
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.id "addnewaccountbutton" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
-                                    Markup.text <|
+                                    Spec.Markup.text <|
                                         Claim.isStringContaining 1 "Add New Account"
                                 )
                         )
@@ -83,14 +84,113 @@ runSpecTests =
                             |> Spec.expect (equals Accounts.Errored)
                         )
                     , it "displays the Accounts page correctly"
-                        (Markup.observeElement
-                            |> Markup.query
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.id "accounts-error-message" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
-                                    Markup.text <|
+                                    Spec.Markup.text <|
                                         Claim.isStringContaining 1 "Error: Unable to retrieve relevant data. Please try again later."
                                 )
+                        )
+                    ]
+            )
+        , Spec.scenario "3. User navigates to Traditional Currency Accounts"
+            (Spec.given
+                (Spec.Setup.init
+                    (Accounts.init ())
+                    |> Spec.Setup.withView Accounts.view
+                    |> Spec.Setup.withUpdate Accounts.update
+                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
+                )
+                |> Spec.when "User clicks Traditional Currency Accounts"
+                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "traditionalCurrencyAccountsButton" ]
+                    , Spec.Markup.Event.click
+                    ]
+                |> Spec.observeThat
+                    [ it "has status as Loaded"
+                        (Observer.observeModel .status
+                            |> Spec.expect (equals Accounts.Loaded)
+                        )
+                    , Spec.it "updates the model to show Traditional Currency Accounts"
+                        (Observer.observeModel .currentView
+                            |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.TraditionalCurrencyAccounts)
+                        )
+                    ]
+            )
+        , Spec.scenario "4. User navigates to Cryptocurrency Accounts"
+            (Spec.given
+                (Spec.Setup.init
+                    (Accounts.init ())
+                    |> Spec.Setup.withView Accounts.view
+                    |> Spec.Setup.withUpdate Accounts.update
+                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
+                )
+                |> Spec.when "User clicks Cryptocurrency Accounts"
+                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
+                    , Spec.Markup.Event.click
+                    ]
+                |> Spec.observeThat
+                    [ Spec.it "updates the model to show Cryptocurrency Accounts"
+                        (Observer.observeModel .currentView
+                            |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.CryptocurrencyAccounts)
+                        )
+                    ]
+            )
+        , Spec.scenario "User navigates to Wallet Password"
+            (Spec.given
+                (Spec.Setup.init
+                    (Accounts.init ())
+                    |> Spec.Setup.withView Accounts.view
+                    |> Spec.Setup.withUpdate Accounts.update
+                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
+                )
+                |> Spec.when "User clicks Wallet Password"
+                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "walletPasswordButton" ]
+                    , Spec.Markup.Event.click
+                    ]
+                |> Spec.observeThat
+                    [ Spec.it "updates the model to show Wallet Password"
+                        (Observer.observeModel .currentView
+                            |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.WalletPassword)
+                        )
+                    ]
+            )
+        , Spec.scenario "User navigates to Wallet Seed"
+            (Spec.given
+                (Spec.Setup.init
+                    (Accounts.init ())
+                    |> Spec.Setup.withView Accounts.view
+                    |> Spec.Setup.withUpdate Accounts.update
+                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
+                )
+                |> Spec.when "User clicks Wallet Seed"
+                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "walletSeedButton" ]
+                    , Spec.Markup.Event.click
+                    ]
+                |> Spec.observeThat
+                    [ Spec.it "updates the model to show Wallet Seed"
+                        (Observer.observeModel .currentView
+                            |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.WalletSeed)
+                        )
+                    ]
+            )
+        , Spec.scenario "User navigates to Backup"
+            (Spec.given
+                (Spec.Setup.init
+                    (Accounts.init ())
+                    |> Spec.Setup.withView Accounts.view
+                    |> Spec.Setup.withUpdate Accounts.update
+                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
+                )
+                |> Spec.when "User clicks Backup"
+                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "backupButton" ]
+                    , Spec.Markup.Event.click
+                    ]
+                |> Spec.observeThat
+                    [ Spec.it "updates the model to show Backup"
+                        (Observer.observeModel .currentView
+                            |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.Backup)
                         )
                     ]
             )
@@ -130,7 +230,7 @@ runSpecTests =
                                << by [ id "xmrAvailableBalance" ]
                                |> Spec.expect
                                    (Claim.isSomethingWhere <|
-                                       Markup.text <|
+                                       Spec.Markup.text <|
                                            Claim.isStringContaining 1 "Available Balance: 42.94967296 XMR"
                                    )
                            )
@@ -140,7 +240,7 @@ runSpecTests =
                                << by [ id "reservedOfferBalance" ]
                                |> Spec.expect
                                    (Claim.isSomethingWhere <|
-                                       Markup.text <|
+                                       Spec.Markup.text <|
                                            Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
                                    )
                            )

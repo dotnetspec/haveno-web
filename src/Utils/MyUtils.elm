@@ -10,7 +10,7 @@ module Utils.MyUtils exposing
 
 import Grpc
 import Html exposing (Html, button, text)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, id)
 import Html.Events exposing (onClick)
 import Http
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (GetBalancesReply)
@@ -167,6 +167,7 @@ toStringGetBalancesReply reply =
         ++ " }"
 
 
-infoBtn : String -> msg -> Html msg
-infoBtn label msg =
-    button [ class "info-button", onClick msg ] [ text label ]
+infoBtn : String -> String -> msg -> Html msg
+infoBtn label identifier msg =
+    button [ class "info-button", id identifier, onClick msg ] [ text label ]
+

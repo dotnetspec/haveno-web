@@ -115,14 +115,14 @@ view model =
                 , Html.Attributes.value model.customMoneroNode
                 ]
                 []
-            , p [ id "retryHavenoConnectionButton" ] [ Utils.MyUtils.infoBtn "Use Custom Node" <| ApplyCustomMoneroNode ]
+            , p [ ] [ Utils.MyUtils.infoBtn "Use Custom Node" "retryHavenoConnectionButton"  <| ApplyCustomMoneroNode ]
             ]
 
         -- Haveno Node Status
         , if not model.havenoConnected then
             div []
                 [ p [ id "havenoNodeNotConnected" ] [ text "⚠ Haveno Node not connected." ]
-                , p [ id "retryHavenoConnectionButton" ] [ Utils.MyUtils.infoBtn "Retry Haveno Connection" <| RetryHavenoConnection ]
+                , p [ ] [ Utils.MyUtils.infoBtn "Retry Haveno Connection" "retryHavenoConnectionButton" <| RetryHavenoConnection ]
                 ]
 
           else
