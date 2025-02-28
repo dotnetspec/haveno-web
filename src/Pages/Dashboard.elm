@@ -1,4 +1,4 @@
-module Pages.Dashboard exposing (Model, Msg, init, initialModel, update, view)
+module Pages.Dashboard exposing (Model, Msg, init, update, view, Status(..), Dashboard(..))
 
 {-| The Dashboardpage. You can get here via either the / or /#/ routes.
 -}
@@ -19,6 +19,7 @@ import Http exposing (..)
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Types.DateType exposing (DateTime)
 import Url exposing (Protocol(..), Url)
+
 
 
 
@@ -48,18 +49,6 @@ type alias Model =
 -- Define your initialModel with default values
 
 
-initialModel : Model
-initialModel =
-    { status = Loading
-    , pagetitle = "Dashboard"
-    , root = Dashboard { name = "Loading..." }
-    , balances = Nothing
-    , primaryaddress = ""
-    , flagUrl = Url Http "localhost" Nothing "/dashboard" Nothing Nothing
-    , havenoAPKHttpRequest = Nothing
-    , version = "No Haveno version available"
-    , errors = []
-    }
 
 
 type Dashboard

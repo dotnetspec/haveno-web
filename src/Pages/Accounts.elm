@@ -2,7 +2,7 @@ module Pages.Accounts exposing (Model, Msg(..), Status(..), View(..), errorView,
 
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
-import Html exposing (Html, div, p, section, text)
+import Html exposing (Html, div, p, section, text, h4)
 import Html.Attributes exposing (class, id)
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
@@ -52,6 +52,7 @@ type View
     | WalletPassword
     | WalletSeed
     | Backup
+
 
 
 
@@ -150,7 +151,10 @@ view model =
                                 div [] [ text "Traditional Currency Accounts" ]
 
                             CryptocurrencyAccounts ->
-                                div [] [ text "CryptocurrencyAccounts Accounts" ]
+                                div []
+                                    [ h4 [] [text "CryptocurrencyAccounts Accounts"]
+                                    , p [] [ Utils.MyUtils.infoBtn "Add New Account" "addnewaccountbutton" <| AddNewAccount ]
+                                    ]
 
                             WalletPassword ->
                                 div [] [ text "Wallet Password " ]
@@ -173,9 +177,6 @@ view model =
 -- NAV: View helpers:
 
 
-
-
-
 errorView : Html Msg
 errorView =
     Html.div [ class "accounts-container" ]
@@ -186,7 +187,7 @@ errorView =
 
 
 manageAccountsView : Html Msg
-manageAccountsView  =
+manageAccountsView =
     Html.div [ class "accounts-container" ]
         [ Html.h1 [ class "accounts-title" ] [ Html.text "Accounts" ]
         , p [] [ Utils.MyUtils.infoBtn "Traditional Currency Accounts" "traditionalCurrencyAccountsButton" <| ChangeView TraditionalCurrencyAccounts ]
@@ -194,7 +195,6 @@ manageAccountsView  =
         , p [] [ Utils.MyUtils.infoBtn "Wallet Password" "walletPasswordButton" <| ChangeView WalletPassword ]
         , p [] [ Utils.MyUtils.infoBtn "Wallet Seed" "walletSeedButton" <| ChangeView WalletSeed ]
         , p [] [ Utils.MyUtils.infoBtn "Backup" "backupButton" <| ChangeView Backup ]
-        , p [] [ Utils.MyUtils.infoBtn "Add New Account" "addnewaccountbutton" <| ChangeView ManageAccounts ]
         ]
 
 

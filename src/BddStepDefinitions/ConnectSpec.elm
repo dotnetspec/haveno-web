@@ -6,7 +6,6 @@ import Extras.TestData
 import Pages.Connect
 import Spec
 import Spec.Claim
-import Spec.Http
 import Spec.Http.Stub as Stub
 import Spec.Markup
 import Spec.Markup.Event
@@ -64,7 +63,6 @@ runSpecTests =
                         , Extras.TestData.unSuccessfullXmrPrimaryAddressFetch
                         ]
                 )
-               
                 |> Spec.when "User clicks Retry Wallet Connection"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "retryWalletConnectionButton" ]
                     , Spec.Markup.Event.click

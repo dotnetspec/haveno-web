@@ -12,8 +12,9 @@ import BddStepDefinitions.Runner
 import Browser
 import Extras.TestData as TestData
 import Main
-import Pages.Funds as Funds
 import Pages.Connect as Connect
+import Pages.Dashboard
+import Pages.Funds as Funds
 import Spec exposing (describe, given, it, scenario, when)
 import Spec.Claim as Claim
 import Spec.Command
@@ -26,7 +27,22 @@ import Spec.Setup
 import Url exposing (Protocol(..), Url)
 
 
+initialDashboardModel : Pages.Dashboard.Model
+initialDashboardModel =
+    { status = Pages.Dashboard.Loaded
+    , pagetitle = "Dashboard"
+    , root = Pages.Dashboard.Dashboard { name = "Loading..." }
+    , balances = TestData.testBalanceInfo
+    , primaryaddress = TestData.primaryAddress
+    , flagUrl = Url Http "localhost" Nothing "/dashboard" Nothing Nothing
+    , havenoAPKHttpRequest = Nothing
+    , version = "1.0.7"
+    , errors = []
+    }
 
+
+
+--{ balances = Just { btc = Just { availableBalance = Int64 { higher = 10000, lower = 0 }, lockedBalance = Int64 { higher = 10000, lower = 0 }, reservedBalance = Int64 { higher = 10000, lower = 0 }, totalAvailableBalance = Int64 { higher = 10000, lower = 0 } }, xmr = Just { availableBalance = Int64 { higher = 10000, lower = 0 }, balance = Int64 { higher = 10000, lower = 0 }, pendingBalance = Int64 { higher = 2000, lower = 0 }, reservedOfferBalance = Int64 { higher = 5000, lower = 0 }, reservedTradeBalance = Int64 { higher = 3000, lower = 0 } } }, errors = [], flagUrl = { fragment = Nothing, host = "localhost", path = "/dashboard", port_ = Nothing, protocol = Http, query = Nothing }, havenoAPKHttpRequest = Nothing, pagetitle = "Dashboard", primaryaddress = "9yLbftcD2cMDA5poVPBJQ5KuwADFRXhe28AtqfeTExaubeMAyiEGBYJ8a8T3kwzoqi6ZuScziHxKqBCToa2m3wuZScc2gJh", root = Dashboard { name = "Loading..." }, status = Loaded, version = "1.0.7" }
 -- NOTE: App.Model and App.Msg are type paramters for the Spec type
 -- They make Spec type more flexible as it can be used with any model and msg types
 -- NOTE: Any test involving subscriptions will need to be specified here using withSubscriptions
@@ -85,7 +101,6 @@ runSpecTests =
                         }
                     |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.unsuccessfullVersionFetch ]
                 )
-               
                 |> Spec.observeThat
                     [ it "should display a message indicating whether the connection to the Haveno API was successful or not"
                         (Markup.observeElement
@@ -99,8 +114,7 @@ runSpecTests =
                         )
                     ]
             )
-        ,
-          scenario "7: Display the Haveno core app version number"
+        , scenario "3: When app first loads it should be on the dashboard page if all the required data is successfully fetched"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -110,18 +124,58 @@ runSpecTests =
                         { onUrlRequest = Main.ClickedLink
                         , onUrlChange = Main.ChangedUrl
                         }
-                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/dashboard" Nothing Nothing)
-                    |> Stub.serve [ TestData.successfullVersionFetch ]
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.successfullVersionFetch, TestData.successfullBalancesFetch ]
                 )
-                
                 |> Spec.observeThat
                     [ it
-                        "a. the app location should be dashboard "
+                        "a. the app NAV location should be root "
                         (Spec.Navigator.observe
                             |> Spec.expect
                                 (Spec.Navigator.location <|
                                     Claim.isEqual Debug.toString
-                                        "http://localhost:1234/dashboard"
+                                        "http://localhost:1234/"
+                                )
+                        )
+                    , it "b.is on the Dashboard page"
+                        (Spec.Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.DashboardPage <|
+                                        initialDashboardModel
+                                )
+                        )
+                    ]
+            )
+        , scenario "7: Display the Haveno core app version number"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.successfullVersionFetch, TestData.successfullBalancesFetch ]
+                )
+                |> Spec.observeThat
+                    [ it
+                        "a. the app NAV location should be root "
+                        (Spec.Navigator.observe
+                            |> Spec.expect
+                                (Spec.Navigator.location <|
+                                    Claim.isEqual Debug.toString
+                                        "http://localhost:1234/"
+                                )
+                        )
+                    , it "b.is on the Dashboard page"
+                        (Spec.Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.DashboardPage <|
+                                        initialDashboardModel
                                 )
                         )
                     , it "c. displays Haveno version number on the Dashboard page"
@@ -146,8 +200,7 @@ runSpecTests =
                         )
                     ]
             )
-        , 
-          scenario "11: Menu Closes After Using NavLink"
+        , scenario "11: Menu Closes After Using NavLink"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -185,8 +238,7 @@ runSpecTests =
                         )
                     ]
             )
-            , 
-          scenario "12: Connect page exists and can be navigated to via menu"
+        , scenario "12: Connect page exists and can be navigated to via menu"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -203,7 +255,7 @@ runSpecTests =
                         Spec.Command.fake
                             Main.ToggleMenu
                     ]
-                |> when "the user clicks the Funds navLink in the burger menu"
+                |> when "the user clicks the Connect navLink in the burger menu"
                     [ Spec.Command.send <|
                         Spec.Command.fake
                             (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/connect" Nothing Nothing))
@@ -289,7 +341,7 @@ runSpecTests =
                    -- Simulate user clicking the Wallet href navLink in the simple menu
                    |> when "the user then clicks the Wallet navLink in the menu"
                        [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
-                   
+
                    |> Spec.observeThat
                        [ it "should display the menu"
                            (Markup.observeElement

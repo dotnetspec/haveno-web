@@ -4,7 +4,6 @@ import BddStepDefinitions.Runner
 import Pages.Dashboard
 import Spec exposing (Flags, Spec, describe, given, it, scenario)
 import Spec.Claim as Claim
-import Spec.Http
 import Spec.Markup as Markup
 import Spec.Markup.Selector exposing (..)
 import Spec.Setup as Setup
@@ -26,7 +25,6 @@ runSpecTests =
                     |> Setup.withView Pages.Dashboard.view
                     |> Setup.withUpdate Pages.Dashboard.update
                 )
-               
                 |> Spec.observeThat
                     [ it "displays a message from the Dashboard page"
                         (Markup.observeElement

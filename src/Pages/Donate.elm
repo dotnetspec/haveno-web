@@ -66,7 +66,6 @@ type Msg
     = GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
-    | AddNewAccount
 
 
 
@@ -76,9 +75,6 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        AddNewAccount ->
-            ( { model | currentView = ManageDonateView }, Cmd.none )
-
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = DonateView }, Cmd.none )
 

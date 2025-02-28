@@ -133,6 +133,16 @@ runSpecTests =
                         (Observer.observeModel .currentView
                             |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.CryptocurrencyAccounts)
                         )
+                        , it "displays the available Add New Account button correctly"
+                           (Spec.Markup.observeElement
+                               |> Spec.Markup.query
+                               << by [ Spec.Markup.Selector.id "addnewaccountbutton" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Spec.Markup.text <|
+                                           Claim.isStringContaining 1 "Add New Account"
+                                   )
+                           )
                     ]
             )
         , Spec.scenario "User navigates to Wallet Password"

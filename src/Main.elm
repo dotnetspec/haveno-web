@@ -8,6 +8,7 @@ port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg
 
 import Browser
 import Browser.Navigation as Nav
+import Comms.CustomGrpc
 import Data.AddressValidity as R
 import Erl
 import Extras.TestData exposing (placeholderUrl)
@@ -38,8 +39,6 @@ import Types.DateType exposing (DateTime)
 import Url exposing (Protocol(..), Url)
 import Url.Parser exposing (oneOf, s)
 import Url.Parser.Query as Query
-import Comms.CustomGrpc
-import Pages.Accounts as Accounts
 
 
 
@@ -86,9 +85,22 @@ init flag _ key =
         urlWithDashboardPath =
             { decodedJsonFromSetupElmmjs | path = "/dashboard" }
 
+        initialDashboardModel : Pages.Dashboard.Model
+        initialDashboardModel =
+            { status = Pages.Dashboard.Loading
+            , pagetitle = "Dashboard"
+            , root = Pages.Dashboard.Dashboard { name = "Loading..." }
+            , balances = Nothing
+            , primaryaddress = ""
+            , flagUrl = Url Http "localhost" Nothing "/dashboard" Nothing Nothing
+            , havenoAPKHttpRequest = Nothing
+            , version = ""
+            , errors = []
+            }
+
         -- NOTE: Initialize the whole model here so that can assign Nav.Key
         updatedModel =
-            { page = DashboardPage Pages.Dashboard.initialModel
+            { page = DashboardPage initialDashboardModel
             , flag = urlWithDashboardPath --decodedJsonFromSetupElmmjs
             , key = key
             , time = Time.millisToPosix 0
@@ -262,15 +274,16 @@ update msg model =
                         { version } ->
                             version
 
-                newDashBoardModel =
-                    case model.page of
-                        DashboardPage dashboard ->
-                            { dashboard | version = verResp }
+                {- newDashBoardModel =
+                   case model.page of
+                       DashboardPage dashboard ->
+                           { dashboard | version = verResp }
 
-                        _ ->
-                            Pages.Dashboard.initialModel
+                       _ ->
+                           Pages.Dashboard.initialModel
+                -}
             in
-            ( { model | isApiConnected = True, version = verResp, page = DashboardPage newDashBoardModel }, Cmd.none )
+            ( { model | isApiConnected = True, version = verResp }, Cmd.none )
 
         GotVersion (Err _) ->
             ( { model | version = "Error obtaining version", isApiConnected = False }, Cmd.none )
@@ -431,14 +444,15 @@ view model =
                 AccountsPage accounts ->
                     let
                         accountsModel =
-                            { accounts | status = Accounts.Loaded
-                            , pagetitle = "Accounts"
-                            , balances = model.balances
-                            , isAddressVisible = False
-                            , primaryaddress = model.primaryaddress
-                            , errors = []
-                            , subaddress = ""
-                            , currentView = Accounts.ManageAccounts
+                            { accounts
+                                | status = Pages.Accounts.Loaded
+                                , pagetitle = "Accounts"
+                                , balances = model.balances
+                                , isAddressVisible = False
+                                , primaryaddress = model.primaryaddress
+                                , errors = []
+                                , subaddress = ""
+                                , currentView = Pages.Accounts.ManageAccounts
                             }
                     in
                     Pages.Accounts.view accountsModel
@@ -731,10 +745,14 @@ toDashboard model ( dashboard, cmd ) =
     ( { model | page = DashboardPage dashboard }
       -- NOTE: Cmd.map is a way to manipulate the result of a command
       -- WARN: sendMessageToJs "msgFromElm" is redundant here but if it isn't actually used somewhere the port won't be recognized on document load
-    , Cmd.batch [ Cmd.map GotDashboardMsg cmd, sendVersionRequest Protobuf.defaultGetVersionRequest
-    , gotAvailableBalances
-    , Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress
-    , Task.perform AdjustTimeZone Time.here, sendMessageToJs "msgFromElm" ]
+    , Cmd.batch
+        [ Cmd.map GotDashboardMsg cmd
+        , sendVersionRequest Protobuf.defaultGetVersionRequest
+        , gotAvailableBalances
+        , Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress
+        , Task.perform AdjustTimeZone Time.here
+        , sendMessageToJs "msgFromElm"
+        ]
     )
 
 
@@ -806,7 +824,7 @@ toDonate model ( donate, cmd ) =
 
 toConnect : Model -> ( Pages.Connect.Model, Cmd Pages.Connect.Msg ) -> ( Model, Cmd Msg )
 toConnect model ( connect, cmd ) =
-    ( { model | page = ConnectPage {connect | havenoConnected = model.isApiConnected, walletConnected = isXMRWalletConnected model} }
+    ( { model | page = ConnectPage { connect | havenoConnected = model.isApiConnected, walletConnected = isXMRWalletConnected model } }
     , Cmd.map GotConnectMsg cmd
     )
 
@@ -859,10 +877,10 @@ gotAvailableBalances =
 
 
 
-
 -- NAV: Helper functions
-
 -- TODO: Improve the validation here:
+
+
 isXMRWalletConnected : Model -> Bool
 isXMRWalletConnected model =
     if not <| model.primaryaddress == "" then
@@ -877,7 +895,7 @@ connectionStatusView model =
     Html.div [ Attr.class "connection-status", Attr.id "connectionStatus" ]
         [ Html.div
             [ Attr.class
-                (if (isXMRWalletConnected model) && model.isApiConnected then
+                (if isXMRWalletConnected model && model.isApiConnected then
                     "status-dot green"
 
                  else
@@ -886,10 +904,10 @@ connectionStatusView model =
             ]
             []
         , Html.text <|
-            if (isXMRWalletConnected model) && model.isApiConnected then
+            if isXMRWalletConnected model && model.isApiConnected then
                 "Connected"
 
-            else if (not <| isXMRWalletConnected model) then
+            else if not <| isXMRWalletConnected model then
                 "Wallet not connected"
 
             else
