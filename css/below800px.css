@@ -1,22 +1,40 @@
-/* Top logo styles */
-.topLogoContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  position: relative; /* Changed from absolute */
-  top: 0;
-  margin: 1rem 0; /* Added margin to separate from other elements */
-  z-index: 10; /* Ensure it appears above the background but within flow */
-}
+@media (max-width: 800px) {
+  /* Top logo styles */
+  .topLogoContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    position: relative; /* Changed from absolute */
+    top: 0;
+    margin: 1rem 0; /* Added margin to separate from other elements */
+    z-index: 10; /* Ensure it appears above the background but within flow */
+  }
 
-.topLogo {
-  max-width: 100px;
-  height: auto;
-}
+  .topLogo {
+    max-width: 100px;
+    height: auto;
+  }
 
-.address-text {
-  word-wrap: break-word;  /* Ensures long words wrap */
-  overflow-wrap: break-word;
-  white-space: normal;  /* Allows text to wrap normally */
+  .address-text {
+    word-wrap: break-word;  /* Ensures long words wrap */
+    overflow-wrap: break-word;
+    white-space: normal;  /* Allows text to wrap normally */
+  }
+
+  .dashboard-panel {
+    width: 100%; /* Make the panel take up the full width */
+    height: auto; /* Allow the height to adjust based on content */
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap; /* Allow wrapping of sections */
+    justify-content: space-between; /* Add space between sections */
+  }
+
+  .dashboard-section {
+    flex: 1 1 45%; /* Make sections take up 45% of the width */
+    margin-right: 5px; /* Add right margin for spacing */
+    margin-bottom: 5px; /* Add bottom margin for spacing */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+  }
 }

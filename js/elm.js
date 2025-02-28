@@ -9229,8 +9229,7 @@ var $author$project$Main$connectionStatusView = function (model) {
 		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('connection-status'),
-				$elm$html$Html$Attributes$id('connectionStatus')
+				$elm$html$Html$Attributes$class('connection-status-container')
 			]),
 		_List_fromArray(
 			[
@@ -9238,22 +9237,81 @@ var $author$project$Main$connectionStatusView = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class(
-						($author$project$Main$isXMRWalletConnected(model) && model.dC) ? 'status-dot green' : 'status-dot red')
+						$elm$html$Html$Attributes$class('connection-status'),
+						$elm$html$Html$Attributes$id('connectionStatus')
 					]),
-				_List_Nil),
-				$elm$html$Html$text(
-				($author$project$Main$isXMRWalletConnected(model) && model.dC) ? 'Connected' : ((!$author$project$Main$isXMRWalletConnected(model)) ? 'Wallet not connected' : 'Haveno node not connected')),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class(
+								($author$project$Main$isXMRWalletConnected(model) && model.dC) ? 'status-dot green' : 'status-dot red')
+							]),
+						_List_Nil),
+						$elm$html$Html$text(
+						($author$project$Main$isXMRWalletConnected(model) && model.dC) ? 'Connected' : ((!$author$project$Main$isXMRWalletConnected(model)) ? 'Wallet not connected' : 'Haveno node not connected')),
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$href('/connect'),
+								$elm$html$Html$Attributes$class('status-link')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Fix')
+							]))
+					])),
 				A2(
-				$elm$html$Html$a,
+				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$href('/connect'),
-						$elm$html$Html$Attributes$class('status-link')
+						$elm$html$Html$Attributes$class('dashboard-panel')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Fix')
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('dashboard-section')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Section 1')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('dashboard-section')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Section 2')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('dashboard-section')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Section 3')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('dashboard-section')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Section 4')
+							]))
 					]))
 			]));
 };

@@ -890,29 +890,37 @@ isXMRWalletConnected model =
 
 connectionStatusView : Model -> Html.Html Msg
 connectionStatusView model =
-    Html.div [ Attr.class "connection-status", Attr.id "connectionStatus" ]
-        [ Html.div
-            [ Attr.class
-                (if isXMRWalletConnected model && model.isApiConnected then
-                    "status-dot green"
+    Html.div [ Attr.class "connection-status-container" ]
+        [ Html.div [ Attr.class "connection-status", Attr.id "connectionStatus" ]
+            [ Html.div
+                [ Attr.class
+                    (if isXMRWalletConnected model && model.isApiConnected then
+                        "status-dot green"
 
-                 else
-                    "status-dot red"
-                )
+                     else
+                        "status-dot red"
+                    )
+                ]
+                []
+            , Html.text <|
+                if isXMRWalletConnected model && model.isApiConnected then
+                    "Connected"
+
+                else if not <| isXMRWalletConnected model then
+                    "Wallet not connected"
+
+                else
+                    "Haveno node not connected"
+
+            -- Link to Connect Page
+            , Html.a [ Attr.href "/connect", Attr.class "status-link" ] [ Html.text "Fix" ]
             ]
-            []
-        , Html.text <|
-            if isXMRWalletConnected model && model.isApiConnected then
-                "Connected"
-
-            else if not <| isXMRWalletConnected model then
-                "Wallet not connected"
-
-            else
-                "Haveno node not connected"
-
-        -- Link to Connect Page
-        , Html.a [ Attr.href "/connect", Attr.class "status-link" ] [ Html.text "Fix" ]
+        , Html.div [ Attr.class "dashboard-panel" ]
+            [ Html.div [ Attr.class "dashboard-section" ] [ Html.text "Section 1" ]
+            , Html.div [ Attr.class "dashboard-section" ] [ Html.text "Section 2" ]
+            , Html.div [ Attr.class "dashboard-section" ] [ Html.text "Section 3" ]
+            , Html.div [ Attr.class "dashboard-section" ] [ Html.text "Section 4" ]
+            ]
         ]
 
 
