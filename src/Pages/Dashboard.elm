@@ -18,7 +18,7 @@ import Html.Attributes as Attr
 import Http exposing (..)
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Types.DateType exposing (DateTime)
-import Url exposing (Protocol(..), Url)
+import Url exposing (Protocol(..))
 
 
 
@@ -38,7 +38,6 @@ type alias Model =
     , root : Dashboard
     , balances : Maybe Protobuf.BalancesInfo
     , primaryaddress : String
-    , flagUrl : Url
     , havenoAPKHttpRequest : Maybe HavenoAPKHttpRequest
     , version : String
     , errors : List String
@@ -74,11 +73,10 @@ type Status
 init : FromMainToDashboard -> ( Model, Cmd Msg )
 init fromMainToDashboard =
     let
-        newUrl =
-            Url Http "localhost" Nothing "/dashboard" Nothing Nothing
+       
 
         newModel =
-            Model Loaded "Dashboard" (Dashboard { name = "Loading..." }) Nothing "" newUrl Nothing fromMainToDashboard.havenoVersion []
+            Model Loaded "Dashboard" (Dashboard { name = "Loading..." }) Nothing ""  Nothing fromMainToDashboard.havenoVersion []
     in
     ( newModel
     , Cmd.batch [ Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress, Comms.CustomGrpc.gotAvailableBalances |> Grpc.toCmd BalanceResponse ]

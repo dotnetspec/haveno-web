@@ -92,7 +92,6 @@ init flag _ key =
             , root = Pages.Dashboard.Dashboard { name = "Loading..." }
             , balances = Nothing
             , primaryaddress = ""
-            , flagUrl = Url Http "localhost" Nothing "/dashboard" Nothing Nothing
             , havenoAPKHttpRequest = Nothing
             , version = ""
             , errors = []

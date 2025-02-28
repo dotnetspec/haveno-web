@@ -34,7 +34,6 @@ initialDashboardModel =
     , root = Pages.Dashboard.Dashboard { name = "Loading..." }
     , balances = TestData.testBalanceInfo
     , primaryaddress = TestData.primaryAddress
-    , flagUrl = Url Http "localhost" Nothing "/dashboard" Nothing Nothing
     , havenoAPKHttpRequest = Nothing
     , version = "1.0.7"
     , errors = []
