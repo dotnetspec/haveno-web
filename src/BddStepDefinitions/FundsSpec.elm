@@ -17,6 +17,24 @@ import Spec.Observer as Observer
 import Spec.Setup
 
 
+-- NAV: Initial test models 
+-- TODO: Use initWithModel - we can't get from Main unless it's a MainSpec test - so these are expected
+-- state at the start of each test
+
+
+getSubAddrInitModel : Funds.Model
+getSubAddrInitModel =
+    { status = Funds.Loaded
+    , pagetitle = "Haveno Web Funds"
+    , balances = Just Protobuf.defaultBalancesInfo
+    , isAddressVisible = False
+    , primaryaddress = ""
+    , errors = []
+    , subaddress = ""
+    , currentView = Funds.SubAddressView
+    }
+
+
 
 -- NAV: Test scenarios
 
@@ -25,8 +43,7 @@ runSpecTests : Spec.Spec Funds.Model Funds.Msg
 runSpecTests =
     Spec.describe
         "Haveno Web App Funds Tests"
-        [ --Runner.skip <|
-          --Runner.pick <|
+        [ 
           scenario "1: Accessing the Funds page with valid balance data"
             (given
                 (Spec.Setup.init (Funds.init "http://localhost:1234")
@@ -37,9 +54,7 @@ runSpecTests =
                 )
                 |> when "the user shows the hidden details"
                     [ Spec.Command.send (Spec.Command.fake <| Funds.ToggleVisibility) ]
-                |> Spec.when "we log the http requests"
-                    [ Spec.Http.logRequests
-                    ]
+                
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
@@ -68,21 +83,10 @@ runSpecTests =
                                 )
                         )
 
-                    {- , it "should display xmrbalance"
-                       (Markup.observeElement
-                           |> Markup.query
-                           << by [ Spec.Markup.Selector.id "xmrbalance" ]
-                           |> Spec.expect
-                               (Claim.isSomethingWhere <|
-                                   Markup.text <|
-                                       Claim.isStringContaining 1 "10000 XMR"
-                               )
-                       )
-                    -}
+                    
                     ]
             )
-        , --Runner.skip <|
-          --Runner.pick <|
+        , 
           scenario "2: Handling the Funds page with INvalid balance data"
             (given
                 (Spec.Setup.init (Funds.init "http://localhost:1234")
@@ -110,8 +114,7 @@ runSpecTests =
                     ]
             )
 
-        --, --Runner.skip <|
-        --Runner.pick <|
+       
         , scenario "2a: Show available balance and reserved balance correctly in the UI"
             (given
                 (Spec.Setup.init (Funds.init "http://localhost:1234")
@@ -120,13 +123,8 @@ runSpecTests =
                     |> Spec.Setup.withLocation TestData.placeholderUrl
                     |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
-                {- |> when "the user shows the hidden details"
-                   [ Spec.Command.send (Spec.Command.fake <| Funds.ToggleVisibility) ]
-                -}
-                {- |> Spec.when "we log the http requests"
-                   [ Spec.Http.logRequests
-                   ]
-                -}
+                
+               
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
@@ -495,21 +493,7 @@ runSpecTests =
 
 
 
--- NAV: Initial test models - we can't get from Main unless it's a MainSpec test - so these are expected
--- state at the start of each test
 
-
-getSubAddrInitModel : Funds.Model
-getSubAddrInitModel =
-    { status = Funds.Loaded
-    , pagetitle = "Haveno Web Funds"
-    , balances = Just Protobuf.defaultBalancesInfo
-    , isAddressVisible = False
-    , primaryaddress = ""
-    , errors = []
-    , subaddress = ""
-    , currentView = Funds.SubAddressView
-    }
 
 
 

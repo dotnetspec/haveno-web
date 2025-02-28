@@ -85,10 +85,7 @@ runSpecTests =
                         }
                     |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.unsuccessfullVersionFetch ]
                 )
-                {- |> Spec.when "we log the http requests"
-                   [ Spec.Http.logRequests
-                   ]
-                -}
+               
                 |> Spec.observeThat
                     [ it "should display a message indicating whether the connection to the Haveno API was successful or not"
                         (Markup.observeElement
@@ -102,8 +99,7 @@ runSpecTests =
                         )
                     ]
             )
-        , --Runner.skip <|
-          --Runner.pick <|
+        ,
           scenario "7: Display the Haveno core app version number"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
@@ -117,10 +113,7 @@ runSpecTests =
                     |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/dashboard" Nothing Nothing)
                     |> Stub.serve [ TestData.successfullVersionFetch ]
                 )
-                {- |> Spec.when "we log the http requests"
-                   [ Spec.Http.logRequests
-                   ]
-                -}
+                
                 |> Spec.observeThat
                     [ it
                         "a. the app location should be dashboard "
@@ -296,10 +289,7 @@ runSpecTests =
                    -- Simulate user clicking the Wallet href navLink in the simple menu
                    |> when "the user then clicks the Wallet navLink in the menu"
                        [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
-                   {- |> Spec.when "we log the http requests"
-                      [ Spec.Http.logRequests
-                      ]
-                   -}
+                   
                    |> Spec.observeThat
                        [ it "should display the menu"
                            (Markup.observeElement

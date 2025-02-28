@@ -1,10 +1,9 @@
-module Pages.Donate exposing (Model, Msg(..), Status(..), View(..), custodialDonateView, errorView, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageDonateView, update, view)
+module Pages.Donate exposing (Model, Msg(..), Status(..), View(..), errorView, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageDonateView, update, view)
 
 import Extras.Constants as Consts
 import Grpc
-import Html exposing (Html, div, section, text)
+import Html exposing (Html, div, section)
 import Html.Attributes as Attr exposing (class)
-import Html.Events
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 
@@ -140,14 +139,6 @@ view model =
 
 
 -- NAV: View helpers:
-
-
-custodialDonateView : Model -> Html Msg
-custodialDonateView _ =
-    Html.div [ Attr.class "accounts-container", Attr.id "custodialDonateView" ]
-        [ Html.h1 [ Attr.class "accounts-title" ] [ Html.text "Donate" ]
-        , Html.button [ class "info-button", Html.Events.onClick AddNewAccount, Attr.id "addnewaccountbutton" ] [ text "Add New Account" ]
-        ]
 
 
 errorView : Html Msg

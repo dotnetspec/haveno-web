@@ -39,6 +39,7 @@ import Url exposing (Protocol(..), Url)
 import Url.Parser exposing (oneOf, s)
 import Url.Parser.Query as Query
 import Comms.CustomGrpc
+import Pages.Accounts as Accounts
 
 
 
@@ -428,7 +429,19 @@ view model =
                         |> Html.map GotMarketMsg
 
                 AccountsPage accounts ->
-                    Pages.Accounts.view accounts
+                    let
+                        accountsModel =
+                            { accounts | status = Accounts.Loaded
+                            , pagetitle = "Accounts"
+                            , balances = model.balances
+                            , isAddressVisible = False
+                            , primaryaddress = model.primaryaddress
+                            , errors = []
+                            , subaddress = ""
+                            , currentView = Accounts.ManageAccounts
+                            }
+                    in
+                    Pages.Accounts.view accountsModel
                         |> Html.map GotAccountsMsg
 
                 DonatePage donate ->
@@ -1069,7 +1082,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.4.48" ]
+                , Html.p [] [ Html.text "Version 0.4.49" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text

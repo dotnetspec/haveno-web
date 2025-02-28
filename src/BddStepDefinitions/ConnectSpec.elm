@@ -64,9 +64,7 @@ runSpecTests =
                         , Extras.TestData.unSuccessfullXmrPrimaryAddressFetch
                         ]
                 )
-                |> Spec.when "we log the http requests"
-                    [ Spec.Http.logRequests
-                    ]
+               
                 |> Spec.when "User clicks Retry Wallet Connection"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "retryWalletConnectionButton" ]
                     , Spec.Markup.Event.click

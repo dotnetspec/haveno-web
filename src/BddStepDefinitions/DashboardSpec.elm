@@ -26,9 +26,7 @@ runSpecTests =
                     |> Setup.withView Pages.Dashboard.view
                     |> Setup.withUpdate Pages.Dashboard.update
                 )
-                |> Spec.when "we log the http requests"
-                    [ Spec.Http.logRequests
-                    ]
+               
                 |> Spec.observeThat
                     [ it "displays a message from the Dashboard page"
                         (Markup.observeElement

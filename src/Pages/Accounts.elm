@@ -1,10 +1,9 @@
-module Pages.Accounts exposing (Model, Msg(..), Status(..), View(..), custodialAccountsView, errorView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, update, view)
+module Pages.Accounts exposing (Model, Msg(..), Status(..), View(..), errorView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, update, view)
 
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
 import Html exposing (Html, div, p, section, text)
 import Html.Attributes exposing (class, id)
-import Html.Events
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import UInt64
@@ -62,7 +61,7 @@ type View
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
-    , Cmd.batch [ gotPrimaryAddress, gotAvailableBalances ]
+    , Cmd.none
     )
 
 
@@ -145,7 +144,7 @@ view model =
                         ]
                         [ case model.currentView of
                             ManageAccounts ->
-                                manageAccountsView "whatever the new account is"
+                                manageAccountsView
 
                             TraditionalCurrencyAccounts ->
                                 div [] [ text "Traditional Currency Accounts" ]
@@ -174,12 +173,7 @@ view model =
 -- NAV: View helpers:
 
 
-custodialAccountsView : Model -> Html Msg
-custodialAccountsView _ =
-    Html.div [ class "accounts-container", id "custodialAccountsView" ]
-        [ Html.h1 [ class "accounts-title" ] [ Html.text "Accounts" ]
-        , Html.button [ class "info-button", Html.Events.onClick AddNewAccount, id "addnewaccountbutton" ] [ text "Add New Account" ]
-        ]
+
 
 
 errorView : Html Msg
@@ -191,8 +185,8 @@ errorView =
         ]
 
 
-manageAccountsView : String -> Html Msg
-manageAccountsView newAccount =
+manageAccountsView : Html Msg
+manageAccountsView  =
     Html.div [ class "accounts-container" ]
         [ Html.h1 [ class "accounts-title" ] [ Html.text "Accounts" ]
         , p [] [ Utils.MyUtils.infoBtn "Traditional Currency Accounts" "traditionalCurrencyAccountsButton" <| ChangeView TraditionalCurrencyAccounts ]

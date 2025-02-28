@@ -8,7 +8,6 @@ import Pages.Accounts as Accounts
 import Spec exposing (Flags, Spec, describe, given, it, scenario, when)
 import Spec.Claim as Claim
 import Spec.Command
-import Spec.Http.Stub as Stub
 import Spec.Markup
 import Spec.Markup.Event
 import Spec.Markup.Selector exposing (by)
@@ -20,19 +19,28 @@ import Spec.Setup
 -- NAV: Test scenarios
 
 
+initialModel : Accounts.Model
+initialModel =
+    { status = Accounts.Loaded
+    , pagetitle = "Accounts"
+    , balances = TestData.testBalanceInfo
+    , isAddressVisible = False
+    , primaryaddress = TestData.primaryAddress
+    , errors = []
+    , subaddress = ""
+    , currentView = Accounts.ManageAccounts
+    }
+
+
 runSpecTests : Spec Accounts.Model Accounts.Msg
 runSpecTests =
     describe
         "Haveno Web App Accounts Tests"
-        [ --skip <|
-          --pick <|
-          scenario "1: Accessing the Accounts page with valid balance data"
+        [ scenario "1: Accessing the Accounts page with valid balance data and primary address which would get from Main"
             (given
-                (Spec.Setup.init (Accounts.init ())
-                    |> Spec.Setup.withView Accounts.view
+                (Spec.Setup.initWithModel initialModel
                     |> Spec.Setup.withUpdate Accounts.update
                     |> Spec.Setup.withLocation placeholderUrl
-                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
                 {- |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
@@ -42,6 +50,10 @@ runSpecTests =
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
                             |> Spec.expect (equals Accounts.Loaded)
+                        )
+                    , it "has view ManageAccounts"
+                        (Observer.observeModel .currentView
+                            |> Spec.expect (equals Accounts.ManageAccounts)
                         )
                     , it "pagetitle is Accounts"
                         (Observer.observeModel .pagetitle
@@ -54,16 +66,6 @@ runSpecTests =
                     , it "should receive primary address"
                         (Observer.observeModel .primaryaddress
                             |> Spec.expect (equals TestData.primaryAddress)
-                        )
-                    , it "should display an 'Add New Account' button"
-                        (Spec.Markup.observeElement
-                            |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id "addnewaccountbutton" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "Add New Account"
-                                )
                         )
                     ]
             )
@@ -97,11 +99,9 @@ runSpecTests =
             )
         , Spec.scenario "3. User navigates to Traditional Currency Accounts"
             (Spec.given
-                (Spec.Setup.init
-                    (Accounts.init ())
+                (Spec.Setup.initWithModel initialModel
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
-                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
                 |> Spec.when "User clicks Traditional Currency Accounts"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "traditionalCurrencyAccountsButton" ]
@@ -120,11 +120,9 @@ runSpecTests =
             )
         , Spec.scenario "4. User navigates to Cryptocurrency Accounts"
             (Spec.given
-                (Spec.Setup.init
-                    (Accounts.init ())
+                (Spec.Setup.initWithModel initialModel
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
-                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
                 |> Spec.when "User clicks Cryptocurrency Accounts"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
@@ -139,11 +137,9 @@ runSpecTests =
             )
         , Spec.scenario "User navigates to Wallet Password"
             (Spec.given
-                (Spec.Setup.init
-                    (Accounts.init ())
+                (Spec.Setup.initWithModel initialModel
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
-                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
                 |> Spec.when "User clicks Wallet Password"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "walletPasswordButton" ]
@@ -158,11 +154,9 @@ runSpecTests =
             )
         , Spec.scenario "User navigates to Wallet Seed"
             (Spec.given
-                (Spec.Setup.init
-                    (Accounts.init ())
+                (Spec.Setup.initWithModel initialModel
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
-                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
                 |> Spec.when "User clicks Wallet Seed"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "walletSeedButton" ]
@@ -177,11 +171,9 @@ runSpecTests =
             )
         , Spec.scenario "User navigates to Backup"
             (Spec.given
-                (Spec.Setup.init
-                    (Accounts.init ())
+                (Spec.Setup.initWithModel initialModel
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
-                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
                 |> Spec.when "User clicks Backup"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "backupButton" ]
