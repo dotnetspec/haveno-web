@@ -47,8 +47,7 @@ type Status
 
 
 type View
-    = AccountsView
-    | ManageAccounts
+    = ManageAccounts
     | TraditionalCurrencyAccounts
     | CryptocurrencyAccounts
     | WalletPassword
@@ -145,9 +144,6 @@ view model =
                         [ class "split-col"
                         ]
                         [ case model.currentView of
-                            AccountsView ->
-                                custodialAccountsView model
-
                             ManageAccounts ->
                                 manageAccountsView "whatever the new account is"
 
