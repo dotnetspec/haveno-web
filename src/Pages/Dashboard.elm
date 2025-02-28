@@ -1,4 +1,4 @@
-module Pages.Dashboard exposing (Model, Msg, init, update, view, Status(..), Dashboard(..))
+module Pages.Dashboard exposing (Dashboard(..), Model, Msg, Status(..), init, update, view)
 
 {-| The Dashboardpage. You can get here via either the / or /#/ routes.
 -}
@@ -15,11 +15,8 @@ import Framework.Heading as Heading
 import Grpc
 import Html exposing (Html)
 import Html.Attributes as Attr
-import Http exposing (..)
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Types.DateType exposing (DateTime)
-import Url exposing (Protocol(..))
-
 
 
 
@@ -38,7 +35,6 @@ type alias Model =
     , root : Dashboard
     , balances : Maybe Protobuf.BalancesInfo
     , primaryaddress : String
-    , havenoAPKHttpRequest : Maybe HavenoAPKHttpRequest
     , version : String
     , errors : List String
     }
@@ -46,8 +42,6 @@ type alias Model =
 
 
 -- Define your initialModel with default values
-
-
 
 
 type Dashboard
@@ -73,10 +67,8 @@ type Status
 init : FromMainToDashboard -> ( Model, Cmd Msg )
 init fromMainToDashboard =
     let
-       
-
         newModel =
-            Model Loaded "Dashboard" (Dashboard { name = "Loading..." }) Nothing ""  Nothing fromMainToDashboard.havenoVersion []
+            Model Loaded "Dashboard" (Dashboard { name = "Loading..." }) Nothing "" fromMainToDashboard.havenoVersion []
     in
     ( newModel
     , Cmd.batch [ Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress, Comms.CustomGrpc.gotAvailableBalances |> Grpc.toCmd BalanceResponse ]
@@ -140,22 +132,3 @@ type alias FromMainToDashboard =
     { time : Maybe DateTime
     , havenoVersion : String
     }
-
-
-type alias HavenoAPKHttpRequest =
-    { method : String
-    , headers : List Header
-    , url : String
-    , body : Body
-    , timeout : Maybe Float
-    , tracker : Maybe String
-    }
-
-
-
--- NAV: Http requests
--- Function to create the GetVersionRequest
--- NAV: Http requests
--- Function to create the GetVersionRequest
--- Function to make the HTTP request
--- NAV: Json Decoders

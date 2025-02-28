@@ -92,7 +92,6 @@ init flag _ key =
             , root = Pages.Dashboard.Dashboard { name = "Loading..." }
             , balances = Nothing
             , primaryaddress = ""
-            , havenoAPKHttpRequest = Nothing
             , version = ""
             , errors = []
             }
@@ -1099,7 +1098,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.4.49" ]
+                , Html.p [] [ Html.text "Version 0.4.50" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text
