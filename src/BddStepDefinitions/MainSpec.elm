@@ -9,6 +9,7 @@ module BddStepDefinitions.MainSpec exposing (main)
 -}
 
 import BddStepDefinitions.Runner
+import BddStepDefinitions.Extra
 import Browser
 import Extras.TestData as TestData
 import Main
@@ -19,7 +20,7 @@ import Spec exposing (describe, given, it, scenario, when)
 import Spec.Claim as Claim
 import Spec.Command
 import Spec.Http.Stub as Stub
-import Spec.Markup as Markup
+import Spec.Markup
 import Spec.Markup.Selector exposing (by)
 import Spec.Navigator
 import Spec.Observer
@@ -74,12 +75,12 @@ runSpecTests =
                                 )
                         )
                     , it "should display a message indicating whether the connection to the Haveno API was successful or not"
-                        (Markup.observeElement
-                            |> Markup.query
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.id "connectionStatus" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
-                                    Markup.text <|
+                                    Spec.Markup.text <|
                                         Claim.isStringContaining 1 "Connected"
                                 )
                         )
@@ -101,12 +102,12 @@ runSpecTests =
                 )
                 |> Spec.observeThat
                     [ it "should display a message indicating whether the connection to the Haveno API was successful or not"
-                        (Markup.observeElement
-                            |> Markup.query
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.id "connectionStatus" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
-                                    Markup.text <|
+                                    Spec.Markup.text <|
                                         Claim.isStringContaining 1 "Haveno node not connected"
                                 )
                         )
@@ -177,22 +178,22 @@ runSpecTests =
                                 )
                         )
                     , it "c. displays Haveno version number on the Dashboard page"
-                        (Markup.observeElement
-                            |> Markup.query
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.id "versiondisplay" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
-                                    Markup.text <|
+                                    Spec.Markup.text <|
                                         Claim.isStringContaining 1 "1.0.7"
                                 )
                         )
                     , it "d. displays Haveno version number in the footer"
-                        (Markup.observeElement
-                            |> Markup.query
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.id "havenofooterver" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
-                                    Markup.text <|
+                                    Spec.Markup.text <|
                                         Claim.isStringContaining 1 "1.0.7"
                                 )
                         )
@@ -274,49 +275,50 @@ runSpecTests =
                         )
                     ]
             )
+        , scenario "2a: Show available balance and reserved balance correctly in the UI"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
+                )
+
+                |> Spec.observeThat
+                    [it "should have balances in the model"
+                        (Spec.Observer.observeModel .balances
+                            |> Spec.expect (BddStepDefinitions.Extra.equals <| TestData.testBalanceInfo)
+                        )
+                    , it "displays the available balance correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id  "xmrAvailableBalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "Available Balance: 42.94967296 XMR"
+                                )
+                        )
+                    , it "displays the reserved balance correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id  "reservedOfferBalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
+                                )
+                        )
+                    ]
+            )
 
         {-
-           , --Runner.skip <|
-             --Runner.pick <|
-             scenario "13: Checking the Menu nav links work"
-               (given
-                   (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
-                       |> Spec.Setup.withDocument Main.view
-                       |> Spec.Setup.withUpdate Main.update
-                       |> Spec.Setup.withSubscriptions Main.subscriptions
-                       |> Spec.Setup.forNavigation
-                           { onUrlRequest = Main.ClickedLink
-                           , onUrlChange = Main.ChangedUrl
-                           }
-                       -- NOTE: Currently believe this is equivalent to the user clicking a link
-                       |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
-                   )
-                   -- Simulate user clicking the Sell href navLink in the simple menu
-                   |> when "the user clicks the Sell navLink in the menu"
-                       [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
-                   {- |> Spec.when "we log the http requests"
-                      [ Spec.Http.logRequests
-                      ]
-                   -}
-                   |> Spec.observeThat
-                       [ it "b.is on the Sell page"
-                           -- NOTE: Cos connected with valid XMR address
-                           (Observer.observeModel .page
-                               |> Spec.expect (Claim.isEqual Debug.toString <| Main.SellPage Sell.initialModel)
-                           )
-                       , it "should display the menu"
-                           (Markup.observeElement
-                               |> Markup.query
-                               << by [ tag "button" ]
-                               |> Spec.expect
-                                   (Claim.isSomethingWhere <|
-                                       Markup.attribute "class" <|
-                                           Claim.isSomethingWhere <|
-                                               Claim.isStringContaining 1 "menu-btn"
-                                   )
-                           )
-                       ]
-               )
+
            , --Runner.skip <|
              --Runner.pick <|
              scenario "14: Checking the Wallet page has initialized after using navlink to Wallet"

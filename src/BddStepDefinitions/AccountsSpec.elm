@@ -197,58 +197,7 @@ runSpecTests =
                     ]
             )
 
-        {-
-           --, --skip <|
-           --pick <|
-           , scenario "2a: Show available balance and reserved balance correctly in the UI"
-               (given
-                   (Spec.Setup.init (Accounts.init "http://localhost:1234")
-                       |> Spec.Setup.withView Accounts.view
-                       |> Spec.Setup.withUpdate Accounts.update
-                       |> Spec.Setup.withLocation placeholderUrl
-                       |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch  ]
-                   )
-                   {- |> when "the user shows the hidden details"
-                       [ Spec.Command.send (Spec.Command.fake <| Accounts.ToggleVisibility) ] -}
-                   {- |> Spec.when "we log the http requests"
-                       [ Spec.Http.logRequests
-                       ] -}
-                   |> Spec.observeThat
-                       [ it "has status as Loaded"
-                           (Observer.observeModel .status
-                               |> Spec.expect (equals Accounts.Loaded)
-                           )
-                       , it "pagetitle is Accounts"
-                           (Observer.observeModel .pagetitle
-                               |> Spec.expect (equals "Accounts")
-                           )
-                       , it "should have balances in the model"
-                           (Observer.observeModel .balances
-                               |> Spec.expect (equals <| testBalanceInfo)
-                           )
-                       , it "displays the available balance correctly"
-                           (Markup.observeElement
-                               |> Markup.query
-                               << by [ id "xmrAvailableBalance" ]
-                               |> Spec.expect
-                                   (Claim.isSomethingWhere <|
-                                       Spec.Markup.text <|
-                                           Claim.isStringContaining 1 "Available Balance: 42.94967296 XMR"
-                                   )
-                           )
-                       , it "displays the reserved balance correctly"
-                           (Markup.observeElement
-                               |> Markup.query
-                               << by [ id "reservedOfferBalance" ]
-                               |> Spec.expect
-                                   (Claim.isSomethingWhere <|
-                                       Spec.Markup.text <|
-                                           Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
-                                   )
-                           )
-                       ]
-               )
-        -}
+        
         ]
 
 
