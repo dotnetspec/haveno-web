@@ -9280,7 +9280,26 @@ var $author$project$Main$connectionStatusView = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Section 1')
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('large-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('XMR')
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('small-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Available Balance')
+									]))
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -9290,7 +9309,26 @@ var $author$project$Main$connectionStatusView = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Section 2')
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('large-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('XMR')
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('small-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Pending')
+									]))
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -9300,7 +9338,26 @@ var $author$project$Main$connectionStatusView = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Section 3')
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('large-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('XMR')
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('small-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Reserved')
+									]))
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -9310,7 +9367,26 @@ var $author$project$Main$connectionStatusView = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Section 4')
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('large-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('XMR/USD: ')
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('small-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Market price by Haveno Price Index')
+									]))
 							]))
 					]))
 			]));
@@ -9360,7 +9436,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.4.50')
+										$elm$html$Html$text('Version 0.4.51')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(

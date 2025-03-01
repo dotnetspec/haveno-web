@@ -37,4 +37,12 @@
     margin-bottom: 5px; /* Add bottom margin for spacing */
     box-sizing: border-box; /* Include padding and border in element's total width and height */
   }
+
+  .large-text {
+    font-size: 0.5em; /* Reduced font size by another 50% */
+  }
+
+  .small-text {
+    font-size: 0.35em; /* Reduced font size by another 50% */
+  }
 }

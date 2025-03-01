@@ -341,5 +341,13 @@ nav a:hover {
   margin-right: 5px;
   flex: 1 1 25%; /* Allow sections to take up 25% of the width */
   text-align: center;
-  font-size: 50%; /* Reduce text size by 50% */
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.large-text {
+  font-size: 0.5em; /* Reduced font size by 2/3 */
+}
+
+.small-text {
+  font-size: 0.35em; /* Reduced font size by 2/3 */
 }
