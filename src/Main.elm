@@ -487,7 +487,7 @@ view model =
     -- NOTE: 'pagetitle' or 'title' in pages is not the same as 'title' in the document
     { title = "Haveno-Web"
     , body =
-        [ Html.div [ Attr.class "connection-status-container" ] [ connectionStatusView model, dashboardContainer model ]
+        [ Html.div [ Attr.class "logo-indicator-dashboard-container" ] [ connectionStatusView model, dashboardContainer model ]
         
         , Html.div [ Attr.class "main-nav-flex-container" ] [ menu model ]
         , Html.div [ Attr.class "topLogoContainer" ] [ topLogo ]

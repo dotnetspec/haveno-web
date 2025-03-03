@@ -17301,7 +17301,7 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('connection-status-container')
+						$elm$html$Html$Attributes$class('logo-indicator-dashboard-container')
 					]),
 				_List_fromArray(
 					[
