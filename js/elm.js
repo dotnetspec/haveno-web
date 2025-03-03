@@ -9237,15 +9237,148 @@ var $author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias = function (reply)
 		uh: $elm$core$String$fromInt(res1)
 	};
 };
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Main$dashboardContainer = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('dashboard-panel')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('dashboard-section')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('large-text'),
+								$elm$html$Html$Attributes$id('xmrAvailableBalance')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.og).r1 + ' XMR')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('small-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Available Balance')
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('dashboard-section')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('large-text'),
+								$elm$html$Html$Attributes$id('pendingBalance')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.og).t6 + ' XMR')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('small-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Pending')
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('dashboard-section')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('large-text'),
+								$elm$html$Html$Attributes$id('reservedOfferBalance')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.og).uh + ' XMR')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('small-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Reserved')
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('dashboard-section')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('large-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('XMR/USD: ')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('small-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Market price by Haveno Price Index')
+							]))
+					]))
+			]));
+};
 var $elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
-var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Main$connectionStatusView = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -9286,137 +9419,7 @@ var $author$project$Main$connectionStatusView = function (model) {
 								$elm$html$Html$text('Fix')
 							]))
 					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('dashboard-panel')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('dashboard-section')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('large-text'),
-										$elm$html$Html$Attributes$id('xmrAvailableBalance')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.og).r1 + ' XMR')
-									])),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('small-text')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Available Balance')
-									]))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('dashboard-section')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('large-text'),
-										$elm$html$Html$Attributes$id('pendingBalance')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.og).t6 + ' XMR')
-									])),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('small-text')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Pending')
-									]))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('dashboard-section')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('large-text'),
-										$elm$html$Html$Attributes$id('reservedOfferBalance')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.og).uh + ' XMR')
-									])),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('small-text')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Reserved')
-									]))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('dashboard-section')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('large-text')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('XMR/USD: ')
-									])),
-								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('small-text')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Market price by Haveno Price Index')
-									]))
-							]))
-					]))
+				$author$project$Main$dashboardContainer(model)
 			]));
 };
 var $elm$html$Html$br = _VirtualDom_node('br');
