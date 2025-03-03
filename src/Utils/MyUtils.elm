@@ -6,6 +6,7 @@ module Utils.MyUtils exposing
     , removeNothingFromList
     , stringFromBool
     , stringFromMaybeString
+    , gotBalancesReplyAsTypeAlias
     )
 
 import Grpc
@@ -167,7 +168,43 @@ toStringGetBalancesReply reply =
         ++ " }"
 
 
+gotBalancesReplyAsTypeAlias : Maybe Protobuf.BalancesInfo -> AccountBalances
+gotBalancesReplyAsTypeAlias reply =
+    let
+        -- Replace these fields with the actual fields in your GetBalancesReply type
+        balInformation =
+            Maybe.withDefault Protobuf.defaultBalancesInfo reply
+
+        gotXmr =
+            Maybe.withDefault Protobuf.defaultXmrBalanceInfo balInformation.xmr
+
+        ( available1, _ ) =
+            toInts gotXmr.availableBalance
+
+        ( pend1, _ ) =
+            toInts gotXmr.pendingBalance
+
+        ( res1, _ ) =
+            toInts gotXmr.reservedOfferBalance
+    in
+    -- Replace these fields with the actual fields in your GetBalancesReply type
+    { available = String.fromInt available1
+    , pending = String.fromInt pend1
+    , reserved = String.fromInt res1
+    }
+
+
 infoBtn : String -> String -> msg -> Html msg
 infoBtn label identifier msg =
     button [ class "info-button", id identifier, onClick msg ] [ text label ]
 
+
+
+-- NAV: Type Aliases
+
+
+type alias AccountBalances =
+    { available : String
+    , pending : String
+    , reserved : String
+    }

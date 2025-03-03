@@ -39,6 +39,7 @@ import Types.DateType exposing (DateTime)
 import Url exposing (Protocol(..), Url)
 import Url.Parser exposing (oneOf, s)
 import Url.Parser.Query as Query
+import Utils.MyUtils exposing (gotBalancesReplyAsTypeAlias)
 
 
 
@@ -917,15 +918,15 @@ connectionStatusView model =
             ]
         , Html.div [ Attr.class "dashboard-panel" ]
             [ Html.div [ Attr.class "dashboard-section" ]
-                [ Html.div [ Attr.class "large-text" ] [ Html.text "XMR" ]
+                [ Html.div [ Attr.class "large-text", Attr.id "xmrAvailableBalance" ] [ Html.text <| (gotBalancesReplyAsTypeAlias <| model.balances).available ++ " XMR" ]
                 , Html.div [ Attr.class "small-text" ] [ Html.text "Available Balance" ]
                 ]
             , Html.div [ Attr.class "dashboard-section" ]
-                [ Html.div [ Attr.class "large-text" ] [ Html.text "XMR" ]
+                [ Html.div [ Attr.class "large-text", Attr.id "pendingBalance" ] [ Html.text <| (gotBalancesReplyAsTypeAlias <| model.balances).pending ++ " XMR" ]
                 , Html.div [ Attr.class "small-text" ] [ Html.text "Pending" ]
                 ]
             , Html.div [ Attr.class "dashboard-section" ]
-                [ Html.div [ Attr.class "large-text" ] [ Html.text "XMR" ]
+                [ Html.div [ Attr.class "large-text", Attr.id "reservedOfferBalance" ] [ Html.text <| (gotBalancesReplyAsTypeAlias <| model.balances).reserved ++ " XMR" ]
                 , Html.div [ Attr.class "small-text" ] [ Html.text "Reserved" ]
                 ]
             , Html.div [ Attr.class "dashboard-section" ]
@@ -1118,7 +1119,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.4.51" ]
+                , Html.p [] [ Html.text "Version 0.4.52" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text

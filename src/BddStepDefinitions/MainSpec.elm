@@ -275,7 +275,7 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario "2a: Show available balance and reserved balance correctly in the UI"
+        , scenario "2a: Show available, pending and reserved balances correctly in the UI"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -301,7 +301,17 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "Available Balance: 42.94967296 XMR"
+                                        Claim.isStringContaining 1 "10000 XMR"
+                                )
+                        )
+                    , it "displays the pending balance correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id  "pendingBalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "2000 XMR"
                                 )
                         )
                     , it "displays the reserved balance correctly"
@@ -311,7 +321,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
+                                        Claim.isStringContaining 1 "5000 XMR"
                                 )
                         )
                     ]
