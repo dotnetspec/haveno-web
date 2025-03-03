@@ -9215,6 +9215,48 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Main$connectionStatusView = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('connection-status'),
+				$elm$html$Html$Attributes$id('connectionStatus')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class(
+						($author$project$Main$isXMRWalletConnected(model) && model.dC) ? 'status-dot green' : 'status-dot red')
+					]),
+				_List_Nil),
+				$elm$html$Html$text(
+				($author$project$Main$isXMRWalletConnected(model) && model.dC) ? 'Connected' : ((!$author$project$Main$isXMRWalletConnected(model)) ? 'Wallet not connected' : 'Haveno node not connected')),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('/connect'),
+						$elm$html$Html$Attributes$class('status-link')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Fix')
+					]))
+			]));
+};
 var $author$project$Proto$Io$Haveno$Protobuffer$defaultXmrBalanceInfo = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__XmrBalanceInfo;
 var $eriktim$elm_protocol_buffers$Internal$Int64$toInts = function (_v0) {
 	var higher = _v0.tc;
@@ -9237,9 +9279,6 @@ var $author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias = function (reply)
 		uh: $elm$core$String$fromInt(res1)
 	};
 };
-var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Main$dashboardContainer = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -9371,55 +9410,6 @@ var $author$project$Main$dashboardContainer = function (model) {
 								$elm$html$Html$text('Market price by Haveno Price Index')
 							]))
 					]))
-			]));
-};
-var $elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
-var $author$project$Main$connectionStatusView = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('connection-status-container')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('connection-status'),
-						$elm$html$Html$Attributes$id('connectionStatus')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class(
-								($author$project$Main$isXMRWalletConnected(model) && model.dC) ? 'status-dot green' : 'status-dot red')
-							]),
-						_List_Nil),
-						$elm$html$Html$text(
-						($author$project$Main$isXMRWalletConnected(model) && model.dC) ? 'Connected' : ((!$author$project$Main$isXMRWalletConnected(model)) ? 'Wallet not connected' : 'Haveno node not connected')),
-						A2(
-						$elm$html$Html$a,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$href('/connect'),
-								$elm$html$Html$Attributes$class('status-link')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Fix')
-							]))
-					])),
-				$author$project$Main$dashboardContainer(model)
 			]));
 };
 var $elm$html$Html$br = _VirtualDom_node('br');
@@ -17307,7 +17297,17 @@ var $author$project$Main$view = function (model) {
 	return {
 		sa: _List_fromArray(
 			[
-				$author$project$Main$connectionStatusView(model),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('connection-status-container')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$connectionStatusView(model),
+						$author$project$Main$dashboardContainer(model)
+					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(

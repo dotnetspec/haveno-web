@@ -487,7 +487,8 @@ view model =
     -- NOTE: 'pagetitle' or 'title' in pages is not the same as 'title' in the document
     { title = "Haveno-Web"
     , body =
-        [ connectionStatusView model
+        [ Html.div [ Attr.class "connection-status-container" ] [ connectionStatusView model, dashboardContainer model ]
+        
         , Html.div [ Attr.class "main-nav-flex-container" ] [ menu model ]
         , Html.div [ Attr.class "topLogoContainer" ] [ topLogo ]
         , Html.div [ Attr.class "contentByPage" ] [ contentByPage ]
@@ -891,8 +892,7 @@ isXMRWalletConnected model =
 
 connectionStatusView : Model -> Html.Html Msg
 connectionStatusView model =
-    Html.div [ Attr.class "connection-status-container" ]
-        [ Html.div [ Attr.class "connection-status", Attr.id "connectionStatus" ]
+    Html.div [ Attr.class "connection-status", Attr.id "connectionStatus" ]
             [ Html.div
                 [ Attr.class
                     (if isXMRWalletConnected model && model.isApiConnected then
@@ -916,8 +916,8 @@ connectionStatusView model =
             -- Link to Connect Page
             , Html.a [ Attr.href "/connect", Attr.class "status-link" ] [ Html.text "Fix" ]
             ]
-        , dashboardContainer model
-        ]
+        
+        
 
 
 dashboardContainer : Model -> Html.Html Msg
