@@ -487,10 +487,10 @@ view model =
     -- NOTE: 'pagetitle' or 'title' in pages is not the same as 'title' in the document
     { title = "Haveno-Web"
     , body =
-        [ Html.div [ Attr.class "logo-indicator-dashboard-container" ] [ connectionStatusView model, dashboardContainer model ]
-        
+        [ Html.div [ Attr.class "logo-indicator-dashboard-container" ] [ topLogo, connectionStatusView model, dashboardContainer model ]
         , Html.div [ Attr.class "main-nav-flex-container" ] [ menu model ]
-        , Html.div [ Attr.class "topLogoContainer" ] [ topLogo ]
+
+        --, Html.div [ Attr.class "topLogoContainer" ] [  ]
         , Html.div [ Attr.class "contentByPage" ] [ contentByPage ]
         , Html.div [ Attr.class "footerContent" ] [ footerContent model ]
         ]
@@ -893,31 +893,29 @@ isXMRWalletConnected model =
 connectionStatusView : Model -> Html.Html Msg
 connectionStatusView model =
     Html.div [ Attr.class "connection-status", Attr.id "connectionStatus" ]
-            [ Html.div
-                [ Attr.class
-                    (if isXMRWalletConnected model && model.isApiConnected then
-                        "status-dot green"
+        [ Html.div
+            [ Attr.class
+                (if isXMRWalletConnected model && model.isApiConnected then
+                    "status-dot green"
 
-                     else
-                        "status-dot red"
-                    )
-                ]
-                []
-            , Html.text <|
-                if isXMRWalletConnected model && model.isApiConnected then
-                    "Connected"
-
-                else if not <| isXMRWalletConnected model then
-                    "Wallet not connected"
-
-                else
-                    "Haveno node not connected"
-
-            -- Link to Connect Page
-            , Html.a [ Attr.href "/connect", Attr.class "status-link" ] [ Html.text "Fix" ]
+                 else
+                    "status-dot red"
+                )
             ]
-        
-        
+            []
+        , Html.text <|
+            if isXMRWalletConnected model && model.isApiConnected then
+                "Connected"
+
+            else if not <| isXMRWalletConnected model then
+                "Wallet not connected"
+
+            else
+                "Haveno node not connected"
+
+        -- Link to Connect Page
+        , Html.a [ Attr.href "/connect", Attr.class "status-link" ] [ Html.text "Fix" ]
+        ]
 
 
 dashboardContainer : Model -> Html.Html Msg
@@ -1022,23 +1020,20 @@ port receiveMessageFromJs : (JD.Value -> msg) -> Sub msg
 topLogo : Html.Html msg
 topLogo =
     Html.div
-        [ Attr.class "topLogoContainer"
-        ]
-        [ Html.div [ Attr.class "topLogo-content" ]
-            [ Html.img
-                [ Attr.src "assets/resources/images/logo-splash100X33.png"
+        []
+        [ Html.img
+            [ Attr.src "assets/resources/images/logo-splash100X33.png"
 
-                -- NOTE: always define the width and height of images. This reduces flickering,
-                -- because the browser can reserve space for the image before loading.
-                , Attr.width 100
-                , Attr.height 33
-                , Attr.alt "Haveno Logo"
-                , Attr.title "Haveno Logo"
-                , Attr.id "topLogoId"
-                , Attr.class "topLogo"
-                ]
-                []
+            -- NOTE: always define the width and height of images. This reduces flickering,
+            -- because the browser can reserve space for the image before loading.
+            , Attr.width 75
+            , Attr.height 22
+            , Attr.alt "Haveno Logo"
+            , Attr.title "Haveno Logo"
+            , Attr.id "topLogoId"
+            , Attr.class "topLogo"
             ]
+            []
         ]
 
 
@@ -1124,7 +1119,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.4.52" ]
+                , Html.p [] [ Html.text "Version 0.4.53" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text

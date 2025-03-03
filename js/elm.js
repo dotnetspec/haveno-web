@@ -9457,7 +9457,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.4.52')
+										$elm$html$Html$text('Version 0.4.53')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
@@ -9622,34 +9622,22 @@ var $elm$html$Html$Attributes$width = function (n) {
 };
 var $author$project$Main$topLogo = A2(
 	$elm$html$Html$div,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('topLogoContainer')
-		]),
+	_List_Nil,
 	_List_fromArray(
 		[
 			A2(
-			$elm$html$Html$div,
+			$elm$html$Html$img,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('topLogo-content')
+					$elm$html$Html$Attributes$src('assets/resources/images/logo-splash100X33.png'),
+					$elm$html$Html$Attributes$width(75),
+					$elm$html$Html$Attributes$height(22),
+					$elm$html$Html$Attributes$alt('Haveno Logo'),
+					$elm$html$Html$Attributes$title('Haveno Logo'),
+					$elm$html$Html$Attributes$id('topLogoId'),
+					$elm$html$Html$Attributes$class('topLogo')
 				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$img,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$src('assets/resources/images/logo-splash100X33.png'),
-							$elm$html$Html$Attributes$width(100),
-							$elm$html$Html$Attributes$height(33),
-							$elm$html$Html$Attributes$alt('Haveno Logo'),
-							$elm$html$Html$Attributes$title('Haveno Logo'),
-							$elm$html$Html$Attributes$id('topLogoId'),
-							$elm$html$Html$Attributes$class('topLogo')
-						]),
-					_List_Nil)
-				]))
+			_List_Nil)
 		]));
 var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $author$project$Main$navLinks = function (page) {
@@ -17305,6 +17293,7 @@ var $author$project$Main$view = function (model) {
 					]),
 				_List_fromArray(
 					[
+						$author$project$Main$topLogo,
 						$author$project$Main$connectionStatusView(model),
 						$author$project$Main$dashboardContainer(model)
 					])),
@@ -17318,14 +17307,6 @@ var $author$project$Main$view = function (model) {
 					[
 						$author$project$Main$menu(model)
 					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('topLogoContainer')
-					]),
-				_List_fromArray(
-					[$author$project$Main$topLogo])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(

@@ -315,8 +315,9 @@ nav a:hover {
 
 .logo-indicator-dashboard-container {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end; /* Align items to the right */
+  flex-direction: row; /* Change to row to align items horizontally */
+  align-items: center; /* Align items to the center vertically */
+  justify-content: flex-end; /* Align items to the right */
 }
 
 .dashboard-panel {

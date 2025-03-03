@@ -1,19 +1,10 @@
 @media (max-width: 800px) {
-  /* Top logo styles */
-  .topLogoContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    position: relative; /* Changed from absolute */
-    top: 0;
-    margin: 1rem 0; /* Added margin to separate from other elements */
-    z-index: 10; /* Ensure it appears above the background but within flow */
-  }
+ 
 
   .topLogo {
     max-width: 100px;
     height: auto;
+    width: 100%;
   }
 
   .address-text {
