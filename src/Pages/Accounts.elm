@@ -1,8 +1,8 @@
-module Pages.Accounts exposing (Model, Msg(..), Status(..), View(..), existingCryptoAccountsView,errorView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, update, view)
+module Pages.Accounts exposing (Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, update, view)
 
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
-import Html exposing (Html, div, h4, h6, p, section, text)
+import Html exposing (Html, div, h4, p, section, text)
 import Html.Attributes exposing (class, id)
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
@@ -37,7 +37,7 @@ initialModel =
     , errors = []
     , subaddress = ""
     , currentView = ManageAccounts
-    , listOfExistingCryptoAccounts = [ ]
+    , listOfExistingCryptoAccounts = []
     }
 
 
@@ -172,11 +172,11 @@ existingCryptoAccountsView : Model -> Html Msg
 existingCryptoAccountsView model =
     Html.div []
         [ Html.h6 [ class "accounts-subtitle" ] [ Html.text "Your Cryptocurrency Accounts" ]
-        , Html.div [ id "accounts-listOfExistingCryptoAccounts" ] 
+        , Html.div [ id "accounts-listOfExistingCryptoAccounts" ]
             (if List.isEmpty model.listOfExistingCryptoAccounts then
-                [ Html.text "There are no accounts set up yet" ]
+                [ Html.div [ class "account-item" ] [ Html.text "There are no accounts set up yet" ] ]
              else
-                List.map (\account -> Html.div [] [ Html.text account ]) model.listOfExistingCryptoAccounts
+                List.map (\account -> Html.div [ class "account-item" ] [ Html.text account ]) model.listOfExistingCryptoAccounts
             )
         ]
 
