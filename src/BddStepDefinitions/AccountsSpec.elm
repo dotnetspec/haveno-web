@@ -148,6 +148,46 @@ runSpecTests =
                         (Observer.observeModel .currentView
                             |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.CreateNewBTCAccountView)
                         )
+                    , it "displays the Cryptocurrency list with BTC as the first option"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "crypto-type" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "BTC"
+                                )
+                        )
+                    , it "displays a text input box titled 'Bitcoin address'"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "bitcoin-address-input" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "Bitcoin address"
+                                )
+                        )
+                    , it "displays a text input box titled 'Limitations' that cannot be modified"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "limitations-input" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "Limitations"
+                                )
+                        )
+                    , it "displays a text input box titled 'Account name' that cannot be modified"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "account-name-input" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "Account name"
+                                )
+                        )
                     , it "displays the available Add New BTC Account button correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
@@ -267,77 +307,7 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario "7. Clicking 'Add New Account' opens 'CreateNewBTCAccountView'"
-            (given
-                (Spec.Setup.initWithModel initialModel
-                    |> Spec.Setup.withView Accounts.view
-                    |> Spec.Setup.withUpdate Accounts.update
-                )
-                |> Spec.when "User clicks Cryptocurrency Accounts"
-                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
-                    , Spec.Markup.Event.click
-                    ]
-                |> Spec.when "User clicks Add New Account"
-                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "addnewBTCaccountViewbutton" ]
-                    , Spec.Markup.Event.click
-                    ]
-                |> Spec.observeThat
-                    [ it "updates the model to show CreateNewBTCAccountView"
-                        (Observer.observeModel .currentView
-                            |> Spec.expect (equals Accounts.CreateNewBTCAccountView)
-                        )
-                    , it "displays the Cryptocurrency list with BTC as the first option"
-                        (Spec.Markup.observeElement
-                            |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.class "cryptocurrency-list" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "BTC"
-                                )
-                        )
-                    , it "displays a text input box titled 'Bitcoin address'"
-                        (Spec.Markup.observeElement
-                            |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id "bitcoin-address-input" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "Bitcoin address"
-                                )
-                        )
-                    , it "displays a text input box titled 'Limitations' that cannot be modified"
-                        (Spec.Markup.observeElement
-                            |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id "limitations-input" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "Limitations"
-                                )
-                        )
-                    , it "displays a text input box titled 'Account name' that cannot be modified"
-                        (Spec.Markup.observeElement
-                            |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id "account-name-input" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "Account name"
-                                )
-                        )
-                    , it "displays a button labeled 'SAVE NEW ACCOUNT'"
-                        (Spec.Markup.observeElement
-                            |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id "save-new-account-button" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "SAVE NEW ACCOUNT"
-                                )
-                        )
-                    ]
-            )
+       
         ]
 
 

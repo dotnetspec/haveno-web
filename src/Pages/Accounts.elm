@@ -195,7 +195,11 @@ createNewBTCAccountView : Model -> Html Msg
 createNewBTCAccountView model =
     Html.div []
         [ Html.h6 [ class "cryptocurrency-list" ] [ Html.text "Cryptocurrency" ]
-        , Html.div [ class "account-item" ] [ Html.text "BTC" ]
+        , Html.div [ class "account-item", id "crypto-type" ]
+            [ case model.cryptoAccountType of
+                BTC ->
+                    Html.text "BTC"
+            ]
         , Html.div []
             [ Html.label [] [ Html.text "Bitcoin address" ]
             , Html.input [ id "bitcoin-address-input", type_ "text", placeholder "Enter BTC address", onInput UpdateNewBTCAddress ] []
