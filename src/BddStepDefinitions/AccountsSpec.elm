@@ -242,7 +242,17 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "Account 1 Account 2"
+                                        Claim.isStringContaining 1 "Account 1"
+                                )
+                        )
+                    , Spec.it "displays the accounts correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "accounts-listOfExistingCryptoAccounts" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "Account 2"
                                 )
                         )
                     ]

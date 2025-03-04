@@ -176,7 +176,7 @@ existingCryptoAccountsView model =
             (if List.isEmpty model.listOfExistingCryptoAccounts then
                 [ Html.text "There are no accounts set up yet" ]
              else
-                List.map (Html.text << (++) " ") model.listOfExistingCryptoAccounts
+                List.map (\account -> Html.div [] [ Html.text account ]) model.listOfExistingCryptoAccounts
             )
         ]
 
