@@ -207,7 +207,7 @@ runSpecTests =
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                 )
-                 |> Spec.when "User clicks Cryptocurrency Accounts"
+                |> Spec.when "User clicks Cryptocurrency Accounts"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
                     , Spec.Markup.Event.click
                     ]
@@ -220,6 +220,29 @@ runSpecTests =
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
                                         Claim.isStringContaining 1 "There are no accounts set up yet"
+                                )
+                        )
+                    ]
+            )
+        , Spec.scenario "6. Displays existing accounts when the list is not empty"
+            (Spec.given
+                (Spec.Setup.initWithModel { initialModel | listOfExistingCryptoAccounts = [ "Account 1", "Account 2" ] }
+                    |> Spec.Setup.withView Accounts.view
+                    |> Spec.Setup.withUpdate Accounts.update
+                )
+                |> Spec.when "User clicks Cryptocurrency Accounts"
+                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
+                    , Spec.Markup.Event.click
+                    ]
+                |> Spec.observeThat
+                    [ Spec.it "displays the accounts correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "accounts-listOfExistingCryptoAccounts" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "Account 1 Account 2"
                                 )
                         )
                     ]
