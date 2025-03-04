@@ -1,8 +1,8 @@
-module Pages.Accounts exposing (Model, Msg(..), Status(..), View(..), errorView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, update, view)
+module Pages.Accounts exposing (Model, Msg(..), Status(..), View(..), existingCryptoAccountsView,errorView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, update, view)
 
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
-import Html exposing (Html, div, h4, p, section, text)
+import Html exposing (Html, div, h4, h6, p, section, text)
 import Html.Attributes exposing (class, id)
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
@@ -23,6 +23,7 @@ type alias Model =
     , errors : List String
     , subaddress : String
     , currentView : View
+    , listOfExistingCryptoAccounts : List String
     }
 
 
@@ -36,6 +37,7 @@ initialModel =
     , errors = []
     , subaddress = ""
     , currentView = ManageAccounts
+    , listOfExistingCryptoAccounts = [ ]
     }
 
 
@@ -140,7 +142,8 @@ view model =
 
                             CryptocurrencyAccounts ->
                                 div []
-                                    [ h4 [] [ text "CryptocurrencyAccounts Accounts" ]
+                                    [ h4 [] [ text "Cryptocurrency Accounts" ]
+                                    , existingCryptoAccountsView model
                                     , p [] [ Utils.MyUtils.infoBtn "Add New Account" "addnewaccountbutton" <| AddNewAccount ]
                                     ]
 
@@ -163,6 +166,19 @@ view model =
 
 
 -- NAV: View helpers:
+
+
+existingCryptoAccountsView : Model -> Html Msg
+existingCryptoAccountsView model =
+    Html.div []
+        [ Html.h6 [ class "accounts-subtitle" ] [ Html.text "Your Cryptocurrency Accounts" ]
+        , Html.div [ id "accounts-listOfExistingCryptoAccounts" ] 
+            (if List.isEmpty model.listOfExistingCryptoAccounts then
+                [ Html.text "There are no accounts set up yet" ]
+             else
+                List.map (Html.text << (++) " ") model.listOfExistingCryptoAccounts
+            )
+        ]
 
 
 errorView : Html Msg

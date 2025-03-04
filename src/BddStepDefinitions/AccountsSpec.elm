@@ -29,6 +29,7 @@ initialModel =
     , errors = []
     , subaddress = ""
     , currentView = Accounts.ManageAccounts
+    , listOfExistingCryptoAccounts = []
     }
 
 
@@ -129,7 +130,7 @@ runSpecTests =
                     , Spec.Markup.Event.click
                     ]
                 |> Spec.observeThat
-                    [  Spec.it "has status as Loaded"
+                    [ Spec.it "has status as Loaded"
                         (Observer.observeModel .status
                             |> Spec.expect (equals Accounts.Loaded)
                         )
@@ -197,6 +198,29 @@ runSpecTests =
                     [ Spec.it "updates the model to show Backup"
                         (Observer.observeModel .currentView
                             |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.Backup)
+                        )
+                    ]
+            )
+        , Spec.scenario "5. Displays 'There are no accounts set up yet' when the list is empty"
+            (Spec.given
+                (Spec.Setup.initWithModel initialModel
+                    |> Spec.Setup.withView Accounts.view
+                    |> Spec.Setup.withUpdate Accounts.update
+                )
+                 |> Spec.when "User clicks Cryptocurrency Accounts"
+                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
+                    , Spec.Markup.Event.click
+                    ]
+                |> Spec.observeThat
+                    [ Spec.it "displays the message correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "accounts-listOfExistingCryptoAccounts" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "There are no accounts set up yet"
+                                )
                         )
                     ]
             )
