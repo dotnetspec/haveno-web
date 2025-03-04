@@ -4,6 +4,7 @@ import BddStepDefinitions.Extra exposing (equals)
 import BddStepDefinitions.Runner
 import Extras.TestData as TestData exposing (placeholderUrl, testBalanceInfo)
 import Grpc
+import Json.Decode
 import Pages.Accounts as Accounts
 import Spec exposing (Flags, Spec, describe, given, it, scenario, when)
 import Spec.Claim as Claim
@@ -175,8 +176,8 @@ runSpecTests =
                             << by [ Spec.Markup.Selector.id "limitations-input" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "Limitations"
+                                    Spec.Markup.property (Json.Decode.field "value" Json.Decode.string) <|
+                                        Claim.isStringContaining 1 "Max. trade duration: 0 hours/Max.trade limit: 96.00 XMR"
                                 )
                         )
                     , it "displays a text input box titled 'Account name' that cannot be modified"
@@ -185,8 +186,8 @@ runSpecTests =
                             << by [ Spec.Markup.Selector.id "account-name-input" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "Account name"
+                                    Spec.Markup.property (Json.Decode.field "value" Json.Decode.string) <|
+                                            Claim.isStringContaining 1 "BTC:"
                                 )
                         )
                     , it "displays the available Add New BTC Account button correctly"

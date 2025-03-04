@@ -4075,7 +4075,7 @@ function _Browser_application(impl)
 					sendToApp(onUrlRequest(
 						(next
 							&& curr.ki === next.ki
-							&& curr.mH === next.mH
+							&& curr.mI === next.mI
 							&& curr.ka.a === next.ka.a
 						)
 							? $elm$browser$Browser$Internal(next)
@@ -4602,7 +4602,7 @@ var _Http_toTask = F3(function(router, toTask, request)
 		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
 		xhr.addEventListener('load', function() { done(_Http_toResponse(request.sV.b, xhr)); });
-		$elm$core$Maybe$isJust(request.m9) && _Http_track(router, xhr, request.m9.a);
+		$elm$core$Maybe$isJust(request.na) && _Http_track(router, xhr, request.na.a);
 
 		try {
 			xhr.open(request.pU, request.bH, true);
@@ -5333,7 +5333,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {s1: fragment, mH: host, t9: path, ka: port_, ki: protocol, ug: query};
+		return {s1: fragment, mI: host, t9: path, ka: port_, ki: protocol, ug: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5618,7 +5618,7 @@ var $author$project$Main$DashboardPage = function (a) {
 };
 var $author$project$Pages$Dashboard$Loading = 0;
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
-var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo = {ng: $elm$core$Maybe$Nothing, nZ: $elm$core$Maybe$Nothing};
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo = {nh: $elm$core$Maybe$Nothing, nZ: $elm$core$Maybe$Nothing};
 var $author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo;
 var $elm$time$Time$Posix = $elm$core$Basics$identity;
 var $elm$time$Time$millisToPosix = $elm$core$Basics$identity;
@@ -5627,12 +5627,12 @@ var $author$project$Pages$Accounts$Loaded = 0;
 var $author$project$Pages$Accounts$ManageAccounts = 0;
 var $author$project$Pages$Accounts$initialModel = {
 	on: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
-	nh: 0,
+	mB: 0,
 	sD: 0,
 	no: _List_Nil,
 	pA: false,
-	mK: _List_Nil,
-	mS: '',
+	mL: _List_Nil,
+	mT: '',
 	t7: 'Accounts',
 	ke: '',
 	rf: 0,
@@ -5674,7 +5674,7 @@ var $author$project$Pages$Buy$init = function (_v0) {
 			{u9: 'Haveno-Web Buy'}),
 		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
-var $author$project$Pages$Connect$initialModel = {eV: 0, e_: '', td: false, mP: 'node.haveno.network:17750', ke: '', nM: false, mW: false, vg: false};
+var $author$project$Pages$Connect$initialModel = {eV: 0, e_: '', td: false, mQ: 'node.haveno.network:17750', ke: '', nM: false, mX: false, vg: false};
 var $author$project$Pages$Connect$init = function (_v0) {
 	return _Utils_Tuple2($author$project$Pages$Connect$initialModel, $elm$core$Platform$Cmd$none);
 };
@@ -6844,7 +6844,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 		]));
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__XmrBalanceInfo = {
 	eB: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
-	ne: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	nf: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
 	nF: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
 	nK: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
 	nL: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0)
@@ -6862,7 +6862,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{ne: a});
+						{nf: a});
 				})),
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
@@ -6918,7 +6918,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{ng: a});
+						{nh: a});
 				})),
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
@@ -7198,11 +7198,11 @@ var $anmolitor$elm_grpc$Grpc$new = F2(
 				[
 					A2($elm$http$Http$header, 'accept', $anmolitor$elm_grpc$Grpc$grpcContentType)
 				]),
-			mH: '',
-			mX: false,
+			mI: '',
+			mY: false,
 			kC: rpc,
 			lE: $elm$core$Maybe$Nothing,
-			m9: $elm$core$Maybe$Nothing
+			na: $elm$core$Maybe$Nothing
 		};
 	});
 var $anmolitor$elm_grpc$Grpc$setHost = F2(
@@ -7210,7 +7210,7 @@ var $anmolitor$elm_grpc$Grpc$setHost = F2(
 		var req = _v0;
 		return _Utils_update(
 			req,
-			{mH: host});
+			{mI: host});
 	});
 var $author$project$Comms$CustomGrpc$gotAvailableBalances = A2(
 	$anmolitor$elm_grpc$Grpc$setHost,
@@ -7648,7 +7648,7 @@ var $elm$http$Http$updateReqs = F3(
 					return A2(
 						$elm$core$Task$andThen,
 						function (pid) {
-							var _v4 = req.m9;
+							var _v4 = req.na;
 							if (_v4.$ === 1) {
 								return A3($elm$http$Http$updateReqs, router, otherCmds, reqs);
 							} else {
@@ -7723,7 +7723,7 @@ var $elm$http$Http$cmdMap = F2(
 					bJ: r.bJ,
 					pU: r.pU,
 					lE: r.lE,
-					m9: r.m9,
+					na: r.na,
 					bH: r.bH
 				});
 		}
@@ -7747,12 +7747,12 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{r1: false, sf: r.sf, sV: r.sV, bJ: r.bJ, pU: r.pU, lE: r.lE, m9: r.m9, bH: r.bH}));
+			{r1: false, sf: r.sf, sV: r.sV, bJ: r.bJ, pU: r.pU, lE: r.lE, na: r.na, bH: r.bH}));
 };
 var $elm$http$Http$riskyRequest = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{r1: true, sf: r.sf, sV: r.sV, bJ: r.bJ, pU: r.pU, lE: r.lE, m9: r.m9, bH: r.bH}));
+			{r1: true, sf: r.sf, sV: r.sV, bJ: r.bJ, pU: r.pU, lE: r.lE, na: r.na, bH: r.bH}));
 };
 var $anmolitor$elm_grpc$Grpc$rpcPath = function (_v0) {
 	var service = _v0.uD;
@@ -7763,7 +7763,7 @@ var $anmolitor$elm_grpc$Grpc$rpcPath = function (_v0) {
 var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 	function (expect, _v0) {
 		var req = _v0;
-		var toHttpRequest = req.mX ? $elm$http$Http$riskyRequest : $elm$http$Http$request;
+		var toHttpRequest = req.mY ? $elm$http$Http$riskyRequest : $elm$http$Http$request;
 		var _v1 = req.kC;
 		var rpc = _v1;
 		var body = A2(
@@ -7782,9 +7782,9 @@ var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 				bJ: req.bJ,
 				pU: 'POST',
 				lE: req.lE,
-				m9: req.m9,
+				na: req.na,
 				bH: _Utils_ap(
-					req.mH,
+					req.mI,
 					$anmolitor$elm_grpc$Grpc$rpcPath(req.kC))
 			});
 	});
@@ -8648,7 +8648,7 @@ var $elm$url$Url$toString = function (url) {
 				A2(
 					$elm$url$Url$addPort,
 					url.ka,
-					_Utils_ap(http, url.mH)),
+					_Utils_ap(http, url.mI)),
 				url.t9)));
 };
 var $author$project$Pages$Accounts$CryptoAccounts = 2;
@@ -8661,7 +8661,7 @@ var $author$project$Pages$Accounts$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{nh: cryptoAcct, sD: 2}),
+						{mB: cryptoAcct, sD: 2}),
 					$elm$core$Platform$Cmd$none);
 			case 1:
 				if (!msg.a.$) {
@@ -8720,7 +8720,7 @@ var $author$project$Pages$Accounts$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{mS: address}),
+						{mT: address}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -8745,13 +8745,13 @@ var $author$project$Pages$Connect$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{eV: model.eV, ke: primaryAddresponse.ue, mW: false, vg: true}),
+							{eV: model.eV, ke: primaryAddresponse.ue, mX: false, vg: true}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{eV: model.eV + 1, mW: true}),
+							{eV: model.eV + 1, mX: true}),
 						A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Connect$RetryWalletConnection, $author$project$Comms$CustomGrpc$gotPrimaryAddress));
 				}
 			case 1:
@@ -8771,7 +8771,7 @@ var $author$project$Pages$Connect$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{e_: '', mP: model.e_}),
+						{e_: '', mQ: model.e_}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -9718,11 +9718,15 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('account-item')
+						$elm$html$Html$Attributes$class('account-item'),
+						$elm$html$Html$Attributes$id('crypto-type')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('BTC')
+						function () {
+						var _v0 = model.mB;
+						return $elm$html$Html$text('BTC');
+					}()
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -9737,15 +9741,21 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 								$elm$html$Html$text('Bitcoin address')
 							])),
 						A2(
-						$elm$html$Html$input,
+						$elm$html$Html$div,
+						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$id('bitcoin-address-input'),
-								$elm$html$Html$Attributes$type_('text'),
-								$elm$html$Html$Attributes$placeholder('Enter BTC address'),
-								$elm$html$Html$Events$onInput($author$project$Pages$Accounts$UpdateNewBTCAddress)
-							]),
-						_List_Nil)
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$id('bitcoin-address-input'),
+										$elm$html$Html$Attributes$type_('text'),
+										$elm$html$Html$Attributes$placeholder('Enter valid BTC address'),
+										$elm$html$Html$Events$onInput($author$project$Pages$Accounts$UpdateNewBTCAddress)
+									]),
+								_List_Nil)
+							]))
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -9760,15 +9770,21 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 								$elm$html$Html$text('Limitations')
 							])),
 						A2(
-						$elm$html$Html$input,
+						$elm$html$Html$div,
+						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$id('limitations-input'),
-								$elm$html$Html$Attributes$type_('text'),
-								$elm$html$Html$Attributes$readonly(true),
-								$elm$html$Html$Attributes$value('Cannot be modified')
-							]),
-						_List_Nil)
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$id('limitations-input'),
+										$elm$html$Html$Attributes$type_('text'),
+										$elm$html$Html$Attributes$readonly(true),
+										$elm$html$Html$Attributes$value('Max. trade duration: 0 hours/Max.trade limit: 96.00 XMR')
+									]),
+								_List_Nil)
+							]))
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -9783,19 +9799,25 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 								$elm$html$Html$text('Account name')
 							])),
 						A2(
-						$elm$html$Html$input,
+						$elm$html$Html$div,
+						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$id('account-name-input'),
-								$elm$html$Html$Attributes$type_('text'),
-								$elm$html$Html$Attributes$readonly(true),
-								$elm$html$Html$Attributes$value('BTC: ' + model.mS)
-							]),
-						_List_Nil)
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$id('account-name-input'),
+										$elm$html$Html$Attributes$type_('text'),
+										$elm$html$Html$Attributes$readonly(true),
+										$elm$html$Html$Attributes$value('BTC: ' + model.mT)
+									]),
+								_List_Nil)
+							]))
 					])),
 				A3(
 				$author$project$Utils$MyUtils$infoBtn,
-				'Save New BTC Account',
+				'SAVE NEW BTC ACCOUNT',
 				'save-new-BTC-account-button',
 				$author$project$Pages$Accounts$AddNewCryptoAccount(0))
 			]));
@@ -9860,7 +9882,7 @@ var $author$project$Pages$Accounts$existingCryptoAccountsView = function (model)
 					[
 						$elm$html$Html$Attributes$id('accounts-listOfExistingCryptoAccounts')
 					]),
-				$elm$core$List$isEmpty(model.mK) ? _List_fromArray(
+				$elm$core$List$isEmpty(model.mL) ? _List_fromArray(
 					[
 						A2(
 						$elm$html$Html$div,
@@ -9886,7 +9908,7 @@ var $author$project$Pages$Accounts$existingCryptoAccountsView = function (model)
 									$elm$html$Html$text(account)
 								]));
 					},
-					model.mK))
+					model.mL))
 			]));
 };
 var $elm$html$Html$h4 = _VirtualDom_node('h4');
@@ -10274,7 +10296,7 @@ var $author$project$Pages$Connect$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text(model.mP)
+								$elm$html$Html$text(model.mQ)
 							]))
 					])) : A2(
 				$elm$html$Html$p,
@@ -10345,7 +10367,7 @@ var $mdgriffith$elm_ui$Internal$Model$Unkeyed = function (a) {
 };
 var $mdgriffith$elm_ui$Internal$Model$AsColumn = 1;
 var $mdgriffith$elm_ui$Internal$Model$asColumn = 1;
-var $mdgriffith$elm_ui$Internal$Style$classes = {rT: 'a', n4: 'atv', rV: 'ab', rW: 'cx', rX: 'cy', rY: 'acb', rZ: 'accx', r_: 'accy', r$: 'acr', oe: 'al', of: 'ar', r0: 'at', nb: 'ah', nc: 'av', r3: 's', sb: 'bh', sc: 'b', sg: 'w7', si: 'bd', sj: 'bdt', mq: 'bn', sk: 'bs', mu: 'cpe', st: 'cp', su: 'cpx', sv: 'cpy', dA: 'c', mx: 'ctr', my: 'cb', mz: 'ccx', dB: 'ccy', hN: 'cl', mA: 'cr', sB: 'ct', sE: 'cptr', sF: 'ctxt', s0: 'fcs', o6: 'focus-within', s5: 'fs', tc: 'g', ns: 'hbh', nt: 'hc', pj: 'he', nu: 'hf', pk: 'hfp', tj: 'hv', tn: 'ic', tp: 'fr', mJ: 'lbl', ts: 'iml', tt: 'imlf', tu: 'imlp', tv: 'implw', tw: 'it', tz: 'i', pK: 'lnk', fG: 'nb', p5: 'notxt', tX: 'ol', tY: 'or', d5: 'oq', t5: 'oh', N: 'pg', qh: 'p', t8: 'ppe', us: 'ui', qP: 'r', uw: 'sb', ux: 'sbx', uy: 'sby', uz: 'sbt', uF: 'e', uH: 'cap', uI: 'sev', uQ: 'sk', gx: 't', uX: 'tc', uY: 'w8', uZ: 'w2', u_: 'w9', u$: 'tj', m5: 'tja', u0: 'tl', u1: 'w3', u2: 'w5', u3: 'w4', u4: 'tr', u5: 'w6', u6: 'w1', u7: 'tun', rx: 'ts', ej: 'clr', vd: 'u', nV: 'wc', rN: 'we', nW: 'wf', rO: 'wfp', nY: 'wrp'};
+var $mdgriffith$elm_ui$Internal$Style$classes = {rT: 'a', n4: 'atv', rV: 'ab', rW: 'cx', rX: 'cy', rY: 'acb', rZ: 'accx', r_: 'accy', r$: 'acr', oe: 'al', of: 'ar', r0: 'at', nc: 'ah', nd: 'av', r3: 's', sb: 'bh', sc: 'b', sg: 'w7', si: 'bd', sj: 'bdt', mq: 'bn', sk: 'bs', mu: 'cpe', st: 'cp', su: 'cpx', sv: 'cpy', dA: 'c', mx: 'ctr', my: 'cb', mz: 'ccx', dB: 'ccy', hN: 'cl', mA: 'cr', sB: 'ct', sE: 'cptr', sF: 'ctxt', s0: 'fcs', o6: 'focus-within', s5: 'fs', tc: 'g', ns: 'hbh', nt: 'hc', pj: 'he', nu: 'hf', pk: 'hfp', tj: 'hv', tn: 'ic', tp: 'fr', mK: 'lbl', ts: 'iml', tt: 'imlf', tu: 'imlp', tv: 'implw', tw: 'it', tz: 'i', pK: 'lnk', fG: 'nb', p5: 'notxt', tX: 'ol', tY: 'or', d5: 'oq', t5: 'oh', N: 'pg', qh: 'p', t8: 'ppe', us: 'ui', qP: 'r', uw: 'sb', ux: 'sbx', uy: 'sby', uz: 'sbt', uF: 'e', uH: 'cap', uI: 'sev', uQ: 'sk', gx: 't', uX: 'tc', uY: 'w8', uZ: 'w2', u_: 'w9', u$: 'tj', m6: 'tja', u0: 'tl', u1: 'w3', u2: 'w5', u3: 'w4', u4: 'tr', u5: 'w6', u6: 'w1', u7: 'tun', rx: 'ts', ej: 'clr', vd: 'u', nV: 'wc', rN: 'we', nW: 'wf', rO: 'wfp', nY: 'wrp'};
 var $mdgriffith$elm_ui$Internal$Model$Generic = {$: 0};
 var $mdgriffith$elm_ui$Internal$Model$div = $mdgriffith$elm_ui$Internal$Model$Generic;
 var $mdgriffith$elm_ui$Internal$Model$NoNearbyChildren = {$: 0};
@@ -11822,7 +11844,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 							])),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Descriptor,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mJ),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.mK),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'align-items', 'baseline')
@@ -12485,7 +12507,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 					])),
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.m5),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.m6),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'text-align', 'justify-all')
@@ -13778,8 +13800,8 @@ var $mdgriffith$elm_ui$Internal$Model$toStyleSheetString = F2(
 		var combine = F2(
 			function (style, rendered) {
 				return {
-					mY: _Utils_ap(
-						rendered.mY,
+					mZ: _Utils_ap(
+						rendered.mZ,
 						A3($mdgriffith$elm_ui$Internal$Model$renderStyleRule, options, style, $elm$core$Maybe$Nothing)),
 					lG: function () {
 						var _v1 = $mdgriffith$elm_ui$Internal$Model$topLevelValue(style);
@@ -13795,10 +13817,10 @@ var $mdgriffith$elm_ui$Internal$Model$toStyleSheetString = F2(
 		var _v0 = A3(
 			$elm$core$List$foldl,
 			combine,
-			{mY: _List_Nil, lG: _List_Nil},
+			{mZ: _List_Nil, lG: _List_Nil},
 			stylesheet);
 		var topLevel = _v0.lG;
-		var rules = _v0.mY;
+		var rules = _v0.mZ;
 		return _Utils_ap(
 			$mdgriffith$elm_ui$Internal$Model$renderTopLevelValues(topLevel),
 			$elm$core$String$concat(rules));
@@ -14430,21 +14452,21 @@ var $mdgriffith$elm_ui$Internal$Model$addNodeName = F2(
 var $mdgriffith$elm_ui$Internal$Model$alignXName = function (align) {
 	switch (align) {
 		case 0:
-			return $mdgriffith$elm_ui$Internal$Style$classes.nb + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.oe);
+			return $mdgriffith$elm_ui$Internal$Style$classes.nc + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.oe);
 		case 2:
-			return $mdgriffith$elm_ui$Internal$Style$classes.nb + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.of);
+			return $mdgriffith$elm_ui$Internal$Style$classes.nc + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.of);
 		default:
-			return $mdgriffith$elm_ui$Internal$Style$classes.nb + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.rW);
+			return $mdgriffith$elm_ui$Internal$Style$classes.nc + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.rW);
 	}
 };
 var $mdgriffith$elm_ui$Internal$Model$alignYName = function (align) {
 	switch (align) {
 		case 0:
-			return $mdgriffith$elm_ui$Internal$Style$classes.nc + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.r0);
+			return $mdgriffith$elm_ui$Internal$Style$classes.nd + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.r0);
 		case 2:
-			return $mdgriffith$elm_ui$Internal$Style$classes.nc + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.rV);
+			return $mdgriffith$elm_ui$Internal$Style$classes.nd + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.rV);
 		default:
-			return $mdgriffith$elm_ui$Internal$Style$classes.nc + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.rX);
+			return $mdgriffith$elm_ui$Internal$Style$classes.nd + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.rX);
 	}
 };
 var $mdgriffith$elm_ui$Internal$Model$FullTransform = F4(
@@ -16601,7 +16623,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts = $eriktim$elm_pro
 var $author$project$Pages$Funds$btcBalanceAsString = function (balInfo) {
 	if (!balInfo.$) {
 		var blInfo = balInfo.a;
-		var _v1 = blInfo.ng;
+		var _v1 = blInfo.nh;
 		if (_v1.$ === 1) {
 			return '0.00';
 		} else {
