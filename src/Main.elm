@@ -458,7 +458,8 @@ view model =
     -- NOTE: 'pagetitle' or 'title' in pages is not the same as 'title' in the document
     { title = "Haveno-Web"
     , body =
-        [ Html.div [ Attr.class "logo-indicator-dashboard-container" ] [ topLogo, connectionStatusView model, dashboardContainer model ]
+        [  viewContainer model
+           -- ,Html.div [ Attr.class "logo-indicator-dashboard-container" ] [ topLogo, connectionStatusView model, dashboardContainer model ]
         , Html.div [ Attr.class "main-nav-flex-container" ] [ menu model ]
         , Html.div [ Attr.class "contentByPage" ] [ contentByPage ]
         , Html.div [ Attr.class "footerContent" ] [ footerContent model ]
@@ -466,7 +467,13 @@ view model =
     }
 
 
-
+viewContainer : Model -> Html.Html Msg
+viewContainer model =
+    Html.div [ Attr.class "dashboard-container" ]
+        [ Html.div [ Attr.class "item1" ] [topLogo]
+        , Html.div [ Attr.class "item2" ] [ connectionStatusView model]
+        , Html.div [ Attr.class "item3" ] [ dashboardContainer model ]
+        ]
 -- TYPES
 -- NOTE: Dashboard.elm is the equivalent of PhotoFolders.elm or 'Folders' in the code
 {- -- NOTE: Two data structures for use cases that were similar but ended up NOT being the same. If you're
@@ -1088,7 +1095,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.4.55" ]
+                , Html.p [] [ Html.text "Version 0.4.56" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text

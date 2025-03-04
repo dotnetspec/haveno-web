@@ -9212,8 +9212,10 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
-var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$br = _VirtualDom_node('br');
+var $elm$html$Html$footer = _VirtualDom_node('footer');
 var $elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
@@ -9221,202 +9223,12 @@ var $elm$html$Html$Attributes$href = function (url) {
 		_VirtualDom_noJavaScriptUri(url));
 };
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$Main$connectionStatusView = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('connection-status'),
-				$elm$html$Html$Attributes$id('connectionStatus')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class(
-						($author$project$Main$isXMRWalletConnected(model) && model.dY) ? 'status-dot green' : 'status-dot red')
-					]),
-				_List_Nil),
-				$elm$html$Html$text(
-				($author$project$Main$isXMRWalletConnected(model) && model.dY) ? 'Connected' : ((!$author$project$Main$isXMRWalletConnected(model)) ? 'Wallet not connected' : 'Haveno node not connected')),
-				A2(
-				$elm$html$Html$a,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$href('/connect'),
-						$elm$html$Html$Attributes$class('status-link')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Fix')
-					]))
-			]));
-};
-var $author$project$Proto$Io$Haveno$Protobuffer$defaultXmrBalanceInfo = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__XmrBalanceInfo;
-var $eriktim$elm_protocol_buffers$Internal$Int64$toInts = function (_v0) {
-	var higher = _v0.te;
-	var lower = _v0.nv;
-	return _Utils_Tuple2(higher, lower);
-};
-var $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts = $eriktim$elm_protocol_buffers$Internal$Int64$toInts;
-var $author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias = function (reply) {
-	var balInformation = A2($elm$core$Maybe$withDefault, $author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo, reply);
-	var gotXmr = A2($elm$core$Maybe$withDefault, $author$project$Proto$Io$Haveno$Protobuffer$defaultXmrBalanceInfo, balInformation.nW);
-	var _v0 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.nH);
-	var res1 = _v0.a;
-	var _v1 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.nC);
-	var pend1 = _v1.a;
-	var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.eB);
-	var available1 = _v2.a;
-	return {
-		r3: $elm$core$String$fromInt(available1),
-		t7: $elm$core$String$fromInt(pend1),
-		ui: $elm$core$String$fromInt(res1)
-	};
-};
-var $author$project$Main$dashboardContainer = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('dashboard-panel')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('dashboard-section')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('large-text'),
-								$elm$html$Html$Attributes$id('xmrAvailableBalance')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.ok).r3 + ' XMR')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('small-text')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Available Balance')
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('dashboard-section')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('large-text'),
-								$elm$html$Html$Attributes$id('pendingBalance')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.ok).t7 + ' XMR')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('small-text')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Pending')
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('dashboard-section')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('large-text'),
-								$elm$html$Html$Attributes$id('reservedOfferBalance')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.ok).ui + ' XMR')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('small-text')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Reserved')
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('dashboard-section')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('large-text')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('XMR/USD: ')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('small-text')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Market price by Haveno Price Index')
-							]))
-					]))
-			]));
-};
-var $elm$html$Html$br = _VirtualDom_node('br');
-var $elm$html$Html$footer = _VirtualDom_node('footer');
 var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Main$footerContent = function (model) {
 	return A2(
 		$elm$html$Html$footer,
@@ -9456,7 +9268,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.4.54')
+										$elm$html$Html$text('Version 0.4.55')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
@@ -16576,6 +16388,12 @@ var $author$project$Pages$Funds$formatBalance = function (int64) {
 	var roundedXmr = $elm$core$Basics$round(xmrAmount * scale) / scale;
 	return $elm$core$String$fromFloat(roundedXmr);
 };
+var $eriktim$elm_protocol_buffers$Internal$Int64$toInts = function (_v0) {
+	var higher = _v0.te;
+	var lower = _v0.nv;
+	return _Utils_Tuple2(higher, lower);
+};
+var $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts = $eriktim$elm_protocol_buffers$Internal$Int64$toInts;
 var $author$project$Pages$Funds$btcBalanceAsString = function (balInfo) {
 	if (!balInfo.$) {
 		var blInfo = balInfo.a;
@@ -17182,6 +17000,227 @@ var $author$project$Pages$Support$content = A2(
 var $author$project$Pages$Support$view = function (_v0) {
 	return $author$project$Pages$Support$content;
 };
+var $author$project$Main$connectionStatusView = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('connection-status'),
+				$elm$html$Html$Attributes$id('connectionStatus')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class(
+						($author$project$Main$isXMRWalletConnected(model) && model.dY) ? 'status-dot green' : 'status-dot red')
+					]),
+				_List_Nil),
+				$elm$html$Html$text(
+				($author$project$Main$isXMRWalletConnected(model) && model.dY) ? 'Connected' : ((!$author$project$Main$isXMRWalletConnected(model)) ? 'Wallet not connected' : 'Haveno node not connected')),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('/connect'),
+						$elm$html$Html$Attributes$class('status-link')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Fix')
+					]))
+			]));
+};
+var $author$project$Proto$Io$Haveno$Protobuffer$defaultXmrBalanceInfo = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__XmrBalanceInfo;
+var $author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias = function (reply) {
+	var balInformation = A2($elm$core$Maybe$withDefault, $author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo, reply);
+	var gotXmr = A2($elm$core$Maybe$withDefault, $author$project$Proto$Io$Haveno$Protobuffer$defaultXmrBalanceInfo, balInformation.nW);
+	var _v0 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.nH);
+	var res1 = _v0.a;
+	var _v1 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.nC);
+	var pend1 = _v1.a;
+	var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.eB);
+	var available1 = _v2.a;
+	return {
+		r3: $elm$core$String$fromInt(available1),
+		t7: $elm$core$String$fromInt(pend1),
+		ui: $elm$core$String$fromInt(res1)
+	};
+};
+var $author$project$Main$dashboardContainer = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('dashboard-panel')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('dashboard-section')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('large-text'),
+								$elm$html$Html$Attributes$id('xmrAvailableBalance')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.ok).r3 + ' XMR')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('small-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Available Balance')
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('dashboard-section')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('large-text'),
+								$elm$html$Html$Attributes$id('pendingBalance')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.ok).t7 + ' XMR')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('small-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Pending')
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('dashboard-section')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('large-text'),
+								$elm$html$Html$Attributes$id('reservedOfferBalance')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.ok).ui + ' XMR')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('small-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Reserved')
+							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('dashboard-section')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('large-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('XMR/USD: ')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('small-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Market price by Haveno Price Index')
+							]))
+					]))
+			]));
+};
+var $author$project$Main$viewContainer = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('dashboard-container')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('item1')
+					]),
+				_List_fromArray(
+					[$author$project$Main$topLogo])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('item2')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$connectionStatusView(model)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('item3')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$dashboardContainer(model)
+					]))
+			]));
+};
 var $author$project$Main$view = function (model) {
 	var contentByPage = function () {
 		var _v0 = model.N;
@@ -17251,18 +17290,7 @@ var $author$project$Main$view = function (model) {
 	return {
 		sc: _List_fromArray(
 			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('logo-indicator-dashboard-container')
-					]),
-				_List_fromArray(
-					[
-						$author$project$Main$topLogo,
-						$author$project$Main$connectionStatusView(model),
-						$author$project$Main$dashboardContainer(model)
-					])),
+				$author$project$Main$viewContainer(model),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
