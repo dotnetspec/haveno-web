@@ -1,9 +1,10 @@
-module Pages.Accounts exposing (Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, update, view)
+module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, update, view)
 
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
 import Html exposing (Html, div, h4, p, section, text)
-import Html.Attributes exposing (class, id)
+import Html.Attributes exposing (class, id, placeholder, readonly, type_, value)
+import Html.Events exposing (onInput)
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import UInt64
@@ -24,6 +25,8 @@ type alias Model =
     , subaddress : String
     , currentView : View
     , listOfExistingCryptoAccounts : List String
+    , newBTCAddress : String
+    , cryptoAccountType : CryptoAccount
     }
 
 
@@ -38,6 +41,8 @@ initialModel =
     , subaddress = ""
     , currentView = ManageAccounts
     , listOfExistingCryptoAccounts = []
+    , newBTCAddress = ""
+    , cryptoAccountType = BTC
     }
 
 
@@ -49,7 +54,8 @@ type Status
 type View
     = ManageAccounts
     | TraditionalCurrencyAccounts
-    | CryptocurrencyAccounts
+    | CryptoAccounts
+    | CreateNewBTCAccountView
     | WalletPassword
     | WalletSeed
     | Backup
@@ -74,8 +80,13 @@ type Msg
     = GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
-    | AddNewAccount
+    | AddNewCryptoAccount CryptoAccount
     | ChangeView View
+    | UpdateNewBTCAddress String
+
+
+type CryptoAccount
+    = BTC
 
 
 
@@ -85,8 +96,8 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        AddNewAccount ->
-            ( { model | currentView = ManageAccounts }, Cmd.none )
+        AddNewCryptoAccount cryptoAcct ->
+            ( { model | currentView = CryptoAccounts, cryptoAccountType = cryptoAcct }, Cmd.none )
 
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
@@ -108,6 +119,9 @@ update msg model =
 
         ChangeView newView ->
             ( { model | currentView = newView }, Cmd.none )
+
+        UpdateNewBTCAddress address ->
+            ( { model | newBTCAddress = address }, Cmd.none )
 
 
 
@@ -140,11 +154,20 @@ view model =
                             TraditionalCurrencyAccounts ->
                                 div [] [ text "Traditional Currency Accounts" ]
 
-                            CryptocurrencyAccounts ->
+                            CryptoAccounts ->
                                 div []
                                     [ h4 [] [ text "Cryptocurrency Accounts" ]
                                     , existingCryptoAccountsView model
-                                    , p [] [ Utils.MyUtils.infoBtn "Add New Account" "addnewaccountbutton" <| AddNewAccount ]
+                                    , p [] [ Utils.MyUtils.infoBtn "Add New BTC CryptoCurrency Account" "addnewBTCaccountViewbutton" <| ChangeView CreateNewBTCAccountView ]
+                                    ]
+
+                            CreateNewBTCAccountView ->
+                                div []
+                                    [ h4 [] [ text "Cryptocurrency Accounts" ]
+                                    , existingCryptoAccountsView model
+
+                                    --, p [] [ Utils.MyUtils.infoBtn "Add New BTC Account" "addnewBTCaccountbutton" <| ChangeView CreateNewBTCAccountView ]
+                                    , createNewBTCAccountView model
                                     ]
 
                             WalletPassword ->
@@ -168,6 +191,27 @@ view model =
 -- NAV: View helpers:
 
 
+createNewBTCAccountView : Model -> Html Msg
+createNewBTCAccountView model =
+    Html.div []
+        [ Html.h6 [ class "cryptocurrency-list" ] [ Html.text "Cryptocurrency" ]
+        , Html.div [ class "account-item" ] [ Html.text "BTC" ]
+        , Html.div []
+            [ Html.label [] [ Html.text "Bitcoin address" ]
+            , Html.input [ id "bitcoin-address-input", type_ "text", placeholder "Enter BTC address", onInput UpdateNewBTCAddress ] []
+            ]
+        , Html.div []
+            [ Html.label [] [ Html.text "Limitations" ]
+            , Html.input [ id "limitations-input", type_ "text", readonly True, value "Cannot be modified" ] []
+            ]
+        , Html.div []
+            [ Html.label [] [ Html.text "Account name" ]
+            , Html.input [ id "account-name-input", type_ "text", readonly True, value ("BTC: " ++ model.newBTCAddress) ] []
+            ]
+        , Utils.MyUtils.infoBtn "SAVE NEW BTC ACCOUNT" "save-new-BTC-account-button" <| AddNewCryptoAccount BTC
+        ]
+
+
 existingCryptoAccountsView : Model -> Html Msg
 existingCryptoAccountsView model =
     Html.div []
@@ -175,6 +219,7 @@ existingCryptoAccountsView model =
         , Html.div [ id "accounts-listOfExistingCryptoAccounts" ]
             (if List.isEmpty model.listOfExistingCryptoAccounts then
                 [ Html.div [ class "account-item" ] [ Html.text "There are no accounts set up yet" ] ]
+
              else
                 List.map (\account -> Html.div [ class "account-item" ] [ Html.text account ]) model.listOfExistingCryptoAccounts
             )
@@ -195,7 +240,7 @@ manageAccountsView =
     Html.div [ class "accounts-container" ]
         [ Html.h1 [ class "accounts-title" ] [ Html.text "Accounts" ]
         , p [] [ Utils.MyUtils.infoBtn "Traditional Currency Accounts" "traditionalCurrencyAccountsButton" <| ChangeView TraditionalCurrencyAccounts ]
-        , p [] [ Utils.MyUtils.infoBtn "Crypto Currency Accounts" "cryptocurrencyAccountsButton" <| ChangeView CryptocurrencyAccounts ]
+        , p [] [ Utils.MyUtils.infoBtn "Crypto Currency Accounts" "cryptocurrencyAccountsButton" <| ChangeView CryptoAccounts ]
         , p [] [ Utils.MyUtils.infoBtn "Wallet Password" "walletPasswordButton" <| ChangeView WalletPassword ]
         , p [] [ Utils.MyUtils.infoBtn "Wallet Seed" "walletSeedButton" <| ChangeView WalletSeed ]
         , p [] [ Utils.MyUtils.infoBtn "Backup" "backupButton" <| ChangeView Backup ]
