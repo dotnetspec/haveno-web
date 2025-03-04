@@ -129,20 +129,24 @@ runSpecTests =
                     , Spec.Markup.Event.click
                     ]
                 |> Spec.observeThat
-                    [ Spec.it "updates the model to show Cryptocurrency Accounts"
+                    [  Spec.it "has status as Loaded"
+                        (Observer.observeModel .status
+                            |> Spec.expect (equals Accounts.Loaded)
+                        )
+                    , Spec.it "updates the model to show Cryptocurrency Accounts"
                         (Observer.observeModel .currentView
                             |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.CryptocurrencyAccounts)
                         )
-                        , it "displays the available Add New Account button correctly"
-                           (Spec.Markup.observeElement
-                               |> Spec.Markup.query
-                               << by [ Spec.Markup.Selector.id "addnewaccountbutton" ]
-                               |> Spec.expect
-                                   (Claim.isSomethingWhere <|
-                                       Spec.Markup.text <|
-                                           Claim.isStringContaining 1 "Add New Account"
-                                   )
-                           )
+                    , it "displays the available Add New Account button correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "addnewaccountbutton" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "Add New Account"
+                                )
+                        )
                     ]
             )
         , Spec.scenario "User navigates to Wallet Password"
@@ -196,8 +200,6 @@ runSpecTests =
                         )
                     ]
             )
-
-        
         ]
 
 

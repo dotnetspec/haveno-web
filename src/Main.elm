@@ -366,10 +366,10 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        GotAccountsMsg aboutMsg ->
+        GotAccountsMsg accountsMsg ->
             case model.page of
-                AccountsPage about ->
-                    toAccounts model (Pages.Accounts.update aboutMsg about)
+                AccountsPage accountsModel ->
+                    toAccounts model (Pages.Accounts.update accountsMsg accountsModel)
 
                 _ ->
                     ( model, Cmd.none )
@@ -441,44 +441,15 @@ view model =
                         |> Html.map GotMarketMsg
 
                 AccountsPage accounts ->
-                    let
-                        accountsModel =
-                            { accounts
-                                | status = Pages.Accounts.Loaded
-                                , pagetitle = "Accounts"
-                                , balances = model.balances
-                                , isAddressVisible = False
-                                , primaryaddress = model.primaryaddress
-                                , errors = []
-                                , subaddress = ""
-                                , currentView = Pages.Accounts.ManageAccounts
-                            }
-                    in
-                    Pages.Accounts.view accountsModel
+                    Pages.Accounts.view accounts
                         |> Html.map GotAccountsMsg
 
                 DonatePage donate ->
                     Pages.Donate.view donate
                         |> Html.map GotDonateMsg
 
-                ConnectPage _ ->
-                    {- -- NOTE: Advantages of This Approach: ✅ Keeps Main.elm responsible for global state but avoids redundancy.
-                       ✅ Ensures Connect.elm always receives the latest connection status.
-                       ✅ Still allows Pages.Connect to manage its own additional state (like retry attempts).
-                    -}
-                    let
-                        connectModel =
-                            { moneroNode = "default.node.address:18081"
-                            , customMoneroNode = ""
-                            , havenoConnected = model.isApiConnected
-                            , walletConnected = isXMRWalletConnected model
-                            , retryingWallet = False
-                            , retryingHaveno = False
-                            , connectionAttempts = 0
-                            , primaryaddress = ""
-                            }
-                    in
-                    Pages.Connect.view connectModel
+                ConnectPage connect ->
+                    Pages.Connect.view connect
                         |> Html.map GotConnectMsg
     in
     -- NAV : View Page Content
@@ -489,8 +460,6 @@ view model =
     , body =
         [ Html.div [ Attr.class "logo-indicator-dashboard-container" ] [ topLogo, connectionStatusView model, dashboardContainer model ]
         , Html.div [ Attr.class "main-nav-flex-container" ] [ menu model ]
-
-        --, Html.div [ Attr.class "topLogoContainer" ] [  ]
         , Html.div [ Attr.class "contentByPage" ] [ contentByPage ]
         , Html.div [ Attr.class "footerContent" ] [ footerContent model ]
         ]
@@ -1119,7 +1088,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.4.54" ]
+                , Html.p [] [ Html.text "Version 0.4.55" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text

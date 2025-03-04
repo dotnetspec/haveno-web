@@ -23,6 +23,7 @@
     "serve": "parcel serve",
     "plw": "playwright show-report",
     "obs":  "yarn optimize &&  yarn build && yarn review && yarn serve",
+    "dbs":  "yarn debug &&  yarn build && yarn review && yarn serve",
     "relns": "yarn optimize &&  yarn unit && yarn spec && yarn review && yarn build",
     "relns+plw": "yarn optimize && yarn unit && yarn spec && yarn review && yarn build && yarn plw",
     "relnoe": "yarn optimize && yarn unit && yarn spec && yarn review && yarn build && yarn serve",

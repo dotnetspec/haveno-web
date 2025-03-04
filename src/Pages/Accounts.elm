@@ -2,7 +2,7 @@ module Pages.Accounts exposing (Model, Msg(..), Status(..), View(..), errorView,
 
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
-import Html exposing (Html, div, p, section, text, h4)
+import Html exposing (Html, div, h4, p, section, text)
 import Html.Attributes exposing (class, id)
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
@@ -28,7 +28,7 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { status = Loading
+    { status = Loaded
     , pagetitle = "Accounts"
     , balances = Just Protobuf.defaultBalancesInfo
     , isAddressVisible = False
@@ -40,8 +40,7 @@ initialModel =
 
 
 type Status
-    = Loading
-    | Loaded
+    = Loaded
     | Errored
 
 
@@ -52,7 +51,6 @@ type View
     | WalletPassword
     | WalletSeed
     | Backup
-
 
 
 
@@ -123,19 +121,9 @@ view model =
         ]
         [ div [ class "split" ]
             [ div
-                [ 
-                ]
+                []
                 []
             , case model.status of
-                Loading ->
-                    div
-                        []
-                        [ div
-                            [ class "spinner"
-                            ]
-                            []
-                        ]
-
                 Errored ->
                     div [ class "split-col" ] [ errorView ]
 
@@ -152,7 +140,7 @@ view model =
 
                             CryptocurrencyAccounts ->
                                 div []
-                                    [ h4 [] [text "CryptocurrencyAccounts Accounts"]
+                                    [ h4 [] [ text "CryptocurrencyAccounts Accounts" ]
                                     , p [] [ Utils.MyUtils.infoBtn "Add New Account" "addnewaccountbutton" <| AddNewAccount ]
                                     ]
 
