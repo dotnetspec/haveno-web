@@ -9269,7 +9269,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.4.57')
+										$elm$html$Html$text('Version 0.4.58')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
