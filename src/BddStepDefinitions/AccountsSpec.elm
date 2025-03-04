@@ -158,14 +158,15 @@ runSpecTests =
                                         Claim.isStringContaining 1 "BTC"
                                 )
                         )
-                    , it "displays a text input box titled 'Bitcoin address'"
+                    , it "displays a text input box titled 'Enter BTC address'"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.id "bitcoin-address-input" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "Bitcoin address"
+                                    Spec.Markup.attribute "placeholder" <|
+                                        Claim.isSomethingWhere <|
+                                            Claim.isStringContaining 1 "Enter valid BTC address"
                                 )
                         )
                     , it "displays a text input box titled 'Limitations' that cannot be modified"
@@ -307,7 +308,6 @@ runSpecTests =
                         )
                     ]
             )
-       
         ]
 
 

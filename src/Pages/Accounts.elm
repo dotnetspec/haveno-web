@@ -202,7 +202,7 @@ createNewBTCAccountView model =
             ]
         , Html.div []
             [ Html.label [] [ Html.text "Bitcoin address" ]
-            , Html.input [ id "bitcoin-address-input", type_ "text", placeholder "Enter BTC address", onInput UpdateNewBTCAddress ] []
+            , Html.input [ id "bitcoin-address-input", type_ "text", placeholder "Enter valid BTC address", onInput UpdateNewBTCAddress ] []
             ]
         , Html.div []
             [ Html.label [] [ Html.text "Limitations" ]
