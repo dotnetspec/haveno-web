@@ -123,7 +123,7 @@ view model =
         ]
         [ div [ class "split" ]
             [ div
-                [ class "split-col"
+                [ 
                 ]
                 []
             , case model.status of

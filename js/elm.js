@@ -9457,7 +9457,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.4.53')
+										$elm$html$Html$text('Version 0.4.54')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
@@ -9952,13 +9952,7 @@ var $author$project$Pages$Accounts$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('split-col')
-							]),
-						_List_Nil),
+						A2($elm$html$Html$div, _List_Nil, _List_Nil),
 						function () {
 						var _v0 = model.nH;
 						switch (_v0) {

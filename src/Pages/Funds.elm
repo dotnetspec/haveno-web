@@ -283,17 +283,6 @@ reservedOfferBalanceAsString balInfo =
 
 
 -- NAV: gRPC calls
-{- gotAvailableBalances : Cmd Msg
-   gotAvailableBalances =
-       let
-           grpcRequest =
-               Grpc.new Wallets.getBalances Protobuf.defaultGetBalancesRequest
-                   |> Grpc.addHeader "password" "apitest"
-                   -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
-                   |> Grpc.setHost "http://localhost:8080"
-       in
-       Grpc.toCmd GotBalances grpcRequest
--}
 
 
 gotNewSubAddress : Cmd Msg
