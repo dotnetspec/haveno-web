@@ -9281,7 +9281,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.4.58')
+										$elm$html$Html$text('Version 0.4.59')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
@@ -9735,13 +9735,16 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 					[
 						A2(
 						$elm$html$Html$label,
-						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Bitcoin address')
+								$elm$html$Html$Attributes$class('large-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Bitcoin address: ')
 							])),
 						A2(
-						$elm$html$Html$div,
+						$elm$html$Html$span,
 						_List_Nil,
 						_List_fromArray(
 							[
@@ -9764,13 +9767,16 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 					[
 						A2(
 						$elm$html$Html$label,
-						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Limitations')
+								$elm$html$Html$Attributes$class('large-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Limitations: ')
 							])),
 						A2(
-						$elm$html$Html$div,
+						$elm$html$Html$span,
 						_List_Nil,
 						_List_fromArray(
 							[
@@ -9793,13 +9799,16 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 					[
 						A2(
 						$elm$html$Html$label,
-						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Account name')
+								$elm$html$Html$Attributes$class('large-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Account name: ')
 							])),
 						A2(
-						$elm$html$Html$div,
+						$elm$html$Html$span,
 						_List_Nil,
 						_List_fromArray(
 							[
