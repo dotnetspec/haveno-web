@@ -3,15 +3,6 @@ module Pages.Dashboard exposing (Dashboard(..), Model, Msg, Status(..), init, up
 {-| The Dashboardpage. You can get here via either the / or /#/ routes.
 -}
 
---import Html exposing (..)
---import Html.Attributes as Attr exposing (..)
-
-import Comms.CustomGrpc
-import Element
-import Element.Region as Region
-import Framework
-import Framework.Grid as Grid
-import Framework.Heading as Heading
 import Grpc
 import Html exposing (Html)
 import Html.Attributes as Attr
@@ -52,7 +43,6 @@ type Dashboard
 
 type Status
     = Loading
-    | Loaded
     | Errored
 
 
@@ -68,16 +58,16 @@ init : FromMainToDashboard -> ( Model, Cmd Msg )
 init fromMainToDashboard =
     let
         newModel =
-            Model Loaded "Dashboard" (Dashboard { name = "Loading..." }) Nothing "" fromMainToDashboard.havenoVersion []
+            Model Loading "Dashboard" (Dashboard { name = "Loading..." }) Nothing "" fromMainToDashboard.havenoVersion []
     in
     ( newModel
-    , Cmd.batch [ Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress, Comms.CustomGrpc.gotAvailableBalances |> Grpc.toCmd BalanceResponse ]
+      --, Cmd.batch [ Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress, Comms.CustomGrpc.gotAvailableBalances |> Grpc.toCmd BalanceResponse ]
+    , Cmd.none
     )
 
 
 type Msg
-    = BalanceResponse (Result Grpc.Error Protobuf.GetBalancesReply)
-    | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
+    = GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
 
 
 
@@ -87,14 +77,8 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        BalanceResponse (Ok response) ->
-            ( { model | balances = response.balances, status = Loaded }, Cmd.none )
-
-        BalanceResponse (Err _) ->
-            ( { model | status = Errored }, Cmd.none )
-
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
-            ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded }, Cmd.none )
+            ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loading }, Cmd.none )
 
         GotXmrPrimaryAddress (Err _) ->
             ( { model | status = Errored }, Cmd.none )
@@ -106,22 +90,20 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    Framework.responsiveLayout [] <|
-        Element.column Framework.container <|
-            [ Element.el Heading.h1 <|
-                Element.text "Dashboard"
-            , Element.text "\n"
-            , Element.el [ Region.heading 4, Element.htmlAttribute (Attr.id "versiondisplay") ]
-                (Element.text ("Your version is: " ++ model.version))
-            , Element.text "\n"
-            , case model.errors of
-                [] ->
-                    Element.text ""
+    case model.status of
+        Loading ->
+            Html.div
+                [ Attr.class "split-col"
+                , Attr.class "spinner"
+                ]
+                []
 
-                _ ->
-                    Element.column Grid.section <|
-                        List.map (\error -> Element.el Heading.h6 (Element.text error)) model.errors
-            ]
+        Errored ->
+            Html.div
+                [ Attr.class "split-col"
+                , Attr.class "error"
+                ]
+                [ Html.text "Error on Loading" ]
 
 
 
