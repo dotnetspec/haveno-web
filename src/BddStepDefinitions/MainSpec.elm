@@ -19,7 +19,6 @@ import Pages.Funds as Funds
 import Spec exposing (describe, given, it, scenario, when)
 import Spec.Claim as Claim
 import Spec.Command
-import Spec.Http
 import Spec.Http.Stub as Stub
 import Spec.Markup
 import Spec.Markup.Selector exposing (by)
@@ -29,6 +28,7 @@ import Url exposing (Protocol(..), Url)
 
 
 
+--import Spec.Http
 -- NAV: Initial test models
 -- TODO: Use initWithModel - we can't get from Main unless it's a MainSpec test - so these are expected
 -- state at the start of each test
@@ -68,9 +68,10 @@ runSpecTests =
                         }
                     |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.successfullVersionFetch, TestData.successfullBalancesFetch ]
                 )
-               {-  |> Spec.when "we log the http requests"
-                    [ Spec.Http.logRequests
-                    ] -}
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
                 |> Spec.observeThat
                     [ it "is on the Accounts page"
                         (Spec.Observer.observeModel .page

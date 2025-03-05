@@ -59,7 +59,7 @@ init fromMainToSplash =
             Model Loading "Splash" (Splash { name = "Loading..." }) Nothing "" fromMainToSplash.havenoVersion []
     in
     ( newModel
-    , Cmd.none
+    , Cmd.map (\_ -> NoOp) Cmd.none
     )
 
 
@@ -72,7 +72,7 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update _ model =
     ( model, Cmd.none )
 
 

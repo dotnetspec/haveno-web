@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toBlank, toConnect, toSplash, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toBlank, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- Main loads Blank initially.
@@ -22,12 +22,12 @@ import Pages.Accounts
 import Pages.Blank
 import Pages.Buy
 import Pages.Connect exposing (Model)
-import Pages.Splash
 import Pages.Donate
 import Pages.Funds
 import Pages.Market
 import Pages.Portfolio
 import Pages.Sell
+import Pages.Splash
 import Pages.Support
 import Parser
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
@@ -104,7 +104,7 @@ init flag _ key =
         decodedJsonFromSetupElmjs =
             case JD.decodeString urlDecoder flag of
                 Ok urLAfterFlagDecode ->
-                    { urLAfterFlagDecode | path = "/dashboard" }
+                    { urLAfterFlagDecode | path = "/" }
 
                 Err _ ->
                     Url.Url Https "haveno-web-dev.netlify.app" Nothing "" Nothing Nothing
@@ -238,8 +238,7 @@ update msg model =
                 updatedModel =
                     { model | balances = response.balances, status = Loaded }
             in
-            
-            ( updatedModel, Cmd.batch [ Cmd.none, Cmd.map (\_ -> NoOp) (Cmd.none)] )
+            ( updatedModel, Cmd.batch [ Cmd.none, Cmd.map (\_ -> NoOp) Cmd.none ] )
 
         GotBalances (Err _) ->
             ( model, Cmd.none )
@@ -473,7 +472,6 @@ contentByPage model =
                 |> Html.map GotConnectMsg
 
 
-
 viewContainer : Model -> Html.Html Msg
 viewContainer model =
     Html.div [ Attr.class "dashboard-container" ]
@@ -529,7 +527,6 @@ type
     | AccountsPage Pages.Accounts.Model
     | DonatePage Pages.Donate.Model
     | ConnectPage Pages.Connect.Model
-   
 
 
 
@@ -593,9 +590,8 @@ urlAsPageParser =
     -- If a Route value representing a Page is sent as input to the parser function,
     -- the resulting 'a' will be a Page (or whatever type Page represents in your specific code).
     oneOf
-        [ Url.Parser.map BlankRoute (s "index.html")
-        , Url.Parser.map BlankRoute Url.Parser.top
-        , Url.Parser.map SplashRoute (Url.Parser.s "dashboard")
+        [ Url.Parser.map SplashRoute (s "index.html")
+        , Url.Parser.map SplashRoute Url.Parser.top
         , Url.Parser.map SellRoute (Url.Parser.s "sell")
         , Url.Parser.map PortfolioRoute (Url.Parser.s "portfolio")
         , Url.Parser.map FundsRoute (Url.Parser.s "funds")
@@ -853,8 +849,6 @@ type alias FromMainToSchedule =
 sendVersionRequest : GetVersionRequest -> Cmd Msg
 sendVersionRequest request =
     let
-       
-
         grpcRequest =
             Grpc.new getVersion request
                 |> Grpc.addHeader "password" "apitest"
