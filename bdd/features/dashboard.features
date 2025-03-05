@@ -1,20 +1,20 @@
 Here’s a series of Gherkin/BDD scenarios describing the behavior of a mobile Tor-based web app that communicates with a user-buildable APK (leveraging a Haveno daemon) via HTTPS to handle hardware wallet transactions. The app will use the hardware wallet as the sole form of identity, and no additional authorization is required.
 
-### **Feature: Haveno-Web Dashboard**
+### **Feature: Haveno-Web Splash**
 
 #### **Background:**
 As per main.features:
-**And** the app is open on the Dashboard (initial) page
+**And** the app is open on the Splash (initial) page
 
 ---
 
-#### **Scenario 1: Accessing the Dashboard page**
+#### **Scenario 1: Accessing the Splash page**
 
 **Given** the page is initialized
 **And** the hwd is connected
 **And** the xmrwallet is connected with a valid address
-**When** the user navigates to the Dashboard page
-**Then** the Dashboard page is visible to the user
+**When** the user navigates to the Splash page
+**Then** the Splash page is visible to the user
 **And** the Haveno version is visible to the user
 
 
@@ -23,14 +23,14 @@ As per main.features:
 #### **Scenario 2: Display user's on device balance**
 
 **Given** the mobile Tor-based web app is open
-**When** the user can view the Dashboard
+**When** the user can view the Splash
 **Then** the web app should be able to communicate with the backend service running on the APK 
 **And** the user can see his balance on the mobile device
 
 #### **Scenario 2: Display user's on device balance**
 
-**Given** the app is open on the Dashboard page
-**When** the user can view the Dashboard
+**Given** the app is open on the Splash page
+**When** the user can view the Splash
 **And** the hw wallet is connected
 **And** the Monero app is open on the hw wallet
 **Then** the user can see his available balance on the mobile device

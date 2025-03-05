@@ -1,9 +1,8 @@
-module Pages.Dashboard exposing (Dashboard(..), Model, Msg, Status(..), init, update, view)
+module Pages.Splash exposing (Model, Msg, Splash(..), Status(..), init, update, view)
 
-{-| The Dashboardpage. You can get here via either the / or /#/ routes.
+{-| The Splashpage. You can get here via either the / or /#/ routes.
 -}
 
-import Grpc
 import Html exposing (Html)
 import Html.Attributes as Attr
 import Proto.Io.Haveno.Protobuffer as Protobuf
@@ -23,7 +22,7 @@ import Types.DateType exposing (DateTime)
 type alias Model =
     { status : Status
     , pagetitle : String
-    , root : Dashboard
+    , root : Splash
     , balances : Maybe Protobuf.BalancesInfo
     , primaryaddress : String
     , version : String
@@ -35,39 +34,37 @@ type alias Model =
 -- Define your initialModel with default values
 
 
-type Dashboard
-    = Dashboard
+type Splash
+    = Splash
         { name : String
         }
 
 
 type Status
     = Loading
-    | Errored
 
 
 
-{- -- NOTE: by calling (from Main) Tuple.first (Dashboard.init ()) , we’ll end up with
-   the Dashboard.Model value we seek. () means we don't really care what goes in, we just
+{- -- NOTE: by calling (from Main) Tuple.first (Splash.init ()) , we’ll end up with
+   the Splash.Model value we seek. () means we don't really care what goes in, we just
    want the output (in this case the model (slightly modified))
 -}
 -- NAV: Init
 
 
-init : FromMainToDashboard -> ( Model, Cmd Msg )
-init fromMainToDashboard =
+init : FromMainToSplash -> ( Model, Cmd Msg )
+init fromMainToSplash =
     let
         newModel =
-            Model Loading "Dashboard" (Dashboard { name = "Loading..." }) Nothing "" fromMainToDashboard.havenoVersion []
+            Model Loading "Splash" (Splash { name = "Loading..." }) Nothing "" fromMainToSplash.havenoVersion []
     in
     ( newModel
-      --, Cmd.batch [ Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress, Comms.CustomGrpc.gotAvailableBalances |> Grpc.toCmd BalanceResponse ]
     , Cmd.none
     )
 
 
 type Msg
-    = GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
+    = NoOp
 
 
 
@@ -76,12 +73,7 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        GotXmrPrimaryAddress (Ok primaryAddresponse) ->
-            ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loading }, Cmd.none )
-
-        GotXmrPrimaryAddress (Err _) ->
-            ( { model | status = Errored }, Cmd.none )
+    ( model, Cmd.none )
 
 
 
@@ -98,19 +90,12 @@ view model =
                 ]
                 []
 
-        Errored ->
-            Html.div
-                [ Attr.class "split-col"
-                , Attr.class "error"
-                ]
-                [ Html.text "Error on Loading" ]
-
 
 
 -- NAV: Type Aliases
 
 
-type alias FromMainToDashboard =
+type alias FromMainToSplash =
     { time : Maybe DateTime
     , havenoVersion : String
     }

@@ -15,7 +15,6 @@ import Extras.TestData as TestData
 import Main
 import Pages.Accounts
 import Pages.Connect as Connect
-import Pages.Dashboard
 import Pages.Funds as Funds
 import Spec exposing (describe, given, it, scenario, when)
 import Spec.Claim as Claim
@@ -46,7 +45,6 @@ accountsInitialModel =
 
 
 
---{ balances = Just { btc = Just { availableBalance = Int64 { higher = 10000, lower = 0 }, lockedBalance = Int64 { higher = 10000, lower = 0 }, reservedBalance = Int64 { higher = 10000, lower = 0 }, totalAvailableBalance = Int64 { higher = 10000, lower = 0 } }, xmr = Just { availableBalance = Int64 { higher = 10000, lower = 0 }, balance = Int64 { higher = 10000, lower = 0 }, pendingBalance = Int64 { higher = 2000, lower = 0 }, reservedOfferBalance = Int64 { higher = 5000, lower = 0 }, reservedTradeBalance = Int64 { higher = 3000, lower = 0 } } }, errors = [], flagUrl = { fragment = Nothing, host = "localhost", path = "/dashboard", port_ = Nothing, protocol = Http, query = Nothing }, havenoAPKHttpRequest = Nothing, pagetitle = "Dashboard", primaryaddress = "9yLbftcD2cMDA5poVPBJQ5KuwADFRXhe28AtqfeTExaubeMAyiEGBYJ8a8T3kwzoqi6ZuScziHxKqBCToa2m3wuZScc2gJh", root = Dashboard { name = "Loading..." }, status = Loaded, version = "1.0.7" }
 -- NOTE: App.Model and App.Msg are type paramters for the Spec type
 -- They make Spec type more flexible as it can be used with any model and msg types
 -- NOTE: Any test involving subscriptions will need to be specified here using withSubscriptions
@@ -70,9 +68,9 @@ runSpecTests =
                         }
                     |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.successfullVersionFetch, TestData.successfullBalancesFetch ]
                 )
-                |> Spec.when "we log the http requests"
+               {-  |> Spec.when "we log the http requests"
                     [ Spec.Http.logRequests
-                    ]
+                    ] -}
                 |> Spec.observeThat
                     [ it "is on the Accounts page"
                         (Spec.Observer.observeModel .page

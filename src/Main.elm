@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setDashboardHavenoVersion, subscriptions, toAccounts, toBlank, toConnect, toDashboard, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toBlank, toConnect, toSplash, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- Main loads Blank initially.
@@ -22,7 +22,7 @@ import Pages.Accounts
 import Pages.Blank
 import Pages.Buy
 import Pages.Connect exposing (Model)
-import Pages.Dashboard
+import Pages.Splash
 import Pages.Donate
 import Pages.Funds
 import Pages.Market
@@ -173,8 +173,8 @@ navigate thekey =
 
 type Msg
     = ClickedLink Browser.UrlRequest
-      -- NOTE: the type of GotDashboardMsg is (Pages.Dashboard.Msg -> Msg)
-    | GotDashboardMsg Pages.Dashboard.Msg
+      -- NOTE: the type of GotSplashMsg is (Pages.Splash.Msg -> Msg)
+    | GotSplashMsg Pages.Splash.Msg
     | GotSellMsg Pages.Sell.Msg
     | GotPortfolioMsg Pages.Portfolio.Msg
     | GotFundsMsg Pages.Funds.Msg
@@ -191,6 +191,7 @@ type Msg
     | ToggleMenu
     | GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
+    | NoOp
 
 
 
@@ -237,7 +238,8 @@ update msg model =
                 updatedModel =
                     { model | balances = response.balances, status = Loaded }
             in
-            toAccounts updatedModel (Pages.Accounts.init ())
+            
+            ( updatedModel, Cmd.batch [ Cmd.none, Cmd.map (\_ -> NoOp) (Cmd.none)] )
 
         GotBalances (Err _) ->
             ( model, Cmd.none )
@@ -288,14 +290,14 @@ update msg model =
             , Cmd.none
             )
 
-        GotDashboardMsg dashboardMsg ->
+        GotSplashMsg dashboardMsg ->
             case model.page of
-                DashboardPage dashboard ->
+                SplashPage dashboard ->
                     let
-                        updatedDashboardModel =
+                        updatedSplashModel =
                             { dashboard | version = model.version }
                     in
-                    toDashboard model (Pages.Dashboard.update dashboardMsg updatedDashboardModel)
+                    toSplash model (Pages.Splash.update dashboardMsg updatedSplashModel)
 
                 _ ->
                     ( model, Cmd.none )
@@ -381,6 +383,9 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
+        NoOp ->
+            toAccounts model (Pages.Accounts.init ())
+
 
 
 -- NAV: View
@@ -414,22 +419,22 @@ view model =
 
 contentByPage : Model -> Html.Html Msg
 contentByPage model =
-    {- -- NOTE:  We are 'delegating' views to Dashboard.view and Sell.view etc.
+    {- -- NOTE:  We are 'delegating' views to Splash.view and Sell.view etc.
        Something similar can be done with subscriptions if required
     -}
     case model.page of
-        DashboardPage dashboard ->
-            Pages.Dashboard.view dashboard
-                -- NOTE: Go from Html Pages.Dashboard.Msg value to Html Msg value using Html.map.
-                {- Conceptually, what Html.map is doing for us here is wrapping a Pages.Dashboard.Msg or
+        SplashPage dashboard ->
+            Pages.Splash.view dashboard
+                -- NOTE: Go from Html Pages.Splash.Msg value to Html Msg value using Html.map.
+                {- Conceptually, what Html.map is doing for us here is wrapping a Pages.Splash.Msg or
                    Pages.Sell.Msg in a Main.Msg , because Main.update knows how to deal with only
                    Main.Msg values. Those wrapped messages will prove useful later when we handle
                    these new messages inside update .
 
-                   We're actually using Pages.Dashboard.view
-                   -- NOTE: Html.map is essential to wrap the Dashboard.elm view and convert Dashboard.Msg into Main.Msg
+                   We're actually using Pages.Splash.view
+                   -- NOTE: Html.map is essential to wrap the Splash.elm view and convert Splash.Msg into Main.Msg
                 -}
-                |> Html.map GotDashboardMsg
+                |> Html.map GotSplashMsg
 
         SellPage dashboard ->
             Pages.Sell.view dashboard
@@ -480,7 +485,7 @@ viewContainer model =
 
 
 -- TYPES
--- NOTE: Dashboard.elm is the equivalent of PhotoFolders.elm or 'Folders' in the code
+-- NOTE: Splash.elm is the equivalent of PhotoFolders.elm or 'Folders' in the code
 {- -- NOTE: Two data structures for use cases that were similar but ended up NOT being the same. If you're
    getting complicated knock-on effects consider that you may need to split data structures like this.
    Here prompted by 'What’s the problem here? Why isn’t Page working well
@@ -493,7 +498,7 @@ viewContainer model =
 
 
 type Route
-    = DashboardRoute
+    = SplashRoute
     | SellRoute
     | PortfolioRoute
     | FundsRoute
@@ -514,7 +519,7 @@ type
     Page
     -- NOTE: Be able to access the model in the selected page so that it can
     -- be passed to the view for that page:
-    = DashboardPage Pages.Dashboard.Model
+    = SplashPage Pages.Splash.Model
     | SellPage Pages.Sell.Model
     | PortfolioPage Pages.Portfolio.Model
     | FundsPage Pages.Funds.Model
@@ -590,7 +595,7 @@ urlAsPageParser =
     oneOf
         [ Url.Parser.map BlankRoute (s "index.html")
         , Url.Parser.map BlankRoute Url.Parser.top
-        , Url.Parser.map DashboardRoute (Url.Parser.s "dashboard")
+        , Url.Parser.map SplashRoute (Url.Parser.s "dashboard")
         , Url.Parser.map SellRoute (Url.Parser.s "sell")
         , Url.Parser.map PortfolioRoute (Url.Parser.s "portfolio")
         , Url.Parser.map FundsRoute (Url.Parser.s "funds")
@@ -624,7 +629,7 @@ codeParser =
 -- queryParser : QueryStringParser (Maybe String)
 -- queryParser =
 --     Query.string "code"
-{- -- NOTE: Getting Model.Dashboard and Model.Sell values exactly where we need them.
+{- -- NOTE: Getting Model.Splash and Model.Sell values exactly where we need them.
    Replaces (eventually) urlToPage used in most of the book: "KEEPING
    BOTH MODEL AND CMD FOR INIT
    Without having their init commands run, our pages’ initial HTTP requests aren’t
@@ -655,9 +660,9 @@ updateUrl url model =
             Pages.Blank.init ()
                 |> toBlank model
 
-        Just DashboardRoute ->
-            Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
-                |> toDashboard model
+        Just SplashRoute ->
+            Pages.Splash.init { time = Nothing, havenoVersion = model.version }
+                |> toSplash model
 
         Just SellRoute ->
             Pages.Sell.init ()
@@ -692,8 +697,8 @@ updateUrl url model =
                 |> toConnect model
 
         Nothing ->
-            Pages.Dashboard.init { time = Nothing, havenoVersion = model.version }
-                |> toDashboard model
+            Pages.Splash.init { time = Nothing, havenoVersion = model.version }
+                |> toSplash model
 
 
 
@@ -722,9 +727,9 @@ updateUrl url model =
 -}
 
 
-toDashboard : Model -> ( Pages.Dashboard.Model, Cmd Pages.Dashboard.Msg ) -> ( Model, Cmd Msg )
-toDashboard model ( dashboard, cmd ) =
-    ( { model | page = DashboardPage dashboard }
+toSplash : Model -> ( Pages.Splash.Model, Cmd Pages.Splash.Msg ) -> ( Model, Cmd Msg )
+toSplash model ( dashboard, cmd ) =
+    ( { model | page = SplashPage dashboard }
       -- NOTE: Cmd.map is a way to manipulate the result of a command
     , Cmd.batch
         [ sendVersionRequest Protobuf.defaultGetVersionRequest
@@ -848,8 +853,7 @@ type alias FromMainToSchedule =
 sendVersionRequest : GetVersionRequest -> Cmd Msg
 sendVersionRequest request =
     let
-        _ =
-            Debug.log "sendVersionRequest" request
+       
 
         grpcRequest =
             Grpc.new getVersion request
@@ -937,8 +941,8 @@ dashboardContainer model =
         ]
 
 
-setDashboardHavenoVersion : Pages.Dashboard.Model -> Model -> Pages.Dashboard.Model
-setDashboardHavenoVersion dashboardModel model =
+setSplashHavenoVersion : Pages.Splash.Model -> Model -> Pages.Splash.Model
+setSplashHavenoVersion dashboardModel model =
     { dashboardModel | version = model.version }
 
 
@@ -1074,7 +1078,7 @@ navLinks page =
                 ]
                 [ Html.li [ Attr.class "logoInNavLinks" ] [ Html.a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "topLogoShrink" ] [ topLogo ] ]
                 , navLink BlankRoute { url = "/", caption = "" }
-                , navLink DashboardRoute { url = "dashboard", caption = "Dashboard" }
+                , navLink SplashRoute { url = "dashboard", caption = "Splash" }
                 , navLink FundsRoute { url = "funds", caption = "Funds" }
                 , navLink Market { url = "market", caption = "Market" }
                 , navLink Support { url = "support", caption = "Support" }
@@ -1138,10 +1142,10 @@ isActive { link, page } =
         , page
         )
     of
-        ( DashboardRoute, DashboardPage _ ) ->
+        ( SplashRoute, SplashPage _ ) ->
             True
 
-        ( DashboardRoute, _ ) ->
+        ( SplashRoute, _ ) ->
             False
 
         ( SellRoute, SellPage _ ) ->
