@@ -1,6 +1,5 @@
 module Pages.Funds exposing (Model, Msg(..), Status(..), View(..), btcBalanceAsString, custodialFundsView, errorView, formatBalance, gotNewSubAddress, init, initialModel, primaryAddressView, reservedOfferBalanceAsString, subAddressView, update, view, xmrAvailableBalanceAsString, xmrBalView)
 
-import Comms.CustomGrpc
 import Extras.Constants as Constants exposing (xmrConversionConstant)
 import Grpc
 import Html exposing (Html, div, section)
@@ -30,7 +29,7 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { status = Loading
+    { status = Loaded
     , pagetitle = "Funds"
     , balances = Just Protobuf.defaultBalancesInfo
     , isAddressVisible = False
@@ -42,8 +41,7 @@ initialModel =
 
 
 type Status
-    = Loading
-    | Loaded
+    = Loaded
     | Errored
 
 
@@ -59,7 +57,7 @@ type View
 init : String -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
-    , Cmd.batch [ Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress, Comms.CustomGrpc.gotAvailableBalances |> Grpc.toCmd GotBalances ]
+    , Cmd.none
     )
 
 
@@ -68,9 +66,7 @@ init _ =
 
 
 type Msg
-    = GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
-    | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
-    | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
+    = GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | ClickedGotNewSubaddress
     | ToggleVisibility
 
@@ -88,22 +84,10 @@ update msg model =
         ClickedGotNewSubaddress ->
             ( model, gotNewSubAddress )
 
-        GotXmrPrimaryAddress (Ok primaryAddresponse) ->
-            ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = FundsView }, Cmd.none )
-
-        GotXmrPrimaryAddress (Err _) ->
-            ( { model | status = Errored }, Cmd.none )
-
         GotXmrNewSubaddress (Ok subAddresponse) ->
             ( { model | subaddress = subAddresponse.subaddress, status = Loaded, currentView = SubAddressView }, Cmd.none )
 
         GotXmrNewSubaddress (Err _) ->
-            ( { model | status = Errored }, Cmd.none )
-
-        GotBalances (Ok response) ->
-            ( { model | balances = response.balances, status = Loaded }, Cmd.none )
-
-        GotBalances (Err _) ->
             ( { model | status = Errored }, Cmd.none )
 
 
@@ -124,15 +108,6 @@ view model =
                 ]
                 []
             , case model.status of
-                Loading ->
-                    div
-                        []
-                        [ div
-                            [ class "spinner"
-                            ]
-                            []
-                        ]
-
                 Errored ->
                     div [ class "split-col" ] [ errorView ]
 
@@ -183,7 +158,8 @@ primaryAddressView model =
              else
                 "Show"
             )
-            "" ToggleVisibility
+            ""
+            ToggleVisibility
         , Html.div [ Attr.class "address-text" ]
             [ Html.span [ Attr.class "address-label" ] [ Html.text "Primary address: " ]
             , Html.span [ Attr.class "address-value" ]

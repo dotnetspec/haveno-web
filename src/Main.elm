@@ -758,7 +758,11 @@ toPortfolio model ( portfolio, cmd ) =
 
 toFunds : Model -> ( Pages.Funds.Model, Cmd Pages.Funds.Msg ) -> ( Model, Cmd Msg )
 toFunds model ( funds, cmd ) =
-    ( { model | page = FundsPage funds }
+    let
+        newFundsModel =
+            { funds | balances = model.balances }
+    in
+    ( { model | page = FundsPage newFundsModel }
     , Cmd.map GotFundsMsg cmd
     )
 

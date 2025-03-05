@@ -2,28 +2,16 @@ module BddStepDefinitions.FundsSpec exposing (main)
 
 import BddStepDefinitions.Extra exposing (equals)
 import BddStepDefinitions.Runner
-import Extras.TestData as TestData exposing (subAddress)
-import Grpc
+import Extras.TestData as TestData
 import Pages.Funds as Funds
-import Proto.Io.Haveno.Protobuffer as Protobuf
 import Spec exposing (given, it, scenario, when)
 import Spec.Claim as Claim
 import Spec.Command
-import Spec.Http
 import Spec.Http.Stub as Stub
 import Spec.Markup as Markup
 import Spec.Markup.Selector exposing (by, id)
 import Spec.Observer as Observer
 import Spec.Setup
-
-
-
--- NAV: Initial test models
--- TODO: Use initWithModel - we can't get from Main unless it's a MainSpec test - so these are expected
--- state at the start of each test
-
-
-
 
 
 fundsInitialModel : Funds.Model
@@ -41,11 +29,10 @@ runSpecTests =
         "Haveno Web App Funds Tests"
         [ scenario "1: Accessing the Funds page with valid balance data"
             (given
-                (Spec.Setup.init (Funds.init "http://localhost:1234")
+                (Spec.Setup.init ( { fundsInitialModel | status = Funds.Loaded, balances = TestData.testBalanceInfo, primaryaddress = TestData.primaryAddress }, Cmd.none )
                     |> Spec.Setup.withView Funds.view
                     |> Spec.Setup.withUpdate Funds.update
                     |> Spec.Setup.withLocation TestData.placeholderUrl
-                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
                 |> when "the user shows the hidden details"
                     [ Spec.Command.send (Spec.Command.fake <| Funds.ToggleVisibility) ]
@@ -80,13 +67,11 @@ runSpecTests =
             )
         , scenario "2: Handling the Funds page with INvalid balance data"
             (given
-                (Spec.Setup.init (Funds.init "http://localhost:1234")
+                (Spec.Setup.init ( { fundsInitialModel | status = Funds.Errored, balances = Nothing, primaryaddress = "" }, Cmd.none )
                     |> Spec.Setup.withView Funds.view
                     |> Spec.Setup.withUpdate Funds.update
                     |> Spec.Setup.withLocation TestData.placeholderUrl
                 )
-                |> when "the user has already clicked the Continue button and triggered the Funds page"
-                    [ Spec.Command.send (Spec.Command.fake <| Funds.GotBalances (Result.Err <| Grpc.UnknownGrpcStatus "unknown")) ]
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
@@ -106,11 +91,10 @@ runSpecTests =
             )
         , scenario "2a: Show available balance and reserved balance correctly in the UI"
             (given
-                (Spec.Setup.init (Funds.init "http://localhost:1234")
+                (Spec.Setup.init ( { fundsInitialModel | status = Funds.Loaded, balances = TestData.testBalanceInfo, primaryaddress = TestData.primaryAddress }, Cmd.none )
                     |> Spec.Setup.withView Funds.view
                     |> Spec.Setup.withUpdate Funds.update
                     |> Spec.Setup.withLocation TestData.placeholderUrl
-                    |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
                 |> Spec.observeThat
                     [ it "has status as Loaded"
@@ -147,8 +131,7 @@ runSpecTests =
                         )
                     ]
             )
-        , 
-          scenario "3: Generating a New Subaddress"
+        , scenario "3: Generating a New Subaddress"
             (given
                 (Spec.Setup.init ( fundsInitialModel, Cmd.none )
                     |> Spec.Setup.withView Funds.view
@@ -156,9 +139,10 @@ runSpecTests =
                     |> Spec.Setup.withLocation TestData.placeholderUrl
                     |> Stub.serve [ TestData.successfullSubAddressFetch ]
                 )
-               {-  |> Spec.when "we log the http requests"
-                    [ Spec.Http.logRequests
-                    ] -}
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
                 -- NOTE: Use this to bypass need to go via Main.elm, which is what will happen in the real app
                 -- via GotFundsMsg
                 |> when "the response triggers GotNewSubaddress in Funds.update"
@@ -192,30 +176,9 @@ runSpecTests =
 
         -- NOTE: Uncomment these tests one at a time to maintain managability
         {-
-          
 
-           scenario "5: Checking Address Balance"
-               (given
-                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                       |> Spec.Setup.withView Wallet.view
-                       |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation TestData.placeholderUrl
-                   )
-                   |> when "the app queries the address balance"
-                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotAddressBalance (Ok "Address Balance: 0.0 XMR")) ]
-                   |> Spec.observeThat
-                       [ it "displays the address balance"
-                           (Markup.observeElement
-                               |> Markup.query
-                               << by [ id "addressBalance" ]
-                               |> Spec.expect
-                                   (Claim.isSomethingWhere <|
-                                       Markup.text <|
-                                           Claim.isStringContaining 1 "Address Balance: 0.0 XMR"
-                                   )
-                           )
-                       ]
-               )
+
+
 
            scenario "6: Viewing Funding Addresses"
                (given

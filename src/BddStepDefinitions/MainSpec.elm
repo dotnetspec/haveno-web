@@ -8,8 +8,8 @@ module BddStepDefinitions.MainSpec exposing (main)
    -- Other modules like WalletSpec are MODULAR tests, limited to the given page alone.
 -}
 
-import BddStepDefinitions.Runner
 import BddStepDefinitions.Extra
+import BddStepDefinitions.Runner
 import Browser
 import Extras.TestData as TestData
 import Main
@@ -27,6 +27,15 @@ import Spec.Observer
 import Spec.Setup
 import Url exposing (Protocol(..), Url)
 
+
+-- NAV: Initial test models
+-- TODO: Use initWithModel - we can't get from Main unless it's a MainSpec test - so these are expected
+-- state at the start of each test
+
+
+fundsInitialModel : Funds.Model
+fundsInitialModel =
+    Funds.initialModel
 
 initialDashboardModel : Pages.Dashboard.Model
 initialDashboardModel =
@@ -275,7 +284,7 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario "2a: Show available, pending and reserved balances correctly in the UI"
+        , scenario "12a: Show available, pending and reserved balances correctly in the UI"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -288,16 +297,15 @@ runSpecTests =
                     |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
                     |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
-
                 |> Spec.observeThat
-                    [it "should have balances in the model"
+                    [ it "should have balances in the model"
                         (Spec.Observer.observeModel .balances
                             |> Spec.expect (BddStepDefinitions.Extra.equals <| TestData.testBalanceInfo)
                         )
                     , it "displays the available balance correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id  "xmrAvailableBalance" ]
+                            << by [ Spec.Markup.Selector.id "xmrAvailableBalance" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
@@ -307,7 +315,7 @@ runSpecTests =
                     , it "displays the pending balance correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id  "pendingBalance" ]
+                            << by [ Spec.Markup.Selector.id "pendingBalance" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
@@ -317,11 +325,71 @@ runSpecTests =
                     , it "displays the reserved balance correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id  "reservedOfferBalance" ]
+                            << by [ Spec.Markup.Selector.id "reservedOfferBalance" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
                                         Claim.isStringContaining 1 "5000 XMR"
+                                )
+                        )
+                    ]
+            )
+        , scenario "13: Balance and Address data is successfully passed down to Funds page"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.successfullVersionFetch, TestData.successfullBalancesFetch ]
+                )
+                |> when "the user opens the menu"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            Main.ToggleMenu
+                    ]
+                |> when "the user clicks the Funds navLink in the burger menu"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/funds" Nothing Nothing))
+                    ]
+                |> Spec.observeThat
+                    [ it "a.is on the Funds page"
+                        (Spec.Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.FundsPage <|
+                                        {fundsInitialModel | balances = TestData.testBalanceInfo, status = Funds.Loaded}
+                                )
+                        )
+                    , it "b. the menu should be closed"
+                        (Spec.Observer.observeModel .isMenuOpen
+                            |> Spec.expect
+                                Claim.isFalse
+                        )
+                     , it "displays the primary address correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "primaryaddress" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "ShowPrimary address: ************************"
+                                )
+                        )
+                   
+                    , it "displays the BTC balance correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "btcbalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "Available BTC Balance: 42.94967296 BTC"
                                 )
                         )
                     ]
