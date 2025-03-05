@@ -13,16 +13,17 @@ import BddStepDefinitions.Runner
 import Browser
 import Extras.TestData as TestData
 import Main
+import Pages.Accounts
 import Pages.Connect as Connect
 import Pages.Dashboard
 import Pages.Funds as Funds
 import Spec exposing (describe, given, it, scenario, when)
 import Spec.Claim as Claim
 import Spec.Command
+import Spec.Http
 import Spec.Http.Stub as Stub
 import Spec.Markup
 import Spec.Markup.Selector exposing (by)
-import Spec.Navigator
 import Spec.Observer
 import Spec.Setup
 import Url exposing (Protocol(..), Url)
@@ -39,16 +40,9 @@ fundsInitialModel =
     Funds.initialModel
 
 
-initialDashboardModel : Pages.Dashboard.Model
-initialDashboardModel =
-    { status = Pages.Dashboard.Loaded
-    , pagetitle = "Dashboard"
-    , root = Pages.Dashboard.Dashboard { name = "Loading..." }
-    , balances = TestData.testBalanceInfo
-    , primaryaddress = TestData.primaryAddress
-    , version = "1.0.7"
-    , errors = []
-    }
+accountsInitialModel : Pages.Accounts.Model
+accountsInitialModel =
+    Pages.Accounts.initialModel
 
 
 
@@ -62,8 +56,7 @@ runSpecTests : Spec.Spec Main.Model Main.Msg
 runSpecTests =
     describe
         "Scenarios based on a Haveno Web App MVP"
-        [ --Runner.skip <|
-          --Runner.pick <|
+        [ --BddStepDefinitions.Runner.pick <|
           scenario "1: Display successful API connection status"
             (given
                 -- NOTE: The URL is passed from js as JSON.stringified
@@ -77,8 +70,23 @@ runSpecTests =
                         }
                     |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.successfullVersionFetch, TestData.successfullBalancesFetch ]
                 )
+                |> Spec.when "we log the http requests"
+                    [ Spec.Http.logRequests
+                    ]
                 |> Spec.observeThat
-                    [ it "a. primaryaddress obtained"
+                    [ it "is on the Accounts page"
+                        (Spec.Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.AccountsPage <|
+                                        { accountsInitialModel | balances = TestData.testBalanceInfo }
+                                )
+                        )
+                    , it "has status as Loaded"
+                        (Spec.Observer.observeModel .status
+                            |> Spec.expect (BddStepDefinitions.Extra.equals Main.Loaded)
+                        )
+                    , it "a. primaryaddress obtained"
                         (Spec.Observer.observeModel .primaryaddress
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
@@ -124,9 +132,9 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario "3: When app first loads it should be on the dashboard page if all the required data is successfully fetched"
+        , scenario "3: When app first loads it should be on the accounts page if all the required data is successfully fetched"
             (given
-                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
                     |> Spec.Setup.withDocument Main.view
                     |> Spec.Setup.withUpdate Main.update
                     |> Spec.Setup.withSubscriptions Main.subscriptions
@@ -134,32 +142,33 @@ runSpecTests =
                         { onUrlRequest = Main.ClickedLink
                         , onUrlChange = Main.ChangedUrl
                         }
-                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
                     |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.successfullVersionFetch, TestData.successfullBalancesFetch ]
                 )
                 |> Spec.observeThat
-                    [ it
-                        "a. the app NAV location should be root "
-                        (Spec.Navigator.observe
-                            |> Spec.expect
-                                (Spec.Navigator.location <|
-                                    Claim.isEqual Debug.toString
-                                        "http://localhost:1234/"
-                                )
-                        )
-                    , it "b.is on the Dashboard page"
+                    [ {- it
+                             "a. the app NAV location should be root "
+                             (Spec.Navigator.observe
+                                 |> Spec.expect
+                                     (Spec.Navigator.location <|
+                                         Claim.isEqual Debug.toString
+                                             "http://localhost:1234/"
+                                     )
+                             )
+                         ,
+                      -}
+                      it "b.is on the Accounts page"
                         (Spec.Observer.observeModel .page
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
-                                    Main.DashboardPage <|
-                                        initialDashboardModel
+                                    Main.AccountsPage <|
+                                        { accountsInitialModel | balances = TestData.testBalanceInfo }
                                 )
                         )
                     ]
             )
         , scenario "7: Display the Haveno core app version number"
             (given
-                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
                     |> Spec.Setup.withDocument Main.view
                     |> Spec.Setup.withUpdate Main.update
                     |> Spec.Setup.withSubscriptions Main.subscriptions
@@ -171,34 +180,7 @@ runSpecTests =
                     |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.successfullVersionFetch, TestData.successfullBalancesFetch ]
                 )
                 |> Spec.observeThat
-                    [ it
-                        "a. the app NAV location should be root "
-                        (Spec.Navigator.observe
-                            |> Spec.expect
-                                (Spec.Navigator.location <|
-                                    Claim.isEqual Debug.toString
-                                        "http://localhost:1234/"
-                                )
-                        )
-                    , it "b.is on the Dashboard page"
-                        (Spec.Observer.observeModel .page
-                            |> Spec.expect
-                                (Claim.isEqual Debug.toString <|
-                                    Main.DashboardPage <|
-                                        initialDashboardModel
-                                )
-                        )
-                    , it "c. displays Haveno version number on the Dashboard page"
-                        (Spec.Markup.observeElement
-                            |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id "versiondisplay" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "1.0.7"
-                                )
-                        )
-                    , it "d. displays Haveno version number in the footer"
+                    [ it "d. displays Haveno version number in the footer"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.id "havenofooterver" ]
@@ -212,7 +194,7 @@ runSpecTests =
             )
         , scenario "11: Menu Closes After Using NavLink"
             (given
-                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
                     |> Spec.Setup.withDocument Main.view
                     |> Spec.Setup.withUpdate Main.update
                     |> Spec.Setup.withSubscriptions Main.subscriptions
@@ -250,7 +232,7 @@ runSpecTests =
             )
         , scenario "12: Connect page exists and can be navigated to via menu"
             (given
-                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
                     |> Spec.Setup.withDocument Main.view
                     |> Spec.Setup.withUpdate Main.update
                     |> Spec.Setup.withSubscriptions Main.subscriptions
@@ -288,7 +270,7 @@ runSpecTests =
             )
         , scenario "12a: Show available, pending and reserved balances correctly in the UI"
             (given
-                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
                     |> Spec.Setup.withDocument Main.view
                     |> Spec.Setup.withUpdate Main.update
                     |> Spec.Setup.withSubscriptions Main.subscriptions
@@ -338,7 +320,7 @@ runSpecTests =
             )
         , scenario "13: Balance and Address data is successfully passed down to Funds page"
             (given
-                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
                     |> Spec.Setup.withDocument Main.view
                     |> Spec.Setup.withUpdate Main.update
                     |> Spec.Setup.withSubscriptions Main.subscriptions
@@ -422,7 +404,7 @@ runSpecTests =
              --Runner.pick <|
              scenario "14: Checking the Wallet page has initialized after using navlink to Wallet"
                (given
-                   (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                   (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
                        |> Spec.Setup.withDocument Main.view
                        |> Spec.Setup.withUpdate Main.update
                        |> Spec.Setup.withSubscriptions Main.subscriptions

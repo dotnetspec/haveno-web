@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setDashboardHavenoVersion, subscriptions, toAccounts, toBlank, toConnect, toDashboard, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setDashboardHavenoVersion, subscriptions, toAccounts, toBlank, toConnect, toDashboard, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- Main loads Blank initially.
@@ -67,57 +67,6 @@ main =
 
 
 
--- NAV: Init
--- NOTE: This is used to initialize the model in init and spec tests
--- WARN: The app sees Url.Url as 'elm-spec' when testing
-
-
-init : String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flag _ key =
-    let
-        decodedJsonFromSetupElmmjs =
-            case JD.decodeString urlDecoder flag of
-                Ok urLAfterFlagDecode ->
-                    urLAfterFlagDecode
-
-                Err _ ->
-                    Url.Url Https "haveno-web-dev.netlify.app" Nothing "" Nothing Nothing
-
-        urlWithDashboardPath =
-            { decodedJsonFromSetupElmmjs | path = "/dashboard" }
-
-        initialDashboardModel : Pages.Dashboard.Model
-        initialDashboardModel =
-            { status = Pages.Dashboard.Loading
-            , pagetitle = "Dashboard"
-            , root = Pages.Dashboard.Dashboard { name = "Loading..." }
-            , balances = Nothing
-            , primaryaddress = ""
-            , version = ""
-            , errors = []
-            }
-
-        -- NOTE: Initialize the whole model here so that can assign Nav.Key
-        updatedModel =
-            { page = DashboardPage initialDashboardModel
-            , flag = urlWithDashboardPath --decodedJsonFromSetupElmmjs
-            , key = key
-            , time = Time.millisToPosix 0
-            , zone = Nothing -- Replace with the actual time zone if available
-            , errors = []
-            , isApiConnected = False
-            , version = "No Haveno version available"
-            , currentJsMessage = ""
-            , initialized = False
-            , isMenuOpen = False
-            , balances = Just Protobuf.defaultBalancesInfo
-            , primaryaddress = ""
-            }
-    in
-    updateUrl urlWithDashboardPath updatedModel
-
-
-
 -- NAV: Model
 -- NOTE: define a Page type to represent the different states
 -- we care about, and add it to Model .
@@ -139,7 +88,46 @@ type alias Model =
     , isMenuOpen : Bool
     , balances : Maybe Protobuf.BalancesInfo
     , primaryaddress : String
+    , status : Status
     }
+
+
+
+-- NAV: Init
+-- NOTE: This is used to initialize the model in init and spec tests
+-- WARN: The app sees Url.Url as 'elm-spec' when testing
+
+
+init : String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init flag _ key =
+    let
+        decodedJsonFromSetupElmjs =
+            case JD.decodeString urlDecoder flag of
+                Ok urLAfterFlagDecode ->
+                    { urLAfterFlagDecode | path = "/dashboard" }
+
+                Err _ ->
+                    Url.Url Https "haveno-web-dev.netlify.app" Nothing "" Nothing Nothing
+
+        -- NOTE: Initialize the whole model here so that can assign Nav.Key
+        initialModel =
+            { page = AccountsPage Pages.Accounts.initialModel
+            , flag = decodedJsonFromSetupElmjs
+            , key = key
+            , time = Time.millisToPosix 0
+            , zone = Nothing -- Replace with the actual time zone if available
+            , errors = []
+            , isApiConnected = False
+            , version = "No Haveno version available"
+            , currentJsMessage = ""
+            , initialized = False
+            , isMenuOpen = False
+            , balances = Just Protobuf.defaultBalancesInfo
+            , primaryaddress = ""
+            , status = Loading
+            }
+    in
+    updateUrl decodedJsonFromSetupElmjs initialModel
 
 
 navigate : Nav.Key -> Cmd Msg
@@ -216,14 +204,40 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        -- Assume success after applying
+        -- NOTE: GotVersion also used as an API Connection indicator
+        GotVersion (Ok versionResp) ->
+            let
+                verResp =
+                    case versionResp of
+                        { version } ->
+                            version
+
+                updatedModel =
+                    { model | isApiConnected = True, version = verResp, status = Loaded }
+            in
+            toAccounts updatedModel (Pages.Accounts.init ())
+
+        GotVersion (Err _) ->
+            ( { model | version = "Error obtaining version", isApiConnected = False }, Cmd.none )
+
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
-            ( { model | primaryaddress = primaryAddresponse.primaryAddress }, Cmd.none )
+            let
+                updatedModel =
+                    { model | isApiConnected = True, primaryaddress = primaryAddresponse.primaryAddress, status = Loaded }
+            in
+            toAccounts updatedModel
+                (Pages.Accounts.init ())
 
         GotXmrPrimaryAddress (Err _) ->
             ( model, Cmd.none )
 
         GotBalances (Ok response) ->
-            ( { model | balances = response.balances }, Cmd.none )
+            let
+                updatedModel =
+                    { model | balances = response.balances, status = Loaded }
+            in
+            toAccounts updatedModel (Pages.Accounts.init ())
 
         GotBalances (Err _) ->
             ( model, Cmd.none )
@@ -263,29 +277,6 @@ update msg model =
 
         ToggleMenu ->
             ( { model | isMenuOpen = not model.isMenuOpen }, Cmd.none )
-
-        -- Assume success after applying
-        -- NOTE: GotVersion also used as an API Connection indicator
-        GotVersion (Ok versionResp) ->
-            let
-                verResp =
-                    case versionResp of
-                        { version } ->
-                            version
-
-                {- newDashBoardModel =
-                   case model.page of
-                       DashboardPage dashboard ->
-                           { dashboard | version = verResp }
-
-                       _ ->
-                           Pages.Dashboard.initialModel
-                -}
-            in
-            ( { model | isApiConnected = True, version = verResp }, Cmd.none )
-
-        GotVersion (Err _) ->
-            ( { model | version = "Error obtaining version", isApiConnected = False }, Cmd.none )
 
         -- NAV: Recv rawJsonMessage
         -- NOTE: This is updated when a message from js is received
@@ -397,120 +388,97 @@ update msg model =
 
 view : Model -> Browser.Document Msg
 view model =
-    
     -- NAV : View Page Content
     -- TODO: Make this content's naming conventions closely match the
     -- related css.
     -- NOTE: 'pagetitle' or 'title' in pages is not the same as 'title' in the document
     { title = "Haveno-Web"
     , body =
-        [  viewContainer model
-           -- ,Html.div [ Attr.class "logo-indicator-dashboard-container" ] [ topLogo, connectionStatusView model, dashboardContainer model ]
-        , Html.div [ Attr.class "main-nav-flex-container" ] [ menu model ]
-        , Html.div [ Attr.class "contentByPage" ] [ contentByPage model]
-        , Html.div [ Attr.class "footerContent" ] [ footerContent model ]
-        ]
+        case model.status of
+            Loading ->
+                [ Html.div
+                    [ Attr.class "split-col"
+                    , Attr.class "spinner"
+                    ]
+                    []
+                ]
+
+            Loaded ->
+                [ viewContainer model
+                , Html.div [ Attr.class "main-nav-flex-container" ] [ menu model ]
+                , Html.div [ Attr.class "contentByPage" ] [ contentByPage model ]
+                , Html.div [ Attr.class "footerContent" ] [ footerContent model ]
+                ]
     }
+
 
 contentByPage : Model -> Html.Html Msg
 contentByPage model =
-            {- -- NOTE:  We are 'delegating' views to Dashboard.view and Sell.view etc.
-               Something similar can be done with subscriptions if required
-            -}
-            case model.page of
-                DashboardPage dashboard ->
-                    Pages.Dashboard.view dashboard
-                        -- NOTE: Go from Html Pages.Dashboard.Msg value to Html Msg value using Html.map.
-                        {- Conceptually, what Html.map is doing for us here is wrapping a Pages.Dashboard.Msg or
-                           Pages.Sell.Msg in a Main.Msg , because Main.update knows how to deal with only
-                           Main.Msg values. Those wrapped messages will prove useful later when we handle
-                           these new messages inside update .
+    {- -- NOTE:  We are 'delegating' views to Dashboard.view and Sell.view etc.
+       Something similar can be done with subscriptions if required
+    -}
+    case model.page of
+        DashboardPage dashboard ->
+            Pages.Dashboard.view dashboard
+                -- NOTE: Go from Html Pages.Dashboard.Msg value to Html Msg value using Html.map.
+                {- Conceptually, what Html.map is doing for us here is wrapping a Pages.Dashboard.Msg or
+                   Pages.Sell.Msg in a Main.Msg , because Main.update knows how to deal with only
+                   Main.Msg values. Those wrapped messages will prove useful later when we handle
+                   these new messages inside update .
 
-                           We're actually using Pages.Dashboard.view
-                           -- NOTE: Html.map is essential to wrap the Dashboard.elm view and convert Dashboard.Msg into Main.Msg
-                        -}
-                        |> Html.map GotDashboardMsg
+                   We're actually using Pages.Dashboard.view
+                   -- NOTE: Html.map is essential to wrap the Dashboard.elm view and convert Dashboard.Msg into Main.Msg
+                -}
+                |> Html.map GotDashboardMsg
 
-                SellPage dashboard ->
-                    Pages.Sell.view dashboard
-                        |> Html.map GotSellMsg
+        SellPage dashboard ->
+            Pages.Sell.view dashboard
+                |> Html.map GotSellMsg
 
-                PortfolioPage terms ->
-                    Pages.Portfolio.view terms
-                        |> Html.map GotPortfolioMsg
+        PortfolioPage terms ->
+            Pages.Portfolio.view terms
+                |> Html.map GotPortfolioMsg
 
-                FundsPage privacy ->
-                    Pages.Funds.view privacy
-                        |> Html.map GotFundsMsg
+        FundsPage privacy ->
+            Pages.Funds.view privacy
+                |> Html.map GotFundsMsg
 
-                SupportPage support ->
-                    Pages.Support.view support
-                        |> Html.map GotSupportMsg
+        SupportPage support ->
+            Pages.Support.view support
+                |> Html.map GotSupportMsg
 
-                BuyPage buy ->
-                    Pages.Buy.view buy
-                        |> Html.map GotBuyMsg
+        BuyPage buy ->
+            Pages.Buy.view buy
+                |> Html.map GotBuyMsg
 
-                MarketPage market ->
-                    Pages.Market.view market
-                        |> Html.map GotMarketMsg
+        MarketPage market ->
+            Pages.Market.view market
+                |> Html.map GotMarketMsg
 
-                AccountsPage accounts ->
-                    Pages.Accounts.view accounts
-                        |> Html.map GotAccountsMsg
+        AccountsPage accounts ->
+            Pages.Accounts.view accounts
+                |> Html.map GotAccountsMsg
 
-                DonatePage donate ->
-                    Pages.Donate.view donate
-                        |> Html.map GotDonateMsg
+        DonatePage donate ->
+            Pages.Donate.view donate
+                |> Html.map GotDonateMsg
 
-                ConnectPage connect ->
-                    Pages.Connect.view connect
-                        |> Html.map GotConnectMsg
+        ConnectPage connect ->
+            Pages.Connect.view connect
+                |> Html.map GotConnectMsg
 
-{- viewLayout : Model -> Html.Html Msg
-viewLayout model =
-    Html.section
-        [ id "page"
-        , class "section-background"
-        , class "text-center"
-        ]
-        [ div [ class "split" ]
-            [ div
-                []
-                []
-            , case model.status of
-                Errored ->
-                    div [ class "split-col" ] [ errorView ]
-
-                Loading ->
-                    div
-                        [ class "split-col"
-                        ]
-                        [spinner]
-
-                Loaded ->
-                    div
-                        [ class "split-col"
-                        ]
-                        [ case model.page of
-                            
-                        ]
-               
-
-            , div
-                [ class "split-col"
-                ]
-                []
-            ]] -}
 
 
 viewContainer : Model -> Html.Html Msg
 viewContainer model =
     Html.div [ Attr.class "dashboard-container" ]
-        [ Html.div [ Attr.class "item1" ] [topLogo]
-        , Html.div [ Attr.class "item2" ] [ connectionStatusView model]
+        [ Html.div [ Attr.class "item1" ] [ topLogo ]
+        , Html.div [ Attr.class "item2" ] [ connectionStatusView model ]
         , Html.div [ Attr.class "item3" ] [ dashboardContainer model ]
         ]
+
+
+
 -- TYPES
 -- NOTE: Dashboard.elm is the equivalent of PhotoFolders.elm or 'Folders' in the code
 {- -- NOTE: Two data structures for use cases that were similar but ended up NOT being the same. If you're
@@ -556,6 +524,7 @@ type
     | AccountsPage Pages.Accounts.Model
     | DonatePage Pages.Donate.Model
     | ConnectPage Pages.Connect.Model
+   
 
 
 
@@ -678,6 +647,10 @@ updateUrl url model =
     in
     -- NOTE: Parse the url to get a ROUTE type
     case Url.Parser.parse urlAsPageParser urlMinusQueryStr of
+        Just AccountsRoute ->
+            Pages.Accounts.init ()
+                |> toAccounts model
+
         Just BlankRoute ->
             Pages.Blank.init ()
                 |> toBlank model
@@ -709,10 +682,6 @@ updateUrl url model =
         Just Market ->
             Pages.Market.init ()
                 |> toMarket model
-
-        Just AccountsRoute ->
-            Pages.Accounts.init ()
-                |> toAccounts model
 
         Just DonateRoute ->
             Pages.Donate.init ()
@@ -757,10 +726,8 @@ toDashboard : Model -> ( Pages.Dashboard.Model, Cmd Pages.Dashboard.Msg ) -> ( M
 toDashboard model ( dashboard, cmd ) =
     ( { model | page = DashboardPage dashboard }
       -- NOTE: Cmd.map is a way to manipulate the result of a command
-      -- WARN: sendMessageToJs "msgFromElm" is redundant here but if it isn't actually used somewhere the port won't be recognized on document load
     , Cmd.batch
-        [ Cmd.map GotDashboardMsg cmd
-        , sendVersionRequest Protobuf.defaultGetVersionRequest
+        [ sendVersionRequest Protobuf.defaultGetVersionRequest
         , gotAvailableBalances
         , Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress
         , Task.perform AdjustTimeZone Time.here
@@ -827,7 +794,9 @@ toMarket model ( market, cmd ) =
 
 toAccounts : Model -> ( Pages.Accounts.Model, Cmd Pages.Accounts.Msg ) -> ( Model, Cmd Msg )
 toAccounts model ( accounts, cmd ) =
-    ( { model | page = AccountsPage accounts }
+    ( { model | page = AccountsPage { accounts | balances = model.balances } }
+      -- NOTE: Cmd.map is a way to manipulate the result of a command
+      -- WARN: sendMessageToJs "msgFromElm" is redundant here but if it isn't actually used somewhere the port won't be recognized on document load
     , Cmd.map GotAccountsMsg cmd
     )
 
@@ -848,6 +817,14 @@ toConnect model ( connect, cmd ) =
 
 
 -- NAV : Types
+
+
+type Status
+    = Loading
+    | Loaded
+
+
+
 -- NAV: Type aliases
 
 
@@ -871,6 +848,9 @@ type alias FromMainToSchedule =
 sendVersionRequest : GetVersionRequest -> Cmd Msg
 sendVersionRequest request =
     let
+        _ =
+            Debug.log "sendVersionRequest" request
+
         grpcRequest =
             Grpc.new getVersion request
                 |> Grpc.addHeader "password" "apitest"
