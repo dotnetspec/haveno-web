@@ -81,7 +81,7 @@ init flag _ key =
                     urLAfterFlagDecode
 
                 Err _ ->
-                    Url.Url Https "haveno-web.squashpassion.com" Nothing "" Nothing Nothing
+                    Url.Url Https "haveno-web-dev.netlify.app" Nothing "" Nothing Nothing
 
         urlWithDashboardPath =
             { decodedJsonFromSetupElmmjs | path = "/dashboard" }
@@ -397,8 +397,23 @@ update msg model =
 
 view : Model -> Browser.Document Msg
 view model =
-    let
-        contentByPage =
+    
+    -- NAV : View Page Content
+    -- TODO: Make this content's naming conventions closely match the
+    -- related css.
+    -- NOTE: 'pagetitle' or 'title' in pages is not the same as 'title' in the document
+    { title = "Haveno-Web"
+    , body =
+        [  viewContainer model
+           -- ,Html.div [ Attr.class "logo-indicator-dashboard-container" ] [ topLogo, connectionStatusView model, dashboardContainer model ]
+        , Html.div [ Attr.class "main-nav-flex-container" ] [ menu model ]
+        , Html.div [ Attr.class "contentByPage" ] [ contentByPage model]
+        , Html.div [ Attr.class "footerContent" ] [ footerContent model ]
+        ]
+    }
+
+contentByPage : Model -> Html.Html Msg
+contentByPage model =
             {- -- NOTE:  We are 'delegating' views to Dashboard.view and Sell.view etc.
                Something similar can be done with subscriptions if required
             -}
@@ -451,20 +466,42 @@ view model =
                 ConnectPage connect ->
                     Pages.Connect.view connect
                         |> Html.map GotConnectMsg
-    in
-    -- NAV : View Page Content
-    -- TODO: Make this content's naming conventions closely match the
-    -- related css.
-    -- NOTE: 'pagetitle' or 'title' in pages is not the same as 'title' in the document
-    { title = "Haveno-Web"
-    , body =
-        [  viewContainer model
-           -- ,Html.div [ Attr.class "logo-indicator-dashboard-container" ] [ topLogo, connectionStatusView model, dashboardContainer model ]
-        , Html.div [ Attr.class "main-nav-flex-container" ] [ menu model ]
-        , Html.div [ Attr.class "contentByPage" ] [ contentByPage ]
-        , Html.div [ Attr.class "footerContent" ] [ footerContent model ]
+
+{- viewLayout : Model -> Html.Html Msg
+viewLayout model =
+    Html.section
+        [ id "page"
+        , class "section-background"
+        , class "text-center"
         ]
-    }
+        [ div [ class "split" ]
+            [ div
+                []
+                []
+            , case model.status of
+                Errored ->
+                    div [ class "split-col" ] [ errorView ]
+
+                Loading ->
+                    div
+                        [ class "split-col"
+                        ]
+                        [spinner]
+
+                Loaded ->
+                    div
+                        [ class "split-col"
+                        ]
+                        [ case model.page of
+                            
+                        ]
+               
+
+            , div
+                [ class "split-col"
+                ]
+                []
+            ]] -}
 
 
 viewContainer : Model -> Html.Html Msg

@@ -7822,14 +7822,8 @@ var $author$project$Pages$Donate$initialModel = {
 var $author$project$Pages$Donate$init = function (_v0) {
 	return _Utils_Tuple2($author$project$Pages$Donate$initialModel, $elm$core$Platform$Cmd$none);
 };
-var $author$project$Pages$Funds$GotBalances = function (a) {
-	return {$: 0, a: a};
-};
-var $author$project$Pages$Funds$GotXmrPrimaryAddress = function (a) {
-	return {$: 1, a: a};
-};
 var $author$project$Pages$Funds$FundsView = 0;
-var $author$project$Pages$Funds$Loading = 0;
+var $author$project$Pages$Funds$Loaded = 0;
 var $author$project$Pages$Funds$initialModel = {
 	on: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
 	sD: 0,
@@ -7841,14 +7835,7 @@ var $author$project$Pages$Funds$initialModel = {
 	uR: ''
 };
 var $author$project$Pages$Funds$init = function (_v0) {
-	return _Utils_Tuple2(
-		$author$project$Pages$Funds$initialModel,
-		$elm$core$Platform$Cmd$batch(
-			_List_fromArray(
-				[
-					A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Funds$GotXmrPrimaryAddress, $author$project$Comms$CustomGrpc$gotPrimaryAddress),
-					A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Funds$GotBalances, $author$project$Comms$CustomGrpc$gotAvailableBalances)
-				])));
+	return _Utils_Tuple2($author$project$Pages$Funds$initialModel, $elm$core$Platform$Cmd$none);
 };
 var $author$project$Pages$Market$GotInitialModel = $elm$core$Basics$identity;
 var $author$project$Pages$Market$Loading = 0;
@@ -8204,11 +8191,14 @@ var $author$project$Main$toFunds = F2(
 	function (model, _v0) {
 		var funds = _v0.a;
 		var cmd = _v0.b;
+		var newFundsModel = _Utils_update(
+			funds,
+			{on: model.on});
 		return _Utils_Tuple2(
 			_Utils_update(
 				model,
 				{
-					N: $author$project$Main$FundsPage(funds)
+					N: $author$project$Main$FundsPage(newFundsModel)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFundsMsg, cmd));
 	});
@@ -8568,7 +8558,7 @@ var $author$project$Main$init = F3(
 				var urLAfterFlagDecode = _v1.a;
 				return urLAfterFlagDecode;
 			} else {
-				return A6($elm$url$Url$Url, 1, 'haveno-web.squashpassion.com', $elm$core$Maybe$Nothing, '', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
+				return A6($elm$url$Url$Url, 1, 'haveno-web-dev.netlify.app', $elm$core$Maybe$Nothing, '', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
 			}
 		}();
 		var urlWithDashboardPath = _Utils_update(
@@ -8604,7 +8594,6 @@ var $author$project$Main$subscriptions = function (_v0) {
 				$author$project$Main$receiveMessageFromJs($author$project$Main$Recv)
 			]));
 };
-var $author$project$Pages$Funds$Loaded = 1;
 var $author$project$Pages$Funds$SubAddressView = 1;
 var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $elm$url$Url$addPort = F2(
@@ -8862,9 +8851,9 @@ var $author$project$Pages$Donate$update = F2(
 				}
 		}
 	});
-var $author$project$Pages$Funds$Errored = 2;
+var $author$project$Pages$Funds$Errored = 1;
 var $author$project$Pages$Funds$GotXmrNewSubaddress = function (a) {
-	return {$: 2, a: a};
+	return {$: 0, a: a};
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrNewSubaddressRequest = {};
 var $author$project$Proto$Io$Haveno$Protobuffer$defaultGetXmrNewSubaddressRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrNewSubaddressRequest;
@@ -8905,57 +8894,27 @@ var $author$project$Pages$Funds$gotNewSubAddress = function () {
 var $author$project$Pages$Funds$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
-			case 4:
+			case 2:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{pA: !model.pA}),
 					$elm$core$Platform$Cmd$none);
-			case 3:
-				return _Utils_Tuple2(model, $author$project$Pages$Funds$gotNewSubAddress);
 			case 1:
-				if (!msg.a.$) {
-					var primaryAddresponse = msg.a.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{sD: 0, ke: primaryAddresponse.ue, rf: 1}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{rf: 2}),
-						$elm$core$Platform$Cmd$none);
-				}
-			case 2:
+				return _Utils_Tuple2(model, $author$project$Pages$Funds$gotNewSubAddress);
+			default:
 				if (!msg.a.$) {
 					var subAddresponse = msg.a.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{sD: 1, rf: 1, uR: subAddresponse.uR}),
+							{sD: 1, rf: 0, uR: subAddresponse.uR}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{rf: 2}),
-						$elm$core$Platform$Cmd$none);
-				}
-			default:
-				if (!msg.a.$) {
-					var response = msg.a.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{on: response.on, rf: 1}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{rf: 2}),
+							{rf: 1}),
 						$elm$core$Platform$Cmd$none);
 				}
 		}
@@ -9126,10 +9085,10 @@ var $author$project$Main$update = F2(
 				var _v7 = model.N;
 				if (_v7.$ === 3) {
 					var fundsModel = _v7.a;
-					if (fundsMsg.$ === 3) {
+					if (fundsMsg.$ === 1) {
 						var newFundsModel = _Utils_update(
 							fundsModel,
-							{sD: 1, rf: 1});
+							{sD: 1, rf: 0});
 						return A2(
 							$author$project$Main$toFunds,
 							model,
@@ -9225,348 +9184,22 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
-var $elm$html$Html$div = _VirtualDom_node('div');
-var $elm$html$Html$a = _VirtualDom_node('a');
-var $elm$html$Html$br = _VirtualDom_node('br');
-var $elm$html$Html$footer = _VirtualDom_node('footer');
-var $elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
-var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
-var $elm$html$Html$p = _VirtualDom_node('p');
-var $elm$html$Html$span = _VirtualDom_node('span');
-var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$Main$footerContent = function (model) {
-	return A2(
-		$elm$html$Html$footer,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('footer'),
-						A2($elm$html$Html$Attributes$style, 'text-align', 'center')
-					]),
-				_List_fromArray(
-					[
-						A2($elm$html$Html$br, _List_Nil, _List_Nil),
-						A2(
-						$elm$html$Html$span,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text(''),
-								A2(
-								$elm$html$Html$a,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$href('https://github.com/haveno-dex/haveno')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Haveno-Web')
-									])),
-								A2($elm$html$Html$br, _List_Nil, _List_Nil),
-								$elm$html$Html$text('Open source code & design'),
-								A2(
-								$elm$html$Html$p,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Version 0.4.59')
-									])),
-								$elm$html$Html$text('Haveno Version'),
-								A2(
-								$elm$html$Html$p,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$id('havenofooterver')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(model.bh)
-									]))
-							]))
-					]))
-			]));
-};
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
-var $author$project$Main$ToggleMenu = {$: 15};
-var $elm$virtual_dom$VirtualDom$attribute = F2(
-	function (key, value) {
-		return A2(
-			_VirtualDom_attribute,
-			_VirtualDom_noOnOrFormAction(key),
-			_VirtualDom_noJavaScriptOrHtmlUri(value));
-	});
-var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
+var $author$project$Pages$Accounts$ChangeView = function (a) {
+	return {$: 4, a: a};
+};
+var $author$project$Pages$Accounts$CreateNewBTCAccountView = 3;
+var $author$project$Pages$Accounts$AddNewCryptoAccount = function (a) {
+	return {$: 3, a: a};
+};
+var $author$project$Pages$Accounts$UpdateNewBTCAddress = function (a) {
+	return {$: 5, a: a};
+};
+var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$h6 = _VirtualDom_node('h6');
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
-var $elm$html$Html$Attributes$classList = function (classes) {
-	return $elm$html$Html$Attributes$class(
-		A2(
-			$elm$core$String$join,
-			' ',
-			A2(
-				$elm$core$List$map,
-				$elm$core$Tuple$first,
-				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
-};
-var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
-var $author$project$Main$isActive = function (_v0) {
-	var link = _v0.pK;
-	var page = _v0.N;
-	var _v1 = _Utils_Tuple2(link, page);
-	switch (_v1.a) {
-		case 0:
-			if (!_v1.b.$) {
-				var _v2 = _v1.a;
-				return true;
-			} else {
-				var _v3 = _v1.a;
-				return false;
-			}
-		case 1:
-			if (_v1.b.$ === 1) {
-				var _v4 = _v1.a;
-				return true;
-			} else {
-				var _v5 = _v1.a;
-				return false;
-			}
-		case 7:
-			var _v6 = _v1.a;
-			return false;
-		case 2:
-			if (_v1.b.$ === 2) {
-				var _v7 = _v1.a;
-				return true;
-			} else {
-				var _v8 = _v1.a;
-				return false;
-			}
-		case 3:
-			if (_v1.b.$ === 3) {
-				var _v9 = _v1.a;
-				return true;
-			} else {
-				var _v10 = _v1.a;
-				return false;
-			}
-		case 4:
-			if (_v1.b.$ === 4) {
-				var _v11 = _v1.a;
-				return true;
-			} else {
-				var _v12 = _v1.a;
-				return false;
-			}
-		case 5:
-			if (_v1.b.$ === 5) {
-				var _v13 = _v1.a;
-				return true;
-			} else {
-				var _v14 = _v1.a;
-				return false;
-			}
-		case 6:
-			if (_v1.b.$ === 6) {
-				var _v15 = _v1.a;
-				return true;
-			} else {
-				var _v16 = _v1.a;
-				return false;
-			}
-		case 8:
-			if (_v1.b.$ === 7) {
-				var _v17 = _v1.a;
-				return true;
-			} else {
-				var _v18 = _v1.a;
-				return false;
-			}
-		case 9:
-			if (_v1.b.$ === 8) {
-				var _v19 = _v1.a;
-				return true;
-			} else {
-				var _v20 = _v1.a;
-				return false;
-			}
-		default:
-			if (_v1.b.$ === 9) {
-				var _v21 = _v1.a;
-				return true;
-			} else {
-				var _v22 = _v1.a;
-				return false;
-			}
-	}
-};
-var $elm$html$Html$li = _VirtualDom_node('li');
-var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
-var $elm$html$Html$Attributes$height = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'height',
-		$elm$core$String$fromInt(n));
-};
-var $elm$html$Html$img = _VirtualDom_node('img');
-var $elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
-var $elm$html$Html$Attributes$title = $elm$html$Html$Attributes$stringProperty('title');
-var $elm$html$Html$Attributes$width = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'width',
-		$elm$core$String$fromInt(n));
-};
-var $author$project$Main$topLogo = A2(
-	$elm$html$Html$div,
-	_List_Nil,
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$img,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$src('assets/resources/images/logo-splash100X33.png'),
-					$elm$html$Html$Attributes$width(75),
-					$elm$html$Html$Attributes$height(22),
-					$elm$html$Html$Attributes$alt('Haveno Logo'),
-					$elm$html$Html$Attributes$title('Haveno Logo'),
-					$elm$html$Html$Attributes$id('topLogoId'),
-					$elm$html$Html$Attributes$class('topLogo')
-				]),
-			_List_Nil)
-		]));
-var $elm$html$Html$ul = _VirtualDom_node('ul');
-var $author$project$Main$navLinks = function (page) {
-	var navLink = F2(
-		function (route, _v0) {
-			var url = _v0.bH;
-			var caption = _v0.bm;
-			return A2(
-				$elm$html$Html$li,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$classList(
-						_List_fromArray(
-							[
-								_Utils_Tuple2(
-								'active',
-								$author$project$Main$isActive(
-									{pK: route, N: page})),
-								_Utils_Tuple2('navLink', true)
-							]))
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$a,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$href(url)
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(caption)
-							]))
-					]));
-		});
-	var links = A2(
-		$elm$html$Html$ul,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$li,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('logoInNavLinks')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$a,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$href('https://haveno-web-dev.netlify.app/'),
-								$elm$html$Html$Attributes$class('topLogoShrink')
-							]),
-						_List_fromArray(
-							[$author$project$Main$topLogo]))
-					])),
-				A2(
-				navLink,
-				7,
-				{bm: '', bH: '/'}),
-				A2(
-				navLink,
-				0,
-				{bm: 'Dashboard', bH: 'dashboard'}),
-				A2(
-				navLink,
-				3,
-				{bm: 'Funds', bH: 'funds'}),
-				A2(
-				navLink,
-				6,
-				{bm: 'Market', bH: 'market'}),
-				A2(
-				navLink,
-				4,
-				{bm: 'Support', bH: 'support'}),
-				A2(
-				navLink,
-				1,
-				{bm: 'Sell', bH: 'sell'}),
-				A2(
-				navLink,
-				5,
-				{bm: 'Buy', bH: 'buy'}),
-				A2(
-				navLink,
-				2,
-				{bm: 'Portfolio', bH: 'portfolio'}),
-				A2(
-				navLink,
-				8,
-				{bm: 'Accounts', bH: 'accounts'}),
-				A2(
-				navLink,
-				10,
-				{bm: 'Connect', bH: 'connect'}),
-				A2(
-				navLink,
-				9,
-				{bm: 'Donate', bH: 'donate'})
-			]));
-	return links;
-};
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 0, a: a};
 };
@@ -9584,59 +9217,8 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $author$project$Main$menu = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$classList(
-						_List_fromArray(
-							[
-								_Utils_Tuple2('menu-btn', true),
-								_Utils_Tuple2('open', model.dC)
-							])),
-						$elm$html$Html$Events$onClick($author$project$Main$ToggleMenu),
-						$elm$html$Html$Attributes$name('menubutton'),
-						A2($elm$html$Html$Attributes$attribute, 'data-testid', 'menu-Html.button')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						model.dC ? '✖' : '☰')
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$classList(
-						_List_fromArray(
-							[
-								_Utils_Tuple2('menu', true),
-								_Utils_Tuple2('open', model.dC)
-							]))
-					]),
-				_List_fromArray(
-					[
-						$author$project$Main$navLinks(model.N)
-					]))
-			]));
-};
-var $author$project$Pages$Accounts$ChangeView = function (a) {
-	return {$: 4, a: a};
-};
-var $author$project$Pages$Accounts$CreateNewBTCAccountView = 3;
-var $author$project$Pages$Accounts$AddNewCryptoAccount = function (a) {
-	return {$: 3, a: a};
-};
-var $author$project$Pages$Accounts$UpdateNewBTCAddress = function (a) {
-	return {$: 5, a: a};
-};
-var $elm$html$Html$h6 = _VirtualDom_node('h6');
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Utils$MyUtils$infoBtn = F3(
 	function (label, identifier, msg) {
 		return A2(
@@ -9696,6 +9278,7 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $elm$html$Html$Attributes$readonly = $elm$html$Html$Attributes$boolProperty('readOnly');
+var $elm$html$Html$span = _VirtualDom_node('span');
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
@@ -9925,6 +9508,7 @@ var $author$project$Pages$Accounts$Backup = 6;
 var $author$project$Pages$Accounts$TraditionalCurrencyAccounts = 1;
 var $author$project$Pages$Accounts$WalletPassword = 4;
 var $author$project$Pages$Accounts$WalletSeed = 5;
+var $elm$html$Html$p = _VirtualDom_node('p');
 var $author$project$Pages$Accounts$manageAccountsView = A2(
 	$elm$html$Html$div,
 	_List_fromArray(
@@ -10134,6 +9718,15 @@ var $author$project$Pages$Accounts$view = function (model) {
 					]))
 			]));
 };
+var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $author$project$Buttons$Default$defaultButton = function (btnName) {
 	return A2(
 		$elm$html$Html$div,
@@ -10185,6 +9778,7 @@ var $author$project$Buttons$Default$defaultButton = function (btnName) {
 					]))
 			]));
 };
+var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $author$project$Pages$Buy$content = A2(
 	$elm$html$Html$section,
 	_List_fromArray(
@@ -13629,6 +13223,17 @@ var $mdgriffith$elm_ui$Internal$Model$adjust = F3(
 	function (size, height, vertical) {
 		return {iz: height / size, uG: size, rF: vertical};
 	});
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
 var $elm$core$List$maximum = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -14478,6 +14083,13 @@ var $mdgriffith$elm_ui$Internal$Model$alignYName = function (align) {
 			return $mdgriffith$elm_ui$Internal$Style$classes.nd + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.rX);
 	}
 };
+var $elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
 var $mdgriffith$elm_ui$Internal$Model$FullTransform = F4(
 	function (a, b, c, d) {
 		return {$: 2, a: a, b: b, c: c, d: d};
@@ -15916,6 +15528,7 @@ var $Orasund$elm_ui_framework$Framework$Heading$h = function (inputLevel) {
 var $Orasund$elm_ui_framework$Framework$Heading$h1 = $Orasund$elm_ui_framework$Framework$Heading$h(1);
 var $Orasund$elm_ui_framework$Framework$Heading$h6 = $Orasund$elm_ui_framework$Framework$Heading$h(6);
 var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
+var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
 var $mdgriffith$elm_ui$Internal$Flag$fontColor = $mdgriffith$elm_ui$Internal$Flag$flag(14);
 var $mdgriffith$elm_ui$Element$Font$color = function (fontColor) {
 	return A2(
@@ -16541,7 +16154,7 @@ var $author$project$Pages$Donate$view = function (model) {
 					]))
 			]));
 };
-var $author$project$Pages$Funds$ClickedGotNewSubaddress = {$: 3};
+var $author$project$Pages$Funds$ClickedGotNewSubaddress = {$: 1};
 var $MartinSStewart$elm_uint64$UInt64$UInt64 = $elm$core$Basics$identity;
 var $MartinSStewart$elm_uint64$UInt64$limit24 = 16777216;
 var $MartinSStewart$elm_uint64$UInt64$max16 = 65535;
@@ -16647,7 +16260,7 @@ var $author$project$Pages$Funds$btcBalanceAsString = function (balInfo) {
 		return '';
 	}
 };
-var $author$project$Pages$Funds$ToggleVisibility = {$: 4};
+var $author$project$Pages$Funds$ToggleVisibility = {$: 2};
 var $author$project$Extras$Constants$blankAddress = '************************';
 var $author$project$Pages$Funds$primaryAddressView = function (model) {
 	return A2(
@@ -16884,48 +16497,33 @@ var $author$project$Pages$Funds$view = function (model) {
 						_List_Nil),
 						function () {
 						var _v0 = model.rf;
-						switch (_v0) {
-							case 0:
-								return A2(
-									$elm$html$Html$div,
-									_List_Nil,
-									_List_fromArray(
-										[
-											A2(
-											$elm$html$Html$div,
-											_List_fromArray(
-												[
-													$elm$html$Html$Attributes$class('spinner')
-												]),
-											_List_Nil)
-										]));
-							case 2:
-								return A2(
-									$elm$html$Html$div,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('split-col')
-										]),
-									_List_fromArray(
-										[$author$project$Pages$Funds$errorView]));
-							default:
-								return A2(
-									$elm$html$Html$div,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('split-col')
-										]),
-									_List_fromArray(
-										[
-											function () {
-											var _v1 = model.sD;
-											if (!_v1) {
-												return $author$project$Pages$Funds$custodialFundsView(model);
-											} else {
-												return $author$project$Pages$Funds$subAddressView(model.uR);
-											}
-										}()
-										]));
+						if (_v0 === 1) {
+							return A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('split-col')
+									]),
+								_List_fromArray(
+									[$author$project$Pages$Funds$errorView]));
+						} else {
+							return A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('split-col')
+									]),
+								_List_fromArray(
+									[
+										function () {
+										var _v1 = model.sD;
+										if (!_v1) {
+											return $author$project$Pages$Funds$custodialFundsView(model);
+										} else {
+											return $author$project$Pages$Funds$subAddressView(model.uR);
+										}
+									}()
+									]));
 						}
 					}(),
 						A2(
@@ -17119,6 +16717,16 @@ var $author$project$Pages$Portfolio$content = A2(
 var $author$project$Pages$Portfolio$view = function (_v0) {
 	return $author$project$Pages$Portfolio$content;
 };
+var $elm$html$Html$Attributes$classList = function (classes) {
+	return $elm$html$Html$Attributes$class(
+		A2(
+			$elm$core$String$join,
+			' ',
+			A2(
+				$elm$core$List$map,
+				$elm$core$Tuple$first,
+				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
+};
 var $author$project$Pages$Sell$content = A2(
 	$elm$html$Html$section,
 	_List_fromArray(
@@ -17233,6 +16841,407 @@ var $author$project$Pages$Support$content = A2(
 		]));
 var $author$project$Pages$Support$view = function (_v0) {
 	return $author$project$Pages$Support$content;
+};
+var $author$project$Main$contentByPage = function (model) {
+	var _v0 = model.N;
+	switch (_v0.$) {
+		case 0:
+			var dashboard = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$GotDashboardMsg,
+				$author$project$Pages$Dashboard$view(dashboard));
+		case 1:
+			var dashboard = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$GotSellMsg,
+				$author$project$Pages$Sell$view(dashboard));
+		case 2:
+			var terms = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$GotPortfolioMsg,
+				$author$project$Pages$Portfolio$view(terms));
+		case 3:
+			var privacy = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$GotFundsMsg,
+				$author$project$Pages$Funds$view(privacy));
+		case 4:
+			var support = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$GotSupportMsg,
+				$author$project$Pages$Support$view(support));
+		case 5:
+			var buy = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$GotBuyMsg,
+				$author$project$Pages$Buy$view(buy));
+		case 6:
+			var market = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$GotMarketMsg,
+				$author$project$Pages$Market$view(market));
+		case 7:
+			var accounts = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$GotAccountsMsg,
+				$author$project$Pages$Accounts$view(accounts));
+		case 8:
+			var donate = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$GotDonateMsg,
+				$author$project$Pages$Donate$view(donate));
+		default:
+			var connect = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$GotConnectMsg,
+				$author$project$Pages$Connect$view(connect));
+	}
+};
+var $elm$html$Html$br = _VirtualDom_node('br');
+var $elm$html$Html$footer = _VirtualDom_node('footer');
+var $author$project$Main$footerContent = function (model) {
+	return A2(
+		$elm$html$Html$footer,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('footer'),
+						A2($elm$html$Html$Attributes$style, 'text-align', 'center')
+					]),
+				_List_fromArray(
+					[
+						A2($elm$html$Html$br, _List_Nil, _List_Nil),
+						A2(
+						$elm$html$Html$span,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(''),
+								A2(
+								$elm$html$Html$a,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$href('https://github.com/haveno-dex/haveno')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Haveno-Web')
+									])),
+								A2($elm$html$Html$br, _List_Nil, _List_Nil),
+								$elm$html$Html$text('Open source code & design'),
+								A2(
+								$elm$html$Html$p,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Version 0.4.59')
+									])),
+								$elm$html$Html$text('Haveno Version'),
+								A2(
+								$elm$html$Html$p,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$id('havenofooterver')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(model.bh)
+									]))
+							]))
+					]))
+			]));
+};
+var $author$project$Main$ToggleMenu = {$: 15};
+var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
+var $author$project$Main$isActive = function (_v0) {
+	var link = _v0.pK;
+	var page = _v0.N;
+	var _v1 = _Utils_Tuple2(link, page);
+	switch (_v1.a) {
+		case 0:
+			if (!_v1.b.$) {
+				var _v2 = _v1.a;
+				return true;
+			} else {
+				var _v3 = _v1.a;
+				return false;
+			}
+		case 1:
+			if (_v1.b.$ === 1) {
+				var _v4 = _v1.a;
+				return true;
+			} else {
+				var _v5 = _v1.a;
+				return false;
+			}
+		case 7:
+			var _v6 = _v1.a;
+			return false;
+		case 2:
+			if (_v1.b.$ === 2) {
+				var _v7 = _v1.a;
+				return true;
+			} else {
+				var _v8 = _v1.a;
+				return false;
+			}
+		case 3:
+			if (_v1.b.$ === 3) {
+				var _v9 = _v1.a;
+				return true;
+			} else {
+				var _v10 = _v1.a;
+				return false;
+			}
+		case 4:
+			if (_v1.b.$ === 4) {
+				var _v11 = _v1.a;
+				return true;
+			} else {
+				var _v12 = _v1.a;
+				return false;
+			}
+		case 5:
+			if (_v1.b.$ === 5) {
+				var _v13 = _v1.a;
+				return true;
+			} else {
+				var _v14 = _v1.a;
+				return false;
+			}
+		case 6:
+			if (_v1.b.$ === 6) {
+				var _v15 = _v1.a;
+				return true;
+			} else {
+				var _v16 = _v1.a;
+				return false;
+			}
+		case 8:
+			if (_v1.b.$ === 7) {
+				var _v17 = _v1.a;
+				return true;
+			} else {
+				var _v18 = _v1.a;
+				return false;
+			}
+		case 9:
+			if (_v1.b.$ === 8) {
+				var _v19 = _v1.a;
+				return true;
+			} else {
+				var _v20 = _v1.a;
+				return false;
+			}
+		default:
+			if (_v1.b.$ === 9) {
+				var _v21 = _v1.a;
+				return true;
+			} else {
+				var _v22 = _v1.a;
+				return false;
+			}
+	}
+};
+var $elm$html$Html$li = _VirtualDom_node('li');
+var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
+var $elm$html$Html$Attributes$height = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'height',
+		$elm$core$String$fromInt(n));
+};
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $elm$html$Html$Attributes$title = $elm$html$Html$Attributes$stringProperty('title');
+var $elm$html$Html$Attributes$width = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'width',
+		$elm$core$String$fromInt(n));
+};
+var $author$project$Main$topLogo = A2(
+	$elm$html$Html$div,
+	_List_Nil,
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$img,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$src('assets/resources/images/logo-splash100X33.png'),
+					$elm$html$Html$Attributes$width(75),
+					$elm$html$Html$Attributes$height(22),
+					$elm$html$Html$Attributes$alt('Haveno Logo'),
+					$elm$html$Html$Attributes$title('Haveno Logo'),
+					$elm$html$Html$Attributes$id('topLogoId'),
+					$elm$html$Html$Attributes$class('topLogo')
+				]),
+			_List_Nil)
+		]));
+var $author$project$Main$navLinks = function (page) {
+	var navLink = F2(
+		function (route, _v0) {
+			var url = _v0.bH;
+			var caption = _v0.bm;
+			return A2(
+				$elm$html$Html$li,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$classList(
+						_List_fromArray(
+							[
+								_Utils_Tuple2(
+								'active',
+								$author$project$Main$isActive(
+									{pK: route, N: page})),
+								_Utils_Tuple2('navLink', true)
+							]))
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$href(url)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(caption)
+							]))
+					]));
+		});
+	var links = A2(
+		$elm$html$Html$ul,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$li,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('logoInNavLinks')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$href('https://haveno-web-dev.netlify.app/'),
+								$elm$html$Html$Attributes$class('topLogoShrink')
+							]),
+						_List_fromArray(
+							[$author$project$Main$topLogo]))
+					])),
+				A2(
+				navLink,
+				7,
+				{bm: '', bH: '/'}),
+				A2(
+				navLink,
+				0,
+				{bm: 'Dashboard', bH: 'dashboard'}),
+				A2(
+				navLink,
+				3,
+				{bm: 'Funds', bH: 'funds'}),
+				A2(
+				navLink,
+				6,
+				{bm: 'Market', bH: 'market'}),
+				A2(
+				navLink,
+				4,
+				{bm: 'Support', bH: 'support'}),
+				A2(
+				navLink,
+				1,
+				{bm: 'Sell', bH: 'sell'}),
+				A2(
+				navLink,
+				5,
+				{bm: 'Buy', bH: 'buy'}),
+				A2(
+				navLink,
+				2,
+				{bm: 'Portfolio', bH: 'portfolio'}),
+				A2(
+				navLink,
+				8,
+				{bm: 'Accounts', bH: 'accounts'}),
+				A2(
+				navLink,
+				10,
+				{bm: 'Connect', bH: 'connect'}),
+				A2(
+				navLink,
+				9,
+				{bm: 'Donate', bH: 'donate'})
+			]));
+	return links;
+};
+var $author$project$Main$menu = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$classList(
+						_List_fromArray(
+							[
+								_Utils_Tuple2('menu-btn', true),
+								_Utils_Tuple2('open', model.dC)
+							])),
+						$elm$html$Html$Events$onClick($author$project$Main$ToggleMenu),
+						$elm$html$Html$Attributes$name('menubutton'),
+						A2($elm$html$Html$Attributes$attribute, 'data-testid', 'menu-Html.button')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						model.dC ? '✖' : '☰')
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$classList(
+						_List_fromArray(
+							[
+								_Utils_Tuple2('menu', true),
+								_Utils_Tuple2('open', model.dC)
+							]))
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$navLinks(model.N)
+					]))
+			]));
 };
 var $author$project$Main$connectionStatusView = function (model) {
 	return A2(
@@ -17456,71 +17465,6 @@ var $author$project$Main$viewContainer = function (model) {
 			]));
 };
 var $author$project$Main$view = function (model) {
-	var contentByPage = function () {
-		var _v0 = model.N;
-		switch (_v0.$) {
-			case 0:
-				var dashboard = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotDashboardMsg,
-					$author$project$Pages$Dashboard$view(dashboard));
-			case 1:
-				var dashboard = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotSellMsg,
-					$author$project$Pages$Sell$view(dashboard));
-			case 2:
-				var terms = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotPortfolioMsg,
-					$author$project$Pages$Portfolio$view(terms));
-			case 3:
-				var privacy = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotFundsMsg,
-					$author$project$Pages$Funds$view(privacy));
-			case 4:
-				var support = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotSupportMsg,
-					$author$project$Pages$Support$view(support));
-			case 5:
-				var buy = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotBuyMsg,
-					$author$project$Pages$Buy$view(buy));
-			case 6:
-				var market = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotMarketMsg,
-					$author$project$Pages$Market$view(market));
-			case 7:
-				var accounts = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotAccountsMsg,
-					$author$project$Pages$Accounts$view(accounts));
-			case 8:
-				var donate = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotDonateMsg,
-					$author$project$Pages$Donate$view(donate));
-			default:
-				var connect = _v0.a;
-				return A2(
-					$elm$html$Html$map,
-					$author$project$Main$GotConnectMsg,
-					$author$project$Pages$Connect$view(connect));
-		}
-	}();
 	return {
 		sf: _List_fromArray(
 			[
@@ -17542,7 +17486,9 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$Attributes$class('contentByPage')
 					]),
 				_List_fromArray(
-					[contentByPage])),
+					[
+						$author$project$Main$contentByPage(model)
+					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
