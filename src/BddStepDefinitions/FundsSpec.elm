@@ -2,7 +2,7 @@ module BddStepDefinitions.FundsSpec exposing (main)
 
 import BddStepDefinitions.Extra exposing (equals)
 import BddStepDefinitions.Runner
-import Extras.TestData as TestData
+import Extras.TestData as TestData exposing (subAddress)
 import Grpc
 import Pages.Funds as Funds
 import Proto.Io.Haveno.Protobuffer as Protobuf
@@ -17,22 +17,18 @@ import Spec.Observer as Observer
 import Spec.Setup
 
 
--- NAV: Initial test models 
+
+-- NAV: Initial test models
 -- TODO: Use initWithModel - we can't get from Main unless it's a MainSpec test - so these are expected
 -- state at the start of each test
 
 
-getSubAddrInitModel : Funds.Model
-getSubAddrInitModel =
-    { status = Funds.Loaded
-    , pagetitle = "Haveno Web Funds"
-    , balances = Just Protobuf.defaultBalancesInfo
-    , isAddressVisible = False
-    , primaryaddress = ""
-    , errors = []
-    , subaddress = ""
-    , currentView = Funds.SubAddressView
-    }
+
+
+
+fundsInitialModel : Funds.Model
+fundsInitialModel =
+    Funds.initialModel
 
 
 
@@ -43,8 +39,7 @@ runSpecTests : Spec.Spec Funds.Model Funds.Msg
 runSpecTests =
     Spec.describe
         "Haveno Web App Funds Tests"
-        [ 
-          scenario "1: Accessing the Funds page with valid balance data"
+        [ scenario "1: Accessing the Funds page with valid balance data"
             (given
                 (Spec.Setup.init (Funds.init "http://localhost:1234")
                     |> Spec.Setup.withView Funds.view
@@ -54,7 +49,6 @@ runSpecTests =
                 )
                 |> when "the user shows the hidden details"
                     [ Spec.Command.send (Spec.Command.fake <| Funds.ToggleVisibility) ]
-                
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
@@ -82,12 +76,9 @@ runSpecTests =
                                         Claim.isStringContaining 1 TestData.primaryAddress
                                 )
                         )
-
-                    
                     ]
             )
-        , 
-          scenario "2: Handling the Funds page with INvalid balance data"
+        , scenario "2: Handling the Funds page with INvalid balance data"
             (given
                 (Spec.Setup.init (Funds.init "http://localhost:1234")
                     |> Spec.Setup.withView Funds.view
@@ -113,8 +104,6 @@ runSpecTests =
                         )
                     ]
             )
-
-       
         , scenario "2a: Show available balance and reserved balance correctly in the UI"
             (given
                 (Spec.Setup.init (Funds.init "http://localhost:1234")
@@ -123,8 +112,6 @@ runSpecTests =
                     |> Spec.Setup.withLocation TestData.placeholderUrl
                     |> Stub.serve [ TestData.successfullBalancesFetch, TestData.successfullXmrPrimaryAddressFetch ]
                 )
-                
-               
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
@@ -160,31 +147,25 @@ runSpecTests =
                         )
                     ]
             )
-        , --Runner.skip <|
-          --Runner.pick <|
+        , 
           scenario "3: Generating a New Subaddress"
             (given
-                (Spec.Setup.init ( getSubAddrInitModel, Spec.Command.fake <| Funds.ClickedGotNewSubaddress )
-                    --(Funds.init "http://localhost:1234")
+                (Spec.Setup.init ( fundsInitialModel, Cmd.none )
                     |> Spec.Setup.withView Funds.view
                     |> Spec.Setup.withUpdate Funds.update
                     |> Spec.Setup.withLocation TestData.placeholderUrl
                     |> Stub.serve [ TestData.successfullSubAddressFetch ]
                 )
-                |> Spec.when "we log the http requests"
+               {-  |> Spec.when "we log the http requests"
                     [ Spec.Http.logRequests
-                    ]
-                |> when "the user ClickedGotNewSubaddress to simulte an new subaddress retrieval"
-                    [ Spec.Command.send (Spec.Command.fake <| Funds.ClickedGotNewSubaddress) ]
+                    ] -}
                 -- NOTE: Use this to bypass need to go via Main.elm, which is what will happen in the real app
                 -- via GotFundsMsg
                 |> when "the response triggers GotNewSubaddress in Funds.update"
                     [ Spec.Command.send
                         (Spec.Command.fake <|
-                            (Funds.GotXmrNewSubaddress
+                            Funds.GotXmrNewSubaddress
                                 (Ok { subaddress = TestData.subAddress })
-                             -- Simulate the successful response
-                            )
                         )
                     ]
                 |> Spec.observeThat
@@ -211,28 +192,7 @@ runSpecTests =
 
         -- NOTE: Uncomment these tests one at a time to maintain managability
         {-
-           scenario "4: Retrieving the Primary Address"
-               (given
-                   (Spec.Setup.init (Wallet.init "http://localhost:1234")
-                       |> Spec.Setup.withView Wallet.view
-                       |> Spec.Setup.withUpdate Wallet.update
-                       |> Spec.Setup.withLocation TestData.placeholderUrl
-                   )
-                   |> when "the app retrieves the primary address"
-                       [ Spec.Command.send (Spec.Command.fake <| Wallet.GotPrimaryAddress (Ok "Primary Address")) ]
-                   |> Spec.observeThat
-                       [ it "displays the primary address"
-                           (Markup.observeElement
-                               |> Markup.query
-                               << by [ id "primaryAddress" ]
-                               |> Spec.expect
-                                   (Claim.isSomethingWhere <|
-                                       Markup.text <|
-                                           Claim.isStringContaining 1 "Primary Address"
-                                   )
-                           )
-                       ]
-               )
+          
 
            scenario "5: Checking Address Balance"
                (given
@@ -490,10 +450,6 @@ runSpecTests =
                )
         -}
         ]
-
-
-
-
 
 
 
