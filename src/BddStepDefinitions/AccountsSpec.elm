@@ -19,21 +19,11 @@ import Spec.Setup
 
 -- NAV: Test scenarios
 
-
-initialModel : Accounts.Model
-initialModel =
-    { status = Accounts.Loaded
-    , pagetitle = "Accounts"
-    , balances = TestData.testBalanceInfo
-    , isAddressVisible = False
-    , primaryaddress = TestData.primaryAddress
-    , errors = []
-    , subaddress = ""
-    , currentView = Accounts.ManageAccounts
-    , listOfExistingCryptoAccounts = []
-    , newBTCAddress = ""
-    , cryptoAccountType = Accounts.BTC
-    }
+-- NOTE: Override the initial model in the module under test where necessary using
+-- using this:
+accountsInitialModel : Accounts.Model
+accountsInitialModel =
+    Accounts.initialModel
 
 
 runSpecTests : Spec Accounts.Model Accounts.Msg
@@ -42,7 +32,7 @@ runSpecTests =
         "Haveno Web App Accounts Tests"
         [ scenario "1: Accessing the Accounts page with valid balance data and primary address which would get from Main"
             (given
-                (Spec.Setup.initWithModel initialModel
+                (Spec.Setup.initWithModel {accountsInitialModel | balances = testBalanceInfo, primaryaddress = TestData.primaryAddress}
                     |> Spec.Setup.withUpdate Accounts.update
                     |> Spec.Setup.withLocation placeholderUrl
                 )
@@ -103,7 +93,7 @@ runSpecTests =
             )
         , Spec.scenario "3. User navigates to Traditional Currency Accounts"
             (Spec.given
-                (Spec.Setup.initWithModel initialModel
+                (Spec.Setup.initWithModel accountsInitialModel
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                 )
@@ -124,7 +114,7 @@ runSpecTests =
             )
         , Spec.scenario "4. User navigates to Cryptocurrency Accounts"
             (Spec.given
-                (Spec.Setup.initWithModel initialModel
+                (Spec.Setup.initWithModel accountsInitialModel
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                 )
@@ -187,7 +177,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.property (Json.Decode.field "value" Json.Decode.string) <|
-                                            Claim.isStringContaining 1 "BTC:"
+                                        Claim.isStringContaining 1 "BTC:"
                                 )
                         )
                     , it "displays the available Add New BTC Account button correctly"
@@ -204,7 +194,7 @@ runSpecTests =
             )
         , Spec.scenario "User navigates to Wallet Password"
             (Spec.given
-                (Spec.Setup.initWithModel initialModel
+                (Spec.Setup.initWithModel accountsInitialModel
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                 )
@@ -221,7 +211,7 @@ runSpecTests =
             )
         , Spec.scenario "User navigates to Wallet Seed"
             (Spec.given
-                (Spec.Setup.initWithModel initialModel
+                (Spec.Setup.initWithModel accountsInitialModel
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                 )
@@ -238,7 +228,7 @@ runSpecTests =
             )
         , Spec.scenario "User navigates to Backup"
             (Spec.given
-                (Spec.Setup.initWithModel initialModel
+                (Spec.Setup.initWithModel accountsInitialModel
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                 )
@@ -255,7 +245,7 @@ runSpecTests =
             )
         , Spec.scenario "5. Displays 'There are no accounts set up yet' when the list is empty"
             (Spec.given
-                (Spec.Setup.initWithModel initialModel
+                (Spec.Setup.initWithModel accountsInitialModel
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                 )
@@ -278,7 +268,7 @@ runSpecTests =
             )
         , Spec.scenario "6. Displays existing accounts when the list is not empty"
             (Spec.given
-                (Spec.Setup.initWithModel { initialModel | listOfExistingCryptoAccounts = [ "Account 1", "Account 2" ] }
+                (Spec.Setup.initWithModel { accountsInitialModel | status = Accounts.Loaded, listOfExistingCryptoAccounts = [ "Account 1", "Account 2" ] }
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                 )
@@ -287,7 +277,11 @@ runSpecTests =
                     , Spec.Markup.Event.click
                     ]
                 |> Spec.observeThat
-                    [ Spec.it "displays the accounts correctly"
+                    [ it "has status as Loaded"
+                        (Observer.observeModel .status
+                            |> Spec.expect (equals Accounts.Loaded)
+                        )
+                    , Spec.it "displays the accounts correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.id "accounts-listOfExistingCryptoAccounts" ]
