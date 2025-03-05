@@ -28,6 +28,7 @@ import Spec.Setup
 import Url exposing (Protocol(..), Url)
 
 
+
 -- NAV: Initial test models
 -- TODO: Use initWithModel - we can't get from Main unless it's a MainSpec test - so these are expected
 -- state at the start of each test
@@ -36,6 +37,7 @@ import Url exposing (Protocol(..), Url)
 fundsInitialModel : Funds.Model
 fundsInitialModel =
     Funds.initialModel
+
 
 initialDashboardModel : Pages.Dashboard.Model
 initialDashboardModel =
@@ -363,7 +365,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
                                     Main.FundsPage <|
-                                        {fundsInitialModel | balances = TestData.testBalanceInfo, status = Funds.Loaded}
+                                        { fundsInitialModel | balances = TestData.testBalanceInfo, status = Funds.Loaded }
                                 )
                         )
                     , it "b. the menu should be closed"
@@ -371,7 +373,7 @@ runSpecTests =
                             |> Spec.expect
                                 Claim.isFalse
                         )
-                     , it "displays the primary address correctly"
+                    , it "displays the primary address correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.id "primaryaddress" ]
@@ -391,7 +393,6 @@ runSpecTests =
                                         Claim.isStringContaining 1 "10000 XMR"
                                 )
                         )
-                   
                     , it "displays the BTC balance correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
@@ -400,6 +401,16 @@ runSpecTests =
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
                                         Claim.isStringContaining 1 "Available BTC Balance: 42.94967296 BTC"
+                                )
+                        )
+                    , it "displays the reservedOffer balance correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "reservedOfferBalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "5000 XMR"
                                 )
                         )
                     ]
