@@ -381,6 +381,16 @@ runSpecTests =
                                         Claim.isStringContaining 1 "ShowPrimary address: ************************"
                                 )
                         )
+                    , it "displays the XMR avail balance correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "xmrAvailableBalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "10000 XMR"
+                                )
+                        )
                    
                     , it "displays the BTC balance correctly"
                         (Spec.Markup.observeElement
