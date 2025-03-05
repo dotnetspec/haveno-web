@@ -1072,7 +1072,6 @@ navLinks page =
                 ]
                 [ Html.li [ Attr.class "logoInNavLinks" ] [ Html.a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "topLogoShrink" ] [ topLogo ] ]
                 , navLink BlankRoute { url = "/", caption = "" }
-                , navLink SplashRoute { url = "dashboard", caption = "Splash" }
                 , navLink FundsRoute { url = "funds", caption = "Funds" }
                 , navLink Market { url = "market", caption = "Market" }
                 , navLink Support { url = "support", caption = "Support" }
@@ -1114,7 +1113,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.4.59" ]
+                , Html.p [] [ Html.text "Version 0.5.59" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text
@@ -1123,10 +1122,6 @@ footerContent model =
                 ]
             ]
         ]
-
-
-
--- FIX:
 
 
 isActive : { link : Route, page : Page } -> Bool
