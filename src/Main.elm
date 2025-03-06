@@ -30,6 +30,7 @@ import Pages.Sell
 import Pages.Splash
 import Pages.Support
 import Parser
+import Process
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
@@ -89,6 +90,7 @@ type alias Model =
     , balances : Maybe Protobuf.BalancesInfo
     , primaryaddress : String
     , status : Status
+    , timeoutId : Maybe Time.Posix
     }
 
 
@@ -125,6 +127,7 @@ init flag _ key =
             , balances = Just Protobuf.defaultBalancesInfo
             , primaryaddress = ""
             , status = Loading
+            , timeoutId = Nothing
             }
     in
     updateUrl decodedJsonFromSetupElmjs initialModel
@@ -185,12 +188,12 @@ type Msg
     | GotDonateMsg Pages.Donate.Msg
     | GotConnectMsg Pages.Connect.Msg
     | ChangedUrl Url.Url
-    | AdjustTimeZone Time.Zone
     | Recv JD.Value
     | GotVersion (Result Grpc.Error GetVersionReply)
     | ToggleMenu
     | GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
+    | Timeout
     | NoOp
 
 
@@ -284,11 +287,6 @@ update msg model =
         Recv _ ->
             ( model, Cmd.none )
 
-        AdjustTimeZone newZone ->
-            ( { model | zone = Just newZone }
-            , Cmd.none
-            )
-
         GotSplashMsg dashboardMsg ->
             case model.page of
                 SplashPage dashboard ->
@@ -381,6 +379,13 @@ update msg model =
 
                 _ ->
                     ( model, Cmd.none )
+
+        Timeout ->
+            if not model.isApiConnected then
+                toConnect model (Pages.Connect.init ())
+
+            else
+                ( model, Cmd.none )
 
         NoOp ->
             toAccounts model (Pages.Accounts.init ())
@@ -731,7 +736,7 @@ toSplash model ( dashboard, cmd ) =
         [ sendVersionRequest Protobuf.defaultGetVersionRequest
         , gotAvailableBalances
         , Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress
-        , Task.perform AdjustTimeZone Time.here
+        , startTimeout
         , sendMessageToJs "msgFromElm"
         ]
     )
@@ -811,7 +816,7 @@ toDonate model ( donate, cmd ) =
 
 toConnect : Model -> ( Pages.Connect.Model, Cmd Pages.Connect.Msg ) -> ( Model, Cmd Msg )
 toConnect model ( connect, cmd ) =
-    ( { model | page = ConnectPage { connect | havenoConnected = model.isApiConnected, walletConnected = isXMRWalletConnected model } }
+    ( { model | page = ConnectPage { connect | havenoConnected = model.isApiConnected, walletConnected = isXMRWalletConnected model }, status = Loaded }
     , Cmd.map GotConnectMsg cmd
     )
 
@@ -874,6 +879,11 @@ gotAvailableBalances =
 
 -- NAV: Helper functions
 -- TODO: Improve the validation here:
+
+
+startTimeout : Cmd Msg
+startTimeout =
+    Process.sleep (5 * 1000) |> Task.perform (\_ -> Timeout)
 
 
 isXMRWalletConnected : Model -> Bool
@@ -1113,7 +1123,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.5.59" ]
+                , Html.p [] [ Html.text "Version 0.5.60" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text

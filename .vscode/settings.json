@@ -3,5 +3,20 @@
         "editor.formatOnSave": true
     },
     "editor.formatOnSave": true
+
+    
+        , "files.watcherExclude": {
+          "**/node_modules/**": true,
+          "**/.git/**": true,
+          "**/dist/**": true,
+          "**/.elm-stuff/**": true
+        },
+        "search.exclude": {
+          "**/node_modules/**": true,
+          "**/dist/**": true,
+          "**/.elm-stuff/**": true
+        }
+      
+      
     
 }

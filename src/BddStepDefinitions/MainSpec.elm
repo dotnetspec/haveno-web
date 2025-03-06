@@ -24,6 +24,7 @@ import Spec.Markup
 import Spec.Markup.Selector exposing (by)
 import Spec.Observer
 import Spec.Setup
+import Spec.Time
 import Url exposing (Protocol(..), Url)
 
 
@@ -392,6 +393,32 @@ runSpecTests =
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
                                         Claim.isStringContaining 1 "5000 XMR"
+                                )
+                        )
+                    ]
+            )
+        , scenario "14: Load Connect page if not connected to API server after 5 seconds"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
+                    |> Stub.serve [ TestData.unsuccessfullVersionFetch ]
+                )
+                |> when "some time passes"
+                    [ Spec.Time.tick 6000
+                    ]
+                |> Spec.observeThat
+                    [ it "should navigate to the Connect page"
+                        (Spec.Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.ConnectPage Connect.initialModel
                                 )
                         )
                     ]
