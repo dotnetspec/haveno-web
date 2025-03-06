@@ -319,6 +319,13 @@ update msg model =
             case model.page of
                 FundsPage fundsModel ->
                     case fundsMsg of
+                        Pages.Funds.ToggleAddressVisibility ->
+                            let
+                                newFundsModel =
+                                    { fundsModel | primaryaddress = model.primaryaddress }
+                            in
+                            toFunds model (Pages.Funds.update fundsMsg newFundsModel)
+
                         Pages.Funds.ClickedGotNewSubaddress ->
                             let
                                 newFundsModel =

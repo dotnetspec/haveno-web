@@ -68,7 +68,7 @@ init _ =
 type Msg
     = GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | ClickedGotNewSubaddress
-    | ToggleVisibility
+    | ToggleAddressVisibility
 
 
 
@@ -78,7 +78,7 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ToggleVisibility ->
+        ToggleAddressVisibility ->
             ( { model | isAddressVisible = not model.isAddressVisible }, Cmd.none )
 
         ClickedGotNewSubaddress ->
@@ -150,7 +150,7 @@ custodialFundsView model =
 
 primaryAddressView : Model -> Html Msg
 primaryAddressView model =
-    Html.div [ Attr.id "primaryaddress", Attr.class "address-container" ]
+    Html.div [ Attr.class "address-container" ]
         [ MyUtils.infoBtn
             (if model.isAddressVisible then
                 "Hide"
@@ -159,10 +159,10 @@ primaryAddressView model =
                 "Show"
             )
             ""
-            ToggleVisibility
+            ToggleAddressVisibility
         , Html.div [ Attr.class "address-text" ]
-            [ Html.span [ Attr.class "address-label" ] [ Html.text "Primary address: " ]
-            , Html.span [ Attr.class "address-value" ]
+            [ Html.span [ Attr.class "address-label"] [ Html.text "Primary address: " ]
+            , Html.span [ Attr.class "address-value", Attr.id "primaryaddress"  ]
                 [ Html.text
                     (if model.isAddressVisible then
                         model.primaryaddress
