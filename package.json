@@ -22,8 +22,8 @@
     "build": "parcel build",
     "serve": "parcel serve",
     "plw": "playwright show-report",
-    "obs":  "yarn optimize &&  yarn build && yarn review && yarn serve",
-    "dbs":  "yarn debug &&  yarn build && yarn review && yarn serve",
+    "obs": "yarn optimize &&  yarn build && yarn review && yarn serve",
+    "dbs": "yarn debug &&  yarn build && yarn review && yarn serve",
     "relns": "yarn optimize &&  yarn unit && yarn spec && yarn review && yarn build",
     "relns+plw": "yarn optimize && yarn unit && yarn spec && yarn review && yarn build && yarn plw",
     "relnoe": "yarn optimize && yarn unit && yarn spec && yarn review && yarn build && yarn serve",
@@ -48,6 +48,7 @@
     "buffer": "^5.5.0||^6.0.0",
     "core-js": "^3.39.0",
     "elm-json": "^0.2.13",
+    "elm-language-server": "^0.1.1",
     "jsdom": "^25.0.1"
   },
   "devDependencies": {

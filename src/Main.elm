@@ -906,6 +906,7 @@ startTimeout =
     Process.sleep (5 * 1000) |> Task.perform (\_ -> Timeout)
 
 -- TODO: Improve the validation here:isXMRWalletConnected : Model -> Bool
+isXMRWalletConnected : { a | primaryaddress : String } -> Bool
 isXMRWalletConnected model =
     if not <| model.primaryaddress == "" then
         True
