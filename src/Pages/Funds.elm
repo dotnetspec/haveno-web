@@ -68,7 +68,7 @@ init _ =
 type Msg
     = GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | ClickedGotNewSubaddress
-    | ToggleAddressVisibility
+    | ToggleFundsVisibility
 
 
 
@@ -78,7 +78,7 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ToggleAddressVisibility ->
+        ToggleFundsVisibility ->
             ( { model | isAddressVisible = not model.isAddressVisible }, Cmd.none )
 
         ClickedGotNewSubaddress ->
@@ -159,10 +159,10 @@ primaryAddressView model =
                 "Show"
             )
             ""
-            ToggleAddressVisibility
+            ToggleFundsVisibility
         , Html.div [ Attr.class "address-text" ]
-            [ Html.span [ Attr.class "address-label"] [ Html.text "Primary address: " ]
-            , Html.span [ Attr.class "address-value", Attr.id "primaryaddress"  ]
+            [ Html.span [ Attr.class "address-label" ] [ Html.text "Primary address: " ]
+            , Html.span [ Attr.class "address-value", Attr.id "primaryaddress" ]
                 [ Html.text
                     (if model.isAddressVisible then
                         model.primaryaddress
@@ -178,7 +178,14 @@ primaryAddressView model =
 xmrBalView : Model -> Html Msg
 xmrBalView model =
     Html.div [ Attr.id "xmrAvailableBalance", Attr.class "balance-text" ]
-        [ Html.text ("Available Balance: " ++ xmrAvailableBalanceAsString model.balances ++ " XMR") ]
+        [ Html.text
+            (if model.isAddressVisible then
+                "Available Balance: " ++ xmrAvailableBalanceAsString model.balances ++ " XMR"
+
+             else
+                Constants.blankAddress
+            )
+        ]
 
 
 errorView : Html Msg

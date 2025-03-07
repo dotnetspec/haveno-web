@@ -1,4 +1,4 @@
-module Extras.TestData exposing (unSuccessfullXmrPrimaryAddressFetch, encodeGrpcMessage, getBalancesEncodedResponse, getBalancesResponse, getSubAddressesEncodedResponse, getVersionBaseURL, placeholderUrl, primaryAddress, subAddress, successfullBalancesFetch, successfullSubAddressFetch, successfullVersionFetch, successfullXmrPrimaryAddressFetch, testBalanceInfo, toBytes, unsuccessfullVersionFetch, walletsBaseUrl)
+module Extras.TestData exposing (unsuccessfullBalancesFetch, unSuccessfullXmrPrimaryAddressFetch, encodeGrpcMessage, getBalancesEncodedResponse, getBalancesResponse, getSubAddressesEncodedResponse, getVersionBaseURL, placeholderUrl, primaryAddress, subAddress, successfullBalancesFetch, successfullSubAddressFetch, successfullVersionFetch, successfullXmrPrimaryAddressFetch, testBalanceInfo, toBytes, unsuccessfullVersionFetch, walletsBaseUrl)
 
 import Base64
 import Bytes exposing (Bytes, Endianness(..))
@@ -99,6 +99,12 @@ successfullBalancesFetch =
     Stub.for (Route.post <| walletsBaseUrl ++ "GetBalances")
         |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
         |> Stub.withBody (Stub.withBytes <| encodeGrpcMessage getBalancesEncodedResponse)
+
+unsuccessfullBalancesFetch : Stub.HttpResponseStub
+unsuccessfullBalancesFetch =
+    Stub.for (Route.post <| walletsBaseUrl ++ "GetBalances")
+        |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
+        |> Stub.withBody (Stub.withBytes <| BytesEncode.encode (BytesEncode.unsignedInt8 0))
 
 
 successfullXmrPrimaryAddressFetch : Stub.HttpResponseStub

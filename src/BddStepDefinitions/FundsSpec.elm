@@ -35,7 +35,7 @@ runSpecTests =
                     |> Spec.Setup.withLocation TestData.placeholderUrl
                 )
                 |> when "the user shows the hidden details"
-                    [ Spec.Command.send (Spec.Command.fake <| Funds.ToggleAddressVisibility) ]
+                    [ Spec.Command.send (Spec.Command.fake <| Funds.ToggleFundsVisibility) ]
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status

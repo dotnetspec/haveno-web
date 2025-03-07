@@ -319,7 +319,7 @@ update msg model =
             case model.page of
                 FundsPage fundsModel ->
                     case fundsMsg of
-                        Pages.Funds.ToggleAddressVisibility ->
+                        Pages.Funds.ToggleFundsVisibility ->
                             let
                                 newFundsModel =
                                     { fundsModel | primaryaddress = model.primaryaddress }
@@ -934,7 +934,7 @@ dashboardContainer : Model -> Html.Html Msg
 dashboardContainer model =
     Html.div [ Attr.class "dashboard-panel" ]
         [ Html.div [ Attr.class "dashboard-section" ]
-            [ Html.div [ Attr.class "large-text", Attr.id "xmrAvailableBalance" ] [ Html.text <| (gotBalancesReplyAsTypeAlias <| model.balances).available ++ " XMR" ]
+            [ Html.div [ Attr.class "large-text", Attr.id "dashboard-container-xmrAvailableBalance" ] [ Html.text <| (Pages.Funds.xmrAvailableBalanceAsString model.balances) ++ " XMR" ]
             , Html.div [ Attr.class "small-text" ] [ Html.text "Available Balance" ]
             ]
         , Html.div [ Attr.class "dashboard-section" ]

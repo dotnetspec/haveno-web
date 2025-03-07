@@ -268,7 +268,7 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario "12a: Show available, pending and reserved balances correctly in the UI"
+        , scenario "12a: Dashboard Container - Show available, pending and reserved balances correctly in the UI"
             (given
                 (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
                     |> Spec.Setup.withDocument Main.view
@@ -289,11 +289,11 @@ runSpecTests =
                     , it "displays the available balance correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id "xmrAvailableBalance" ]
+                            << by [ Spec.Markup.Selector.id "dashboard-container-xmrAvailableBalance" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "10000 XMR"
+                                        Claim.isStringContaining 1 "42.94967296 XMR"
                                 )
                         )
                     , it "displays the pending balance correctly"
@@ -318,7 +318,7 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario "13a: Balance and Address data is hidden initially on the Funds page"
+        , scenario "13a: Connection Issues: Balance and Address data is hidden initially on the Funds page"
             (given
                 (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
                     |> Spec.Setup.withDocument Main.view
@@ -329,10 +329,15 @@ runSpecTests =
                         , onUrlChange = Main.ChangedUrl
                         }
                     |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
-                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch
-                    , TestData.successfullVersionFetch
-                    , TestData.successfullBalancesFetch ]
+                    |> Stub.serve
+                        [ TestData.unSuccessfullXmrPrimaryAddressFetch
+                        , TestData.unsuccessfullVersionFetch
+                        , TestData.unsuccessfullBalancesFetch
+                        ]
                 )
+                |> when "we wait for possible server timeout"
+                    [ Spec.Time.tick 6000
+                    ]
                 |> when "the user opens the menu"
                     [ Spec.Command.send <|
                         Spec.Command.fake
@@ -349,7 +354,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
                                     Main.FundsPage <|
-                                        { fundsInitialModel | balances = TestData.testBalanceInfo, status = Funds.Loaded }
+                                        { fundsInitialModel | isAddressVisible = False, status = Funds.Loaded }
                                 )
                         )
                     , it "b. the menu should be closed"
@@ -367,39 +372,41 @@ runSpecTests =
                                         Claim.isStringContaining 1 "************************"
                                 )
                         )
-                    {- , it "displays the XMR avail balance correctly"
+                    , it "displays the XMR avail balance correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.id "xmrAvailableBalance" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "10000 XMR"
+                                        Claim.isStringContaining 1 "************************"
                                 )
                         )
-                    , it "displays the BTC balance correctly"
-                        (Spec.Markup.observeElement
-                            |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id "btcbalance" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "Available BTC Balance: 42.94967296 BTC"
-                                )
-                        )
-                    , it "displays the reservedOffer balance correctly"
-                        (Spec.Markup.observeElement
-                            |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id "reservedOfferBalance" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "5000 XMR"
-                                )
-                        ) -}
+
+                    {- , it "displays the BTC balance correctly"
+                           (Spec.Markup.observeElement
+                               |> Spec.Markup.query
+                               << by [ Spec.Markup.Selector.id "btcbalance" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Spec.Markup.text <|
+                                           Claim.isStringContaining 1 "Available BTC Balance: 42.94967296 BTC"
+                                   )
+                           )
+                       , it "displays the reservedOffer balance correctly"
+                           (Spec.Markup.observeElement
+                               |> Spec.Markup.query
+                               << by [ Spec.Markup.Selector.id "reservedOfferBalance" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Spec.Markup.text <|
+                                           Claim.isStringContaining 1 "5000 XMR"
+                                   )
+                           )
+                    -}
                     ]
             )
-        , scenario "13b: Balance and Address data is successfully passed down to Funds page and shown on button click"
+        , scenario "13b: No Connection Issues: Balance and Address data is successfully passed down to Funds page and shown on button click"
             (given
                 (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
                     |> Spec.Setup.withDocument Main.view
@@ -410,9 +417,11 @@ runSpecTests =
                         , onUrlChange = Main.ChangedUrl
                         }
                     |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
-                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch
-                    , TestData.successfullVersionFetch
-                    , TestData.successfullBalancesFetch ]
+                    |> Stub.serve
+                        [ TestData.successfullXmrPrimaryAddressFetch
+                        , TestData.successfullVersionFetch
+                        , TestData.successfullBalancesFetch
+                        ]
                 )
                 |> when "the user opens the menu"
                     [ Spec.Command.send <|
@@ -427,7 +436,7 @@ runSpecTests =
                 |> when "the user toggles the primary address button"
                     [ Spec.Command.send <|
                         Spec.Command.fake
-                            (Main.GotFundsMsg Funds.ToggleAddressVisibility)
+                            (Main.GotFundsMsg Funds.ToggleFundsVisibility)
                     ]
                 |> Spec.observeThat
                     [ it "a.is on the Funds page"
@@ -450,17 +459,29 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
-                                        Claim.isStringContaining 1 TestData.primaryAddress 
+                                        Claim.isStringContaining 1 TestData.primaryAddress
                                 )
                         )
-                    , it "displays the XMR avail balance correctly"
+                        
+                    , it "displays the dashboard container XMR avail balance correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "dashboard-container-xmrAvailableBalance" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "42.94967296 XMR"
+                                )
+                        )
+
+                    , it "displays the main page XMR avail balance correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.id "xmrAvailableBalance" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "10000 XMR"
+                                        Claim.isStringContaining 1 "42.94967296 XMR"
                                 )
                         )
                     , it "displays the BTC balance correctly"
@@ -498,7 +519,7 @@ runSpecTests =
                     |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
                     |> Stub.serve [ TestData.unsuccessfullVersionFetch ]
                 )
-                |> when "some time passes"
+                |> when "we wait for possible server timeout"
                     [ Spec.Time.tick 6000
                     ]
                 |> Spec.observeThat
