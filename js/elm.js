@@ -4622,9 +4622,9 @@ var _Http_toTask = F3(function(router, toTask, request)
 		$elm$core$Maybe$isJust(request.nb) && _Http_track(router, xhr, request.nb.a);
 
 		try {
-			xhr.open(request.pV, request.bK, true);
+			xhr.open(request.pV, request.dj, true);
 		} catch (e) {
-			return done($elm$http$Http$BadUrl_(request.bK));
+			return done($elm$http$Http$BadUrl_(request.dj));
 		}
 
 		_Http_configureRequest(xhr, request);
@@ -4641,7 +4641,7 @@ var _Http_toTask = F3(function(router, toTask, request)
 
 function _Http_configureRequest(xhr, request)
 {
-	for (var headers = request.bI; headers.b; headers = headers.b) // WHILE_CONS
+	for (var headers = request.bH; headers.b; headers = headers.b) // WHILE_CONS
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
@@ -4668,10 +4668,10 @@ function _Http_toResponse(toBody, xhr)
 function _Http_toMetadata(xhr)
 {
 	return {
-		bK: xhr.responseURL,
+		dj: xhr.responseURL,
 		uN: xhr.status,
 		uO: xhr.statusText,
-		bI: _Http_parseHeaders(xhr.getAllResponseHeaders())
+		bH: _Http_parseHeaders(xhr.getAllResponseHeaders())
 	};
 }
 
@@ -5596,22 +5596,6 @@ var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Pages$Accounts$init = function (_v0) {
 	return _Utils_Tuple2($author$project$Pages$Accounts$initialModel, $elm$core$Platform$Cmd$none);
 };
-var $author$project$Pages$Blank$GotInitialModel = $elm$core$Basics$identity;
-var $author$project$Pages$Blank$Blank = $elm$core$Basics$identity;
-var $author$project$Pages$Blank$Loaded = 0;
-var $author$project$Pages$Blank$initialModel = {
-	qQ: {tQ: 'Loading...'},
-	dI: 0,
-	va: 'Blank'
-};
-var $elm$core$Platform$Cmd$map = _Platform_map;
-var $author$project$Pages$Blank$init = function (_v0) {
-	return _Utils_Tuple2(
-		_Utils_update(
-			$author$project$Pages$Blank$initialModel,
-			{va: 'Haveno-Web'}),
-		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
-};
 var $author$project$Pages$Buy$GotInitialModel = $elm$core$Basics$identity;
 var $author$project$Pages$Buy$Buy = $elm$core$Basics$identity;
 var $author$project$Pages$Buy$Loading = 0;
@@ -5620,6 +5604,7 @@ var $author$project$Pages$Buy$initialModel = {
 	dI: 0,
 	va: 'Buy'
 };
+var $elm$core$Platform$Cmd$map = _Platform_map;
 var $author$project$Pages$Buy$init = function (_v0) {
 	return _Utils_Tuple2(
 		_Utils_update(
@@ -6397,12 +6382,6 @@ var $author$project$Main$toAccounts = F2(
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotAccountsMsg, cmd));
 	});
-var $author$project$Main$toBlank = F2(
-	function (model, _v0) {
-		var blankmodel = _v0.a;
-		var blankcmd = _v0.b;
-		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-	});
 var $author$project$Main$ConnectPage = function (a) {
 	return {$: 9, a: a};
 };
@@ -6567,10 +6546,10 @@ var $anmolitor$elm_grpc$Grpc$addHeader = F3(
 		return _Utils_update(
 			req,
 			{
-				bI: A2(
+				bH: A2(
 					$elm$core$List$cons,
 					A2($elm$http$Http$header, key, value),
-					req.bI)
+					req.bH)
 			});
 	});
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetBalancesRequest = {g: ''};
@@ -7556,7 +7535,7 @@ var $anmolitor$elm_grpc$Grpc$new = F2(
 	function (rpc, req) {
 		return {
 			si: req,
-			bI: _List_fromArray(
+			bH: _List_fromArray(
 				[
 					A2($elm$http$Http$header, 'accept', $anmolitor$elm_grpc$Grpc$grpcContentType)
 				]),
@@ -7852,7 +7831,7 @@ var $anmolitor$elm_grpc$Grpc$handleResponse = F2(
 						A2(
 							$elm$core$Maybe$andThen,
 							$elm$core$String$toInt,
-							A2($elm$core$Dict$get, 'grpc-status', metadata.bI))));
+							A2($elm$core$Dict$get, 'grpc-status', metadata.bH))));
 				if (!grpcStatus) {
 					return A2(
 						$elm$core$Result$fromMaybe,
@@ -7867,10 +7846,10 @@ var $anmolitor$elm_grpc$Grpc$handleResponse = F2(
 					var errMessage = A2(
 						$elm$core$Maybe$withDefault,
 						metadata.uO,
-						A2($elm$core$Dict$get, 'grpc-message', metadata.bI));
+						A2($elm$core$Dict$get, 'grpc-message', metadata.bH));
 					return $elm$core$Result$Err(
 						$anmolitor$elm_grpc$Grpc$BadStatus(
-							{sW: errMessage, cz: metadata, up: bytes, dI: grpcStatus}));
+							{sW: errMessage, cy: metadata, up: bytes, dI: grpcStatus}));
 				}
 			});
 		switch (httpResponse.$) {
@@ -8013,11 +7992,11 @@ var $elm$http$Http$cmdMap = F2(
 					r5: r.r5,
 					si: r.si,
 					sY: A2(_Http_mapExpect, func, r.sY),
-					bI: r.bI,
+					bH: r.bH,
 					pV: r.pV,
 					lF: r.lF,
 					nb: r.nb,
-					bK: r.bK
+					dj: r.dj
 				});
 		}
 	});
@@ -8040,12 +8019,12 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{r5: false, si: r.si, sY: r.sY, bI: r.bI, pV: r.pV, lF: r.lF, nb: r.nb, bK: r.bK}));
+			{r5: false, si: r.si, sY: r.sY, bH: r.bH, pV: r.pV, lF: r.lF, nb: r.nb, dj: r.dj}));
 };
 var $elm$http$Http$riskyRequest = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{r5: true, si: r.si, sY: r.sY, bI: r.bI, pV: r.pV, lF: r.lF, nb: r.nb, bK: r.bK}));
+			{r5: true, si: r.si, sY: r.sY, bH: r.bH, pV: r.pV, lF: r.lF, nb: r.nb, dj: r.dj}));
 };
 var $anmolitor$elm_grpc$Grpc$rpcPath = function (_v0) {
 	var service = _v0.uE;
@@ -8072,11 +8051,11 @@ var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 					$elm$http$Http$expectBytesResponse,
 					expect,
 					$anmolitor$elm_grpc$Grpc$handleResponse(rpc.sJ)),
-				bI: req.bI,
+				bH: req.bH,
 				pV: 'POST',
 				lF: req.lF,
 				nb: req.nb,
-				bK: _Utils_ap(
+				dj: _Utils_ap(
 					req.mJ,
 					$anmolitor$elm_grpc$Grpc$rpcPath(req.kD))
 			});
@@ -8227,10 +8206,10 @@ var $author$project$Main$toSupport = F2(
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotSupportMsg, cmd));
 	});
-var $author$project$Main$AccountsRoute = 8;
+var $author$project$Main$AccountsRoute = 7;
 var $author$project$Main$Buy = 5;
-var $author$project$Main$ConnectRoute = 10;
-var $author$project$Main$DonateRoute = 9;
+var $author$project$Main$ConnectRoute = 9;
+var $author$project$Main$DonateRoute = 8;
 var $author$project$Main$FundsRoute = 3;
 var $author$project$Main$Market = 6;
 var $author$project$Main$PortfolioRoute = 2;
@@ -8359,15 +8338,15 @@ var $author$project$Main$urlAsPageParser = $elm$url$Url$Parser$oneOf(
 			$elm$url$Url$Parser$s('market')),
 			A2(
 			$elm$url$Url$Parser$map,
-			8,
+			7,
 			$elm$url$Url$Parser$s('accounts')),
 			A2(
 			$elm$url$Url$Parser$map,
-			9,
+			8,
 			$elm$url$Url$Parser$s('donate')),
 			A2(
 			$elm$url$Url$Parser$map,
-			10,
+			9,
 			$elm$url$Url$Parser$s('connect'))
 		]));
 var $author$project$Main$updateUrl = F2(
@@ -8380,69 +8359,63 @@ var $author$project$Main$updateUrl = F2(
 		var _v0 = A2($elm$url$Url$Parser$parse, $author$project$Main$urlAsPageParser, urlMinusQueryStr);
 		if (!_v0.$) {
 			switch (_v0.a) {
-				case 8:
+				case 7:
 					var _v1 = _v0.a;
 					return A2(
 						$author$project$Main$toAccounts,
 						model,
 						$author$project$Pages$Accounts$init(0));
-				case 7:
-					var _v2 = _v0.a;
-					return A2(
-						$author$project$Main$toBlank,
-						model,
-						$author$project$Pages$Blank$init(0));
 				case 0:
-					var _v3 = _v0.a;
+					var _v2 = _v0.a;
 					return A2(
 						$author$project$Main$toSplash,
 						model,
 						$author$project$Pages$Splash$init(
 							{pj: model.bF, lE: $elm$core$Maybe$Nothing}));
 				case 1:
-					var _v4 = _v0.a;
+					var _v3 = _v0.a;
 					return A2(
 						$author$project$Main$toSell,
 						model,
 						$author$project$Pages$Sell$init(0));
 				case 2:
-					var _v5 = _v0.a;
+					var _v4 = _v0.a;
 					return A2(
 						$author$project$Main$toPortfolio,
 						model,
 						$author$project$Pages$Portfolio$init(0));
 				case 3:
-					var _v6 = _v0.a;
+					var _v5 = _v0.a;
 					return A2(
 						$author$project$Main$toFunds,
 						model,
 						$author$project$Pages$Funds$init(''));
 				case 4:
-					var _v7 = _v0.a;
+					var _v6 = _v0.a;
 					return A2(
 						$author$project$Main$toSupport,
 						model,
 						$author$project$Pages$Support$init(0));
 				case 5:
-					var _v8 = _v0.a;
+					var _v7 = _v0.a;
 					return A2(
 						$author$project$Main$toPricing,
 						model,
 						$author$project$Pages$Buy$init(0));
 				case 6:
-					var _v9 = _v0.a;
+					var _v8 = _v0.a;
 					return A2(
 						$author$project$Main$toMarket,
 						model,
 						$author$project$Pages$Market$init(0));
-				case 9:
-					var _v10 = _v0.a;
+				case 8:
+					var _v9 = _v0.a;
 					return A2(
 						$author$project$Main$toDonate,
 						model,
 						$author$project$Pages$Donate$init(0));
 				default:
-					var _v11 = _v0.a;
+					var _v10 = _v0.a;
 					return A2(
 						$author$project$Main$toConnect,
 						model,
@@ -10906,7 +10879,6 @@ var $elm$virtual_dom$VirtualDom$attribute = F2(
 	});
 var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
 var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
-var $author$project$Main$BlankRoute = 7;
 var $author$project$Main$isActive = function (_v0) {
 	var link = _v0.pL;
 	var page = _v0.N;
@@ -10928,71 +10900,68 @@ var $author$project$Main$isActive = function (_v0) {
 				var _v5 = _v1.a;
 				return false;
 			}
-		case 7:
-			var _v6 = _v1.a;
-			return false;
 		case 2:
 			if (_v1.b.$ === 2) {
-				var _v7 = _v1.a;
+				var _v6 = _v1.a;
 				return true;
 			} else {
-				var _v8 = _v1.a;
+				var _v7 = _v1.a;
 				return false;
 			}
 		case 3:
 			if (_v1.b.$ === 3) {
-				var _v9 = _v1.a;
+				var _v8 = _v1.a;
 				return true;
 			} else {
-				var _v10 = _v1.a;
+				var _v9 = _v1.a;
 				return false;
 			}
 		case 4:
 			if (_v1.b.$ === 4) {
-				var _v11 = _v1.a;
+				var _v10 = _v1.a;
 				return true;
 			} else {
-				var _v12 = _v1.a;
+				var _v11 = _v1.a;
 				return false;
 			}
 		case 5:
 			if (_v1.b.$ === 5) {
-				var _v13 = _v1.a;
+				var _v12 = _v1.a;
 				return true;
 			} else {
-				var _v14 = _v1.a;
+				var _v13 = _v1.a;
 				return false;
 			}
 		case 6:
 			if (_v1.b.$ === 6) {
-				var _v15 = _v1.a;
+				var _v14 = _v1.a;
 				return true;
 			} else {
+				var _v15 = _v1.a;
+				return false;
+			}
+		case 7:
+			if (_v1.b.$ === 7) {
 				var _v16 = _v1.a;
+				return true;
+			} else {
+				var _v17 = _v1.a;
 				return false;
 			}
 		case 8:
-			if (_v1.b.$ === 7) {
-				var _v17 = _v1.a;
-				return true;
-			} else {
-				var _v18 = _v1.a;
-				return false;
-			}
-		case 9:
 			if (_v1.b.$ === 8) {
-				var _v19 = _v1.a;
+				var _v18 = _v1.a;
 				return true;
 			} else {
-				var _v20 = _v1.a;
+				var _v19 = _v1.a;
 				return false;
 			}
 		default:
 			if (_v1.b.$ === 9) {
-				var _v21 = _v1.a;
+				var _v20 = _v1.a;
 				return true;
 			} else {
-				var _v22 = _v1.a;
+				var _v21 = _v1.a;
 				return false;
 			}
 	}
@@ -11041,8 +11010,8 @@ var $author$project$Main$topLogo = A2(
 var $author$project$Main$navLinks = function (page) {
 	var navLink = F2(
 		function (route, _v0) {
-			var url = _v0.bK;
-			var caption = _v0.bH;
+			var url = _v0.dj;
+			var caption = _v0.bX;
 			return A2(
 				$elm$html$Html$li,
 				_List_fromArray(
@@ -11096,44 +11065,40 @@ var $author$project$Main$navLinks = function (page) {
 					])),
 				A2(
 				navLink,
-				7,
-				{bH: '', bK: '/'}),
-				A2(
-				navLink,
 				3,
-				{bH: 'Funds', bK: 'funds'}),
+				{bX: 'Funds', dj: 'funds'}),
 				A2(
 				navLink,
 				6,
-				{bH: 'Market', bK: 'market'}),
+				{bX: 'Market', dj: 'market'}),
 				A2(
 				navLink,
 				4,
-				{bH: 'Support', bK: 'support'}),
+				{bX: 'Support', dj: 'support'}),
 				A2(
 				navLink,
 				1,
-				{bH: 'Sell', bK: 'sell'}),
+				{bX: 'Sell', dj: 'sell'}),
 				A2(
 				navLink,
 				5,
-				{bH: 'Buy', bK: 'buy'}),
+				{bX: 'Buy', dj: 'buy'}),
 				A2(
 				navLink,
 				2,
-				{bH: 'Portfolio', bK: 'portfolio'}),
+				{bX: 'Portfolio', dj: 'portfolio'}),
 				A2(
 				navLink,
-				8,
-				{bH: 'Accounts', bK: 'accounts'}),
-				A2(
-				navLink,
-				10,
-				{bH: 'Connect', bK: 'connect'}),
+				7,
+				{bX: 'Accounts', dj: 'accounts'}),
 				A2(
 				navLink,
 				9,
-				{bH: 'Donate', bK: 'donate'})
+				{bX: 'Connect', dj: 'connect'}),
+				A2(
+				navLink,
+				8,
+				{bX: 'Donate', dj: 'donate'})
 			]));
 	return links;
 };

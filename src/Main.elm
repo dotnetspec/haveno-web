@@ -1,8 +1,7 @@
-port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), only2Decimals, codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toBlank, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), only2Decimals, codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
--- Main loads Blank initially.
--- and uses a top level Model where data that needs to be persisted ACROSS pages is held
+
 -- NOTE: exposing Url exposes a different type of Url to
 -- just import Url
 
@@ -19,7 +18,7 @@ import Html.Events exposing (onClick)
 import Json.Decode as JD
 import Json.Encode as JE
 import Pages.Accounts
-import Pages.Blank
+
 import Pages.Buy
 import Pages.Connect exposing (Model)
 import Pages.Donate
@@ -515,7 +514,7 @@ type Route
     | Support
     | Buy
     | Market
-    | BlankRoute
+
     | AccountsRoute
     | DonateRoute
     | ConnectRoute
@@ -664,9 +663,7 @@ updateUrl url model =
             Pages.Accounts.init ()
                 |> toAccounts model
 
-        Just BlankRoute ->
-            Pages.Blank.init ()
-                |> toBlank model
+        
 
         Just SplashRoute ->
             Pages.Splash.init { time = Nothing, havenoVersion = model.version }
@@ -759,11 +756,6 @@ toSell model ( sell, cmd ) =
     )
 
 
-toBlank : Model -> ( Pages.Blank.Model, Cmd Pages.Blank.Msg ) -> ( Model, Cmd Msg )
-toBlank model ( blankmodel, blankcmd ) =
-    ( model
-    , Cmd.none
-    )
 
 
 toPortfolio : Model -> ( Pages.Portfolio.Model, Cmd Pages.Portfolio.Msg ) -> ( Model, Cmd Msg )
@@ -1101,7 +1093,7 @@ navLinks page =
                 [-- NOTE: img is now managed separately so is can be shrunk etc. withouth affecting the links
                 ]
                 [ Html.li [ Attr.class "logoInNavLinks" ] [ Html.a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "topLogoShrink" ] [ topLogo ] ]
-                , navLink BlankRoute { url = "/", caption = "" }
+                
                 , navLink FundsRoute { url = "funds", caption = "Funds" }
                 , navLink Market { url = "market", caption = "Market" }
                 , navLink Support { url = "support", caption = "Support" }
@@ -1173,8 +1165,7 @@ isActive { link, page } =
         ( SellRoute, _ ) ->
             False
 
-        ( BlankRoute, _ ) ->
-            False
+       
 
         ( PortfolioRoute, PortfolioPage _ ) ->
             True
