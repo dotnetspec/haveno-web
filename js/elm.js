@@ -10879,7 +10879,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.5.61')
+										$elm$html$Html$text('Version 0.5.62')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
@@ -11228,6 +11228,18 @@ var $author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias = function (reply)
 		un: $elm$core$String$fromInt(res1)
 	};
 };
+var $author$project$Main$only2Decimals = function (str) {
+	var _v0 = A2($elm$core$String$split, '.', str);
+	if ((_v0.b && _v0.b.b) && (!_v0.b.b.b)) {
+		var intPart = _v0.a;
+		var _v1 = _v0.b;
+		var decPart = _v1.a;
+		var truncatedDecPart = A2($elm$core$String$left, 2, decPart);
+		return intPart + ('.' + truncatedDecPart);
+	} else {
+		return str;
+	}
+};
 var $author$project$Main$dashboardContainer = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -11255,7 +11267,8 @@ var $author$project$Main$dashboardContainer = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								$author$project$Pages$Funds$xmrAvailableBalanceAsString(model.on) + ' XMR')
+								$author$project$Main$only2Decimals(
+									$author$project$Pages$Funds$xmrAvailableBalanceAsString(model.on)) + ' XMR')
 							])),
 						A2(
 						$elm$html$Html$div,

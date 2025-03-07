@@ -178,6 +178,7 @@ runSpecTests =
                         )
                     ]
             )
+             
 
         -- NOTE: Uncomment these tests one at a time to maintain managability
         {-
@@ -433,3 +434,4 @@ runSpecTests =
 main : Program Spec.Flags (Spec.Model Funds.Model Funds.Msg) (Spec.Msg Funds.Msg)
 main =
     BddStepDefinitions.Runner.browserProgram [ runSpecTests ]
+   

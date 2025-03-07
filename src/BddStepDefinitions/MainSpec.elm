@@ -293,7 +293,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "42.94967296 XMR"
+                                        Claim.isStringContaining 1 "42.94 XMR"
                                 )
                         )
                     , it "displays the pending balance correctly"
@@ -462,18 +462,6 @@ runSpecTests =
                                         Claim.isStringContaining 1 TestData.primaryAddress
                                 )
                         )
-                        
-                    , it "displays the dashboard container XMR avail balance correctly"
-                        (Spec.Markup.observeElement
-                            |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id "dashboard-container-xmrAvailableBalance" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "42.94967296 XMR"
-                                )
-                        )
-
                     , it "displays the main page XMR avail balance correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query

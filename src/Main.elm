@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toBlank, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), only2Decimals, codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toBlank, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- Main loads Blank initially.
@@ -885,15 +885,27 @@ gotAvailableBalances =
 
 
 -- NAV: Helper functions
--- TODO: Improve the validation here:
+
+only2Decimals : String -> String
+only2Decimals str =
+    case String.split "." str of
+        [ intPart, decPart ] ->
+            let
+                truncatedDecPart =
+                    String.left 2 decPart
+            in
+            intPart ++ "." ++ truncatedDecPart
+
+        _ ->
+            str
+
 
 
 startTimeout : Cmd Msg
 startTimeout =
     Process.sleep (5 * 1000) |> Task.perform (\_ -> Timeout)
 
-
-isXMRWalletConnected : Model -> Bool
+-- TODO: Improve the validation here:isXMRWalletConnected : Model -> Bool
 isXMRWalletConnected model =
     if not <| model.primaryaddress == "" then
         True
@@ -934,7 +946,7 @@ dashboardContainer : Model -> Html.Html Msg
 dashboardContainer model =
     Html.div [ Attr.class "dashboard-panel" ]
         [ Html.div [ Attr.class "dashboard-section" ]
-            [ Html.div [ Attr.class "large-text", Attr.id "dashboard-container-xmrAvailableBalance" ] [ Html.text <| (Pages.Funds.xmrAvailableBalanceAsString model.balances) ++ " XMR" ]
+            [ Html.div [ Attr.class "large-text", Attr.id "dashboard-container-xmrAvailableBalance" ] [ Html.text <| (only2Decimals <| Pages.Funds.xmrAvailableBalanceAsString model.balances) ++ " XMR" ]
             , Html.div [ Attr.class "small-text" ] [ Html.text "Available Balance" ]
             ]
         , Html.div [ Attr.class "dashboard-section" ]
@@ -1130,7 +1142,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.5.61" ]
+                , Html.p [] [ Html.text "Version 0.5.62" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text
