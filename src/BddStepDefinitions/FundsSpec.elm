@@ -96,6 +96,11 @@ runSpecTests =
                     |> Spec.Setup.withUpdate Funds.update
                     |> Spec.Setup.withLocation TestData.placeholderUrl
                 )
+                |> when "the user toggles the 'show' button"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            ( Funds.ToggleFundsVisibility)
+                    ]
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status

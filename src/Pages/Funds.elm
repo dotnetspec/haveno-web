@@ -148,6 +148,8 @@ custodialFundsView model =
         ]
 
 
+
+-- TODO: Align with other data views
 primaryAddressView : Model -> Html Msg
 primaryAddressView model =
     Html.div [ Attr.class "address-container" ]
@@ -177,14 +179,17 @@ primaryAddressView model =
 
 xmrBalView : Model -> Html Msg
 xmrBalView model =
-    Html.div [ Attr.id "xmrAvailableBalance", Attr.class "balance-text" ]
-        [ Html.text
-            (if model.isAddressVisible then
-                "Available Balance: " ++ xmrAvailableBalanceAsString model.balances ++ " XMR"
+    Html.div [Attr.class "balance-text" ]
+        [ Html.span [ Attr.class "address-label" ] [ Html.text "Available Balance: " ]
+        , Html.span [ Attr.class "address-value",  Attr.id "xmrAvailableBalance" ]
+            [ Html.text
+                (if model.isAddressVisible then
+                    xmrAvailableBalanceAsString model.balances ++ " XMR"
 
-             else
-                Constants.blankAddress
-            )
+                 else
+                    Constants.blankAddress
+                )
+            ]
         ]
 
 
