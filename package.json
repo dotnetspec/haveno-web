@@ -9,7 +9,7 @@
     "unit": "elm-test 'src/**/Tests/Test*.elm' --fuzz 100",
     "spec": "npx elm-spec-runner --specRoot ./",
     "review": "elm-review --fix",
-    "vitest": "vitest",
+    "vitest": "vitest --no-watch",
     "debug": "elm make src/Main.elm --output=js/elm.js --debug",
     "optimize": "elm make src/Main.elm --output=js/elm.js --optimize",
     "mth": "./terminals/localNet_2_User.sh",
@@ -23,12 +23,12 @@
     "build": "parcel build",
     "serve": "parcel serve",
     "plw": "playwright show-report",
-    "obs": "yarn optimize &&  yarn build && yarn review && yarn serve",
-    "dbs": "yarn debug &&  yarn build && yarn review && yarn serve",
-    "relns": "yarn optimize &&  yarn unit && yarn spec && yarn review && yarn build",
-    "relns+plw": "yarn optimize && yarn unit && yarn spec && yarn review && yarn build && yarn plw",
-    "relnoe": "yarn optimize && yarn unit && yarn spec && yarn review && yarn build && yarn serve",
-    "rel": "yarn optimize && yarn eb && yarn unit && yarn spec && yarn review && yarn build && yarn serve"
+    "obs": "yarn optimize &&  yarn build && yarn review && yarn vitest && yarn serve",
+    "dbs": "yarn debug &&  yarn build && yarn review && yarn vitest && yarn serve",
+    "relns": "yarn optimize &&  yarn unit && yarn spec && yarn review && yarn vitest && yarn build",
+    "relns+plw": "yarn optimize && yarn unit && yarn spec && yarn review && yarn vitest && yarn build && yarn plw",
+    "relnoe": "yarn optimize && yarn unit && yarn spec && yarn review && yarn vitest && yarn build && yarn serve",
+    "rel": "yarn optimize && yarn eb && yarn unit && yarn spec && yarn review && yarn vitest && yarn build && yarn serve"
   },
   "husky": {
     "hooks": {
