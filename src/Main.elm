@@ -1,7 +1,6 @@
-port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), only2Decimals, codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, only2Decimals, receiveMessageFromJs, sendMessageToJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
-
 -- NOTE: exposing Url exposes a different type of Url to
 -- just import Url
 
@@ -18,7 +17,6 @@ import Html.Events exposing (onClick)
 import Json.Decode as JD
 import Json.Encode as JE
 import Pages.Accounts
-
 import Pages.Buy
 import Pages.Connect exposing (Model)
 import Pages.Donate
@@ -514,7 +512,6 @@ type Route
     | Support
     | Buy
     | Market
-
     | AccountsRoute
     | DonateRoute
     | ConnectRoute
@@ -663,8 +660,6 @@ updateUrl url model =
             Pages.Accounts.init ()
                 |> toAccounts model
 
-        
-
         Just SplashRoute ->
             Pages.Splash.init { time = Nothing, havenoVersion = model.version }
                 |> toSplash model
@@ -741,7 +736,7 @@ toSplash model ( dashboard, cmd ) =
         , gotAvailableBalances
         , Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress
         , startTimeout
-        , sendMessageToJs "msgFromElm"
+        , notifyJsReady
         ]
     )
 
@@ -754,8 +749,6 @@ toSell model ( sell, cmd ) =
       -}
     , Cmd.map GotSellMsg cmd
     )
-
-
 
 
 toPortfolio : Model -> ( Pages.Portfolio.Model, Cmd Pages.Portfolio.Msg ) -> ( Model, Cmd Msg )
@@ -801,7 +794,8 @@ toAccounts : Model -> ( Pages.Accounts.Model, Cmd Pages.Accounts.Msg ) -> ( Mode
 toAccounts model ( accounts, cmd ) =
     ( { model | page = AccountsPage { accounts | balances = model.balances } }
       -- NOTE: Cmd.map is a way to manipulate the result of a command
-      -- WARN: sendMessageToJs "msgFromElm" is redundant here but if it isn't actually used somewhere the port won't be recognized on document load
+      -- WARN: sendMessageToJs "msgFromElm" is redundant here
+      -- but if it isn't actually used somewhere the port won't be recognized on document load
     , Cmd.map GotAccountsMsg cmd
     )
 
@@ -878,6 +872,7 @@ gotAvailableBalances =
 
 -- NAV: Helper functions
 
+
 only2Decimals : String -> String
 only2Decimals str =
     case String.split "." str of
@@ -892,12 +887,15 @@ only2Decimals str =
             str
 
 
-
 startTimeout : Cmd Msg
 startTimeout =
     Process.sleep (5 * 1000) |> Task.perform (\_ -> Timeout)
 
+
+
 -- TODO: Improve the validation here:isXMRWalletConnected : Model -> Bool
+
+
 isXMRWalletConnected : { a | primaryaddress : String } -> Bool
 isXMRWalletConnected model =
     if not <| model.primaryaddress == "" then
@@ -1093,7 +1091,6 @@ navLinks page =
                 [-- NOTE: img is now managed separately so is can be shrunk etc. withouth affecting the links
                 ]
                 [ Html.li [ Attr.class "logoInNavLinks" ] [ Html.a [ Attr.href "https://haveno-web-dev.netlify.app/", Attr.class "topLogoShrink" ] [ topLogo ] ]
-                
                 , navLink FundsRoute { url = "funds", caption = "Funds" }
                 , navLink Market { url = "market", caption = "Market" }
                 , navLink Support { url = "support", caption = "Support" }
@@ -1111,15 +1108,19 @@ navLinks page =
 
 -- NAV: Cmd Msgs
 -- these might e.g. be sent to ports etc.
-{- notifyJsReady : Cmd Msg
-   notifyJsReady =
-       sendMessageToJs "ElmReady"
 
 
-   logOutUser : Cmd Msg
-   logOutUser =
-       sendMessageToJs "logOut"
--}
+notifyJsReady : Cmd Msg
+notifyJsReady =
+    sendMessageToJs "ElmReady"
+
+
+encryptionMsg : Cmd Msg
+encryptionMsg =
+    sendMessageToJs "encryptionMsg"
+
+
+
 -- NAV: Main Persistent
 
 
@@ -1164,8 +1165,6 @@ isActive { link, page } =
 
         ( SellRoute, _ ) ->
             False
-
-       
 
         ( PortfolioRoute, PortfolioPage _ ) ->
             True

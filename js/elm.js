@@ -8123,6 +8123,7 @@ var $author$project$Comms$CustomGrpc$gotPrimaryAddress = A2(
 		A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getXmrPrimaryAddress, $author$project$Proto$Io$Haveno$Protobuffer$defaultGetXmrPrimaryAddressRequest)));
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Main$sendMessageToJs = _Platform_outgoingPort('sendMessageToJs', $elm$json$Json$Encode$string);
+var $author$project$Main$notifyJsReady = $author$project$Main$sendMessageToJs('ElmReady');
 var $author$project$Main$GotVersion = function (a) {
 	return {$: 13, a: a};
 };
@@ -8185,7 +8186,7 @@ var $author$project$Main$toSplash = F2(
 						$author$project$Main$gotAvailableBalances,
 						A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Main$GotXmrPrimaryAddress, $author$project$Comms$CustomGrpc$gotPrimaryAddress),
 						$author$project$Main$startTimeout,
-						$author$project$Main$sendMessageToJs('msgFromElm')
+						$author$project$Main$notifyJsReady
 					])));
 	});
 var $author$project$Main$GotSupportMsg = function (a) {
