@@ -1,25 +1,45 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { encrypt, decrypt } from '../encryption.js';
 
-describe('Encryption', () => {
-    it('should encrypt and decrypt text correctly', () => {
-        const text = 'Sensitive Data';
-        const encryptedData = encrypt(text);
-        const decryptedText = decrypt(encryptedData);
-        expect(decryptedText).toBe(text);
+describe('Web Crypto API - AES Encryption', () => {
+    const password = 'test-password';
+    const message = 'Sensitive bank details';
+
+    beforeEach(() => {
+        localStorage.clear(); // Reset storage before each test
     });
 
-    it('should return different encrypted data for the same text', () => {
-        const text = 'Sensitive Data';
-        const encryptedData1 = encrypt(text);
-        const encryptedData2 = encrypt(text);
-        expect(encryptedData1.encrypted).not.toBe(encryptedData2.encrypted);
+    it('should encrypt and decrypt the message correctly', async () => {
+        await encrypt(message, password);
+        const decrypted = await decrypt(password);
+        expect(decrypted).toBe(message);
     });
 
-    it('should throw an error if decryption fails', () => {
-        const text = 'Sensitive Data';
-        const encryptedData = encrypt(text);
-        encryptedData.encrypted = 'corrupted data';
-        expect(() => decrypt(encryptedData)).toThrow();
+    it('should fail to decrypt with a wrong password', async () => {
+        await encrypt(message, password);
+        const decrypted = await decrypt('wrong-password');
+        expect(decrypted).not.toBe(message);
+        expect(decrypted).toBeNull();
+    });
+
+    it('should generate different encrypted outputs for the same message', async () => {
+        await encrypt(message, password);
+        const firstEncryption = localStorage.getItem('secureMessage');
+
+        await encrypt(message, password);
+        const secondEncryption = localStorage.getItem('secureMessage');
+
+        expect(firstEncryption).not.toBe(secondEncryption);
+    });
+
+    it('should store encrypted data in localStorage', async () => {
+        await encrypt(message, password);
+        const storedData = localStorage.getItem('secureMessage');
+        expect(storedData).not.toBeNull();
+    });
+
+    it('should return null if no message is stored', async () => {
+        const decrypted = await decrypt(password);
+        expect(decrypted).toBeNull();
     });
 });

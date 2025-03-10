@@ -1,23 +1,73 @@
-import crypto from 'crypto';
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
 
-const algorithm = 'aes-256-cbc';
-const key = crypto.randomBytes(32);
-
-export function encrypt(text) {
-    const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    let encrypted = cipher.update(text, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return {
-        iv: iv.toString('hex'),
-        encrypted: encrypted
-    };
+async function getKeyMaterial(password) {
+    const encodedPassword = encoder.encode(password);
+    return crypto.subtle.importKey(
+        "raw",
+        encodedPassword,
+        "PBKDF2",
+        false,
+        ["deriveKey"]
+    );
 }
 
-export function decrypt(encryptedData) {
-    const iv = Buffer.from(encryptedData.iv, 'hex');
-    const decipher = crypto.createDecipheriv(algorithm, key, iv);
-    let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
+async function deriveKey(keyMaterial, salt) {
+    return crypto.subtle.deriveKey(
+        {
+            name: "PBKDF2",
+            salt: salt,
+            iterations: 100000,
+            hash: "SHA-256"
+        },
+        keyMaterial,
+        { name: "AES-GCM", length: 256 },
+        false,
+        ["encrypt", "decrypt"]
+    );
+}
+
+export async function encrypt(message, password) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const keyMaterial = await getKeyMaterial(password);
+    const key = await deriveKey(keyMaterial, salt);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const encodedMessage = encoder.encode(message);
+    const encrypted = await crypto.subtle.encrypt(
+        {
+            name: "AES-GCM",
+            iv: iv
+        },
+        key,
+        encodedMessage
+    );
+    const encryptedData = {
+        iv: Array.from(iv),
+        salt: Array.from(salt),
+        data: Array.from(new Uint8Array(encrypted))
+    };
+    localStorage.setItem('secureMessage', JSON.stringify(encryptedData));
+}
+
+export async function decrypt(password) {
+    const encryptedData = JSON.parse(localStorage.getItem('secureMessage'));
+    if (!encryptedData) return null;
+    const salt = new Uint8Array(encryptedData.salt);
+    const iv = new Uint8Array(encryptedData.iv);
+    const data = new Uint8Array(encryptedData.data);
+    const keyMaterial = await getKeyMaterial(password);
+    const key = await deriveKey(keyMaterial, salt);
+    try {
+        const decrypted = await crypto.subtle.decrypt(
+            {
+                name: "AES-GCM",
+                iv: iv
+            },
+            key,
+            data
+        );
+        return decoder.decode(decrypted);
+    } catch (e) {
+        return null;
+    }
 }

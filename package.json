@@ -49,8 +49,7 @@
     "buffer": "^5.5.0||^6.0.0",
     "core-js": "^3.39.0",
     "elm-json": "^0.2.13",
-    "elm-language-server": "^0.1.1",
-    "jsdom": "^25.0.1"
+    "elm-language-server": "^0.1.1"
   },
   "devDependencies": {
     "@parcel/transformer-elm": "2.13.0",
@@ -60,6 +59,7 @@
     "elm-review": "^2.13.2",
     "elm-spec-runner": "^2.5.1",
     "husky": "^9.1.4",
+    "jsdom": "^26.0.0",
     "lint-staged": "^15.2.9",
     "madge": "^8.0.0",
     "parcel": "^2.12.0",
