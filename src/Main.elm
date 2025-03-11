@@ -994,6 +994,7 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ receiveMessageFromJs Recv
+        
         ]
 
 
@@ -1115,9 +1116,7 @@ notifyJsReady =
     sendMessageToJs "ElmReady"
 
 
-encryptionMsg : Cmd Msg
-encryptionMsg =
-    sendMessageToJs "encryptionMsg"
+
 
 
 

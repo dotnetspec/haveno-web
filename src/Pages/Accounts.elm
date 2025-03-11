@@ -1,4 +1,4 @@
-module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, update, view)
+port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), encryptedMsg, errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, update, view)
 
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
@@ -68,6 +68,7 @@ type View
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
+    --, Cmd.batch [encryptionMsg (buildEncryptedMsgStr BTC "")  ]
     , Cmd.none
     )
 
@@ -85,6 +86,7 @@ type Msg
     | UpdateNewBTCAddress String
 
 
+-- NAV: Types
 type CryptoAccount
     = BTC
 
@@ -97,7 +99,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         AddNewCryptoAccount cryptoAcct ->
-            ( { model | currentView = CryptoAccounts, cryptoAccountType = cryptoAcct }, Cmd.none )
+            ( { model | currentView = CryptoAccounts, cryptoAccountType = cryptoAcct }, encryptionMsg (buildEncryptedMsgStr cryptoAcct model.newBTCAddress) )
 
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
@@ -300,6 +302,15 @@ gotNewSubAddress =
 
 -- NAV: Helper functions
 
+buildEncryptedMsgStr : CryptoAccount -> String -> String
+buildEncryptedMsgStr cryptoAccount publicKey =
+    "encryptionMsg~^&" ++ (toStringCryptoAccount cryptoAccount) ++ ("~^&" ++ publicKey)
+
+toStringCryptoAccount : CryptoAccount -> String
+toStringCryptoAccount cryptoAccout = 
+    case cryptoAccout of
+        BTC -> "BTC"
+
 
 formatBalance : { higher : Int, lower : Int } -> String
 formatBalance int64 =
@@ -340,3 +351,15 @@ formatBalance int64 =
             toFloat (round (xmrAmount * scale)) / scale
     in
     String.fromFloat roundedXmr
+
+
+encryptionMsg : String -> Cmd Msg
+encryptionMsg msgString =
+    encryptedMsg msgString
+
+
+
+-- NAV: Ports
+
+
+port encryptedMsg : String -> Cmd msg

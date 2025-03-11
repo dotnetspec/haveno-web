@@ -4074,9 +4074,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.kj === next.kj
-							&& curr.mJ === next.mJ
-							&& curr.kc.a === next.kc.a
+							&& curr.kk === next.kk
+							&& curr.mK === next.mK
+							&& curr.kd.a === next.kd.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4645,7 +4645,7 @@ function _Http_configureRequest(xhr, request)
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
-	xhr.timeout = request.lF.a || 0;
+	xhr.timeout = request.lG.a || 0;
 	xhr.responseType = request.sY.d;
 	xhr.withCredentials = request.r5;
 }
@@ -5287,7 +5287,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {s4: fragment, mJ: host, ub: path, kc: port_, kj: protocol, ui: query};
+		return {s4: fragment, mK: host, ub: path, kd: port_, kk: protocol, ui: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5578,12 +5578,12 @@ var $author$project$Pages$Accounts$Loaded = 0;
 var $author$project$Pages$Accounts$ManageAccounts = 0;
 var $author$project$Pages$Accounts$initialModel = {
 	on: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
-	mC: 0,
+	mD: 0,
 	sG: 0,
 	oX: _List_Nil,
 	pB: false,
-	mM: _List_Nil,
-	mU: '',
+	mN: _List_Nil,
+	jL: '',
 	qi: 'Accounts',
 	f_: '',
 	dI: 0,
@@ -5612,7 +5612,7 @@ var $author$project$Pages$Buy$init = function (_v0) {
 			{va: 'Haveno-Web Buy'}),
 		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
-var $author$project$Pages$Connect$initialModel = {eW: 0, e$: '', tg: false, mR: 'node.haveno.network:17750', f_: '', nM: false, mY: false, vh: false};
+var $author$project$Pages$Connect$initialModel = {eW: 0, e$: '', tg: false, mS: 'node.haveno.network:17750', f_: '', nM: false, mY: false, vh: false};
 var $author$project$Pages$Connect$init = function (_v0) {
 	return _Utils_Tuple2($author$project$Pages$Connect$initialModel, $elm$core$Platform$Cmd$none);
 };
@@ -6931,7 +6931,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$unknownFieldDecoder = function
 };
 var $eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage = F2(
 	function (width, state) {
-		return (state.dl <= 0) ? ($elm$core$Set$isEmpty(state.ky) ? $elm$bytes$Bytes$Decode$succeed(
+		return (state.dl <= 0) ? ($elm$core$Set$isEmpty(state.kz) ? $elm$bytes$Bytes$Decode$succeed(
 			$elm$bytes$Bytes$Decode$Done(
 				_Utils_Tuple2(width, state.tN))) : $elm$bytes$Bytes$Decode$fail) : A2(
 			$elm$bytes$Bytes$Decode$andThen,
@@ -6953,7 +6953,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage = F2(
 									state,
 									{
 										tN: fn(state.tN),
-										ky: A2($elm$core$Set$remove, fieldNumber, state.ky),
+										kz: A2($elm$core$Set$remove, fieldNumber, state.kz),
 										dl: (state.dl - usedBytes) - n
 									}));
 						},
@@ -7004,7 +7004,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$message = F2(
 				var width = wireType.a;
 				return A2(
 					$elm$bytes$Bytes$Decode$loop,
-					{nl: dict, tN: v, ky: requiredSet, dl: width},
+					{nl: dict, tN: v, kz: requiredSet, dl: width},
 					$eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage(width));
 			} else {
 				return $elm$bytes$Bytes$Decode$fail;
@@ -7539,10 +7539,10 @@ var $anmolitor$elm_grpc$Grpc$new = F2(
 				[
 					A2($elm$http$Http$header, 'accept', $anmolitor$elm_grpc$Grpc$grpcContentType)
 				]),
-			mJ: '',
+			mK: '',
 			mZ: false,
-			kD: rpc,
-			lF: $elm$core$Maybe$Nothing,
+			kE: rpc,
+			lG: $elm$core$Maybe$Nothing,
 			nb: $elm$core$Maybe$Nothing
 		};
 	});
@@ -7551,7 +7551,7 @@ var $anmolitor$elm_grpc$Grpc$setHost = F2(
 		var req = _v0;
 		return _Utils_update(
 			req,
-			{mJ: host});
+			{mK: host});
 	});
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -7994,7 +7994,7 @@ var $elm$http$Http$cmdMap = F2(
 					sY: A2(_Http_mapExpect, func, r.sY),
 					bH: r.bH,
 					pV: r.pV,
-					lF: r.lF,
+					lG: r.lG,
 					nb: r.nb,
 					dj: r.dj
 				});
@@ -8019,12 +8019,12 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{r5: false, si: r.si, sY: r.sY, bH: r.bH, pV: r.pV, lF: r.lF, nb: r.nb, dj: r.dj}));
+			{r5: false, si: r.si, sY: r.sY, bH: r.bH, pV: r.pV, lG: r.lG, nb: r.nb, dj: r.dj}));
 };
 var $elm$http$Http$riskyRequest = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{r5: true, si: r.si, sY: r.sY, bH: r.bH, pV: r.pV, lF: r.lF, nb: r.nb, dj: r.dj}));
+			{r5: true, si: r.si, sY: r.sY, bH: r.bH, pV: r.pV, lG: r.lG, nb: r.nb, dj: r.dj}));
 };
 var $anmolitor$elm_grpc$Grpc$rpcPath = function (_v0) {
 	var service = _v0.uE;
@@ -8036,7 +8036,7 @@ var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 	function (expect, _v0) {
 		var req = _v0;
 		var toHttpRequest = req.mZ ? $elm$http$Http$riskyRequest : $elm$http$Http$request;
-		var _v1 = req.kD;
+		var _v1 = req.kE;
 		var rpc = _v1;
 		var body = A2(
 			$elm$http$Http$bytesBody,
@@ -8053,11 +8053,11 @@ var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 					$anmolitor$elm_grpc$Grpc$handleResponse(rpc.sJ)),
 				bH: req.bH,
 				pV: 'POST',
-				lF: req.lF,
+				lG: req.lG,
 				nb: req.nb,
 				dj: _Utils_ap(
-					req.mJ,
-					$anmolitor$elm_grpc$Grpc$rpcPath(req.kD))
+					req.mK,
+					$anmolitor$elm_grpc$Grpc$rpcPath(req.kE))
 			});
 	});
 var $author$project$Main$gotAvailableBalances = function () {
@@ -8372,7 +8372,7 @@ var $author$project$Main$updateUrl = F2(
 						$author$project$Main$toSplash,
 						model,
 						$author$project$Pages$Splash$init(
-							{pj: model.bF, lE: $elm$core$Maybe$Nothing}));
+							{pj: model.bF, lF: $elm$core$Maybe$Nothing}));
 				case 1:
 					var _v3 = _v0.a;
 					return A2(
@@ -8427,7 +8427,7 @@ var $author$project$Main$updateUrl = F2(
 				$author$project$Main$toSplash,
 				model,
 				$author$project$Pages$Splash$init(
-					{pj: model.bF, lE: $elm$core$Maybe$Nothing}));
+					{pj: model.bF, lF: $elm$core$Maybe$Nothing}));
 		}
 	});
 var $elm$json$Json$Decode$andThen = _Json_andThen;
@@ -8470,7 +8470,7 @@ var $author$project$Main$init = F3(
 			N: $author$project$Main$AccountsPage($author$project$Pages$Accounts$initialModel),
 			f_: '',
 			dI: 0,
-			lE: $elm$time$Time$millisToPosix(0),
+			lF: $elm$time$Time$millisToPosix(0),
 			rr: $elm$core$Maybe$Nothing,
 			bF: 'No Haveno version available',
 			rW: $elm$core$Maybe$Nothing
@@ -8515,7 +8515,7 @@ var $elm$url$Url$addPrefixed = F3(
 	});
 var $elm$url$Url$toString = function (url) {
 	var http = function () {
-		var _v0 = url.kj;
+		var _v0 = url.kk;
 		if (!_v0) {
 			return 'http://';
 		} else {
@@ -8533,12 +8533,23 @@ var $elm$url$Url$toString = function (url) {
 			_Utils_ap(
 				A2(
 					$elm$url$Url$addPort,
-					url.kc,
-					_Utils_ap(http, url.mJ)),
+					url.kd,
+					_Utils_ap(http, url.mK)),
 				url.ub)));
 };
 var $author$project$Pages$Accounts$CryptoAccounts = 2;
 var $author$project$Pages$Accounts$Errored = 1;
+var $author$project$Pages$Accounts$toStringCryptoAccount = function (cryptoAccout) {
+	return 'BTC';
+};
+var $author$project$Pages$Accounts$buildEncryptedMsgStr = F2(
+	function (cryptoAccount, publicKey) {
+		return 'encryptionMsg~^&' + ($author$project$Pages$Accounts$toStringCryptoAccount(cryptoAccount) + ('~^&' + publicKey));
+	});
+var $author$project$Pages$Accounts$encryptedMsg = _Platform_outgoingPort('encryptedMsg', $elm$json$Json$Encode$string);
+var $author$project$Pages$Accounts$encryptionMsg = function (msgString) {
+	return $author$project$Pages$Accounts$encryptedMsg(msgString);
+};
 var $author$project$Pages$Accounts$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -8547,8 +8558,9 @@ var $author$project$Pages$Accounts$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{mC: cryptoAcct, sG: 2}),
-					$elm$core$Platform$Cmd$none);
+						{mD: cryptoAcct, sG: 2}),
+					$author$project$Pages$Accounts$encryptionMsg(
+						A2($author$project$Pages$Accounts$buildEncryptedMsgStr, cryptoAcct, model.jL)));
 			case 1:
 				if (!msg.a.$) {
 					var primaryAddresponse = msg.a.a;
@@ -8606,7 +8618,7 @@ var $author$project$Pages$Accounts$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{mU: address}),
+						{jL: address}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -8657,7 +8669,7 @@ var $author$project$Pages$Connect$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{e$: '', mR: model.e$}),
+						{e$: '', mS: model.e$}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -9201,7 +9213,7 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 				_List_fromArray(
 					[
 						function () {
-						var _v0 = model.mC;
+						var _v0 = model.mD;
 						return $elm$html$Html$text('BTC');
 					}()
 					])),
@@ -9296,7 +9308,7 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 										$elm$html$Html$Attributes$id('account-name-input'),
 										$elm$html$Html$Attributes$type_('text'),
 										$elm$html$Html$Attributes$readonly(true),
-										$elm$html$Html$Attributes$value('BTC: ' + model.mU)
+										$elm$html$Html$Attributes$value('BTC: ' + model.jL)
 									]),
 								_List_Nil)
 							]))
@@ -9368,7 +9380,7 @@ var $author$project$Pages$Accounts$existingCryptoAccountsView = function (model)
 					[
 						$elm$html$Html$Attributes$id('accounts-listOfExistingCryptoAccounts')
 					]),
-				$elm$core$List$isEmpty(model.mM) ? _List_fromArray(
+				$elm$core$List$isEmpty(model.mN) ? _List_fromArray(
 					[
 						A2(
 						$elm$html$Html$div,
@@ -9394,7 +9406,7 @@ var $author$project$Pages$Accounts$existingCryptoAccountsView = function (model)
 									$elm$html$Html$text(account)
 								]));
 					},
-					model.mM))
+					model.mN))
 			]));
 };
 var $elm$html$Html$h4 = _VirtualDom_node('h4');
@@ -9793,7 +9805,7 @@ var $author$project$Pages$Connect$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text(model.mR)
+								$elm$html$Html$text(model.mS)
 							]))
 					])) : A2(
 				$elm$html$Html$p,

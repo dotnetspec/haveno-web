@@ -14,6 +14,8 @@ import Spec.Markup.Event
 import Spec.Markup.Selector exposing (by)
 import Spec.Observer as Observer
 import Spec.Setup
+import Spec.Command
+import Spec.Port
 
 
 
@@ -300,6 +302,36 @@ runSpecTests =
                                     Spec.Markup.text <|
                                         Claim.isStringContaining 1 "Account 2"
                                 )
+                        )
+                    ]
+            )
+            ,scenario "User clicks SAVE NEW BTC ACCOUNT button and sends the expected message to the port"
+            (given
+                (Spec.Setup.initWithModel accountsInitialModel
+                    |> Spec.Setup.withView Accounts.view
+                    |> Spec.Setup.withUpdate Accounts.update
+                    |> Spec.Setup.withLocation placeholderUrl
+                )
+                |> when "User clicks Cryptocurrency Accounts"
+                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
+                    , Spec.Markup.Event.click
+                    ]
+                |> when "User clicks Add New BTC Account"
+                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "addnewBTCaccountViewbutton" ]
+                    , Spec.Markup.Event.click
+                    ]
+                |> when "User enters a new BTC address"
+                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "bitcoin-address-input" ]
+                    , Spec.Markup.Event.input "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+                    ]
+                |> when "User clicks SAVE NEW BTC ACCOUNT button"
+                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "save-new-BTC-account-button" ]
+                    , Spec.Markup.Event.click
+                    ]
+                |> Spec.observeThat
+                    [ it "sends the expected message to the port"
+                        (Spec.Port.observe "encryptedMsg" Json.Decode.string
+                            |> Spec.expect (equals ["encryptionMsg~^&BTC~^&1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"])
                         )
                     ]
             )

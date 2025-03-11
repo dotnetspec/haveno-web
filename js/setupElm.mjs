@@ -36,6 +36,16 @@ function handleElmMessages(eapp) {
   }
 }
 
+function handleMessagesForEncryption(eapp) {
+  if (eapp.ports && eapp.ports.encryptedMsg) {
+    eapp.ports.encryptedMsg.subscribe((message) => {
+      handleMessageFromElm(message, eapp);
+    });
+  } else {
+    console.error("encryptedMsg port is not defined on eapp.ports");
+  }
+}
+
 function initializeBrowserEnvironment() {
   try {
     const environmentInfo = detectEnvironment();
@@ -48,6 +58,7 @@ function initializeBrowserEnvironment() {
 
     const eapp = initializeElmApp(jsonUrl);
     handleElmMessages(eapp);
+    handleMessagesForEncryption(eapp);
   } catch (error) {
     console.error("Error in setupElm.js:", error);
   }
