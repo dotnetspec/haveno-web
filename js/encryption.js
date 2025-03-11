@@ -1,3 +1,4 @@
+// encryption.js
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
@@ -46,6 +47,7 @@ export async function encrypt(message, password) {
         salt: Array.from(salt),
         data: Array.from(new Uint8Array(encrypted))
     };
+    //console.log('Encrypted data:', encryptedData);
     localStorage.setItem('secureMessage', JSON.stringify(encryptedData));
 }
 
@@ -56,6 +58,7 @@ export async function decrypt(password) {
     const iv = new Uint8Array(encryptedData.iv);
     const data = new Uint8Array(encryptedData.data);
     const keyMaterial = await getKeyMaterial(password);
+    
     const key = await deriveKey(keyMaterial, salt);
     try {
         const decrypted = await crypto.subtle.decrypt(
@@ -66,8 +69,11 @@ export async function decrypt(password) {
             key,
             data
         );
+        
         return decoder.decode(decrypted);
     } catch (e) {
+        
+        console.error("Decryption failed (not an error if testing for fail):", e);
         return null;
     }
 }

@@ -3,7 +3,7 @@ import { encrypt, decrypt } from '../encryption.js';
 
 describe('Web Crypto API - AES Encryption', () => {
     const password = 'test-password';
-    const message = 'Sensitive bank details';
+    const message = 'Sensitive Data';
 
     beforeEach(() => {
         localStorage.clear(); // Reset storage before each test
