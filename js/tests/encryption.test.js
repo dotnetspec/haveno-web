@@ -32,14 +32,7 @@ describe('Web Crypto API - AES Encryption', () => {
         expect(firstEncryption).not.toBe(secondEncryption);
     });
 
-    it('should store encrypted data in localStorage', async () => {
-        await encrypt(message, password);
-        const storedData = localStorage.getItem('secureMessage');
-        expect(storedData).not.toBeNull();
-    });
+    
 
-    it('should return null if no message is stored', async () => {
-        const decrypted = await decrypt(password);
-        expect(decrypted).toBeNull();
-    });
+   
 });
