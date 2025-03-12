@@ -14,15 +14,14 @@ describe('Web Crypto API - AES Encryption', () => {
         localStorage.clear(); // Reset storage before each test
     });
 
-    /* it('should encrypt and decrypt the message correctly', async () => {
-        await handleMessageFromElm(elmMessageAsJson);
+    it('should encrypt and decrypt the message correctly', async () => {
+        const encrypted = await encrypt(elmMessageAsJson, password);
+        expect(encrypted).not.toBeNull();
         const decrypted = await decrypt(elmMessageAsJson, password);
-        //const parsedData = JSON.parse(decrypted);
         expect(decrypted).not.toBeNull();
         expect(decrypted).not.toBeUndefined();
         expect(decrypted).toContain("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
-        //expect(decrypted).toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
-    }); */
+    });
 
     it('should fail to decrypt with a wrong password', async () => {
         await handleMessageFromElm(elmMessageAsJson);
