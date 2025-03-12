@@ -47,12 +47,12 @@ export async function encrypt(message, password) {
         salt: Array.from(salt),
         data: Array.from(new Uint8Array(encrypted))
     };
-    //console.log('Encrypted data:', encryptedData);
-    localStorage.setItem('encryptionMsg', JSON.stringify(encryptedData));
+    console.log('message:', message);
+    localStorage.setItem(message, JSON.stringify(encryptedData));
 }
 
-export async function decrypt(password) {
-    const encryptedData = JSON.parse(localStorage.getItem('encryptionMsg'));
+export async function decrypt(message, password) {
+    const encryptedData = JSON.parse(localStorage.getItem(message.type));
     if (!encryptedData) return null;
     const salt = new Uint8Array(encryptedData.salt);
     const iv = new Uint8Array(encryptedData.iv);
