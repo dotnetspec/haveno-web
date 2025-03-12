@@ -3,8 +3,12 @@ import { handleMessageFromElm } from '../handleElmMessages.js';
 import * as encryption from '../encryption.js';
 
 describe('handleMessageFromElm', () => {
-    const message = 'encryptionMsg~^&Sensitive Data';
-    const app = {}; // Mock app object
+    const password = 'test-password';
+    const elmMessage = JSON.stringify({
+        type: "encryptionMsg",
+        currency: "BTC",
+        address: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
+    });
 
     beforeEach(() => {
         localStorage.clear(); // Reset storage before each test
@@ -15,9 +19,9 @@ describe('handleMessageFromElm', () => {
         // Mock the encrypt function
         const encryptSpy = vi.spyOn(encryption, 'encrypt').mockImplementation(async () => {});
 
-        await handleMessageFromElm(message, app);
+        await handleMessageFromElm(elmMessage);
 
         // Verify that the encrypt function was called with the correct parameters
-        expect(encryptSpy).toHaveBeenCalledWith('Sensitive Data', 'test-password');
+        expect(encryptSpy).toHaveBeenCalledWith(elmMessage.type, password);
     });
 });

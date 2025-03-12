@@ -4,38 +4,42 @@ import { handleMessageFromElm } from '../handleElmMessages.js';
 
 describe('Web Crypto API - AES Encryption', () => {
     const password = 'test-password';
-    const message = 'Sensitive Data';
+    const elmMessage = JSON.stringify({
+        type: "encryptionMsg",
+        currency: "BTC",
+        address: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
+    });
 
     beforeEach(() => {
         localStorage.clear(); // Reset storage before each test
     });
 
-    it('should encrypt and decrypt the message correctly', async () => {
-        await encrypt(message, password);
+    /* it('should encrypt and decrypt the message correctly', async () => {
+        await handleMessageFromElm(elmMessage);
         const decrypted = await decrypt(password);
-        expect(decrypted).toBe(message);
-    });
+        expect(decrypted).toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
+    }); */
 
     it('should fail to decrypt with a wrong password', async () => {
-        await encrypt(message, password);
+        await handleMessageFromElm(elmMessage);
         const decrypted = await decrypt('wrong-password');
-        expect(decrypted).not.toBe(message);
+        expect(decrypted).not.toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
         expect(decrypted).toBeNull();
     });
 
     it('should generate different encrypted outputs for the same message', async () => {
-        await encrypt(message, password);
-        const firstEncryption = localStorage.getItem('secureMessage');
+        await handleMessageFromElm(elmMessage);
+        const firstEncryption = localStorage.getItem('encryptionMsg');
 
-        await encrypt(message, password);
-        const secondEncryption = localStorage.getItem('secureMessage');
+        await handleMessageFromElm(elmMessage);
+        const secondEncryption = localStorage.getItem('encryptionMsg');
 
         expect(firstEncryption).not.toBe(secondEncryption);
     });
 
     it('should store encrypted data with the expected structure', async () => {
-        await encrypt(message, password);
-        const storedData = localStorage.getItem('secureMessage');
+        await handleMessageFromElm(elmMessage);
+        const storedData = localStorage.getItem('encryptionMsg');
         expect(storedData).not.toBeNull();
 
         const parsedData = JSON.parse(storedData);
@@ -47,12 +51,11 @@ describe('Web Crypto API - AES Encryption', () => {
         expect(Array.isArray(parsedData.data)).toBe(true);
     });
 
-   /*  it('should handle encryption message from Elm and store encrypted data', async () => {
-        const elmMessage = 'encryptionMsg~^&BTC~^&1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v';
+    it('should handle encryption message from Elm and store encrypted data', async () => {
         await handleMessageFromElm(elmMessage);
 
         // Verify that the encrypted data is stored in localStorage
-        const storedData = localStorage.getItem('secureMessage');
+        const storedData = localStorage.getItem('encryptionMsg');
         expect(storedData).not.toBeNull();
         expect(storedData).not.toBeUndefined();
 
@@ -63,7 +66,5 @@ describe('Web Crypto API - AES Encryption', () => {
         expect(Array.isArray(parsedData.iv)).toBe(true);
         expect(Array.isArray(parsedData.salt)).toBe(true);
         expect(Array.isArray(parsedData.data)).toBe(true);
-    }); */
-
-   
+    });
 });

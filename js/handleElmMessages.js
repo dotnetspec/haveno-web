@@ -1,25 +1,23 @@
-// handleElmMessages.js
 import { encrypt } from './encryption.js';
 
 export async function handleMessageFromElm(message) {
-    const messageArr = message.split("~^&");
+    const parsedMessage = JSON.parse(message);
 
-    switch (messageArr[0]) {
+    switch (parsedMessage.type) {
         case "ElmReady":
             try {
-                console.log("Message from Elm : ", messageArr[0]);
+                console.log("Message from Elm : ", parsedMessage.type);
             } catch (error) {
                 console.error("Error Receiving Message from Elm: ", error);
             }
             break;
         case "encryptionMsg":
             try {
-                console.log("Encryption message from Elm : ", messageArr[0]);
-                console.log("Message that will be encrypted : ", messageArr[1]);
-                const encryptedData = await encrypt(messageArr[1], 'test-password'); // Call the encrypt function
+                console.log("Encryption message from Elm : ", parsedMessage.type);
+                console.log("Message that will be encrypted : ", parsedMessage.address);
+                const encryptedData = await encrypt(parsedMessage.encryptionMsg, 'test-password'); // Call the encrypt function
                 console.log('Encrypted data in encryptionMsg:', encryptedData);
                 localStorage.setItem('secureMessage', JSON.stringify(encryptedData));
-                
             } catch (error) {
                 console.error("Error Receiving Encryption Message from Elm: ", error);
             }

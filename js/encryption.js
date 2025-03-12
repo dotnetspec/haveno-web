@@ -48,11 +48,11 @@ export async function encrypt(message, password) {
         data: Array.from(new Uint8Array(encrypted))
     };
     //console.log('Encrypted data:', encryptedData);
-    localStorage.setItem('secureMessage', JSON.stringify(encryptedData));
+    localStorage.setItem('encryptionMsg', JSON.stringify(encryptedData));
 }
 
 export async function decrypt(password) {
-    const encryptedData = JSON.parse(localStorage.getItem('secureMessage'));
+    const encryptedData = JSON.parse(localStorage.getItem('encryptionMsg'));
     if (!encryptedData) return null;
     const salt = new Uint8Array(encryptedData.salt);
     const iv = new Uint8Array(encryptedData.iv);
