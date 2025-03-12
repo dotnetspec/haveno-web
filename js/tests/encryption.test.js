@@ -4,7 +4,7 @@ import { handleMessageFromElm } from '../handleElmMessages.js';
 
 describe('Web Crypto API - AES Encryption', () => {
     const password = 'test-password';
-    const elmMessage = JSON.stringify({
+    const elmMessageAsJson = JSON.stringify({
         type: "encryptionMsg",
         currency: "BTC",
         address: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
@@ -15,8 +15,8 @@ describe('Web Crypto API - AES Encryption', () => {
     });
 
     /* it('should encrypt and decrypt the message correctly', async () => {
-        await handleMessageFromElm(elmMessage);
-        const decrypted = await decrypt(elmMessage, password);
+        await handleMessageFromElm(elmMessageAsJson);
+        const decrypted = await decrypt(elmMessageAsJson, password);
         //const parsedData = JSON.parse(decrypted);
         expect(decrypted).not.toBeNull();
         expect(decrypted).not.toBeUndefined();
@@ -25,24 +25,24 @@ describe('Web Crypto API - AES Encryption', () => {
     }); */
 
     it('should fail to decrypt with a wrong password', async () => {
-        await handleMessageFromElm(elmMessage);
-        const decrypted = await decrypt(elmMessage, 'wrong-password');
+        await handleMessageFromElm(elmMessageAsJson);
+        const decrypted = await decrypt(elmMessageAsJson, 'wrong-password');
         expect(decrypted).not.toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
         expect(decrypted).toBeNull();
     });
 
     it('should generate different encrypted outputs for the same message', async () => {
-        await handleMessageFromElm(elmMessage);
+        await handleMessageFromElm(elmMessageAsJson);
         const firstEncryption = localStorage.getItem('encryptionMsg');
 
-        await handleMessageFromElm(elmMessage);
+        await handleMessageFromElm(elmMessageAsJson);
         const secondEncryption = localStorage.getItem('encryptionMsg');
 
         expect(firstEncryption).not.toBe(secondEncryption);
     });
 
     it('should store encrypted data with the expected structure', async () => {
-        await handleMessageFromElm(elmMessage);
+        await handleMessageFromElm(elmMessageAsJson);
         const storedData = localStorage.getItem('encryptionMsg');
         expect(storedData).not.toBeNull();
 
@@ -56,7 +56,7 @@ describe('Web Crypto API - AES Encryption', () => {
     });
 
     it('should handle encryption message from Elm and store encrypted data', async () => {
-        await handleMessageFromElm(elmMessage);
+        await handleMessageFromElm(elmMessageAsJson);
 
         // Verify that the encrypted data is stored in localStorage
         const storedData = localStorage.getItem('encryptionMsg');
