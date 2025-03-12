@@ -47,7 +47,6 @@ export async function encrypt(message, password) {
         salt: Array.from(salt),
         data: Array.from(new Uint8Array(encrypted))
     };
-    console.log('message:', message);
     localStorage.setItem(message.type, JSON.stringify(encryptedData));
 }
 
