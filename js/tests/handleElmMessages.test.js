@@ -27,6 +27,6 @@ describe("handleMessageFromElm", () => {
     expect(elmMessageAsJsObj.type).toEqual("encryptionMsg");
 
     // Verify that the encrypt function was called with the correct parameters
-    expect(encryptSpy).toHaveBeenCalledWith(elmMessageAsJsObj.type, password);
+    expect(encryptSpy).toHaveBeenCalledWith(elmMessageAsJsObj, password);
   });
 });

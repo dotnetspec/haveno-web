@@ -15,7 +15,7 @@ export async function handleMessageFromElm(message) {
             try {
                 console.log("Encryption message from Elm : ", parsedMessage.type);
                 console.log("Message that will be encrypted : ", parsedMessage.address);
-                const encryptedData = await encrypt(parsedMessage.type, 'test-password'); // Call the encrypt function
+                const encryptedData = await encrypt(parsedMessage, 'test-password'); // Call the encrypt function
                 console.log('Encrypted data in encryptionMsg:', encryptedData);
             } catch (error) {
                 console.error("Error Receiving Encryption Message from Elm: ", error);
