@@ -4,7 +4,7 @@ import * as encryption from "../encryption.js";
 
 describe("handleMessageFromElm", () => {
   const password = "test-password";
-  const elmMessage = JSON.stringify({
+  const elmMessageAsJson = JSON.stringify({
     type: "encryptionMsg",
     currency: "BTC",
     address: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
@@ -21,12 +21,12 @@ describe("handleMessageFromElm", () => {
       .spyOn(encryption, "encrypt")
       .mockImplementation(async () => {});
 
-    await handleMessageFromElm(elmMessage);
+    await handleMessageFromElm(elmMessageAsJson);
 
-    const parsedJson = JSON.parse(elmMessage);
-    expect(parsedJson.type).toEqual("encryptionMsg");
+    const elmMessageAsJsObj = JSON.parse(elmMessageAsJson);
+    expect(elmMessageAsJsObj.type).toEqual("encryptionMsg");
 
     // Verify that the encrypt function was called with the correct parameters
-    expect(encryptSpy).toHaveBeenCalledWith(parsedJson.type, password);
+    expect(encryptSpy).toHaveBeenCalledWith(elmMessageAsJsObj.type, password);
   });
 });
