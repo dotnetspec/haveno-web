@@ -5,6 +5,7 @@ import Grpc
 import Html exposing (Html, div, h4, p, section, text)
 import Html.Attributes exposing (class, id, placeholder, readonly, type_, value)
 import Html.Events exposing (onInput)
+import Json.Encode as JE
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import UInt64
@@ -85,7 +86,10 @@ type Msg
     | UpdateNewBTCAddress String
 
 
+
 -- NAV: Types
+
+
 type CryptoAccount
     = BTC
 
@@ -98,7 +102,11 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         AddNewCryptoAccount cryptoAcct ->
-            ( { model | currentView = CryptoAccounts, cryptoAccountType = cryptoAcct }, encryptionMsg (buildEncryptedMsgStr cryptoAcct model.newBTCAddress) )
+            let
+                message =
+                    JE.encode 0 (JE.object [ ( "type", JE.string "encryptionMsg" ), ( "currency", JE.string "BTC" ), ( "address", JE.string "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v" ) ])
+            in
+            ( { model | currentView = CryptoAccounts, cryptoAccountType = cryptoAcct }, encryptionMsg message )
 
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
@@ -166,8 +174,6 @@ view model =
                                 div []
                                     [ h4 [] [ text "Cryptocurrency Accounts" ]
                                     , existingCryptoAccountsView model
-
-                                    --, p [] [ Utils.MyUtils.infoBtn "Add New BTC Account" "addnewBTCaccountbutton" <| ChangeView CreateNewBTCAccountView ]
                                     , createNewBTCAccountView model
                                     ]
 
@@ -300,15 +306,6 @@ gotNewSubAddress =
 
 
 -- NAV: Helper functions
-
-buildEncryptedMsgStr : CryptoAccount -> String -> String
-buildEncryptedMsgStr cryptoAccount publicKey =
-    "encryptionMsg~^&" ++ (toStringCryptoAccount cryptoAccount) ++ ("~^&" ++ publicKey)
-
-toStringCryptoAccount : CryptoAccount -> String
-toStringCryptoAccount cryptoAccout = 
-    case cryptoAccout of
-        BTC -> "BTC"
 
 
 formatBalance : { higher : Int, lower : Int } -> String

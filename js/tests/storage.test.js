@@ -18,7 +18,7 @@ describe('storage', () => {
 
         // Verify that the data is stored in localStorage
         const storedData = localStorage.getItem(key);
-        console.log('Stored data:', storedData);
+        
         expect(storedData).not.toBeNull();
         expect(storedData).toBe(message);
     });
@@ -29,7 +29,7 @@ describe('storage', () => {
 
         // Retrieve the data from localStorage
         const storedData = localStorage.getItem(key);
-        console.log('Retrieved data:', storedData);
+      
         expect(storedData).not.toBeNull();
         expect(storedData).toBe(message);
     });

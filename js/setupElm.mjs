@@ -29,7 +29,7 @@ function initializeElmApp(jsonUrl) {
 function handleElmMessages(eapp) {
   if (eapp.ports && eapp.ports.sendMessageToJs) {
     eapp.ports.sendMessageToJs.subscribe((message) => {
-      handleMessageFromElm(message, eapp);
+      handleMessageFromElm(message);
     });
   } else {
     console.error("sendMessageToJs port is not defined on eapp.ports");
@@ -39,7 +39,7 @@ function handleElmMessages(eapp) {
 function handleMessagesForEncryption(eapp) {
   if (eapp.ports && eapp.ports.encryptedMsg) {
     eapp.ports.encryptedMsg.subscribe((message) => {
-      handleMessageFromElm(message, eapp);
+      handleMessageFromElm(message);
     });
   } else {
     console.error("encryptedMsg port is not defined on eapp.ports");

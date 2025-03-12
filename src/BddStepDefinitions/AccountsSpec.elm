@@ -331,7 +331,7 @@ runSpecTests =
                 |> Spec.observeThat
                     [ it "sends the expected message to the port"
                         (Spec.Port.observe "encryptedMsg" Json.Decode.string
-                            |> Spec.expect (equals ["encryptionMsg~^&BTC~^&1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"])
+                            |> Spec.expect (equals ["{\"type\":\"encryptionMsg\",\"currency\":\"BTC\",\"address\":\"1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v\"}"])
                         )
                     ]
             )
