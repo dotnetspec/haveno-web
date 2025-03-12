@@ -68,7 +68,6 @@ type View
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( initialModel
-    --, Cmd.batch [encryptionMsg (buildEncryptedMsgStr BTC "")  ]
     , Cmd.none
     )
 
