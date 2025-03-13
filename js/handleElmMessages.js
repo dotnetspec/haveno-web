@@ -1,7 +1,6 @@
 import { encrypt } from './encryption.js';
 
 export async function handleMessageFromElm(message) {
-    console.log("msg to handleMessageFromElm", message);
     if (!message) {
         console.log("Null or undefined. No message yet", message);
         return;
