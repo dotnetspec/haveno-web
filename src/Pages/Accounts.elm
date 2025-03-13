@@ -26,6 +26,7 @@ type alias Model =
     , subaddress : String
     , currentView : View
     , listOfExistingCryptoAccounts : List String
+    , listOfBTCAccounts : List String
     , newBTCAddress : String
     , cryptoAccountType : CryptoAccount
     }
@@ -42,6 +43,7 @@ initialModel =
     , subaddress = ""
     , currentView = ManageAccounts
     , listOfExistingCryptoAccounts = []
+    , listOfBTCAccounts = []
     , newBTCAddress = ""
     , cryptoAccountType = BTC
     }
@@ -107,7 +109,7 @@ update msg model =
                 message =
                     JE.encode 0 (JE.object [ ( "type", JE.string "encryptionMsg" ), ( "currency", JE.string "BTC" ), ( "address", JE.string "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v" ) ])
             in
-            ( { model | currentView = DisplayStoredBTCAddresses, cryptoAccountType = cryptoAcct }, encryptionMsg message )
+            ( { model | currentView = DisplayStoredBTCAddresses, cryptoAccountType = cryptoAcct, listOfBTCAccounts = model.listOfBTCAccounts ++  ["1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"]}, encryptionMsg message )
 
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
@@ -160,10 +162,10 @@ view model =
                         [ case model.currentView of
                             DisplayStoredBTCAddresses ->
                                 div []
-                                    [ h4 [] [ text "Cryptocurrency Accounts" ]
-                                    , existingCryptoAccountsView model
-                                    , createNewBTCAccountView model
+                                    [ h4 [] [ text "BTC Accounts" ]
+                                    , btcAccountsView model
                                     ]
+
                             ManageAccounts ->
                                 manageAccountsView
 
@@ -246,6 +248,20 @@ existingCryptoAccountsView model =
 
              else
                 List.map (\account -> Html.div [ class "account-item" ] [ Html.text account ]) model.listOfExistingCryptoAccounts
+            )
+        ]
+
+
+btcAccountsView : Model -> Html Msg
+btcAccountsView model =
+    Html.div []
+        [ Html.h6 [ class "accounts-subtitle" ] [ Html.text "Your BTC Accounts" ]
+        , Html.div [ id "accounts-listOfBTCAccounts" ]
+            (if List.isEmpty model.listOfBTCAccounts then
+                [ Html.div [ class "btc-account-item" ] [ Html.text "There are no BTC accounts set up yet" ] ]
+
+             else
+                List.map (\account -> Html.div [ class "btc-account-item" ] [ Html.text account ]) model.listOfBTCAccounts
             )
         ]
 

@@ -337,19 +337,16 @@ runSpecTests =
                         (Observer.observeModel .currentView
                             |> Spec.expect (equals Accounts.DisplayStoredBTCAddresses)
                         )
-
-                    --,
-                    {- , it "displays the newly added BTC address correctly"
-                       (Spec.Markup.observeElement
-                           |> Spec.Markup.query
-                           << by [ Spec.Markup.Selector.id "btcaccounts-container" ]
-                           |> Spec.expect
-                               (Claim.isSomethingWhere <|
-                                   Spec.Markup.text <|
-                                       Claim.isStringContaining 1 "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
-                               )
-                       )
-                    -}
+                    , it "displays the newly added BTC address correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.class "btc-account-item" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
+                                )
+                        )
                     ]
             )
         ]
