@@ -13,16 +13,16 @@ import Spec.Markup
 import Spec.Markup.Event
 import Spec.Markup.Selector exposing (by)
 import Spec.Observer as Observer
-import Spec.Setup
-import Spec.Command
 import Spec.Port
+import Spec.Setup
 
 
 
 -- NAV: Test scenarios
-
 -- NOTE: Override the initial model in the module under test where necessary using
 -- using this:
+
+
 accountsInitialModel : Accounts.Model
 accountsInitialModel =
     Accounts.initialModel
@@ -34,7 +34,7 @@ runSpecTests =
         "Haveno Web App Accounts Tests"
         [ scenario "1: Accessing the Accounts page with valid balance data and primary address which would get from Main"
             (given
-                (Spec.Setup.initWithModel {accountsInitialModel | balances = testBalanceInfo, primaryaddress = TestData.primaryAddress}
+                (Spec.Setup.initWithModel { accountsInitialModel | balances = testBalanceInfo, primaryaddress = TestData.primaryAddress }
                     |> Spec.Setup.withUpdate Accounts.update
                     |> Spec.Setup.withLocation placeholderUrl
                 )
@@ -305,7 +305,7 @@ runSpecTests =
                         )
                     ]
             )
-            ,scenario "User clicks SAVE NEW BTC ACCOUNT button and sends the expected message to the port"
+        , scenario "User clicks SAVE NEW BTC ACCOUNT button and sends the expected message to the port"
             (given
                 (Spec.Setup.initWithModel accountsInitialModel
                     |> Spec.Setup.withView Accounts.view
@@ -331,8 +331,25 @@ runSpecTests =
                 |> Spec.observeThat
                     [ it "sends the expected message to the port"
                         (Spec.Port.observe "encryptedMsg" Json.Decode.string
-                            |> Spec.expect (equals ["{\"type\":\"encryptionMsg\",\"currency\":\"BTC\",\"address\":\"1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v\"}"])
+                            |> Spec.expect (equals [ "{\"type\":\"encryptionMsg\",\"currency\":\"BTC\",\"address\":\"1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v\"}" ])
                         )
+                    , it "is on the DisplayStoredBTCAddresses view"
+                        (Observer.observeModel .currentView
+                            |> Spec.expect (equals Accounts.DisplayStoredBTCAddresses)
+                        )
+
+                    --,
+                    {- , it "displays the newly added BTC address correctly"
+                       (Spec.Markup.observeElement
+                           |> Spec.Markup.query
+                           << by [ Spec.Markup.Selector.id "btcaccounts-container" ]
+                           |> Spec.expect
+                               (Claim.isSomethingWhere <|
+                                   Spec.Markup.text <|
+                                       Claim.isStringContaining 1 "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
+                               )
+                       )
+                    -}
                     ]
             )
         ]

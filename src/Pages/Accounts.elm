@@ -57,6 +57,7 @@ type View
     | TraditionalCurrencyAccounts
     | CryptoAccounts
     | CreateNewBTCAccountView
+    | DisplayStoredBTCAddresses
     | WalletPassword
     | WalletSeed
     | Backup
@@ -106,7 +107,7 @@ update msg model =
                 message =
                     JE.encode 0 (JE.object [ ( "type", JE.string "encryptionMsg" ), ( "currency", JE.string "BTC" ), ( "address", JE.string "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v" ) ])
             in
-            ( { model | currentView = CryptoAccounts, cryptoAccountType = cryptoAcct }, encryptionMsg message )
+            ( { model | currentView = DisplayStoredBTCAddresses, cryptoAccountType = cryptoAcct }, encryptionMsg message )
 
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
@@ -157,6 +158,12 @@ view model =
                         [ class "split-col"
                         ]
                         [ case model.currentView of
+                            DisplayStoredBTCAddresses ->
+                                div []
+                                    [ h4 [] [ text "Cryptocurrency Accounts" ]
+                                    , existingCryptoAccountsView model
+                                    , createNewBTCAccountView model
+                                    ]
                             ManageAccounts ->
                                 manageAccountsView
 
