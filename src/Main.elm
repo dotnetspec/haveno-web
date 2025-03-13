@@ -996,7 +996,8 @@ subscriptions _ =
 
 
 
--- NAV: Ports - once defined here they can be used in js with app.ports.
+-- NAV: Ports 
+-- NOTE: once defined here they can be used in js with app.ports.
 -- <portname>.send/subscribe(<data>)
 -- WARN: Use the port(s) somewhere in the code or it won't initialize on document load
 
@@ -1008,22 +1009,6 @@ port receiveMessageFromJs : (JD.Value -> msg) -> Sub msg
 
 
 
-{- port initializeLedger : (Int -> msg) -> Sub msg
-   port getAccountInfoFromLNS : (Int -> msg) -> Sub msg
-
-   -- Handle the responses from the ports
-   port ledgerInitialized : (JD.Value -> msg) -> Sub msg
-   port accountInfoReceived : (JD.Value -> msg) -> Sub msg
--}
-{- -- NOTE: messageReceiver: You could have just recieved a string here (String -> msg),
-   but now we're getting a JSON object from js, created like this in the js:
-
-     msgToElm = {
-       operationEventMsg: "Update for challenge done"
-     }
-     msg has a handle function that extracts it using a decoder
-
--}
 {- -- NOTE: This type can be Html.Html msg instead
    of Html.Html Msg because footerContent
    has no event handlers.
