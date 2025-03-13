@@ -305,6 +305,39 @@ runSpecTests =
                         )
                     ]
             )
+        , BddStepDefinitions.Runner.skip <| scenario "User clicks VIEW BTC ACCOUNTS button and sends the expected message to the port"
+            (given
+                (Spec.Setup.initWithModel accountsInitialModel
+                    |> Spec.Setup.withView Accounts.view
+                    |> Spec.Setup.withUpdate Accounts.update
+                    |> Spec.Setup.withLocation placeholderUrl
+                )
+                |> when "User clicks Cryptocurrency Accounts"
+                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
+                    , Spec.Markup.Event.click
+                    ]
+                 |> when "User clicks BTC Accounts"
+                    [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "btcAccountsButton" ]
+                    , Spec.Markup.Event.click
+                    ]
+                
+                |> Spec.observeThat
+                    [ it "is on the DisplayStoredBTCAddresses view"
+                        (Observer.observeModel .currentView
+                            |> Spec.expect (equals Accounts.DisplayStoredBTCAddresses)
+                        )
+                    , it "displays stored and unencrypted BTC address(es) correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.class "btc-account-item" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
+                                )
+                        )
+                    ]
+            )
         , scenario "User clicks SAVE NEW BTC ACCOUNT button and sends the expected message to the port"
             (given
                 (Spec.Setup.initWithModel accountsInitialModel
