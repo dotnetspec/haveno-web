@@ -3,7 +3,7 @@ port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(.
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
 import Html exposing (Html, div, h4, p, section, text)
-import Html.Attributes exposing (class, id, placeholder, readonly, type_, value)
+import Html.Attributes exposing (class, id, placeholder, readonly, type_, value, classList)
 import Html.Events exposing (onInput)
 import Json.Encode as JE
 import Proto.Io.Haveno.Protobuffer as Protobuf
@@ -261,7 +261,7 @@ btcAccountsView model =
                 [ Html.div [ class "btc-account-item" ] [ Html.text "There are no BTC accounts set up yet" ] ]
 
              else
-                List.map (\account -> Html.div [ class "btc-account-item" ] [ Html.text account ]) model.listOfBTCAccounts
+                List.map (\account -> Html.div [ classList [ ("btc-account-item", True) , ("address-label", True) ]] [ Html.text account ]) model.listOfBTCAccounts
             )
         ]
 

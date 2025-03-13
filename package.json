@@ -22,6 +22,7 @@
     "start": "parcel",
     "build": "parcel build",
     "serve": "parcel serve",
+    "bs": "yarn build && yarn serve",
     "plw": "playwright show-report",
     "obs": "yarn optimize &&  yarn build && yarn review && yarn vitest && yarn serve",
     "dbs": "yarn debug &&  yarn build && yarn review && yarn vitest && yarn serve",
