@@ -8121,9 +8121,40 @@ var $author$project$Comms$CustomGrpc$gotPrimaryAddress = A2(
 		'password',
 		'apitest',
 		A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getXmrPrimaryAddress, $author$project$Proto$Io$Haveno$Protobuffer$defaultGetXmrPrimaryAddressRequest)));
+var $elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			$elm$core$List$foldl,
+			F2(
+				function (_v0, obj) {
+					var k = _v0.a;
+					var v = _v0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(0),
+			pairs));
+};
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Main$sendMessageToJs = _Platform_outgoingPort('sendMessageToJs', $elm$json$Json$Encode$string);
-var $author$project$Main$notifyJsReady = $author$project$Main$sendMessageToJs('ElmReady');
+var $author$project$Main$notifyJsReady = function () {
+	var message = A2(
+		$elm$json$Json$Encode$encode,
+		0,
+		$elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'type',
+					$elm$json$Json$Encode$string('ElmReady')),
+					_Utils_Tuple2(
+					'currency',
+					$elm$json$Json$Encode$string('')),
+					_Utils_Tuple2(
+					'address',
+					$elm$json$Json$Encode$string(''))
+				])));
+	return $author$project$Main$sendMessageToJs(message);
+}();
 var $author$project$Main$GotVersion = function (a) {
 	return {$: 13, a: a};
 };
@@ -8542,19 +8573,6 @@ var $author$project$Pages$Accounts$Errored = 1;
 var $author$project$Pages$Accounts$encryptedMsg = _Platform_outgoingPort('encryptedMsg', $elm$json$Json$Encode$string);
 var $author$project$Pages$Accounts$encryptionMsg = function (msgString) {
 	return $author$project$Pages$Accounts$encryptedMsg(msgString);
-};
-var $elm$json$Json$Encode$object = function (pairs) {
-	return _Json_wrap(
-		A3(
-			$elm$core$List$foldl,
-			F2(
-				function (_v0, obj) {
-					var k = _v0.a;
-					var v = _v0.b;
-					return A3(_Json_addField, k, v, obj);
-				}),
-			_Json_emptyObject(0),
-			pairs));
 };
 var $author$project$Pages$Accounts$update = F2(
 	function (msg, model) {
@@ -10886,7 +10904,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.6.63')
+										$elm$html$Html$text('Version 0.6.64')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(

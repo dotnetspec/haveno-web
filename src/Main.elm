@@ -794,8 +794,6 @@ toAccounts : Model -> ( Pages.Accounts.Model, Cmd Pages.Accounts.Msg ) -> ( Mode
 toAccounts model ( accounts, cmd ) =
     ( { model | page = AccountsPage { accounts | balances = model.balances } }
       -- NOTE: Cmd.map is a way to manipulate the result of a command
-      -- WARN: sendMessageToJs "msgFromElm" is redundant here
-      -- but if it isn't actually used somewhere the port won't be recognized on document load
     , Cmd.map GotAccountsMsg cmd
     )
 
@@ -994,14 +992,13 @@ subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
         [ receiveMessageFromJs Recv
-        
         ]
 
 
 
 -- NAV: Ports - once defined here they can be used in js with app.ports.
 -- <portname>.send/subscribe(<data>)
--- WARN: Use the port somewhere in the code or it won't initialize on document load
+-- WARN: Use the port(s) somewhere in the code or it won't initialize on document load
 
 
 port sendMessageToJs : String -> Cmd msg
@@ -1113,10 +1110,11 @@ navLinks page =
 
 notifyJsReady : Cmd Msg
 notifyJsReady =
-    sendMessageToJs "ElmReady"
-
-
-
+    let
+        message =
+            JE.encode 0 (JE.object [ ( "type", JE.string "ElmReady" ), ( "currency", JE.string "" ), ( "address", JE.string "" ) ])
+    in
+    sendMessageToJs message
 
 
 
@@ -1135,7 +1133,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.6.63" ]
+                , Html.p [] [ Html.text "Version 0.6.64" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text
