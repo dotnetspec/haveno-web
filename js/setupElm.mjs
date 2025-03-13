@@ -17,7 +17,7 @@ function detectEnvironment() {
   };
 }
 
-function initializeElmApp(jsonUrl) {
+export function initializeElmApp(Elm, jsonUrl) {
   const eapp = Elm.Main.init({
     node: document.getElementById("elm"),
     flags: jsonUrl,
@@ -56,7 +56,7 @@ function initializeBrowserEnvironment() {
     const jsonUrl = JSON.stringify(window.location.origin);
     console.log("jsonUrl:", jsonUrl);
 
-    const eapp = initializeElmApp(jsonUrl);
+    const eapp = initializeElmApp(Elm, jsonUrl);
     handleElmMessages(eapp);
     handleMessagesForEncryption(eapp);
   } catch (error) {
