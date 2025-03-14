@@ -39,7 +39,7 @@ describe("handleMessageFromElm", () => {
     expect(encryptSpy).toHaveBeenCalledWith(elmMessageAsJsObj.address, password);
   });
 
-  it("should decrypt BTC accounts stored in localStorage", async () => {
+  it("should decrypt BTC accounts stored in localStorage and send the data back to Elm", async () => {
     // Mock the decrypt function
     const decryptSpy = vi
       .spyOn(encryption, "decrypt")
@@ -53,9 +53,36 @@ describe("handleMessageFromElm", () => {
     });
     localStorage.setItem("BTC_Public_Key", encryptedData);
 
+    // Mock the Elm ports
+    global.window.Elm = {
+      Main: {
+        ports: {
+          jsInterop: {
+            send: vi.fn(),
+          },
+        },
+      },
+    };
+
     await handleMessageFromElm(elmDecrytCrypoAccountsMsgRequestAsJson);
 
     // Verify that the decrypt function was called with the correct parameters
     expect(decryptSpy).toHaveBeenCalledWith(encryptedData, password);
+
+    // Verify that the decrypted data was sent back to Elm
+    expect(window.Elm.Main.ports.jsInterop.send).toHaveBeenCalledWith(JSON.stringify({
+      type: "decryptedCrypoAccountsResponse",
+      data: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
+    }));
+  });
+
+  it("should log a message if no BTC accounts are found in localStorage", async () => {
+    // Mock console.log to capture the output
+    const consoleLogSpy = vi.spyOn(console, "log");
+
+    await handleMessageFromElm(elmDecrytCrypoAccountsMsgRequestAsJson);
+
+    // Verify that the correct message was logged to the console
+    expect(consoleLogSpy).toHaveBeenCalledWith("No BTC accounts found in localStorage.");
   });
 });

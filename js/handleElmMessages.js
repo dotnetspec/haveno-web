@@ -29,6 +29,12 @@ export async function handleMessageFromElm(message) {
                 if (encryptedData) {
                     const decryptedData = await decrypt(encryptedData, 'test-password');
                     console.log("Decrypted BTC accounts:", decryptedData);
+                    if (window.Elm && window.Elm.Main && window.Elm.Main.ports && window.Elm.Main.ports.jsInterop) {
+                        window.Elm.Main.ports.jsInterop.send(JSON.stringify({
+                            type: "decryptedCrypoAccountsResponse",
+                            data: decryptedData
+                        }));
+                    }
                 } else {
                     console.log("No BTC accounts found in localStorage.");
                 }
