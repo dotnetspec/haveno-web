@@ -108,5 +108,11 @@ NOTE: they must stay on the root
 Uncomment jest lines to include proxyTest in the pipeline
 Add playwright tests to the pipeline
 
+# Repository
+# If you are viewing this on GitHub, this is a mirror!  
+The official repo is hosted on GitLab.
+
+
+
 
 
