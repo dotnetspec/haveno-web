@@ -1,4 +1,4 @@
-import { encrypt } from './encryption.js';
+import { encrypt, decrypt } from './encryption.js';
 
 export async function handleMessageFromElm(message) {
     if (!message) {
@@ -17,12 +17,23 @@ export async function handleMessageFromElm(message) {
             break;
         case "encryptionMsg":
             try {
-                const encryptedData = await encrypt(parsedMessage, 'test-password'); // Call the encrypt function
-                localStorage.setItem(parsedMessage.type, encryptedData);
-                
-                
+                const encryptedData = await encrypt(parsedMessage.address, 'test-password'); // Call the encrypt function
+                localStorage.setItem(parsedMessage.type, JSON.stringify(encryptedData));
             } catch (error) {
                 console.error("Error Receiving Encryption Message from Elm: ", error);
+            }
+            break;
+        case "decrytCrypoAccountsMsgRequest":
+            try {
+                const encryptedData = localStorage.getItem('BTC_Public_Key');
+                if (encryptedData) {
+                    const decryptedData = await decrypt(encryptedData, 'test-password');
+                    console.log("Decrypted BTC accounts:", decryptedData);
+                } else {
+                    console.log("No BTC accounts found in localStorage.");
+                }
+            } catch (error) {
+                console.error("Error decrypting BTC accounts:", error);
             }
             break;
         default:
