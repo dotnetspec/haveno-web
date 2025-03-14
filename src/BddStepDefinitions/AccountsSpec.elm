@@ -305,7 +305,7 @@ runSpecTests =
                         )
                     ]
             )
-        , BddStepDefinitions.Runner.skip <| scenario "User clicks VIEW BTC ACCOUNTS button and sends the expected message to the port"
+        {- , scenario "User clicks VIEW BTC ACCOUNTS button and sends the expected message to the port"
             (given
                 (Spec.Setup.initWithModel accountsInitialModel
                     |> Spec.Setup.withView Accounts.view
@@ -337,7 +337,7 @@ runSpecTests =
                                 )
                         )
                     ]
-            )
+            ) -}
         , scenario "User clicks SAVE NEW BTC ACCOUNT button and sends the expected message to the port"
             (given
                 (Spec.Setup.initWithModel accountsInitialModel

@@ -9696,6 +9696,17 @@ var $author$project$Pages$Accounts$view = function (model) {
 																[
 																	$elm$html$Html$text('Cryptocurrency Accounts')
 																])),
+															A2(
+															$elm$html$Html$p,
+															_List_Nil,
+															_List_fromArray(
+																[
+																	A3(
+																	$author$project$Utils$MyUtils$infoBtn,
+																	'VIEW BTC ACCOUNTS',
+																	'btcAccountsButton',
+																	$author$project$Pages$Accounts$ChangeView(4))
+																])),
 															$author$project$Pages$Accounts$existingCryptoAccountsView(model),
 															A2(
 															$elm$html$Html$p,
