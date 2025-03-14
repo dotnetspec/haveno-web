@@ -74,7 +74,7 @@ describe("handleMessageFromElm", () => {
     expect(window.Elm.Main.ports.jsInterop.send).toHaveBeenCalledWith(JSON.stringify({
       type: "decryptedCrypoAccountsResponse",
       page: "AccountsPage",
-      data: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
+      data: ["1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"], // Send as a list
       currency: "BTC",
     }));
   });

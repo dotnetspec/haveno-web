@@ -33,7 +33,7 @@ export async function handleMessageFromElm(message) {
                         window.Elm.Main.ports.jsInterop.send(JSON.stringify({
                             type: "decryptedCrypoAccountsResponse",
                             page: parsedMessage.page,
-                            data: decryptedData,
+                            data: [decryptedData], // Send as a list
                             currency: parsedMessage.currency
                         }));
                     }
