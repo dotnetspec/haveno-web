@@ -4,6 +4,21 @@
   "type": "module",
   "description": "Mobile-first web app for Haveno",
   "source": "index.html",
+  "license": "SEE LICENSE IN LICENSE",
+  "licenses": [
+    {
+      "type": "BSD-3-Clause",
+      "url": "https://opensource.org/licenses/BSD-3-Clause"
+    },
+    {
+      "type": "Apache-2.0",
+      "url": "https://opensource.org/licenses/Apache-2.0"
+    },
+    {
+      "type": "AGPL-3.0",
+      "url": "https://www.gnu.org/licenses/agpl-3.0.html"
+    }
+  ],
   "scripts": {
     "jsdepgraph": "madge --extensions js,mjs --exclude 'elm.js' --image js/graph.png js",
     "unit": "elm-test 'src/**/Tests/Test*.elm' --fuzz 100",
