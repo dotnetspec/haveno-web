@@ -27,12 +27,12 @@ export function initializeElmApp(Elm, jsonUrl) {
 }
 
 function handleElmMessages(eapp) {
-  if (eapp.ports && eapp.ports.sendMessageToJs) {
-    eapp.ports.sendMessageToJs.subscribe((message) => {
+  if (eapp.ports && eapp.ports.jsInterop) {
+    eapp.ports.jsInterop.subscribe((message) => {
       handleMessageFromElm(message);
     });
   } else {
-    console.error("sendMessageToJs port is not defined on eapp.ports");
+    console.error("jsInterop port is not defined on eapp.ports");
   }
 }
 

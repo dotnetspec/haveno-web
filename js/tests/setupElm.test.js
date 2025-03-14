@@ -22,7 +22,7 @@ describe('initializeElmApp', () => {
             Main: {
                 init: vi.fn().mockReturnValue({
                     ports: {
-                        sendMessageToJs: {
+                        jsInterop: {
                             subscribe: vi.fn(),
                         },
                         encryptedAndDecryptedMsgs: {
@@ -52,7 +52,7 @@ describe('initializeElmApp', () => {
         expect(console.log).toHaveBeenCalledWith('elm init:', eapp);
         expect(eapp).toEqual({
             ports: {
-                sendMessageToJs: {
+                jsInterop: {
                     subscribe: expect.any(Function),
                 },
                 encryptedAndDecryptedMsgs: {
