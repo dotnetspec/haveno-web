@@ -36,7 +36,7 @@ function handleElmMessages(eapp) {
   }
 }
 
-function handleMessagesForEncryption(eapp) {
+function handleMessagesForEncryptionAndDecryption(eapp) {
   if (eapp.ports && eapp.ports.encryptedAndDecryptedMsgs) {
     eapp.ports.encryptedAndDecryptedMsgs.subscribe((message) => {
       handleMessageFromElm(message);
@@ -58,7 +58,7 @@ function initializeBrowserEnvironment() {
 
     const eapp = initializeElmApp(Elm, jsonUrl);
     handleElmMessages(eapp);
-    handleMessagesForEncryption(eapp);
+    handleMessagesForEncryptionAndDecryption(eapp);
   } catch (error) {
     console.error("Error in setupElm.js:", error);
   }
