@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, only2Decimals, receiveJsonFromJs, jsInterop, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, only2Decimals, receiveMsgsFromJs, jsInterop, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- NOTE: exposing Url exposes a different type of Url to
@@ -151,14 +151,14 @@ navigate thekey =
 
    All the below are constructor functions for the Msg type. They are not functions in the traditional sense,
    e.g.
-   port receiveJsonFromJs : (String -> msg) -> Sub msg
+   port receiveMsgsFromJs : (String -> msg) -> Sub msg
    ReceivedFromJs String
 
    subscriptions : Model -> Sub Msg
     subscriptions _ =
-    -- NOTE: ReceivedFromJs has no String here cos receiveJsonFromJs wants a function that takes a String
+    -- NOTE: ReceivedFromJs has no String here cos receiveMsgsFromJs wants a function that takes a String
     -- and returns a Msg. This is what ReceivedFromJs was 'constructed' to be
-    receiveJsonFromJs ReceivedFromJs
+    receiveMsgsFromJs ReceivedFromJs
 
 
 
@@ -279,10 +279,37 @@ update msg model =
         ToggleMenu ->
             ( { model | isMenuOpen = not model.isMenuOpen }, Cmd.none )
 
-        -- NAV: Recv rawJsonMessage
-        -- NOTE: This is updated when a message from js is received
-        Recv _ ->
-            ( model, Cmd.none )
+        -- NAV: Recv
+        -- NOTE: This is where we can branch according to whichever page js intends
+        -- it's message to reach
+        Recv message ->
+            case JD.decodeValue jsMessageDecoder message of
+                Ok jsMsg ->
+                    case jsMsg.page of
+                        "AccountsPage" ->
+                            case JD.decodeValue Pages.Accounts.messageDecoder jsMsg.data of
+                                Ok accountsPageMsgType ->
+                                    let
+                                        -- HACK: To get an accounts model to pass on
+                                        accountsMdl = case model.page of
+                                            AccountsPage accountsModel ->
+                                                accountsModel
+                                            _ ->
+                                                -- REVIEW:
+                                                -- WARN: This could re-set values if we're not
+                                                -- on the Accounts page in Elm (unlikely) 
+                                                Pages.Accounts.initialModel
+                                    
+                                    in
+                                    toAccounts model (Pages.Accounts.update  accountsPageMsgType accountsMdl)
+                                Err _ ->
+                                    ( model, Cmd.none )
+
+                        _ ->
+                            ( model, Cmd.none )
+
+                Err _ ->
+                    ( model, Cmd.none )
 
         GotSplashMsg dashboardMsg ->
             case model.page of
@@ -363,7 +390,13 @@ update msg model =
         GotAccountsMsg accountsMsg ->
             case model.page of
                 AccountsPage accountsModel ->
-                    toAccounts model (Pages.Accounts.update accountsMsg accountsModel)
+                    let
+                        ( updatedAccountsModel, accountsCmd ) =
+                            Pages.Accounts.update accountsMsg accountsModel
+                    in
+                    ( { model | page = AccountsPage updatedAccountsModel }
+                    , Cmd.map GotAccountsMsg accountsCmd
+                    )
 
                 _ ->
                     ( model, Cmd.none )
@@ -991,7 +1024,7 @@ gotCodeFromUrl url =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ receiveJsonFromJs Recv
+        [ receiveMsgsFromJs Recv
         ]
 
 
@@ -1005,7 +1038,7 @@ subscriptions _ =
 port jsInterop : String -> Cmd msg
 
 
-port receiveJsonFromJs : (JD.Value -> msg) -> Sub msg
+port receiveMsgsFromJs : (JD.Value -> msg) -> Sub msg
 
 
 
@@ -1228,3 +1261,19 @@ viewErrors dismissErrors errors =
         <|
             errorMessages errors
                 ++ [ okButton dismissErrors ]
+
+
+type alias JsMessage =
+    { page : String
+    , type_ : String
+    , data : JD.Value
+    , currency : String
+    }
+
+jsMessageDecoder : JD.Decoder JsMessage
+jsMessageDecoder =
+    JD.map4 JsMessage
+        (JD.field "page" JD.string)
+        (JD.field "type" JD.string)
+        (JD.field "data" JD.value)
+        (JD.field "currency" JD.string)

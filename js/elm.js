@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.at.jk === region.X.jk)
+	if (region.as.jh === region.W.jh)
 	{
-		return 'on line ' + region.at.jk;
+		return 'on line ' + region.as.jh;
 	}
-	return 'on lines ' + region.at.jk + ' through ' + region.X.jk;
+	return 'on lines ' + region.as.jh + ' through ' + region.W.jh;
 }
 
 
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.tu,
+		impl.tt,
 		impl.vg,
-		impl.uV,
+		impl.uU,
 		function() { return function() {} }
 	);
 });
@@ -2720,8 +2720,8 @@ var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
 		c: func(record.c),
-		nQ: record.nQ,
-		nH: record.nH
+		nN: record.nN,
+		nE: record.nE
 	}
 });
 
@@ -2990,10 +2990,10 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 
 		var value = result.a;
 		var message = !tag ? value : tag < 3 ? value.a : value.c;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.nQ;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.nN;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.nH) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.nE) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3943,9 +3943,9 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.tu,
+		impl.tt,
 		impl.vg,
-		impl.uV,
+		impl.uU,
 		function(sendToApp, initialModel) {
 			var view = impl.vh;
 			/**/
@@ -3979,9 +3979,9 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.tu,
+		impl.tt,
 		impl.vg,
-		impl.uV,
+		impl.uU,
 		function(sendToApp, initialModel) {
 			var divertHrefToApp = impl.eg && impl.eg(sendToApp)
 			var view = impl.vh;
@@ -3992,12 +3992,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.sj);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.sh);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.vb) && (_VirtualDom_doc.title = title = doc.vb);
+				(title !== doc.va) && (_VirtualDom_doc.title = title = doc.va);
 			});
 		}
 	);
@@ -4053,8 +4053,8 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.t1;
-	var onUrlRequest = impl.t2;
+	var onUrlChange = impl.t0;
+	var onUrlRequest = impl.t1;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
@@ -4074,9 +4074,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.kk === next.kk
-							&& curr.mK === next.mK
-							&& curr.kd.a === next.kd.a
+							&& curr.ki === next.ki
+							&& curr.mH === next.mH
+							&& curr.kb.a === next.kb.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4084,13 +4084,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		tu: function(flags)
+		tt: function(flags)
 		{
-			return A3(impl.tu, flags, _Browser_getUrl(), key);
+			return A3(impl.tt, flags, _Browser_getUrl(), key);
 		},
 		vh: impl.vh,
 		vg: impl.vg,
-		uV: impl.uV
+		uU: impl.uU
 	});
 }
 
@@ -4156,17 +4156,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { tk: 'hidden', st: 'visibilitychange' }
+		? { tj: 'hidden', sr: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { tk: 'mozHidden', st: 'mozvisibilitychange' }
+		? { tj: 'mozHidden', sr: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { tk: 'msHidden', st: 'msvisibilitychange' }
+		? { tj: 'msHidden', sr: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { tk: 'webkitHidden', st: 'webkitvisibilitychange' }
-		: { tk: 'hidden', st: 'visibilitychange' };
+		? { tj: 'webkitHidden', sr: 'webkitvisibilitychange' }
+		: { tj: 'hidden', sr: 'visibilitychange' };
 }
 
 
@@ -4247,12 +4247,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		q_: _Browser_getScene(),
-		rK: {
-			rT: _Browser_window.pageXOffset,
-			rV: _Browser_window.pageYOffset,
-			dl: _Browser_doc.documentElement.clientWidth,
-			iC: _Browser_doc.documentElement.clientHeight
+		qY: _Browser_getScene(),
+		rI: {
+			rR: _Browser_window.pageXOffset,
+			rT: _Browser_window.pageYOffset,
+			dk: _Browser_doc.documentElement.clientWidth,
+			iz: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4262,8 +4262,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		dl: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		iC: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		dk: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		iz: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4286,15 +4286,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			q_: {
-				dl: node.scrollWidth,
-				iC: node.scrollHeight
+			qY: {
+				dk: node.scrollWidth,
+				iz: node.scrollHeight
 			},
-			rK: {
-				rT: node.scrollLeft,
-				rV: node.scrollTop,
-				dl: node.clientWidth,
-				iC: node.clientHeight
+			rI: {
+				rR: node.scrollLeft,
+				rT: node.scrollTop,
+				dk: node.clientWidth,
+				iz: node.clientHeight
 			}
 		};
 	});
@@ -4324,18 +4324,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			q_: _Browser_getScene(),
-			rK: {
-				rT: x,
-				rV: y,
-				dl: _Browser_doc.documentElement.clientWidth,
-				iC: _Browser_doc.documentElement.clientHeight
+			qY: _Browser_getScene(),
+			rI: {
+				rR: x,
+				rT: y,
+				dk: _Browser_doc.documentElement.clientWidth,
+				iz: _Browser_doc.documentElement.clientHeight
 			},
-			$7: {
-				rT: x + rect.left,
-				rV: y + rect.top,
-				dl: rect.width,
-				iC: rect.height
+			dn: {
+				rR: x + rect.left,
+				rT: y + rect.top,
+				dk: rect.width,
+				iz: rect.height
 			}
 		};
 	});
@@ -4612,25 +4612,25 @@ var _Http_toTask = F3(function(router, toTask, request)
 	return _Scheduler_binding(function(callback)
 	{
 		function done(response) {
-			callback(toTask(request.sZ.a(response)));
+			callback(toTask(request.sY.a(response)));
 		}
 
 		var xhr = new XMLHttpRequest();
 		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.sZ.b, xhr)); });
-		$elm$core$Maybe$isJust(request.nc) && _Http_track(router, xhr, request.nc.a);
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.sY.b, xhr)); });
+		$elm$core$Maybe$isJust(request.m8) && _Http_track(router, xhr, request.m8.a);
 
 		try {
-			xhr.open(request.pW, request.dj, true);
+			xhr.open(request.pU, request.di, true);
 		} catch (e) {
-			return done($elm$http$Http$BadUrl_(request.dj));
+			return done($elm$http$Http$BadUrl_(request.di));
 		}
 
 		_Http_configureRequest(xhr, request);
 
-		request.sj.a && xhr.setRequestHeader('Content-Type', request.sj.a);
-		xhr.send(request.sj.b);
+		request.sh.a && xhr.setRequestHeader('Content-Type', request.sh.a);
+		xhr.send(request.sh.b);
 
 		return function() { xhr.c = true; xhr.abort(); };
 	});
@@ -4641,13 +4641,13 @@ var _Http_toTask = F3(function(router, toTask, request)
 
 function _Http_configureRequest(xhr, request)
 {
-	for (var headers = request.bH; headers.b; headers = headers.b) // WHILE_CONS
+	for (var headers = request.bG; headers.b; headers = headers.b) // WHILE_CONS
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
-	xhr.timeout = request.lG.a || 0;
-	xhr.responseType = request.sZ.d;
-	xhr.withCredentials = request.r6;
+	xhr.timeout = request.lE.a || 0;
+	xhr.responseType = request.sY.d;
+	xhr.withCredentials = request.r4;
 }
 
 
@@ -4668,10 +4668,10 @@ function _Http_toResponse(toBody, xhr)
 function _Http_toMetadata(xhr)
 {
 	return {
-		dj: xhr.responseURL,
-		uO: xhr.status,
-		uP: xhr.statusText,
-		bH: _Http_parseHeaders(xhr.getAllResponseHeaders())
+		di: xhr.responseURL,
+		uN: xhr.status,
+		uO: xhr.statusText,
+		bG: _Http_parseHeaders(xhr.getAllResponseHeaders())
 	};
 }
 
@@ -4766,15 +4766,15 @@ function _Http_track(router, xhr, tracker)
 	xhr.upload.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Sending({
-			uE: event.loaded,
-			uI: event.total
+			uD: event.loaded,
+			uH: event.total
 		}))));
 	});
 	xhr.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Receiving({
-			uk: event.loaded,
-			uI: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
+			uj: event.loaded,
+			uH: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
 		}))));
 	});
 }var $author$project$Main$ChangedUrl = function (a) {
@@ -5189,25 +5189,25 @@ var $elm$core$Array$treeFromBuilder = F2(
 	});
 var $elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
-		if (!builder.ap) {
+		if (!builder.ao) {
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.au),
+				$elm$core$Elm$JsArray$length(builder.at),
 				$elm$core$Array$shiftStep,
 				$elm$core$Elm$JsArray$empty,
-				builder.au);
+				builder.at);
 		} else {
-			var treeLen = builder.ap * $elm$core$Array$branchFactor;
+			var treeLen = builder.ao * $elm$core$Array$branchFactor;
 			var depth = $elm$core$Basics$floor(
 				A2($elm$core$Basics$logBase, $elm$core$Array$branchFactor, treeLen - 1));
-			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.av) : builder.av;
-			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.ap);
+			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.au) : builder.au;
+			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.ao);
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.au) + treeLen,
+				$elm$core$Elm$JsArray$length(builder.at) + treeLen,
 				A2($elm$core$Basics$max, 5, depth * $elm$core$Array$shiftStep),
 				tree,
-				builder.au);
+				builder.at);
 		}
 	});
 var $elm$core$Basics$idiv = _Basics_idiv;
@@ -5220,7 +5220,7 @@ var $elm$core$Array$initializeHelp = F5(
 				return A2(
 					$elm$core$Array$builderToArray,
 					false,
-					{av: nodeList, ap: (len / $elm$core$Array$branchFactor) | 0, au: tail});
+					{au: nodeList, ao: (len / $elm$core$Array$branchFactor) | 0, at: tail});
 			} else {
 				var leaf = $elm$core$Array$Leaf(
 					A3($elm$core$Elm$JsArray$initialize, $elm$core$Array$branchFactor, fromIndex, fn));
@@ -5287,7 +5287,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {s5: fragment, mK: host, uc: path, kd: port_, kk: protocol, uj: query};
+		return {s4: fragment, mH: host, ub: path, kb: port_, ki: protocol, ui: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5571,24 +5571,24 @@ var $author$project$Main$AccountsPage = function (a) {
 };
 var $author$project$Main$Loading = 0;
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
-var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo = {nj: $elm$core$Maybe$Nothing, n_: $elm$core$Maybe$Nothing};
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo = {nf: $elm$core$Maybe$Nothing, nX: $elm$core$Maybe$Nothing};
 var $author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo;
 var $author$project$Pages$Accounts$BTC = 0;
 var $author$project$Pages$Accounts$Loaded = 0;
 var $author$project$Pages$Accounts$ManageAccounts = 0;
 var $author$project$Pages$Accounts$initialModel = {
-	oo: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
-	mD: 0,
-	sH: 0,
-	oY: _List_Nil,
-	pC: false,
-	fy: _List_Nil,
-	mN: _List_Nil,
-	mV: '',
-	qj: 'Accounts',
-	f$: '',
+	ol: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
+	ng: 0,
+	sG: 0,
+	oW: _List_Nil,
+	pA: false,
+	dD: _List_Nil,
+	mK: _List_Nil,
+	jJ: '',
+	qh: 'Accounts',
+	fZ: '',
 	dI: 0,
-	uT: ''
+	uS: ''
 };
 var $elm$time$Time$Posix = $elm$core$Basics$identity;
 var $elm$time$Time$millisToPosix = $elm$core$Basics$identity;
@@ -5601,33 +5601,33 @@ var $author$project$Pages$Buy$GotInitialModel = $elm$core$Basics$identity;
 var $author$project$Pages$Buy$Buy = $elm$core$Basics$identity;
 var $author$project$Pages$Buy$Loading = 0;
 var $author$project$Pages$Buy$initialModel = {
-	qR: {tR: 'Loading...'},
+	qP: {tQ: 'Loading...'},
 	dI: 0,
-	vb: 'Buy'
+	va: 'Buy'
 };
 var $elm$core$Platform$Cmd$map = _Platform_map;
 var $author$project$Pages$Buy$init = function (_v0) {
 	return _Utils_Tuple2(
 		_Utils_update(
 			$author$project$Pages$Buy$initialModel,
-			{vb: 'Haveno-Web Buy'}),
+			{va: 'Haveno-Web Buy'}),
 		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
-var $author$project$Pages$Connect$initialModel = {eW: 0, e$: '', th: false, mS: 'node.haveno.network:17750', f$: '', nN: false, mZ: false, vi: false};
+var $author$project$Pages$Connect$initialModel = {eW: 0, e$: '', tg: false, mP: 'node.haveno.network:17750', fZ: '', nK: false, mV: false, vi: false};
 var $author$project$Pages$Connect$init = function (_v0) {
 	return _Utils_Tuple2($author$project$Pages$Connect$initialModel, $elm$core$Platform$Cmd$none);
 };
 var $author$project$Pages$Donate$DonateView = 0;
 var $author$project$Pages$Donate$Loaded = 0;
 var $author$project$Pages$Donate$initialModel = {
-	oo: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
-	sH: 0,
-	oY: _List_Nil,
-	pC: false,
-	qj: 'Donate',
-	f$: '',
+	ol: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
+	sG: 0,
+	oW: _List_Nil,
+	pA: false,
+	qh: 'Donate',
+	fZ: '',
 	dI: 0,
-	uT: ''
+	uS: ''
 };
 var $author$project$Pages$Donate$init = function (_v0) {
 	return _Utils_Tuple2($author$project$Pages$Donate$initialModel, $elm$core$Platform$Cmd$none);
@@ -5635,14 +5635,14 @@ var $author$project$Pages$Donate$init = function (_v0) {
 var $author$project$Pages$Funds$FundsView = 0;
 var $author$project$Pages$Funds$Loaded = 0;
 var $author$project$Pages$Funds$initialModel = {
-	oo: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
-	sH: 0,
-	oY: _List_Nil,
-	pC: false,
-	qj: 'Funds',
-	f$: '',
+	ol: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
+	sG: 0,
+	oW: _List_Nil,
+	pA: false,
+	qh: 'Funds',
+	fZ: '',
 	dI: 0,
-	uT: ''
+	uS: ''
 };
 var $author$project$Pages$Funds$init = function (_v0) {
 	return _Utils_Tuple2($author$project$Pages$Funds$initialModel, $elm$core$Platform$Cmd$none);
@@ -5651,39 +5651,39 @@ var $author$project$Pages$Market$GotInitialModel = $elm$core$Basics$identity;
 var $author$project$Pages$Market$Loading = 0;
 var $author$project$Pages$Market$Market = $elm$core$Basics$identity;
 var $author$project$Pages$Market$initialModel = {
-	qR: {tR: 'Loading...'},
+	qP: {tQ: 'Loading...'},
 	dI: 0,
-	vb: 'Market'
+	va: 'Market'
 };
 var $author$project$Pages$Market$init = function (_v0) {
 	return _Utils_Tuple2(
 		_Utils_update(
 			$author$project$Pages$Market$initialModel,
-			{vb: 'Haveno-Web Market'}),
+			{va: 'Haveno-Web Market'}),
 		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
 var $author$project$Pages$Portfolio$GotInitialModel = $elm$core$Basics$identity;
 var $author$project$Pages$Portfolio$Loading = 0;
 var $author$project$Pages$Portfolio$Portfolio = $elm$core$Basics$identity;
 var $author$project$Pages$Portfolio$initialModel = {
-	qR: {tR: 'Loading...'},
+	qP: {tQ: 'Loading...'},
 	dI: 0,
-	vb: 'Portfolio'
+	va: 'Portfolio'
 };
 var $author$project$Pages$Portfolio$init = function (_v0) {
 	return _Utils_Tuple2(
 		_Utils_update(
 			$author$project$Pages$Portfolio$initialModel,
-			{vb: 'Haveno-Web Portfolio'}),
+			{va: 'Haveno-Web Portfolio'}),
 		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
 var $author$project$Pages$Sell$GotInitialModel = $elm$core$Basics$identity;
 var $author$project$Pages$Sell$Loading = 0;
 var $author$project$Pages$Sell$Sell = $elm$core$Basics$identity;
 var $author$project$Pages$Sell$initialModel = {
-	qR: {tR: 'Loading...'},
+	qP: {tQ: 'Loading...'},
 	dI: 0,
-	vb: 'Sell'
+	va: 'Sell'
 };
 var $author$project$Pages$Sell$init = function (_v0) {
 	return _Utils_Tuple2(
@@ -5693,7 +5693,7 @@ var $author$project$Pages$Sell$init = function (_v0) {
 var $author$project$Pages$Splash$Loading = 0;
 var $author$project$Pages$Splash$Model = F7(
 	function (status, pagetitle, root, balances, primaryaddress, version, errors) {
-		return {oo: balances, oY: errors, qj: pagetitle, f$: primaryaddress, qR: root, dI: status, bF: version};
+		return {ol: balances, oW: errors, qh: pagetitle, fZ: primaryaddress, qP: root, dI: status, bE: version};
 	});
 var $author$project$Pages$Splash$NoOp = 0;
 var $author$project$Pages$Splash$Splash = $elm$core$Basics$identity;
@@ -5702,10 +5702,10 @@ var $author$project$Pages$Splash$init = function (fromMainToSplash) {
 		$author$project$Pages$Splash$Model,
 		0,
 		'Splash',
-		{tR: 'Loading...'},
+		{tQ: 'Loading...'},
 		$elm$core$Maybe$Nothing,
 		'',
-		fromMainToSplash.pk,
+		fromMainToSplash.pi,
 		_List_Nil);
 	return _Utils_Tuple2(
 		newModel,
@@ -5720,20 +5720,20 @@ var $author$project$Pages$Support$GotInitialModel = $elm$core$Basics$identity;
 var $author$project$Pages$Support$Loading = 0;
 var $author$project$Pages$Support$Support = $elm$core$Basics$identity;
 var $author$project$Pages$Support$initialModel = {
-	qR: {tR: 'Loading...'},
+	qP: {tQ: 'Loading...'},
 	dI: 0,
-	vb: 'Support'
+	va: 'Support'
 };
 var $author$project$Pages$Support$init = function (_v0) {
 	return _Utils_Tuple2(
 		_Utils_update(
 			$author$project$Pages$Support$initialModel,
-			{vb: 'Haveno-Web Support'}),
+			{va: 'Haveno-Web Support'}),
 		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
 var $elm$url$Url$Parser$State = F5(
 	function (visited, unvisited, params, frag, value) {
-		return {dX: frag, d7: params, dK: unvisited, ao: value, en: visited};
+		return {dX: frag, d7: params, dK: unvisited, an: value, en: visited};
 	});
 var $elm$url$Url$Parser$getFirstMatch = function (states) {
 	getFirstMatch:
@@ -5745,10 +5745,10 @@ var $elm$url$Url$Parser$getFirstMatch = function (states) {
 			var rest = states.b;
 			var _v1 = state.dK;
 			if (!_v1.b) {
-				return $elm$core$Maybe$Just(state.ao);
+				return $elm$core$Maybe$Just(state.an);
 			} else {
 				if ((_v1.a === '') && (!_v1.b.b)) {
-					return $elm$core$Maybe$Just(state.ao);
+					return $elm$core$Maybe$Just(state.an);
 				} else {
 					var $temp$states = rest;
 					states = $temp$states;
@@ -6360,9 +6360,9 @@ var $elm$url$Url$Parser$parse = F2(
 				A5(
 					$elm$url$Url$Parser$State,
 					_List_Nil,
-					$elm$url$Url$Parser$preparePath(url.uc),
-					$elm$url$Url$Parser$prepareQuery(url.uj),
-					url.s5,
+					$elm$url$Url$Parser$preparePath(url.ub),
+					$elm$url$Url$Parser$prepareQuery(url.ui),
+					url.s4,
 					$elm$core$Basics$identity)));
 	});
 var $author$project$Main$GotAccountsMsg = function (a) {
@@ -6376,10 +6376,10 @@ var $author$project$Main$toAccounts = F2(
 			_Utils_update(
 				model,
 				{
-					N: $author$project$Main$AccountsPage(
+					H: $author$project$Main$AccountsPage(
 						_Utils_update(
 							accounts,
-							{oo: model.oo}))
+							{ol: model.ol}))
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotAccountsMsg, cmd));
 	});
@@ -6392,7 +6392,7 @@ var $author$project$Main$GotConnectMsg = function (a) {
 var $author$project$Main$Loaded = 1;
 var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$isXMRWalletConnected = function (model) {
-	return (!(model.f$ === '')) ? true : false;
+	return (!(model.fZ === '')) ? true : false;
 };
 var $author$project$Main$toConnect = F2(
 	function (model, _v0) {
@@ -6402,11 +6402,11 @@ var $author$project$Main$toConnect = F2(
 			_Utils_update(
 				model,
 				{
-					N: $author$project$Main$ConnectPage(
+					H: $author$project$Main$ConnectPage(
 						_Utils_update(
 							connect,
 							{
-								th: model.dt,
+								tg: model.ds,
 								vi: $author$project$Main$isXMRWalletConnected(model)
 							})),
 					dI: 1
@@ -6427,7 +6427,7 @@ var $author$project$Main$toDonate = F2(
 			_Utils_update(
 				model,
 				{
-					N: $author$project$Main$DonatePage(donate)
+					H: $author$project$Main$DonatePage(donate)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotDonateMsg, cmd));
 	});
@@ -6443,12 +6443,12 @@ var $author$project$Main$toFunds = F2(
 		var cmd = _v0.b;
 		var newFundsModel = _Utils_update(
 			funds,
-			{oo: model.oo});
+			{ol: model.ol});
 		return _Utils_Tuple2(
 			_Utils_update(
 				model,
 				{
-					N: $author$project$Main$FundsPage(newFundsModel)
+					H: $author$project$Main$FundsPage(newFundsModel)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotFundsMsg, cmd));
 	});
@@ -6466,7 +6466,7 @@ var $author$project$Main$toMarket = F2(
 			_Utils_update(
 				model,
 				{
-					N: $author$project$Main$MarketPage(market)
+					H: $author$project$Main$MarketPage(market)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotMarketMsg, cmd));
 	});
@@ -6484,7 +6484,7 @@ var $author$project$Main$toPortfolio = F2(
 			_Utils_update(
 				model,
 				{
-					N: $author$project$Main$PortfolioPage(portfolio)
+					H: $author$project$Main$PortfolioPage(portfolio)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotPortfolioMsg, cmd));
 	});
@@ -6502,7 +6502,7 @@ var $author$project$Main$toPricing = F2(
 			_Utils_update(
 				model,
 				{
-					N: $author$project$Main$BuyPage(pricing)
+					H: $author$project$Main$BuyPage(pricing)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotBuyMsg, cmd));
 	});
@@ -6520,7 +6520,7 @@ var $author$project$Main$toSell = F2(
 			_Utils_update(
 				model,
 				{
-					N: $author$project$Main$SellPage(sell)
+					H: $author$project$Main$SellPage(sell)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotSellMsg, cmd));
 	});
@@ -6547,10 +6547,10 @@ var $anmolitor$elm_grpc$Grpc$addHeader = F3(
 		return _Utils_update(
 			req,
 			{
-				bH: A2(
+				bG: A2(
 					$elm$core$List$cons,
 					A2($elm$http$Http$header, key, value),
-					req.bH)
+					req.bG)
 			});
 	});
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetBalancesRequest = {g: ''};
@@ -6560,14 +6560,14 @@ var $eriktim$elm_protocol_buffers$Internal$Int64$Int64 = $elm$core$Basics$identi
 var $elm$core$Bitwise$or = _Bitwise_or;
 var $eriktim$elm_protocol_buffers$Internal$Int64$fromInts = F2(
 	function (higher, lower) {
-		return {tl: 0 | higher, nz: 0 | lower};
+		return {tk: 0 | higher, nw: 0 | lower};
 	});
 var $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts = $eriktim$elm_protocol_buffers$Internal$Int64$fromInts;
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BtcBalanceInfo = {
 	eC: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
-	ny: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
-	nK: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
-	nT: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0)
+	nv: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	nH: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	nQ: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0)
 };
 var $eriktim$elm_protocol_buffers$Protobuf$Decode$Decoder = $elm$core$Basics$identity;
 var $elm$bytes$Bytes$Encode$getWidth = function (builder) {
@@ -6828,7 +6828,7 @@ var $elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
 var $eriktim$elm_protocol_buffers$Internal$Int32$toZigZag = function (value) {
 	return (value >> 31) ^ (value << 1);
 };
-var $eriktim$elm_protocol_buffers$Internal$Int32$operations = {s6: $elm$core$Basics$identity, s7: $eriktim$elm_protocol_buffers$Internal$Int32$fromSigned, s8: $eriktim$elm_protocol_buffers$Internal$Int32$fromZigZag, uf: $eriktim$elm_protocol_buffers$Internal$Int32$popBase128, ui: $eriktim$elm_protocol_buffers$Internal$Int32$pushBase128, vc: $eriktim$elm_protocol_buffers$Internal$Int32$toSigned, vd: $eriktim$elm_protocol_buffers$Internal$Int32$toZigZag};
+var $eriktim$elm_protocol_buffers$Internal$Int32$operations = {s5: $elm$core$Basics$identity, s6: $eriktim$elm_protocol_buffers$Internal$Int32$fromSigned, s7: $eriktim$elm_protocol_buffers$Internal$Int32$fromZigZag, ue: $eriktim$elm_protocol_buffers$Internal$Int32$popBase128, uh: $eriktim$elm_protocol_buffers$Internal$Int32$pushBase128, vb: $eriktim$elm_protocol_buffers$Internal$Int32$toSigned, vc: $eriktim$elm_protocol_buffers$Internal$Int32$toZigZag};
 var $elm$bytes$Bytes$Decode$unsignedInt8 = _Bytes_read_u8;
 var $eriktim$elm_protocol_buffers$Protobuf$Decode$varIntDecoder = function (config) {
 	return A2(
@@ -6841,12 +6841,12 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$varIntDecoder = function (conf
 					var value = _v0.b;
 					return _Utils_Tuple2(
 						usedBytes + 1,
-						A2(config.ui, 127 & octet, value));
+						A2(config.uh, 127 & octet, value));
 				},
 				$eriktim$elm_protocol_buffers$Protobuf$Decode$varIntDecoder(config)) : $elm$bytes$Bytes$Decode$succeed(
 				_Utils_Tuple2(
 					1,
-					config.s6(octet)));
+					config.s5(octet)));
 		},
 		$elm$bytes$Bytes$Decode$unsignedInt8);
 };
@@ -6932,16 +6932,16 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$unknownFieldDecoder = function
 };
 var $eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage = F2(
 	function (width, state) {
-		return (state.dl <= 0) ? ($elm$core$Set$isEmpty(state.kz) ? $elm$bytes$Bytes$Decode$succeed(
+		return (state.dk <= 0) ? ($elm$core$Set$isEmpty(state.kx) ? $elm$bytes$Bytes$Decode$succeed(
 			$elm$bytes$Bytes$Decode$Done(
-				_Utils_Tuple2(width, state.tO))) : $elm$bytes$Bytes$Decode$fail) : A2(
+				_Utils_Tuple2(width, state.tN))) : $elm$bytes$Bytes$Decode$fail) : A2(
 			$elm$bytes$Bytes$Decode$andThen,
 			function (_v0) {
 				var usedBytes = _v0.a;
 				var _v1 = _v0.b;
 				var fieldNumber = _v1.a;
 				var wireType = _v1.b;
-				var _v2 = A2($elm$core$Dict$get, fieldNumber, state.nm);
+				var _v2 = A2($elm$core$Dict$get, fieldNumber, state.nj);
 				if (!_v2.$) {
 					var decoder = _v2.a;
 					return A2(
@@ -6953,9 +6953,9 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage = F2(
 								_Utils_update(
 									state,
 									{
-										tO: fn(state.tO),
-										kz: A2($elm$core$Set$remove, fieldNumber, state.kz),
-										dl: (state.dl - usedBytes) - n
+										tN: fn(state.tN),
+										kx: A2($elm$core$Set$remove, fieldNumber, state.kx),
+										dk: (state.dk - usedBytes) - n
 									}));
 						},
 						decoder(wireType));
@@ -6966,7 +6966,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage = F2(
 							return $elm$bytes$Bytes$Decode$Loop(
 								_Utils_update(
 									state,
-									{dl: (state.dl - usedBytes) - n}));
+									{dk: (state.dk - usedBytes) - n}));
 						},
 						$eriktim$elm_protocol_buffers$Protobuf$Decode$unknownFieldDecoder(wireType));
 				}
@@ -7005,7 +7005,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$message = F2(
 				var width = wireType.a;
 				return A2(
 					$elm$bytes$Bytes$Decode$loop,
-					{nm: dict, tO: v, kz: requiredSet, dl: width},
+					{nj: dict, tN: v, kx: requiredSet, dk: width},
 					$eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage(width));
 			} else {
 				return $elm$bytes$Bytes$Decode$fail;
@@ -7041,19 +7041,19 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$optional = F3(
 var $eriktim$elm_protocol_buffers$Internal$Int64$fromBase128 = $eriktim$elm_protocol_buffers$Internal$Int64$fromInts(0);
 var $eriktim$elm_protocol_buffers$Internal$Int64$and = F2(
 	function (n, _v0) {
-		var lower = _v0.nz;
+		var lower = _v0.nw;
 		return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, 0, n & lower);
 	});
 var $elm$core$Bitwise$complement = _Bitwise_complement;
 var $eriktim$elm_protocol_buffers$Internal$Int64$negate = function (_int) {
-	var higher = _int.tl;
-	var lower = _int.nz;
+	var higher = _int.tk;
+	var lower = _int.nw;
 	return ((!lower) && (!higher)) ? _int : A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, ~higher, (~lower) + 1);
 };
 var $eriktim$elm_protocol_buffers$Internal$Int64$shiftRightZfBy = F2(
 	function (n, _v0) {
-		var higher = _v0.tl;
-		var lower = _v0.nz;
+		var higher = _v0.tk;
+		var lower = _v0.nw;
 		if (n > 32) {
 			return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, 0, higher >>> n);
 		} else {
@@ -7066,7 +7066,7 @@ var $eriktim$elm_protocol_buffers$Internal$Int64$xor = F2(
 	function (_v0, _v1) {
 		var a = _v0;
 		var b = _v1;
-		return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, a.tl ^ b.tl, a.nz ^ b.nz);
+		return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, a.tk ^ b.tk, a.nw ^ b.nw);
 	});
 var $eriktim$elm_protocol_buffers$Internal$Int64$fromZigZag = function (value) {
 	return A2(
@@ -7076,21 +7076,21 @@ var $eriktim$elm_protocol_buffers$Internal$Int64$fromZigZag = function (value) {
 			A2($eriktim$elm_protocol_buffers$Internal$Int64$and, 1, value)));
 };
 var $eriktim$elm_protocol_buffers$Internal$Int64$popBase128 = function (_int) {
-	var lower = _int.nz;
+	var lower = _int.nw;
 	var higherBits = A2($eriktim$elm_protocol_buffers$Internal$Int64$shiftRightZfBy, 7, _int);
 	var base128 = 127 & lower;
 	return _Utils_Tuple2(base128, higherBits);
 };
 var $eriktim$elm_protocol_buffers$Internal$Int64$addUnsafe = F2(
 	function (n, _v0) {
-		var higher = _v0.tl;
-		var lower = _v0.nz;
+		var higher = _v0.tk;
+		var lower = _v0.nw;
 		return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, higher, n + lower);
 	});
 var $eriktim$elm_protocol_buffers$Internal$Int64$shiftLeftBy = F2(
 	function (n, _v0) {
-		var higher = _v0.tl;
-		var lower = _v0.nz;
+		var higher = _v0.tk;
+		var lower = _v0.nw;
 		if (n > 32) {
 			return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, lower << n, 0);
 		} else {
@@ -7107,7 +7107,7 @@ var $eriktim$elm_protocol_buffers$Internal$Int64$pushBase128 = F2(
 			A2($eriktim$elm_protocol_buffers$Internal$Int64$shiftLeftBy, 7, _int));
 	});
 var $eriktim$elm_protocol_buffers$Internal$Int64$shiftRightBy63 = function (_v0) {
-	var higher = _v0.tl;
+	var higher = _v0.tk;
 	var onlyOnesOrZeros = higher >> 31;
 	return A2($eriktim$elm_protocol_buffers$Internal$Int64$fromInts, onlyOnesOrZeros, onlyOnesOrZeros);
 };
@@ -7117,7 +7117,7 @@ var $eriktim$elm_protocol_buffers$Internal$Int64$toZigZag = function (value) {
 		$eriktim$elm_protocol_buffers$Internal$Int64$shiftRightBy63(value),
 		A2($eriktim$elm_protocol_buffers$Internal$Int64$shiftLeftBy, 1, value));
 };
-var $eriktim$elm_protocol_buffers$Internal$Int64$operations = {s6: $eriktim$elm_protocol_buffers$Internal$Int64$fromBase128, s7: $elm$core$Basics$identity, s8: $eriktim$elm_protocol_buffers$Internal$Int64$fromZigZag, uf: $eriktim$elm_protocol_buffers$Internal$Int64$popBase128, ui: $eriktim$elm_protocol_buffers$Internal$Int64$pushBase128, vc: $elm$core$Basics$identity, vd: $eriktim$elm_protocol_buffers$Internal$Int64$toZigZag};
+var $eriktim$elm_protocol_buffers$Internal$Int64$operations = {s5: $eriktim$elm_protocol_buffers$Internal$Int64$fromBase128, s6: $elm$core$Basics$identity, s7: $eriktim$elm_protocol_buffers$Internal$Int64$fromZigZag, ue: $eriktim$elm_protocol_buffers$Internal$Int64$popBase128, uh: $eriktim$elm_protocol_buffers$Internal$Int64$pushBase128, vb: $elm$core$Basics$identity, vc: $eriktim$elm_protocol_buffers$Internal$Int64$toZigZag};
 var $eriktim$elm_protocol_buffers$Protobuf$Decode$packedDecoder = F2(
 	function (decoderWireType, decoder) {
 		return function (wireType) {
@@ -7134,7 +7134,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$uintDecoder = function (config
 		$eriktim$elm_protocol_buffers$Internal$Protobuf$VarInt,
 		A2(
 			$elm$bytes$Bytes$Decode$map,
-			$elm$core$Tuple$mapSecond(config.s7),
+			$elm$core$Tuple$mapSecond(config.s6),
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$varIntDecoder(config)));
 };
 var $eriktim$elm_protocol_buffers$Protobuf$Decode$uint64 = $eriktim$elm_protocol_buffers$Protobuf$Decode$uintDecoder($eriktim$elm_protocol_buffers$Internal$Int64$operations);
@@ -7161,7 +7161,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{nK: a});
+						{nH: a});
 				})),
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
@@ -7171,7 +7171,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{nT: a});
+						{nQ: a});
 				})),
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
@@ -7181,15 +7181,15 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{ny: a});
+						{nv: a});
 				}))
 		]));
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__XmrBalanceInfo = {
 	eC: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
-	nh: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
-	nG: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
-	nL: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
-	nM: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0)
+	nd: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	nD: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	nI: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	nJ: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0)
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__XmrBalanceInfo = A2(
 	$eriktim$elm_protocol_buffers$Protobuf$Decode$message,
@@ -7204,7 +7204,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{nh: a});
+						{nd: a});
 				})),
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
@@ -7224,7 +7224,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{nG: a});
+						{nD: a});
 				})),
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
@@ -7234,7 +7234,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{nL: a});
+						{nI: a});
 				})),
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
@@ -7244,7 +7244,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{nM: a});
+						{nJ: a});
 				}))
 		]));
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__BalancesInfo = A2(
@@ -7260,7 +7260,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{nj: a});
+						{nf: a});
 				})),
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
@@ -7270,10 +7270,10 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{n_: a});
+						{nX: a});
 				}))
 		]));
-var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetBalancesReply = {oo: $elm$core$Maybe$Nothing};
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetBalancesReply = {ol: $elm$core$Maybe$Nothing};
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetBalancesReply = A2(
 	$eriktim$elm_protocol_buffers$Protobuf$Decode$message,
 	$author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetBalancesReply,
@@ -7287,7 +7287,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{oo: a});
+						{ol: a});
 				}))
 		]));
 var $author$project$Proto$Io$Haveno$Protobuffer$decodeGetBalancesReply = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetBalancesReply;
@@ -7353,12 +7353,12 @@ var $elm$bytes$Bytes$Encode$U8 = function (a) {
 var $elm$bytes$Bytes$Encode$unsignedInt8 = $elm$bytes$Bytes$Encode$U8;
 var $eriktim$elm_protocol_buffers$Protobuf$Encode$toVarIntEncoders = F2(
 	function (config, value) {
-		var _v0 = config.uf(value);
+		var _v0 = config.ue(value);
 		var base128 = _v0.a;
 		var higherBits = _v0.b;
 		return _Utils_eq(
 			higherBits,
-			config.s6(0)) ? _List_fromArray(
+			config.s5(0)) ? _List_fromArray(
 			[
 				$elm$bytes$Bytes$Encode$unsignedInt8(base128)
 			]) : A2(
@@ -7530,21 +7530,21 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Have
 			]));
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$encodeGetBalancesRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetBalancesRequest;
-var $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getBalances = {sK: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetBalancesReply, sW: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetBalancesRequest, ua: 'io.haveno.protobuffer', uw: 'GetBalances', uF: 'Wallets'};
+var $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getBalances = {sJ: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetBalancesReply, sV: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetBalancesRequest, t9: 'io.haveno.protobuffer', uv: 'GetBalances', uE: 'Wallets'};
 var $anmolitor$elm_grpc$Grpc$grpcContentType = 'application/grpc-web+proto';
 var $anmolitor$elm_grpc$Grpc$new = F2(
 	function (rpc, req) {
 		return {
-			sj: req,
-			bH: _List_fromArray(
+			sh: req,
+			bG: _List_fromArray(
 				[
 					A2($elm$http$Http$header, 'accept', $anmolitor$elm_grpc$Grpc$grpcContentType)
 				]),
-			mK: '',
-			m_: false,
-			kE: rpc,
-			lG: $elm$core$Maybe$Nothing,
-			nc: $elm$core$Maybe$Nothing
+			mH: '',
+			mW: false,
+			kC: rpc,
+			lE: $elm$core$Maybe$Nothing,
+			m8: $elm$core$Maybe$Nothing
 		};
 	});
 var $anmolitor$elm_grpc$Grpc$setHost = F2(
@@ -7552,7 +7552,7 @@ var $anmolitor$elm_grpc$Grpc$setHost = F2(
 		var req = _v0;
 		return _Utils_update(
 			req,
-			{mK: host});
+			{mH: host});
 	});
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -7822,7 +7822,7 @@ var $anmolitor$elm_grpc$Grpc$handleResponse = F2(
 	function (decoder, httpResponse) {
 		var parseResponse = F3(
 			function (isGoodStatus, metadata, bytes) {
-				var defaultGrpcStatus = isGoodStatus ? 0 : $anmolitor$elm_grpc$Grpc$httpBadStatusToGrpcStatus(metadata.uO);
+				var defaultGrpcStatus = isGoodStatus ? 0 : $anmolitor$elm_grpc$Grpc$httpBadStatusToGrpcStatus(metadata.uN);
 				var grpcStatus = A2(
 					$elm$core$Maybe$withDefault,
 					defaultGrpcStatus,
@@ -7832,7 +7832,7 @@ var $anmolitor$elm_grpc$Grpc$handleResponse = F2(
 						A2(
 							$elm$core$Maybe$andThen,
 							$elm$core$String$toInt,
-							A2($elm$core$Dict$get, 'grpc-status', metadata.bH))));
+							A2($elm$core$Dict$get, 'grpc-status', metadata.bG))));
 				if (!grpcStatus) {
 					return A2(
 						$elm$core$Result$fromMaybe,
@@ -7846,11 +7846,11 @@ var $anmolitor$elm_grpc$Grpc$handleResponse = F2(
 				} else {
 					var errMessage = A2(
 						$elm$core$Maybe$withDefault,
-						metadata.uP,
-						A2($elm$core$Dict$get, 'grpc-message', metadata.bH));
+						metadata.uO,
+						A2($elm$core$Dict$get, 'grpc-message', metadata.bG));
 					return $elm$core$Result$Err(
 						$anmolitor$elm_grpc$Grpc$BadStatus(
-							{sX: errMessage, cy: metadata, uq: bytes, dI: grpcStatus}));
+							{sW: errMessage, cx: metadata, up: bytes, dI: grpcStatus}));
 				}
 			});
 		switch (httpResponse.$) {
@@ -7877,7 +7877,7 @@ var $elm$http$Http$Request = function (a) {
 };
 var $elm$http$Http$State = F2(
 	function (reqs, subs) {
-		return {qM: reqs, rn: subs};
+		return {qK: reqs, rl: subs};
 	});
 var $elm$http$Http$init = $elm$core$Task$succeed(
 	A2($elm$http$Http$State, $elm$core$Dict$empty, _List_Nil));
@@ -7921,7 +7921,7 @@ var $elm$http$Http$updateReqs = F3(
 					return A2(
 						$elm$core$Task$andThen,
 						function (pid) {
-							var _v4 = req.nc;
+							var _v4 = req.m8;
 							if (_v4.$ === 1) {
 								return A3($elm$http$Http$updateReqs, router, otherCmds, reqs);
 							} else {
@@ -7951,7 +7951,7 @@ var $elm$http$Http$onEffects = F4(
 				return $elm$core$Task$succeed(
 					A2($elm$http$Http$State, reqs, subs));
 			},
-			A3($elm$http$Http$updateReqs, router, cmds, state.qM));
+			A3($elm$http$Http$updateReqs, router, cmds, state.qK));
 	});
 var $elm$http$Http$maybeSend = F4(
 	function (router, desiredTracker, progress, _v0) {
@@ -7976,7 +7976,7 @@ var $elm$http$Http$onSelfMsg = F3(
 				A2(
 					$elm$core$List$filterMap,
 					A3($elm$http$Http$maybeSend, router, tracker, progress),
-					state.rn)));
+					state.rl)));
 	});
 var $elm$http$Http$Cancel = function (a) {
 	return {$: 0, a: a};
@@ -7990,14 +7990,14 @@ var $elm$http$Http$cmdMap = F2(
 			var r = cmd.a;
 			return $elm$http$Http$Request(
 				{
-					r6: r.r6,
-					sj: r.sj,
-					sZ: A2(_Http_mapExpect, func, r.sZ),
-					bH: r.bH,
-					pW: r.pW,
-					lG: r.lG,
-					nc: r.nc,
-					dj: r.dj
+					r4: r.r4,
+					sh: r.sh,
+					sY: A2(_Http_mapExpect, func, r.sY),
+					bG: r.bG,
+					pU: r.pU,
+					lE: r.lE,
+					m8: r.m8,
+					di: r.di
 				});
 		}
 	});
@@ -8020,45 +8020,45 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{r6: false, sj: r.sj, sZ: r.sZ, bH: r.bH, pW: r.pW, lG: r.lG, nc: r.nc, dj: r.dj}));
+			{r4: false, sh: r.sh, sY: r.sY, bG: r.bG, pU: r.pU, lE: r.lE, m8: r.m8, di: r.di}));
 };
 var $elm$http$Http$riskyRequest = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{r6: true, sj: r.sj, sZ: r.sZ, bH: r.bH, pW: r.pW, lG: r.lG, nc: r.nc, dj: r.dj}));
+			{r4: true, sh: r.sh, sY: r.sY, bG: r.bG, pU: r.pU, lE: r.lE, m8: r.m8, di: r.di}));
 };
 var $anmolitor$elm_grpc$Grpc$rpcPath = function (_v0) {
-	var service = _v0.uF;
-	var _package = _v0.ua;
-	var rpcName = _v0.uw;
+	var service = _v0.uE;
+	var _package = _v0.t9;
+	var rpcName = _v0.uv;
 	return '/' + (($elm$core$String$isEmpty(_package) ? '' : (_package + '.')) + (service + ('/' + rpcName)));
 };
 var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 	function (expect, _v0) {
 		var req = _v0;
-		var toHttpRequest = req.m_ ? $elm$http$Http$riskyRequest : $elm$http$Http$request;
-		var _v1 = req.kE;
+		var toHttpRequest = req.mW ? $elm$http$Http$riskyRequest : $elm$http$Http$request;
+		var _v1 = req.kC;
 		var rpc = _v1;
 		var body = A2(
 			$elm$http$Http$bytesBody,
 			$anmolitor$elm_grpc$Grpc$grpcContentType,
 			$anmolitor$elm_grpc$Grpc$frameRequest(
 				$eriktim$elm_protocol_buffers$Protobuf$Encode$encode(
-					rpc.sW(req.sj))));
+					rpc.sV(req.sh))));
 		return toHttpRequest(
 			{
-				sj: body,
-				sZ: A2(
+				sh: body,
+				sY: A2(
 					$elm$http$Http$expectBytesResponse,
 					expect,
-					$anmolitor$elm_grpc$Grpc$handleResponse(rpc.sK)),
-				bH: req.bH,
-				pW: 'POST',
-				lG: req.lG,
-				nc: req.nc,
-				dj: _Utils_ap(
-					req.mK,
-					$anmolitor$elm_grpc$Grpc$rpcPath(req.kE))
+					$anmolitor$elm_grpc$Grpc$handleResponse(rpc.sJ)),
+				bG: req.bG,
+				pU: 'POST',
+				lE: req.lE,
+				m8: req.m8,
+				di: _Utils_ap(
+					req.mH,
+					$anmolitor$elm_grpc$Grpc$rpcPath(req.kC))
 			});
 	});
 var $author$project$Main$gotAvailableBalances = function () {
@@ -8074,7 +8074,7 @@ var $author$project$Main$gotAvailableBalances = function () {
 }();
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressRequest = {};
 var $author$project$Proto$Io$Haveno$Protobuffer$defaultGetXmrPrimaryAddressRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressRequest;
-var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressReply = {uh: ''};
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressReply = {ug: ''};
 var $eriktim$elm_protocol_buffers$Protobuf$Decode$lengthDelimitedDecoder = function (decoder) {
 	return function (wireType) {
 		if (wireType.$ === 2) {
@@ -8105,7 +8105,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{uh: a});
+						{ug: a});
 				}))
 		]));
 var $author$project$Proto$Io$Haveno$Protobuffer$decodeGetXmrPrimaryAddressReply = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressReply;
@@ -8113,7 +8113,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Have
 	return $eriktim$elm_protocol_buffers$Protobuf$Encode$message(_List_Nil);
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$encodeGetXmrPrimaryAddressRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressRequest;
-var $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getXmrPrimaryAddress = {sK: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetXmrPrimaryAddressReply, sW: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetXmrPrimaryAddressRequest, ua: 'io.haveno.protobuffer', uw: 'GetXmrPrimaryAddress', uF: 'Wallets'};
+var $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getXmrPrimaryAddress = {sJ: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetXmrPrimaryAddressReply, sV: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetXmrPrimaryAddressRequest, t9: 'io.haveno.protobuffer', uv: 'GetXmrPrimaryAddress', uE: 'Wallets'};
 var $author$project$Comms$CustomGrpc$gotPrimaryAddress = A2(
 	$anmolitor$elm_grpc$Grpc$setHost,
 	'http://localhost:8080',
@@ -8122,6 +8122,8 @@ var $author$project$Comms$CustomGrpc$gotPrimaryAddress = A2(
 		'password',
 		'apitest',
 		A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getXmrPrimaryAddress, $author$project$Proto$Io$Haveno$Protobuffer$defaultGetXmrPrimaryAddressRequest)));
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Main$jsInterop = _Platform_outgoingPort('jsInterop', $elm$json$Json$Encode$string);
 var $elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
 		A3(
@@ -8135,8 +8137,6 @@ var $elm$json$Json$Encode$object = function (pairs) {
 			_Json_emptyObject(0),
 			pairs));
 };
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $author$project$Main$sendMessageToJs = _Platform_outgoingPort('sendMessageToJs', $elm$json$Json$Encode$string);
 var $author$project$Main$notifyJsReady = function () {
 	var message = A2(
 		$elm$json$Json$Encode$encode,
@@ -8154,12 +8154,12 @@ var $author$project$Main$notifyJsReady = function () {
 					'address',
 					$elm$json$Json$Encode$string(''))
 				])));
-	return $author$project$Main$sendMessageToJs(message);
+	return $author$project$Main$jsInterop(message);
 }();
 var $author$project$Main$GotVersion = function (a) {
 	return {$: 13, a: a};
 };
-var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionReply = {bF: ''};
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionReply = {bE: ''};
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetVersionReply = A2(
 	$eriktim$elm_protocol_buffers$Protobuf$Decode$message,
 	$author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionReply,
@@ -8173,7 +8173,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{bF: a});
+						{bE: a});
 				}))
 		]));
 var $author$project$Proto$Io$Haveno$Protobuffer$decodeGetVersionReply = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetVersionReply;
@@ -8181,7 +8181,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Have
 	return $eriktim$elm_protocol_buffers$Protobuf$Encode$message(_List_Nil);
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$encodeGetVersionRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetVersionRequest;
-var $author$project$Proto$Io$Haveno$Protobuffer$GetVersion$getVersion = {sK: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetVersionReply, sW: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetVersionRequest, ua: 'io.haveno.protobuffer', uw: 'GetVersion', uF: 'GetVersion'};
+var $author$project$Proto$Io$Haveno$Protobuffer$GetVersion$getVersion = {sJ: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetVersionReply, sV: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetVersionRequest, t9: 'io.haveno.protobuffer', uv: 'GetVersion', uE: 'GetVersion'};
 var $author$project$Main$sendVersionRequest = function (request) {
 	var grpcRequest = A2(
 		$anmolitor$elm_grpc$Grpc$setHost,
@@ -8209,7 +8209,7 @@ var $author$project$Main$toSplash = F2(
 			_Utils_update(
 				model,
 				{
-					N: $author$project$Main$SplashPage(dashboard)
+					H: $author$project$Main$SplashPage(dashboard)
 				}),
 			$elm$core$Platform$Cmd$batch(
 				_List_fromArray(
@@ -8235,7 +8235,7 @@ var $author$project$Main$toSupport = F2(
 			_Utils_update(
 				model,
 				{
-					N: $author$project$Main$SupportPage(support)
+					H: $author$project$Main$SupportPage(support)
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotSupportMsg, cmd));
 	});
@@ -8256,7 +8256,7 @@ var $elm$url$Url$Parser$mapState = F2(
 		var unvisited = _v0.dK;
 		var params = _v0.d7;
 		var frag = _v0.dX;
-		var value = _v0.ao;
+		var value = _v0.an;
 		return A5(
 			$elm$url$Url$Parser$State,
 			visited,
@@ -8273,7 +8273,7 @@ var $elm$url$Url$Parser$map = F2(
 			var unvisited = _v1.dK;
 			var params = _v1.d7;
 			var frag = _v1.dX;
-			var value = _v1.ao;
+			var value = _v1.an;
 			return A2(
 				$elm$core$List$map,
 				$elm$url$Url$Parser$mapState(value),
@@ -8314,7 +8314,7 @@ var $elm$url$Url$Parser$s = function (str) {
 		var unvisited = _v0.dK;
 		var params = _v0.d7;
 		var frag = _v0.dX;
-		var value = _v0.ao;
+		var value = _v0.an;
 		if (!unvisited.b) {
 			return _List_Nil;
 		} else {
@@ -8387,7 +8387,7 @@ var $author$project$Main$updateUrl = F2(
 		var urlMinusQueryStr = _Utils_update(
 			url,
 			{
-				uj: $elm$core$Maybe$Just('')
+				ui: $elm$core$Maybe$Just('')
 			});
 		var _v0 = A2($elm$url$Url$Parser$parse, $author$project$Main$urlAsPageParser, urlMinusQueryStr);
 		if (!_v0.$) {
@@ -8404,7 +8404,7 @@ var $author$project$Main$updateUrl = F2(
 						$author$project$Main$toSplash,
 						model,
 						$author$project$Pages$Splash$init(
-							{pk: model.bF, lF: $elm$core$Maybe$Nothing}));
+							{pi: model.bE, lD: $elm$core$Maybe$Nothing}));
 				case 1:
 					var _v3 = _v0.a;
 					return A2(
@@ -8459,7 +8459,7 @@ var $author$project$Main$updateUrl = F2(
 				$author$project$Main$toSplash,
 				model,
 				$author$project$Pages$Splash$init(
-					{pk: model.bF, lF: $elm$core$Maybe$Nothing}));
+					{pi: model.bE, lD: $elm$core$Maybe$Nothing}));
 		}
 	});
 var $elm$json$Json$Decode$andThen = _Json_andThen;
@@ -8485,27 +8485,27 @@ var $author$project$Main$init = F3(
 				var urLAfterFlagDecode = _v1.a;
 				return _Utils_update(
 					urLAfterFlagDecode,
-					{uc: '/'});
+					{ub: '/'});
 			} else {
 				return A6($elm$url$Url$Url, 1, 'haveno-web-dev.netlify.app', $elm$core$Maybe$Nothing, '', $elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing);
 			}
 		}();
 		var initialModel = {
-			oo: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
-			oN: '',
-			oY: _List_Nil,
-			o6: decodedJsonFromSetupElmjs,
-			pw: false,
-			dt: false,
-			dD: false,
-			pH: key,
-			N: $author$project$Main$AccountsPage($author$project$Pages$Accounts$initialModel),
-			f$: '',
+			ol: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
+			oK: '',
+			oW: _List_Nil,
+			o4: decodedJsonFromSetupElmjs,
+			pu: false,
+			ds: false,
+			dC: false,
+			pF: key,
+			H: $author$project$Main$AccountsPage($author$project$Pages$Accounts$initialModel),
+			fZ: '',
 			dI: 0,
-			lF: $elm$time$Time$millisToPosix(0),
-			rs: $elm$core$Maybe$Nothing,
-			bF: 'No Haveno version available',
-			rX: $elm$core$Maybe$Nothing
+			lD: $elm$time$Time$millisToPosix(0),
+			rq: $elm$core$Maybe$Nothing,
+			bE: 'No Haveno version available',
+			rV: $elm$core$Maybe$Nothing
 		};
 		return A2($author$project$Main$updateUrl, decodedJsonFromSetupElmjs, initialModel);
 	});
@@ -8514,17 +8514,56 @@ var $author$project$Main$Recv = function (a) {
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$json$Json$Decode$value = _Json_decodeValue;
-var $author$project$Main$receiveMessageFromJs = _Platform_incomingPort('receiveMessageFromJs', $elm$json$Json$Decode$value);
+var $author$project$Main$receiveMsgsFromJs = _Platform_incomingPort('receiveMsgsFromJs', $elm$json$Json$Decode$value);
 var $author$project$Main$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
-				$author$project$Main$receiveMessageFromJs($author$project$Main$Recv)
+				$author$project$Main$receiveMsgsFromJs($author$project$Main$Recv)
 			]));
 };
 var $author$project$Main$NoOp = {$: 18};
 var $author$project$Pages$Funds$SubAddressView = 1;
+var $elm$json$Json$Decode$decodeValue = _Json_run;
+var $author$project$Main$JsMessage = F4(
+	function (page, type_, data, currency) {
+		return {sF: currency, oL: data, H: page, ve: type_};
+	});
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $elm$json$Json$Decode$map4 = _Json_map4;
+var $author$project$Main$jsMessageDecoder = A5(
+	$elm$json$Json$Decode$map4,
+	$author$project$Main$JsMessage,
+	A2($elm$json$Json$Decode$field, 'page', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'type', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'data', $elm$json$Json$Decode$value),
+	A2($elm$json$Json$Decode$field, 'currency', $elm$json$Json$Decode$string));
 var $elm$browser$Browser$Navigation$load = _Browser_load;
+var $author$project$Pages$Accounts$AddNewCryptoAccount = function (a) {
+	return {$: 3, a: a};
+};
+var $author$project$Pages$Accounts$DecryptCryptoAccounts = function (a) {
+	return {$: 4, a: a};
+};
+var $author$project$Pages$Accounts$messageDecoder = A2(
+	$elm$json$Json$Decode$andThen,
+	function (msgType) {
+		switch (msgType) {
+			case 'encryptCrypoAccountMsgRequest':
+				return A2(
+					$elm$json$Json$Decode$map,
+					$author$project$Pages$Accounts$AddNewCryptoAccount,
+					A2($elm$json$Json$Decode$field, 'address', $elm$json$Json$Decode$string));
+			case 'decryptedCrypoAccountsResponse':
+				return A2(
+					$elm$json$Json$Decode$map,
+					$author$project$Pages$Accounts$DecryptCryptoAccounts,
+					A2($elm$json$Json$Decode$field, 'data', $elm$json$Json$Decode$string));
+			default:
+				return $elm$json$Json$Decode$fail('Unknown message type');
+		}
+	},
+	A2($elm$json$Json$Decode$field, 'type', $elm$json$Json$Decode$string));
 var $elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 1) {
@@ -8547,7 +8586,7 @@ var $elm$url$Url$addPrefixed = F3(
 	});
 var $elm$url$Url$toString = function (url) {
 	var http = function () {
-		var _v0 = url.kk;
+		var _v0 = url.ki;
 		if (!_v0) {
 			return 'http://';
 		} else {
@@ -8557,29 +8596,29 @@ var $elm$url$Url$toString = function (url) {
 	return A3(
 		$elm$url$Url$addPrefixed,
 		'#',
-		url.s5,
+		url.s4,
 		A3(
 			$elm$url$Url$addPrefixed,
 			'?',
-			url.uj,
+			url.ui,
 			_Utils_ap(
 				A2(
 					$elm$url$Url$addPort,
-					url.kd,
-					_Utils_ap(http, url.mK)),
-				url.uc)));
+					url.kb,
+					_Utils_ap(http, url.mH)),
+				url.ub)));
 };
 var $author$project$Pages$Accounts$DisplayStoredBTCAddresses = 4;
 var $author$project$Pages$Accounts$Errored = 1;
-var $author$project$Pages$Accounts$encryptedAndDecryptedMsgs = _Platform_outgoingPort('encryptedAndDecryptedMsgs', $elm$json$Json$Encode$string);
+var $author$project$Pages$Accounts$jsInteropFromAccounts = _Platform_outgoingPort('jsInteropFromAccounts', $elm$json$Json$Encode$string);
 var $author$project$Pages$Accounts$encryptionMsg = function (msgString) {
-	return $author$project$Pages$Accounts$encryptedAndDecryptedMsgs(msgString);
+	return $author$project$Pages$Accounts$jsInteropFromAccounts(msgString);
 };
 var $author$project$Pages$Accounts$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 3:
-				var cryptoAcct = msg.a;
+				var address = msg.a;
 				var message = A2(
 					$elm$json$Json$Encode$encode,
 					0,
@@ -8594,27 +8633,38 @@ var $author$project$Pages$Accounts$update = F2(
 								$elm$json$Json$Encode$string('BTC')),
 								_Utils_Tuple2(
 								'address',
-								$elm$json$Json$Encode$string('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'))
+								$elm$json$Json$Encode$string(address))
 							])));
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							mD: cryptoAcct,
-							sH: 4,
-							fy: _Utils_ap(
-								model.fy,
+							sG: 4,
+							dD: _Utils_ap(
+								model.dD,
 								_List_fromArray(
-									['1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v']))
+									[address]))
 						}),
 					$author$project$Pages$Accounts$encryptionMsg(message));
+			case 4:
+				var data = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							dD: _Utils_ap(
+								model.dD,
+								_List_fromArray(
+									[data]))
+						}),
+					$elm$core$Platform$Cmd$none);
 			case 1:
 				if (!msg.a.$) {
 					var primaryAddresponse = msg.a.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{sH: 0, f$: primaryAddresponse.uh, dI: 0}),
+							{sG: 0, fZ: primaryAddresponse.ug, dI: 0}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
@@ -8629,7 +8679,7 @@ var $author$project$Pages$Accounts$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{sH: 0, dI: 0, uT: subAddresponse.uT}),
+							{sG: 0, dI: 0, uS: subAddresponse.uS}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
@@ -8644,7 +8694,7 @@ var $author$project$Pages$Accounts$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{oo: response.oo, sH: 0, dI: 0}),
+							{ol: response.ol, sG: 0, dI: 0}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
@@ -8653,19 +8703,19 @@ var $author$project$Pages$Accounts$update = F2(
 							{dI: 1}),
 						$elm$core$Platform$Cmd$none);
 				}
-			case 4:
+			case 5:
 				var newView = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{sH: newView}),
+						{sG: newView}),
 					$elm$core$Platform$Cmd$none);
 			default:
 				var address = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{mV: address}),
+						{jJ: address}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -8675,7 +8725,7 @@ var $author$project$Pages$Buy$update = F2(
 		return _Utils_Tuple2(
 			_Utils_update(
 				newModel,
-				{vb: model.vb}),
+				{va: model.va}),
 			$elm$core$Platform$Cmd$none);
 	});
 var $author$project$Pages$Connect$RetryWalletConnection = function (a) {
@@ -8690,20 +8740,20 @@ var $author$project$Pages$Connect$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{eW: model.eW, f$: primaryAddresponse.uh, mZ: false, vi: true}),
+							{eW: model.eW, fZ: primaryAddresponse.ug, mV: false, vi: true}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{eW: model.eW + 1, mZ: true}),
+							{eW: model.eW + 1, mV: true}),
 						A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Connect$RetryWalletConnection, $author$project$Comms$CustomGrpc$gotPrimaryAddress));
 				}
 			case 1:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{nN: true}),
+						{nK: true}),
 					$elm$core$Platform$Cmd$none);
 			case 2:
 				var node = msg.a;
@@ -8716,7 +8766,7 @@ var $author$project$Pages$Connect$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{e$: '', mS: model.e$}),
+						{e$: '', mP: model.e$}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -8731,7 +8781,7 @@ var $author$project$Pages$Donate$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{sH: 0, f$: primaryAddresponse.uh, dI: 0}),
+							{sG: 0, fZ: primaryAddresponse.ug, dI: 0}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
@@ -8746,7 +8796,7 @@ var $author$project$Pages$Donate$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{sH: 1, dI: 0, uT: subAddresponse.uT}),
+							{sG: 1, dI: 0, uS: subAddresponse.uS}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
@@ -8761,7 +8811,7 @@ var $author$project$Pages$Donate$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{oo: response.oo, dI: 0}),
+							{ol: response.ol, dI: 0}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
@@ -8778,7 +8828,7 @@ var $author$project$Pages$Funds$GotXmrNewSubaddress = function (a) {
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrNewSubaddressRequest = {};
 var $author$project$Proto$Io$Haveno$Protobuffer$defaultGetXmrNewSubaddressRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrNewSubaddressRequest;
-var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrNewSubaddressReply = {uT: ''};
+var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrNewSubaddressReply = {uS: ''};
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetXmrNewSubaddressReply = A2(
 	$eriktim$elm_protocol_buffers$Protobuf$Decode$message,
 	$author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrNewSubaddressReply,
@@ -8792,7 +8842,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{uT: a});
+						{uS: a});
 				}))
 		]));
 var $author$project$Proto$Io$Haveno$Protobuffer$decodeGetXmrNewSubaddressReply = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__GetXmrNewSubaddressReply;
@@ -8800,7 +8850,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Have
 	return $eriktim$elm_protocol_buffers$Protobuf$Encode$message(_List_Nil);
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$encodeGetXmrNewSubaddressRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$encodeProto__Io__Haveno__Protobuffer__GetXmrNewSubaddressRequest;
-var $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getXmrNewSubaddress = {sK: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetXmrNewSubaddressReply, sW: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetXmrNewSubaddressRequest, ua: 'io.haveno.protobuffer', uw: 'GetXmrNewSubaddress', uF: 'Wallets'};
+var $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getXmrNewSubaddress = {sJ: $author$project$Proto$Io$Haveno$Protobuffer$decodeGetXmrNewSubaddressReply, sV: $author$project$Proto$Io$Haveno$Protobuffer$encodeGetXmrNewSubaddressRequest, t9: 'io.haveno.protobuffer', uv: 'GetXmrNewSubaddress', uE: 'Wallets'};
 var $author$project$Pages$Funds$gotNewSubAddress = function () {
 	var grpcRequest = A2(
 		$anmolitor$elm_grpc$Grpc$setHost,
@@ -8819,7 +8869,7 @@ var $author$project$Pages$Funds$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{pC: !model.pC}),
+						{pA: !model.pA}),
 					$elm$core$Platform$Cmd$none);
 			case 1:
 				return _Utils_Tuple2(model, $author$project$Pages$Funds$gotNewSubAddress);
@@ -8829,7 +8879,7 @@ var $author$project$Pages$Funds$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{sH: 1, dI: 0, uT: subAddresponse.uT}),
+							{sG: 1, dI: 0, uS: subAddresponse.uS}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
@@ -8846,7 +8896,7 @@ var $author$project$Pages$Market$update = F2(
 		return _Utils_Tuple2(
 			_Utils_update(
 				newModel,
-				{vb: model.vb}),
+				{va: model.va}),
 			$elm$core$Platform$Cmd$none);
 	});
 var $author$project$Pages$Portfolio$update = F2(
@@ -8855,7 +8905,7 @@ var $author$project$Pages$Portfolio$update = F2(
 		return _Utils_Tuple2(
 			_Utils_update(
 				newModel,
-				{vb: model.vb}),
+				{va: model.va}),
 			$elm$core$Platform$Cmd$none);
 	});
 var $author$project$Pages$Sell$update = F2(
@@ -8864,7 +8914,7 @@ var $author$project$Pages$Sell$update = F2(
 		return _Utils_Tuple2(
 			_Utils_update(
 				newModel,
-				{vb: model.vb}),
+				{va: model.va}),
 			$elm$core$Platform$Cmd$none);
 	});
 var $author$project$Pages$Splash$update = F2(
@@ -8877,7 +8927,7 @@ var $author$project$Pages$Support$update = F2(
 		return _Utils_Tuple2(
 			_Utils_update(
 				newModel,
-				{vb: model.vb}),
+				{va: model.va}),
 			$elm$core$Platform$Cmd$none);
 	});
 var $author$project$Main$update = F2(
@@ -8887,12 +8937,12 @@ var $author$project$Main$update = F2(
 				if (!msg.a.$) {
 					var versionResp = msg.a.a;
 					var verResp = function () {
-						var version = versionResp.bF;
+						var version = versionResp.bE;
 						return version;
 					}();
 					var updatedModel = _Utils_update(
 						model,
-						{dt: true, dI: 1, bF: verResp});
+						{ds: true, dI: 1, bE: verResp});
 					return A2(
 						$author$project$Main$toAccounts,
 						updatedModel,
@@ -8901,7 +8951,7 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{dt: false, bF: 'Error obtaining version'}),
+							{ds: false, bE: 'Error obtaining version'}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 16:
@@ -8909,7 +8959,7 @@ var $author$project$Main$update = F2(
 					var primaryAddresponse = msg.a.a;
 					var updatedModel = _Utils_update(
 						model,
-						{dt: true, f$: primaryAddresponse.uh, dI: 1});
+						{ds: true, fZ: primaryAddresponse.ug, dI: 1});
 					return A2(
 						$author$project$Main$toAccounts,
 						updatedModel,
@@ -8922,7 +8972,7 @@ var $author$project$Main$update = F2(
 					var response = msg.a.a;
 					var updatedModel = _Utils_update(
 						model,
-						{oo: response.oo, dI: 1});
+						{ol: response.ol, dI: 1});
 					return _Utils_Tuple2(
 						updatedModel,
 						$elm$core$Platform$Cmd$batch(
@@ -8950,7 +9000,7 @@ var $author$project$Main$update = F2(
 					var url = urlRequest.a;
 					var modelWithMenuClosed = _Utils_update(
 						model,
-						{dD: false});
+						{dC: false});
 					var _v4 = $elm$url$Url$toString(url);
 					if (_v4 === 'https://haveno-web-dev.netlify.app//') {
 						return _Utils_Tuple2(
@@ -8968,18 +9018,48 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{dD: !model.dD}),
+						{dC: !model.dC}),
 					$elm$core$Platform$Cmd$none);
 			case 12:
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				var message = msg.a;
+				var _v5 = A2($elm$json$Json$Decode$decodeValue, $author$project$Main$jsMessageDecoder, message);
+				if (!_v5.$) {
+					var jsMsg = _v5.a;
+					var _v6 = jsMsg.H;
+					if (_v6 === 'AccountsPage') {
+						var _v7 = A2($elm$json$Json$Decode$decodeValue, $author$project$Pages$Accounts$messageDecoder, jsMsg.oL);
+						if (!_v7.$) {
+							var accountsPageMsgType = _v7.a;
+							var accountsMdl = function () {
+								var _v8 = model.H;
+								if (_v8.$ === 7) {
+									var accountsModel = _v8.a;
+									return accountsModel;
+								} else {
+									return $author$project$Pages$Accounts$initialModel;
+								}
+							}();
+							return A2(
+								$author$project$Main$toAccounts,
+								model,
+								A2($author$project$Pages$Accounts$update, accountsPageMsgType, accountsMdl));
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					} else {
+						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+					}
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
 			case 1:
 				var dashboardMsg = msg.a;
-				var _v5 = model.N;
-				if (!_v5.$) {
-					var dashboard = _v5.a;
+				var _v9 = model.H;
+				if (!_v9.$) {
+					var dashboard = _v9.a;
 					var updatedSplashModel = _Utils_update(
 						dashboard,
-						{bF: model.bF});
+						{bE: model.bE});
 					return A2(
 						$author$project$Main$toSplash,
 						model,
@@ -8989,9 +9069,9 @@ var $author$project$Main$update = F2(
 				}
 			case 2:
 				var sellMsg = msg.a;
-				var _v6 = model.N;
-				if (_v6.$ === 1) {
-					var sell = _v6.a;
+				var _v10 = model.H;
+				if (_v10.$ === 1) {
+					var sell = _v10.a;
 					return A2(
 						$author$project$Main$toSell,
 						model,
@@ -9001,9 +9081,9 @@ var $author$project$Main$update = F2(
 				}
 			case 3:
 				var termsMsg = msg.a;
-				var _v7 = model.N;
-				if (_v7.$ === 2) {
-					var terms = _v7.a;
+				var _v11 = model.H;
+				if (_v11.$ === 2) {
+					var terms = _v11.a;
 					return A2(
 						$author$project$Main$toPortfolio,
 						model,
@@ -9013,14 +9093,14 @@ var $author$project$Main$update = F2(
 				}
 			case 4:
 				var fundsMsg = msg.a;
-				var _v8 = model.N;
-				if (_v8.$ === 3) {
-					var fundsModel = _v8.a;
+				var _v12 = model.H;
+				if (_v12.$ === 3) {
+					var fundsModel = _v12.a;
 					switch (fundsMsg.$) {
 						case 2:
 							var newFundsModel = _Utils_update(
 								fundsModel,
-								{f$: model.f$});
+								{fZ: model.fZ});
 							return A2(
 								$author$project$Main$toFunds,
 								model,
@@ -9028,7 +9108,7 @@ var $author$project$Main$update = F2(
 						case 1:
 							var newFundsModel = _Utils_update(
 								fundsModel,
-								{sH: 1, dI: 0});
+								{sG: 1, dI: 0});
 							return A2(
 								$author$project$Main$toFunds,
 								model,
@@ -9044,9 +9124,9 @@ var $author$project$Main$update = F2(
 				}
 			case 5:
 				var supportMsg = msg.a;
-				var _v10 = model.N;
-				if (_v10.$ === 4) {
-					var support = _v10.a;
+				var _v14 = model.H;
+				if (_v14.$ === 4) {
+					var support = _v14.a;
 					return A2(
 						$author$project$Main$toSupport,
 						model,
@@ -9056,9 +9136,9 @@ var $author$project$Main$update = F2(
 				}
 			case 6:
 				var pricingMsg = msg.a;
-				var _v11 = model.N;
-				if (_v11.$ === 5) {
-					var pricing = _v11.a;
+				var _v15 = model.H;
+				if (_v15.$ === 5) {
+					var pricing = _v15.a;
 					return A2(
 						$author$project$Main$toPricing,
 						model,
@@ -9068,9 +9148,9 @@ var $author$project$Main$update = F2(
 				}
 			case 7:
 				var aboutMsg = msg.a;
-				var _v12 = model.N;
-				if (_v12.$ === 6) {
-					var about = _v12.a;
+				var _v16 = model.H;
+				if (_v16.$ === 6) {
+					var about = _v16.a;
 					return A2(
 						$author$project$Main$toMarket,
 						model,
@@ -9080,21 +9160,27 @@ var $author$project$Main$update = F2(
 				}
 			case 8:
 				var accountsMsg = msg.a;
-				var _v13 = model.N;
-				if (_v13.$ === 7) {
-					var accountsModel = _v13.a;
-					return A2(
-						$author$project$Main$toAccounts,
-						model,
-						A2($author$project$Pages$Accounts$update, accountsMsg, accountsModel));
+				var _v17 = model.H;
+				if (_v17.$ === 7) {
+					var accountsModel = _v17.a;
+					var _v18 = A2($author$project$Pages$Accounts$update, accountsMsg, accountsModel);
+					var updatedAccountsModel = _v18.a;
+					var accountsCmd = _v18.b;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								H: $author$project$Main$AccountsPage(updatedAccountsModel)
+							}),
+						A2($elm$core$Platform$Cmd$map, $author$project$Main$GotAccountsMsg, accountsCmd));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 9:
 				var donateMsg = msg.a;
-				var _v14 = model.N;
-				if (_v14.$ === 8) {
-					var donate = _v14.a;
+				var _v19 = model.H;
+				if (_v19.$ === 8) {
+					var donate = _v19.a;
 					return A2(
 						$author$project$Main$toDonate,
 						model,
@@ -9104,9 +9190,9 @@ var $author$project$Main$update = F2(
 				}
 			case 10:
 				var connectMsg = msg.a;
-				var _v15 = model.N;
-				if (_v15.$ === 9) {
-					var connect = _v15.a;
+				var _v20 = model.H;
+				if (_v20.$ === 9) {
+					var connect = _v20.a;
 					return A2(
 						$author$project$Main$toConnect,
 						model,
@@ -9115,7 +9201,7 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 17:
-				return (!model.dt) ? A2(
+				return (!model.ds) ? A2(
 					$author$project$Main$toConnect,
 					model,
 					$author$project$Pages$Connect$init(0)) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -9140,7 +9226,7 @@ var $author$project$Main$GotSplashMsg = function (a) {
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $author$project$Pages$Accounts$ChangeView = function (a) {
-	return {$: 4, a: a};
+	return {$: 5, a: a};
 };
 var $author$project$Pages$Accounts$CreateNewBTCAccountView = 3;
 var $elm$core$List$filter = F2(
@@ -9198,7 +9284,7 @@ var $author$project$Pages$Accounts$btcAccountsView = function (model) {
 					[
 						$elm$html$Html$Attributes$id('accounts-listOfBTCAccounts')
 					]),
-				$elm$core$List$isEmpty(model.fy) ? _List_fromArray(
+				$elm$core$List$isEmpty(model.dD) ? _List_fromArray(
 					[
 						A2(
 						$elm$html$Html$div,
@@ -9229,14 +9315,11 @@ var $author$project$Pages$Accounts$btcAccountsView = function (model) {
 									$elm$html$Html$text(account)
 								]));
 					},
-					model.fy))
+					model.dD))
 			]));
 };
-var $author$project$Pages$Accounts$AddNewCryptoAccount = function (a) {
-	return {$: 3, a: a};
-};
 var $author$project$Pages$Accounts$UpdateNewBTCAddress = function (a) {
-	return {$: 5, a: a};
+	return {$: 6, a: a};
 };
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
@@ -9286,7 +9369,6 @@ var $elm$html$Html$Events$stopPropagationOn = F2(
 			event,
 			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
 	});
-var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$at = F2(
 	function (fields, decoder) {
 		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
@@ -9344,7 +9426,7 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 				_List_fromArray(
 					[
 						function () {
-						var _v0 = model.mD;
+						var _v0 = model.ng;
 						return $elm$html$Html$text('BTC');
 					}()
 					])),
@@ -9439,7 +9521,7 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 										$elm$html$Html$Attributes$id('account-name-input'),
 										$elm$html$Html$Attributes$type_('text'),
 										$elm$html$Html$Attributes$readonly(true),
-										$elm$html$Html$Attributes$value('BTC: ' + model.mV)
+										$elm$html$Html$Attributes$value('BTC: ' + model.jJ)
 									]),
 								_List_Nil)
 							]))
@@ -9448,7 +9530,7 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 				$author$project$Utils$MyUtils$infoBtn,
 				'SAVE NEW BTC ACCOUNT',
 				'save-new-BTC-account-button',
-				$author$project$Pages$Accounts$AddNewCryptoAccount(0))
+				$author$project$Pages$Accounts$AddNewCryptoAccount(model.jJ))
 			]));
 };
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
@@ -9504,7 +9586,7 @@ var $author$project$Pages$Accounts$existingCryptoAccountsView = function (model)
 					[
 						$elm$html$Html$Attributes$id('accounts-listOfExistingCryptoAccounts')
 					]),
-				$elm$core$List$isEmpty(model.mN) ? _List_fromArray(
+				$elm$core$List$isEmpty(model.mK) ? _List_fromArray(
 					[
 						A2(
 						$elm$html$Html$div,
@@ -9530,7 +9612,7 @@ var $author$project$Pages$Accounts$existingCryptoAccountsView = function (model)
 									$elm$html$Html$text(account)
 								]));
 					},
-					model.mN))
+					model.mK))
 			]));
 };
 var $elm$html$Html$h4 = _VirtualDom_node('h4');
@@ -9656,7 +9738,7 @@ var $author$project$Pages$Accounts$view = function (model) {
 								_List_fromArray(
 									[
 										function () {
-										var _v1 = model.sH;
+										var _v1 = model.sG;
 										switch (_v1) {
 											case 4:
 												return A2(
@@ -9956,7 +10038,7 @@ var $author$project$Pages$Connect$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text(model.mS)
+								$elm$html$Html$text(model.mP)
 							]))
 					])) : A2(
 				$elm$html$Html$p,
@@ -9997,7 +10079,7 @@ var $author$project$Pages$Connect$view = function (model) {
 								A3($author$project$Utils$MyUtils$infoBtn, 'Use Custom Node', 'retryHavenoConnectionButton', $author$project$Pages$Connect$ApplyCustomMoneroNode)
 							]))
 					])),
-				(!model.th) ? A2(
+				(!model.tg) ? A2(
 				$elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
@@ -10159,7 +10241,7 @@ var $author$project$Pages$Donate$view = function (model) {
 								_List_fromArray(
 									[
 										function () {
-										var _v1 = model.sH;
+										var _v1 = model.sG;
 										if (!_v1) {
 											return $author$project$Pages$Donate$manageDonateView;
 										} else {
@@ -10251,11 +10333,11 @@ var $author$project$Extras$Constants$xmrConversionConstant = 4294967296;
 var $author$project$Pages$Funds$formatBalance = function (int64) {
 	var scale = A2($elm$core$Basics$pow, 10, 11);
 	var fullUInt64 = function () {
-		var lowPart = (int64.nz < 0) ? $MartinSStewart$elm_uint64$UInt64$fromInt(int64.nz + $author$project$Extras$Constants$xmrConversionConstant) : $MartinSStewart$elm_uint64$UInt64$fromInt(int64.nz);
+		var lowPart = (int64.nw < 0) ? $MartinSStewart$elm_uint64$UInt64$fromInt(int64.nw + $author$project$Extras$Constants$xmrConversionConstant) : $MartinSStewart$elm_uint64$UInt64$fromInt(int64.nw);
 		var highPart = A2(
 			$MartinSStewart$elm_uint64$UInt64$mul,
 			$MartinSStewart$elm_uint64$UInt64$fromInt($author$project$Extras$Constants$xmrConversionConstant),
-			$MartinSStewart$elm_uint64$UInt64$fromInt(int64.tl));
+			$MartinSStewart$elm_uint64$UInt64$fromInt(int64.tk));
 		return A2($MartinSStewart$elm_uint64$UInt64$add, highPart, lowPart);
 	}();
 	var fullFloat = $MartinSStewart$elm_uint64$UInt64$toFloat(fullUInt64);
@@ -10264,15 +10346,15 @@ var $author$project$Pages$Funds$formatBalance = function (int64) {
 	return $elm$core$String$fromFloat(roundedXmr);
 };
 var $eriktim$elm_protocol_buffers$Internal$Int64$toInts = function (_v0) {
-	var higher = _v0.tl;
-	var lower = _v0.nz;
+	var higher = _v0.tk;
+	var lower = _v0.nw;
 	return _Utils_Tuple2(higher, lower);
 };
 var $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts = $eriktim$elm_protocol_buffers$Internal$Int64$toInts;
 var $author$project$Pages$Funds$btcBalanceAsString = function (balInfo) {
 	if (!balInfo.$) {
 		var blInfo = balInfo.a;
-		var _v1 = blInfo.nj;
+		var _v1 = blInfo.nf;
 		if (_v1.$ === 1) {
 			return '0.00';
 		} else {
@@ -10281,7 +10363,7 @@ var $author$project$Pages$Funds$btcBalanceAsString = function (balInfo) {
 			var firstInt = _v2.a;
 			var secondInt = _v2.b;
 			return $author$project$Pages$Funds$formatBalance(
-				{tl: firstInt, nz: secondInt});
+				{tk: firstInt, nw: secondInt});
 		}
 	} else {
 		return '';
@@ -10300,7 +10382,7 @@ var $author$project$Pages$Funds$primaryAddressView = function (model) {
 			[
 				A3(
 				$author$project$Utils$MyUtils$infoBtn,
-				model.pC ? 'Hide' : 'Show',
+				model.pA ? 'Hide' : 'Show',
 				'',
 				$author$project$Pages$Funds$ToggleFundsVisibility),
 				A2(
@@ -10331,7 +10413,7 @@ var $author$project$Pages$Funds$primaryAddressView = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								model.pC ? model.f$ : $author$project$Extras$Constants$blankAddress)
+								model.pA ? model.fZ : $author$project$Extras$Constants$blankAddress)
 							]))
 					]))
 			]));
@@ -10339,12 +10421,12 @@ var $author$project$Pages$Funds$primaryAddressView = function (model) {
 var $author$project$Pages$Funds$reservedOfferBalanceAsString = function (balInfo) {
 	if (!balInfo.$) {
 		var blInfo = balInfo.a;
-		var _v1 = blInfo.n_;
+		var _v1 = blInfo.nX;
 		if (_v1.$ === 1) {
 			return '0.00';
 		} else {
 			var xmrbalViewinfo = _v1.a;
-			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(xmrbalViewinfo.nL);
+			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(xmrbalViewinfo.nI);
 			var firstInt = _v2.a;
 			var secondInt = _v2.b;
 			return $elm$core$String$fromInt(firstInt) + ('.' + $elm$core$String$fromInt(secondInt));
@@ -10356,7 +10438,7 @@ var $author$project$Pages$Funds$reservedOfferBalanceAsString = function (balInfo
 var $author$project$Pages$Funds$xmrAvailableBalanceAsString = function (balInfo) {
 	if (!balInfo.$) {
 		var blInfo = balInfo.a;
-		var _v1 = blInfo.n_;
+		var _v1 = blInfo.nX;
 		if (_v1.$ === 1) {
 			return '0.00';
 		} else {
@@ -10365,7 +10447,7 @@ var $author$project$Pages$Funds$xmrAvailableBalanceAsString = function (balInfo)
 			var firstInt = _v2.a;
 			var secondInt = _v2.b;
 			return $author$project$Pages$Funds$formatBalance(
-				{tl: firstInt, nz: secondInt});
+				{tk: firstInt, nw: secondInt});
 		}
 	} else {
 		return '0.00';
@@ -10400,7 +10482,7 @@ var $author$project$Pages$Funds$xmrBalView = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						model.pC ? ($author$project$Pages$Funds$xmrAvailableBalanceAsString(model.oo) + ' XMR') : $author$project$Extras$Constants$blankAddress)
+						model.pA ? ($author$project$Pages$Funds$xmrAvailableBalanceAsString(model.ol) + ' XMR') : $author$project$Extras$Constants$blankAddress)
 					]))
 			]));
 };
@@ -10436,7 +10518,7 @@ var $author$project$Pages$Funds$custodialFundsView = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						'Available BTC Balance: ' + ($author$project$Pages$Funds$btcBalanceAsString(model.oo) + ' BTC'))
+						'Available BTC Balance: ' + ($author$project$Pages$Funds$btcBalanceAsString(model.ol) + ' BTC'))
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -10448,7 +10530,7 @@ var $author$project$Pages$Funds$custodialFundsView = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						'Reserved Offer Balance: ' + ($author$project$Pages$Funds$reservedOfferBalanceAsString(model.oo) + ' XMR'))
+						'Reserved Offer Balance: ' + ($author$project$Pages$Funds$reservedOfferBalanceAsString(model.ol) + ' XMR'))
 					])),
 				A3($author$project$Utils$MyUtils$infoBtn, 'New Sub Address', '', $author$project$Pages$Funds$ClickedGotNewSubaddress)
 			]));
@@ -10562,11 +10644,11 @@ var $author$project$Pages$Funds$view = function (model) {
 								_List_fromArray(
 									[
 										function () {
-										var _v1 = model.sH;
+										var _v1 = model.sG;
 										if (!_v1) {
 											return $author$project$Pages$Funds$custodialFundsView(model);
 										} else {
-											return $author$project$Pages$Funds$subAddressView(model.uT);
+											return $author$project$Pages$Funds$subAddressView(model.uS);
 										}
 									}()
 									]));
@@ -10890,7 +10972,7 @@ var $author$project$Pages$Support$view = function (_v0) {
 	return $author$project$Pages$Support$content;
 };
 var $author$project$Main$contentByPage = function (model) {
-	var _v0 = model.N;
+	var _v0 = model.H;
 	switch (_v0.$) {
 		case 0:
 			var dashboard = _v0.a;
@@ -10995,7 +11077,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.6.65')
+										$elm$html$Html$text('Version 0.6.66')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
@@ -11006,7 +11088,7 @@ var $author$project$Main$footerContent = function (model) {
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text(model.bF)
+										$elm$html$Html$text(model.bE)
 									]))
 							]))
 					]))
@@ -11023,8 +11105,8 @@ var $elm$virtual_dom$VirtualDom$attribute = F2(
 var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
 var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
 var $author$project$Main$isActive = function (_v0) {
-	var link = _v0.pM;
-	var page = _v0.N;
+	var link = _v0.pK;
+	var page = _v0.H;
 	var _v1 = _Utils_Tuple2(link, page);
 	switch (_v1.a) {
 		case 0:
@@ -11153,8 +11235,8 @@ var $author$project$Main$topLogo = A2(
 var $author$project$Main$navLinks = function (page) {
 	var navLink = F2(
 		function (route, _v0) {
-			var url = _v0.dj;
-			var caption = _v0.bX;
+			var url = _v0.di;
+			var caption = _v0.bW;
 			return A2(
 				$elm$html$Html$li,
 				_List_fromArray(
@@ -11165,7 +11247,7 @@ var $author$project$Main$navLinks = function (page) {
 								_Utils_Tuple2(
 								'active',
 								$author$project$Main$isActive(
-									{pM: route, N: page})),
+									{pK: route, H: page})),
 								_Utils_Tuple2('navLink', true)
 							]))
 					]),
@@ -11209,39 +11291,39 @@ var $author$project$Main$navLinks = function (page) {
 				A2(
 				navLink,
 				3,
-				{bX: 'Funds', dj: 'funds'}),
+				{bW: 'Funds', di: 'funds'}),
 				A2(
 				navLink,
 				6,
-				{bX: 'Market', dj: 'market'}),
+				{bW: 'Market', di: 'market'}),
 				A2(
 				navLink,
 				4,
-				{bX: 'Support', dj: 'support'}),
+				{bW: 'Support', di: 'support'}),
 				A2(
 				navLink,
 				1,
-				{bX: 'Sell', dj: 'sell'}),
+				{bW: 'Sell', di: 'sell'}),
 				A2(
 				navLink,
 				5,
-				{bX: 'Buy', dj: 'buy'}),
+				{bW: 'Buy', di: 'buy'}),
 				A2(
 				navLink,
 				2,
-				{bX: 'Portfolio', dj: 'portfolio'}),
+				{bW: 'Portfolio', di: 'portfolio'}),
 				A2(
 				navLink,
 				7,
-				{bX: 'Accounts', dj: 'accounts'}),
+				{bW: 'Accounts', di: 'accounts'}),
 				A2(
 				navLink,
 				9,
-				{bX: 'Connect', dj: 'connect'}),
+				{bW: 'Connect', di: 'connect'}),
 				A2(
 				navLink,
 				8,
-				{bX: 'Donate', dj: 'donate'})
+				{bW: 'Donate', di: 'donate'})
 			]));
 	return links;
 };
@@ -11259,7 +11341,7 @@ var $author$project$Main$menu = function (model) {
 						_List_fromArray(
 							[
 								_Utils_Tuple2('menu-btn', true),
-								_Utils_Tuple2('open', model.dD)
+								_Utils_Tuple2('open', model.dC)
 							])),
 						$elm$html$Html$Events$onClick($author$project$Main$ToggleMenu),
 						$elm$html$Html$Attributes$name('menubutton'),
@@ -11268,7 +11350,7 @@ var $author$project$Main$menu = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						model.dD ? '✖' : '☰')
+						model.dC ? '✖' : '☰')
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -11278,12 +11360,12 @@ var $author$project$Main$menu = function (model) {
 						_List_fromArray(
 							[
 								_Utils_Tuple2('menu', true),
-								_Utils_Tuple2('open', model.dD)
+								_Utils_Tuple2('open', model.dC)
 							]))
 					]),
 				_List_fromArray(
 					[
-						$author$project$Main$navLinks(model.N)
+						$author$project$Main$navLinks(model.H)
 					]))
 			]));
 };
@@ -11302,11 +11384,11 @@ var $author$project$Main$connectionStatusView = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$class(
-						($author$project$Main$isXMRWalletConnected(model) && model.dt) ? 'status-dot green' : 'status-dot red')
+						($author$project$Main$isXMRWalletConnected(model) && model.ds) ? 'status-dot green' : 'status-dot red')
 					]),
 				_List_Nil),
 				$elm$html$Html$text(
-				($author$project$Main$isXMRWalletConnected(model) && model.dt) ? 'Connected' : ((!$author$project$Main$isXMRWalletConnected(model)) ? 'Wallet not connected' : 'Haveno node not connected')),
+				($author$project$Main$isXMRWalletConnected(model) && model.ds) ? 'Connected' : ((!$author$project$Main$isXMRWalletConnected(model)) ? 'Wallet not connected' : 'Haveno node not connected')),
 				A2(
 				$elm$html$Html$a,
 				_List_fromArray(
@@ -11323,17 +11405,17 @@ var $author$project$Main$connectionStatusView = function (model) {
 var $author$project$Proto$Io$Haveno$Protobuffer$defaultXmrBalanceInfo = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__XmrBalanceInfo;
 var $author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias = function (reply) {
 	var balInformation = A2($elm$core$Maybe$withDefault, $author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo, reply);
-	var gotXmr = A2($elm$core$Maybe$withDefault, $author$project$Proto$Io$Haveno$Protobuffer$defaultXmrBalanceInfo, balInformation.n_);
-	var _v0 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.nL);
+	var gotXmr = A2($elm$core$Maybe$withDefault, $author$project$Proto$Io$Haveno$Protobuffer$defaultXmrBalanceInfo, balInformation.nX);
+	var _v0 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.nI);
 	var res1 = _v0.a;
-	var _v1 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.nG);
+	var _v1 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.nD);
 	var pend1 = _v1.a;
 	var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.eC);
 	var available1 = _v2.a;
 	return {
-		om: $elm$core$String$fromInt(available1),
-		ud: $elm$core$String$fromInt(pend1),
-		uo: $elm$core$String$fromInt(res1)
+		oj: $elm$core$String$fromInt(available1),
+		uc: $elm$core$String$fromInt(pend1),
+		un: $elm$core$String$fromInt(res1)
 	};
 };
 var $author$project$Main$only2Decimals = function (str) {
@@ -11376,7 +11458,7 @@ var $author$project$Main$dashboardContainer = function (model) {
 							[
 								$elm$html$Html$text(
 								$author$project$Main$only2Decimals(
-									$author$project$Pages$Funds$xmrAvailableBalanceAsString(model.oo)) + ' XMR')
+									$author$project$Pages$Funds$xmrAvailableBalanceAsString(model.ol)) + ' XMR')
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -11407,7 +11489,7 @@ var $author$project$Main$dashboardContainer = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.oo).ud + ' XMR')
+								$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.ol).uc + ' XMR')
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -11438,7 +11520,7 @@ var $author$project$Main$dashboardContainer = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.oo).uo + ' XMR')
+								$author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias(model.ol).un + ' XMR')
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -11523,7 +11605,7 @@ var $author$project$Main$viewContainer = function (model) {
 };
 var $author$project$Main$view = function (model) {
 	return {
-		sj: function () {
+		sh: function () {
 			var _v0 = model.dI;
 			if (!_v0) {
 				return _List_fromArray(
@@ -11574,9 +11656,9 @@ var $author$project$Main$view = function (model) {
 					]);
 			}
 		}(),
-		vb: 'Haveno-Web'
+		va: 'Haveno-Web'
 	};
 };
 var $author$project$Main$main = $elm$browser$Browser$application(
-	{tu: $author$project$Main$init, t1: $author$project$Main$ChangedUrl, t2: $author$project$Main$ClickedLink, uV: $author$project$Main$subscriptions, vg: $author$project$Main$update, vh: $author$project$Main$view});
+	{tt: $author$project$Main$init, t0: $author$project$Main$ChangedUrl, t1: $author$project$Main$ClickedLink, uU: $author$project$Main$subscriptions, vg: $author$project$Main$update, vh: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$string)(0)}});}(this));

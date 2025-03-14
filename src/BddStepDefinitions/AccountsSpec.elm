@@ -363,7 +363,7 @@ runSpecTests =
                 |> Spec.observeThat
                     [ it "sends the expected message to the port"
                         (Spec.Port.observe "jsInteropFromAccounts" Json.Decode.string
-                            |> Spec.expect (equals [ "{\"type\":\"encryptCrypoAccountMsgRequest\",\"currency\":\"BTC\",\"address\":\"1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v\"}" ])
+                            |> Spec.expect (equals [ "{\"type\":\"encryptCrypoAccountMsgRequest\",\"currency\":\"BTC\",\"address\":\"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa\"}" ])
                         )
                     , it "is on the DisplayStoredBTCAddresses view"
                         (Observer.observeModel .currentView
@@ -376,7 +376,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
+                                        Claim.isStringContaining 1 "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
                                 )
                         )
                     ]

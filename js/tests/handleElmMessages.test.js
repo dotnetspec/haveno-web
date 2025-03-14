@@ -13,6 +13,7 @@ describe("handleMessageFromElm", () => {
   const elmDecrytCrypoAccountsMsgRequestAsJson = JSON.stringify({
     type: "decrytCrypoAccountsMsgRequest",
     currency: "BTC",
+    page: "AccountsPage",
   });
 
   beforeEach(() => {
@@ -72,7 +73,9 @@ describe("handleMessageFromElm", () => {
     // Verify that the decrypted data was sent back to Elm
     expect(window.Elm.Main.ports.jsInterop.send).toHaveBeenCalledWith(JSON.stringify({
       type: "decryptedCrypoAccountsResponse",
+      page: "AccountsPage",
       data: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
+      currency: "BTC",
     }));
   });
 

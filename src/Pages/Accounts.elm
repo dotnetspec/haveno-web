@@ -1,4 +1,4 @@
-port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), jsInteropFromAccounts, errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, update, view)
+port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), messageDecoder, jsInteropFromAccounts, errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, update, view)
 
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
@@ -6,6 +6,7 @@ import Html exposing (Html, div, h4, p, section, text)
 import Html.Attributes exposing (class, classList, id, placeholder, readonly, type_, value)
 import Html.Events exposing (onInput)
 import Json.Encode as JE
+import Json.Decode as JD
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import UInt64
@@ -84,7 +85,8 @@ type Msg
     = GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
-    | AddNewCryptoAccount CryptoAccount
+    | AddNewCryptoAccount String
+    | DecryptCryptoAccounts String
     | ChangeView View
     | UpdateNewBTCAddress String
 
@@ -104,12 +106,16 @@ type CryptoAccount
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        AddNewCryptoAccount cryptoAcct ->
+        AddNewCryptoAccount address ->
             let
                 message =
-                    JE.encode 0 (JE.object [ ( "type", JE.string "encryptCrypoAccountMsgRequest" ), ( "currency", JE.string "BTC" ), ( "address", JE.string "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v" ) ])
+                    JE.encode 0 (JE.object [ ( "type", JE.string "encryptCrypoAccountMsgRequest" ), ( "currency", JE.string "BTC" ), ( "address", JE.string address ) ])
             in
-            ( { model | currentView = DisplayStoredBTCAddresses, cryptoAccountType = cryptoAcct, listOfBTCAccounts = model.listOfBTCAccounts ++ [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v" ] }, encryptionMsg message )
+            ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAccounts = model.listOfBTCAccounts ++ [ address ] }, encryptionMsg message )
+
+        DecryptCryptoAccounts data ->
+            -- Handle decrypted data here
+            ( { model | listOfBTCAccounts = model.listOfBTCAccounts ++ [ data ] }, Cmd.none )
 
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
@@ -235,7 +241,7 @@ createNewBTCAccountView model =
                 [ Html.input [ id "account-name-input", type_ "text", readonly True, value ("BTC: " ++ model.newBTCAddress) ] []
                 ]
             ]
-        , Utils.MyUtils.infoBtn "SAVE NEW BTC ACCOUNT" "save-new-BTC-account-button" <| AddNewCryptoAccount BTC
+        , Utils.MyUtils.infoBtn "SAVE NEW BTC ACCOUNT" "save-new-BTC-account-button" <| AddNewCryptoAccount model.newBTCAddress
         ]
 
 
@@ -383,3 +389,20 @@ encryptionMsg msgString =
 
 
 port jsInteropFromAccounts : String -> Cmd msg
+
+-- NAV: Decoders
+messageDecoder : JD.Decoder Msg
+messageDecoder =
+    JD.field "type" JD.string
+        |> JD.andThen
+            (\msgType ->
+                case msgType of
+                    "encryptCrypoAccountMsgRequest" ->
+                        JD.map AddNewCryptoAccount (JD.field "address" JD.string)
+
+                    "decryptedCrypoAccountsResponse" ->
+                        JD.map DecryptCryptoAccounts (JD.field "data" JD.string)
+
+                    _ ->
+                        JD.fail "Unknown message type"
+            )
