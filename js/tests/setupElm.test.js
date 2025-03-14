@@ -25,7 +25,7 @@ describe('initializeElmApp', () => {
                         jsInterop: {
                             subscribe: vi.fn(),
                         },
-                        encryptedAndDecryptedMsgs: {
+                        jsInteropFromAccounts: {
                             subscribe: vi.fn(),
                         },
                     },
@@ -55,7 +55,7 @@ describe('initializeElmApp', () => {
                 jsInterop: {
                     subscribe: expect.any(Function),
                 },
-                encryptedAndDecryptedMsgs: {
+                jsInteropFromAccounts: {
                     subscribe: expect.any(Function),
                 },
             },

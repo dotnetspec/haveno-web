@@ -36,13 +36,13 @@ function handleElmMessages(eapp) {
   }
 }
 
-function handleMessagesForEncryptionAndDecryption(eapp) {
-  if (eapp.ports && eapp.ports.encryptedAndDecryptedMsgs) {
-    eapp.ports.encryptedAndDecryptedMsgs.subscribe((message) => {
+function handleMessagesFromAccounts(eapp) {
+  if (eapp.ports && eapp.ports.jsInteropFromAccounts) {
+    eapp.ports.jsInteropFromAccounts.subscribe((message) => {
       handleMessageFromElm(message);
     });
   } else {
-    console.error("encryptedAndDecryptedMsgs port is not defined on eapp.ports");
+    console.error("jsInteropFromAccounts port is not defined on eapp.ports");
   }
 }
 
@@ -58,7 +58,7 @@ function initializeBrowserEnvironment() {
 
     const eapp = initializeElmApp(Elm, jsonUrl);
     handleElmMessages(eapp);
-    handleMessagesForEncryptionAndDecryption(eapp);
+    handleMessagesFromAccounts(eapp);
   } catch (error) {
     console.error("Error in setupElm.js:", error);
   }
