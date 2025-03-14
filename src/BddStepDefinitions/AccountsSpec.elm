@@ -15,6 +15,7 @@ import Spec.Markup.Selector exposing (by)
 import Spec.Observer as Observer
 import Spec.Port
 import Spec.Setup
+import Json.Decode exposing (list)
 
 
 
@@ -307,7 +308,7 @@ runSpecTests =
             )
         , scenario "User clicks VIEW BTC ACCOUNTS button and sends the expected message to the port"
             (given
-                (Spec.Setup.initWithModel accountsInitialModel
+                (Spec.Setup.initWithModel {accountsInitialModel | listOfBTCAccounts = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]}
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                     |> Spec.Setup.withLocation placeholderUrl
@@ -364,7 +365,7 @@ runSpecTests =
                 |> Spec.observeThat
                     [ it "sends the expected message to the port"
                         (Spec.Port.observe "encryptedAndDecryptedMsgs" Json.Decode.string
-                            |> Spec.expect (equals [ "{\"type\":\"encryptionMsg\",\"currency\":\"BTC\",\"address\":\"1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v\"}" ])
+                            |> Spec.expect (equals [ "{\"type\":\"encryptCrypoAccountMsgRequest\",\"currency\":\"BTC\",\"address\":\"1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v\"}" ])
                         )
                     , it "is on the DisplayStoredBTCAddresses view"
                         (Observer.observeModel .currentView

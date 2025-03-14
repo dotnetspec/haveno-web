@@ -5,7 +5,7 @@ import { handleMessageFromElm } from "../handleElmMessages.js";
 describe("Web Crypto API - AES Encryption", () => {
     const password = "test-password";
     const elmMessageAsJson = JSON.stringify({
-        type: "encryptionMsg",
+        type: "encryptCrypoAccountMsgRequest",
         currency: "BTC",
         address: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
     });
@@ -27,7 +27,7 @@ describe("Web Crypto API - AES Encryption", () => {
 
     it("should fail to decrypt with a wrong password", async () => {
         await handleMessageFromElm(elmMessageAsJson);
-        const encryptedinStorage = localStorage.getItem("encryptionMsg");
+        const encryptedinStorage = localStorage.getItem("encryptCrypoAccountMsgRequest");
         const decrypted = await decrypt(encryptedinStorage, "wrong-password");
         expect(decrypted).not.toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
         expect(decrypted).toBeNull();
@@ -52,10 +52,11 @@ describe("Web Crypto API - AES Encryption", () => {
         expect(decrypted).not.toBeNull();
         expect(decrypted).not.toBeUndefined();
         expect(decrypted).toContain("type");
-        expect(decrypted).toContain("encryptionMsg");
+        expect(decrypted).toContain("encryptCrypoAccountMsgRequest");
         expect(decrypted).toContain("currency");
         expect(decrypted).toContain("BTC");
         expect(decrypted).toContain("address");
         expect(decrypted).toContain("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
+        expect(decrypted).not.toContain('Sorry, problem');
     });
 });

@@ -15,7 +15,7 @@ export async function handleMessageFromElm(message) {
                 console.error("Error Receiving Message from Elm: ", error);
             }
             break;
-        case "encryptionMsg":
+        case "encryptCrypoAccountMsgRequest":
             try {
                 const encryptedData = await encrypt(parsedMessage.address, 'test-password'); // Call the encrypt function
                 localStorage.setItem(parsedMessage.type, JSON.stringify(encryptedData));

@@ -5,7 +5,7 @@ import * as encryption from "../encryption.js";
 describe("handleMessageFromElm", () => {
   const password = "test-password";
   const elmEncryptionMsgAsJson = JSON.stringify({
-    type: "encryptionMsg",
+    type: "encryptCrypoAccountMsgRequest",
     currency: "BTC",
     address: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
   });
@@ -33,7 +33,7 @@ describe("handleMessageFromElm", () => {
     await handleMessageFromElm(elmEncryptionMsgAsJson);
 
     const elmMessageAsJsObj = JSON.parse(elmEncryptionMsgAsJson);
-    expect(elmMessageAsJsObj.type).toEqual("encryptionMsg");
+    expect(elmMessageAsJsObj.type).toEqual("encryptCrypoAccountMsgRequest");
 
     // Verify that the encrypt function was called with the correct parameters
     expect(encryptSpy).toHaveBeenCalledWith(elmMessageAsJsObj.address, password);

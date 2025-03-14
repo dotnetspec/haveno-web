@@ -107,7 +107,7 @@ update msg model =
         AddNewCryptoAccount cryptoAcct ->
             let
                 message =
-                    JE.encode 0 (JE.object [ ( "type", JE.string "encryptionMsg" ), ( "currency", JE.string "BTC" ), ( "address", JE.string "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v" ) ])
+                    JE.encode 0 (JE.object [ ( "type", JE.string "encryptCrypoAccountMsgRequest" ), ( "currency", JE.string "BTC" ), ( "address", JE.string "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v" ) ])
             in
             ( { model | currentView = DisplayStoredBTCAddresses, cryptoAccountType = cryptoAcct, listOfBTCAccounts = model.listOfBTCAccounts ++ [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v" ] }, encryptionMsg message )
 

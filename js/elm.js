@@ -8571,9 +8571,9 @@ var $elm$url$Url$toString = function (url) {
 };
 var $author$project$Pages$Accounts$DisplayStoredBTCAddresses = 4;
 var $author$project$Pages$Accounts$Errored = 1;
-var $author$project$Pages$Accounts$encryptedMsg = _Platform_outgoingPort('encryptedMsg', $elm$json$Json$Encode$string);
+var $author$project$Pages$Accounts$encryptedAndDecryptedMsgs = _Platform_outgoingPort('encryptedAndDecryptedMsgs', $elm$json$Json$Encode$string);
 var $author$project$Pages$Accounts$encryptionMsg = function (msgString) {
-	return $author$project$Pages$Accounts$encryptedMsg(msgString);
+	return $author$project$Pages$Accounts$encryptedAndDecryptedMsgs(msgString);
 };
 var $author$project$Pages$Accounts$update = F2(
 	function (msg, model) {
@@ -8588,7 +8588,7 @@ var $author$project$Pages$Accounts$update = F2(
 							[
 								_Utils_Tuple2(
 								'type',
-								$elm$json$Json$Encode$string('encryptionMsg')),
+								$elm$json$Json$Encode$string('encryptCrypoAccountMsgRequest')),
 								_Utils_Tuple2(
 								'currency',
 								$elm$json$Json$Encode$string('BTC')),
