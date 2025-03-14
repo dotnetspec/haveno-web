@@ -37,12 +37,12 @@ function handleElmMessages(eapp) {
 }
 
 function handleMessagesForEncryption(eapp) {
-  if (eapp.ports && eapp.ports.encryptedMsg) {
-    eapp.ports.encryptedMsg.subscribe((message) => {
+  if (eapp.ports && eapp.ports.encryptedAndDecryptedMsgs) {
+    eapp.ports.encryptedAndDecryptedMsgs.subscribe((message) => {
       handleMessageFromElm(message);
     });
   } else {
-    console.error("encryptedMsg port is not defined on eapp.ports");
+    console.error("encryptedAndDecryptedMsgs port is not defined on eapp.ports");
   }
 }
 

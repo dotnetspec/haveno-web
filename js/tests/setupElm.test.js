@@ -25,7 +25,7 @@ describe('initializeElmApp', () => {
                         sendMessageToJs: {
                             subscribe: vi.fn(),
                         },
-                        encryptedMsg: {
+                        encryptedAndDecryptedMsgs: {
                             subscribe: vi.fn(),
                         },
                     },
@@ -55,7 +55,7 @@ describe('initializeElmApp', () => {
                 sendMessageToJs: {
                     subscribe: expect.any(Function),
                 },
-                encryptedMsg: {
+                encryptedAndDecryptedMsgs: {
                     subscribe: expect.any(Function),
                 },
             },
