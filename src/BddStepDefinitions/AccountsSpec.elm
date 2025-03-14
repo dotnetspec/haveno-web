@@ -15,7 +15,6 @@ import Spec.Markup.Selector exposing (by)
 import Spec.Observer as Observer
 import Spec.Port
 import Spec.Setup
-import Json.Decode exposing (list)
 
 
 
@@ -308,7 +307,7 @@ runSpecTests =
             )
         , scenario "User clicks VIEW BTC ACCOUNTS button and sends the expected message to the port"
             (given
-                (Spec.Setup.initWithModel {accountsInitialModel | listOfBTCAccounts = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]}
+                (Spec.Setup.initWithModel { accountsInitialModel | listOfBTCAccounts = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ] }
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                     |> Spec.Setup.withLocation placeholderUrl
@@ -317,11 +316,10 @@ runSpecTests =
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
                     , Spec.Markup.Event.click
                     ]
-                 |> when "User clicks BTC Accounts"
+                |> when "User clicks BTC Accounts"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "btcAccountsButton" ]
                     , Spec.Markup.Event.click
                     ]
-                
                 |> Spec.observeThat
                     [ it "is on the DisplayStoredBTCAddresses view"
                         (Observer.observeModel .currentView
