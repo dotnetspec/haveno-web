@@ -26,7 +26,7 @@ export function initializeElmApp(Elm, jsonUrl) {
   return eapp;
 }
 
-function handleElmMessages(eapp) {
+function handleMessagesToAndFromMain(eapp) {
   if (eapp.ports && eapp.ports.jsInterop) {
     eapp.ports.jsInterop.subscribe((message) => {
       handleMessageFromElm(message);
@@ -57,7 +57,7 @@ function initializeBrowserEnvironment() {
     console.log("jsonUrl:", jsonUrl);
 
     const eapp = initializeElmApp(Elm, jsonUrl);
-    handleElmMessages(eapp);
+    handleMessagesToAndFromMain(eapp);
     handleMessagesFromAccounts(eapp);
   } catch (error) {
     console.error("Error in setupElm.js:", error);
