@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, only2Decimals, receiveMessageFromJs, jsInterop, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, only2Decimals, receiveJsonFromJs, jsInterop, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- NOTE: exposing Url exposes a different type of Url to
@@ -151,14 +151,14 @@ navigate thekey =
 
    All the below are constructor functions for the Msg type. They are not functions in the traditional sense,
    e.g.
-   port receiveMessageFromJs : (String -> msg) -> Sub msg
+   port receiveJsonFromJs : (String -> msg) -> Sub msg
    ReceivedFromJs String
 
    subscriptions : Model -> Sub Msg
     subscriptions _ =
-    -- NOTE: ReceivedFromJs has no String here cos receiveMessageFromJs wants a function that takes a String
+    -- NOTE: ReceivedFromJs has no String here cos receiveJsonFromJs wants a function that takes a String
     -- and returns a Msg. This is what ReceivedFromJs was 'constructed' to be
-    receiveMessageFromJs ReceivedFromJs
+    receiveJsonFromJs ReceivedFromJs
 
 
 
@@ -991,7 +991,7 @@ gotCodeFromUrl url =
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ receiveMessageFromJs Recv
+        [ receiveJsonFromJs Recv
         ]
 
 
@@ -1005,7 +1005,7 @@ subscriptions _ =
 port jsInterop : String -> Cmd msg
 
 
-port receiveMessageFromJs : (JD.Value -> msg) -> Sub msg
+port receiveJsonFromJs : (JD.Value -> msg) -> Sub msg
 
 
 
