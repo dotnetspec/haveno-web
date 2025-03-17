@@ -1,4 +1,4 @@
-module Pages.Splash exposing (Model, Msg, Splash(..), Status(..), init, update, view)
+module Pages.Splash exposing (Model, Msg, Splash(..), Status(..), initialModel, init, update, view)
 
 {-| The Splashpage. You can get here via either the / or /#/ routes.
 -}
@@ -29,7 +29,9 @@ type alias Model =
     , errors : List String
     }
 
-
+initialModel : Model
+initialModel =
+    Model Loading "Splash" (Splash { name = "Loading..." }) Nothing "" "" []
 
 -- Define your initialModel with default values
 

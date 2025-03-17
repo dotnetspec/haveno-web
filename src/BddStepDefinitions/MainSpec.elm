@@ -26,6 +26,7 @@ import Spec.Observer
 import Spec.Setup
 import Spec.Time
 import Url exposing (Protocol(..), Url)
+--import Spec.Http
 
 
 
@@ -71,8 +72,8 @@ runSpecTests =
                 )
                 {- |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
-                   ]
-                -}
+                   ] -}
+               
                 |> Spec.observeThat
                     [ it "is on the Accounts page"
                         (Spec.Observer.observeModel .page

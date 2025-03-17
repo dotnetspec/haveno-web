@@ -110,7 +110,7 @@ init flag _ key =
 
         -- NOTE: Initialize the whole model here so that can assign Nav.Key
         initialModel =
-            { page = AccountsPage Pages.Accounts.initialModel
+            { page = SplashPage Pages.Splash.initialModel
             , flag = decodedJsonFromSetupElmjs
             , key = key
             , time = Time.millisToPosix 0
@@ -127,6 +127,7 @@ init flag _ key =
             , timeoutId = Nothing
             }
     in
+    -- NOTE: We go via the SplashRoute, but arrive on the Accounts page, as per initial model
     updateUrl decodedJsonFromSetupElmjs initialModel
 
 
@@ -280,7 +281,7 @@ update msg model =
             ( { model | isMenuOpen = not model.isMenuOpen }, Cmd.none )
 
         -- NAV: Recv
-        -- NOTE: This is where we can branch according to whichever page js intends
+        -- NOTE: This is where we can branch and handle data according to whichever page js intends
         -- it's message to reach
         Recv message ->
             case JD.decodeValue jsMessageDecoder message of
