@@ -44,7 +44,7 @@ describe("handleMessageFromElm", () => {
     // Mock the decrypt function
     const decryptSpy = vi
       .spyOn(encryption, "decrypt")
-      .mockImplementation(async () => "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
+      .mockImplementation(async () => "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v, 1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o");
 
     // Mock the encrypted data in localStorage
     const encryptedData = JSON.stringify({
@@ -71,12 +71,7 @@ describe("handleMessageFromElm", () => {
     expect(decryptSpy).toHaveBeenCalledWith(encryptedData, password);
 
     // Verify that the decrypted data was sent back to Elm
-    expect(window.Elm.Main.ports.jsInterop.send).toHaveBeenCalledWith(JSON.stringify({
-      type: "decryptedCrypoAccountsResponse",
-      page: "AccountsPage",
-      data: ["1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"], // Send as a list
-      currency: "BTC",
-    }));
+    expect(window.Elm.Main.ports.jsInterop.send).toHaveBeenCalledWith("{\"type\":\"decryptedCrypoAccountsResponse\",\"page\":\"AccountsPage\",\"data\":[\"1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v, 1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o\"],\"currency\":\"BTC\"}");
   });
 
   it("should log a message if no BTC accounts are found in localStorage", async () => {
