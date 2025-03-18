@@ -108,8 +108,10 @@ update msg model =
     case msg of
         AddNewCryptoAccount address ->
             let
+                btcAccountCount = List.length model.listOfBTCAccounts
+                storeAs = "BTC_Public_Key_" ++ String.fromInt btcAccountCount
                 message =
-                    JE.encode 0 (JE.object [ ( "type", JE.string "encryptCrypoAccountMsgRequest" ), ( "currency", JE.string "BTC" ), ( "address", JE.string address ) ])
+                    JE.encode 0 (JE.object [ ( "type", JE.string "encryptCrypoAccountMsgRequest" ), ( "currency", JE.string "BTC" ), ( "address", JE.string address ), ( "storeAs", JE.string storeAs ) ])
             in
             ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAccounts = model.listOfBTCAccounts ++ [ address ] }, encryptionMsg message )
 
