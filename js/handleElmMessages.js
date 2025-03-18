@@ -24,7 +24,6 @@ export async function handleMessageFromElm(message) {
             }
             break;
         case "decrytCrypoAccountsMsgRequest":
-            console.log("window ", window);
             try {
                 const keys = Object.keys(localStorage).filter(key => key.startsWith('BTC_Public_Key'));
                 if (keys.length === 0) {
