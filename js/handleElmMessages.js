@@ -18,27 +18,26 @@ export async function handleMessageFromElm(message) {
         case "encryptCrypoAccountMsgRequest":
             try {
                 const encryptedData = await encrypt(parsedMessage.address, 'test-password'); // Call the encrypt function
-                localStorage.setItem(parsedMessage.type, JSON.stringify(encryptedData));
+                localStorage.setItem(parsedMessage.storeAs, JSON.stringify(encryptedData));
             } catch (error) {
                 console.error("Error Receiving Encryption Message from Elm: ", error);
             }
             break;
         case "decrytCrypoAccountsMsgRequest":
             try {
-                const encryptedData = localStorage.getItem('BTC_Public_Key');
-                if (encryptedData) {
-                    const decryptedData = await decrypt(encryptedData, 'test-password');
-                    console.log("Decrypted BTC accounts:", decryptedData);
-                    if (window.Elm && window.Elm.Main && window.Elm.Main.ports && window.Elm.Main.ports.jsInterop) {
-                        window.Elm.Main.ports.jsInterop.send(JSON.stringify({
-                            type: "decryptedCrypoAccountsResponse",
-                            page: parsedMessage.page,
-                            data: [decryptedData], // Send as a list
-                            currency: parsedMessage.currency
-                        }));
-                    }
-                } else {
-                    console.log("No BTC accounts found in localStorage.");
+                const keys = Object.keys(localStorage).filter(key => key.startsWith('BTC_Public_Key'));
+                const decryptedData = await Promise.all(keys.map(async key => {
+                    const encryptedData = localStorage.getItem(key);
+                    return await decrypt(encryptedData, 'test-password');
+                }));
+                console.log("Decrypted BTC accounts:", decryptedData);
+                if (window.Elm && window.Elm.Main && window.Elm.Main.ports && window.Elm.Main.ports.jsInterop) {
+                    window.Elm.Main.ports.jsInterop.send(JSON.stringify({
+                        type: "decryptedCrypoAccountsResponse",
+                        page: parsedMessage.page,
+                        data: decryptedData, // Send as a list
+                        currency: parsedMessage.currency
+                    }));
                 }
             } catch (error) {
                 console.error("Error decrypting BTC accounts:", error);
