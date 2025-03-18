@@ -1,4 +1,4 @@
-module Extras.TestData exposing (unsuccessfullBalancesFetch, unSuccessfullXmrPrimaryAddressFetch, encodeGrpcMessage, getBalancesEncodedResponse, getBalancesResponse, getSubAddressesEncodedResponse, getVersionBaseURL, placeholderUrl, primaryAddress, subAddress, successfullBalancesFetch, successfullSubAddressFetch, successfullVersionFetch, successfullXmrPrimaryAddressFetch, testBalanceInfo, toBytes, unsuccessfullVersionFetch, walletsBaseUrl)
+module Extras.TestData exposing (elmReadyMsgRequest, decrytCrypoAccountsMsgRequest, encodeGrpcMessage, getBalancesEncodedResponse, getBalancesResponse, getSubAddressesEncodedResponse, getVersionBaseURL, placeholderUrl, primaryAddress, subAddress, successfullBalancesFetch, successfullSubAddressFetch, successfullVersionFetch, successfullXmrPrimaryAddressFetch, testBalanceInfo, toBytes, unSuccessfullXmrPrimaryAddressFetch, unsuccessfullBalancesFetch, unsuccessfullVersionFetch, walletsBaseUrl)
 
 import Base64
 import Bytes exposing (Bytes, Endianness(..))
@@ -20,6 +20,13 @@ subAddress : String
 subAddress =
     "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
 
+decrytCrypoAccountsMsgRequest : String
+decrytCrypoAccountsMsgRequest =
+    "{\"type\":\"decrytCrypoAccountsMsgRequest\",\"currency\":\"BTC\",\"page\":\"AccountsPage\"}"
+
+elmReadyMsgRequest : String
+elmReadyMsgRequest =
+    "{\"type\":\"ElmReady\",\"currency\":\"\",\"address\":\"\"}"
 
 getVersionBaseURL : String
 getVersionBaseURL =
@@ -100,6 +107,7 @@ successfullBalancesFetch =
         |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
         |> Stub.withBody (Stub.withBytes <| encodeGrpcMessage getBalancesEncodedResponse)
 
+
 unsuccessfullBalancesFetch : Stub.HttpResponseStub
 unsuccessfullBalancesFetch =
     Stub.for (Route.post <| walletsBaseUrl ++ "GetBalances")
@@ -124,6 +132,7 @@ successfullXmrPrimaryAddressFetch =
     Stub.for (Route.post <| walletsBaseUrl ++ "GetXmrPrimaryAddress")
         |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
         |> Stub.withBody (Stub.withBytes decodedBytes)
+
 
 unSuccessfullXmrPrimaryAddressFetch : Stub.HttpResponseStub
 unSuccessfullXmrPrimaryAddressFetch =
@@ -278,3 +287,5 @@ getSubAddressesEncodedResponse =
             Encode.encode (Protobuf.encodeGetXmrNewSubaddressReply subAddrReply)
     in
     encodedResponse
+
+

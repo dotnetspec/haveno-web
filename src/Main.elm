@@ -771,6 +771,7 @@ toSplash model ( dashboard, cmd ) =
         , Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress
         , startTimeout
         , notifyJsReady
+        , gotDecryptedCryptoAccountData
         ]
     )
 
@@ -1135,6 +1136,16 @@ notifyJsReady =
     in
     jsInterop message
 
+gotDecryptedCryptoAccountData : Cmd Msg
+gotDecryptedCryptoAccountData = 
+    let
+        message =
+            JE.encode 0 (JE.object [ ( "type", JE.string "decrytCrypoAccountsMsgRequest" ), ( "currency", JE.string "BTC" ), ( "page", JE.string "AccountsPage" ) ])
+    in
+    jsInterop message
+
+
+
 
 
 -- NAV: Main Persistent
@@ -1152,7 +1163,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.6.66" ]
+                , Html.p [] [ Html.text "Version 0.6.67" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text

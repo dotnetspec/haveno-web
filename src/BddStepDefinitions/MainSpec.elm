@@ -7,11 +7,13 @@ module BddStepDefinitions.MainSpec exposing (main)
    -- It's for testing the app as a whole, not individual functions. Try to limit tests here to logic, not specifics.
    -- Other modules like WalletSpec are MODULAR tests, limited to the given page alone.
 -}
+--import Spec.Http
 
 import BddStepDefinitions.Extra
 import BddStepDefinitions.Runner
 import Browser
 import Extras.TestData as TestData
+import Json.Decode
 import Main
 import Pages.Accounts
 import Pages.Connect as Connect
@@ -22,11 +24,12 @@ import Spec.Command
 import Spec.Http.Stub as Stub
 import Spec.Markup
 import Spec.Markup.Selector exposing (by)
+import Spec.Navigator
 import Spec.Observer
+import Spec.Port
 import Spec.Setup
 import Spec.Time
 import Url exposing (Protocol(..), Url)
---import Spec.Http
 
 
 
@@ -72,10 +75,10 @@ runSpecTests =
                 )
                 {- |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
-                   ] -}
-               
+                   ]
+                -}
                 |> Spec.observeThat
-                    [ it "is on the Accounts page"
+                    [ it "is on the Accounts page (after Splash page)"
                         (Spec.Observer.observeModel .page
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
@@ -133,9 +136,11 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario "3: When app first loads it should be on the accounts page if all the required data is successfully fetched"
+        , scenario """3: When app first loads it should be on the accounts page if all the required 
+        data is successfully fetched from gRPC server and the correct request for decrypted crypto accont data 
+        is made to the js interop port"""
             (given
-                (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
+                (Spec.Setup.initForApplication (Main.init "\"http://elm-spec/\"")
                     |> Spec.Setup.withDocument Main.view
                     |> Spec.Setup.withUpdate Main.update
                     |> Spec.Setup.withSubscriptions Main.subscriptions
@@ -143,26 +148,37 @@ runSpecTests =
                         { onUrlRequest = Main.ClickedLink
                         , onUrlChange = Main.ChangedUrl
                         }
-                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch, TestData.successfullVersionFetch, TestData.successfullBalancesFetch ]
+                    |> Stub.serve
+                        [ TestData.successfullXmrPrimaryAddressFetch
+                        , TestData.successfullVersionFetch
+                        , TestData.successfullBalancesFetch
+                        ]
                 )
                 |> Spec.observeThat
-                    [ {- it
-                             "a. the app NAV location should be root "
-                             (Spec.Navigator.observe
-                                 |> Spec.expect
-                                     (Spec.Navigator.location <|
-                                         Claim.isEqual Debug.toString
-                                             "http://localhost:1234/"
-                                     )
-                             )
-                         ,
-                      -}
-                      it "b.is on the Accounts page"
+                    [ it "a.is on the Accounts page"
                         (Spec.Observer.observeModel .page
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
                                     Main.AccountsPage <|
                                         { accountsInitialModel | balances = TestData.testBalanceInfo }
+                                )
+                        )
+                    , it
+                        "b. the app NAV location should be root "
+                        (Spec.Navigator.observe
+                            |> Spec.expect
+                                (Spec.Navigator.location <|
+                                    Claim.isEqual Debug.toString
+                                        "http://elm-spec/"
+                                )
+                        )
+                    , it "sent the right message over the port"
+                        (Spec.Port.observe "jsInterop" Json.Decode.string
+                            |> Spec.expect
+                                (BddStepDefinitions.Extra.equals
+                                    [ "{\"type\":\"decrytCrypoAccountsMsgRequest\",\"currency\":\"BTC\",\"page\":\"AccountsPage\"}"
+                                    , "{\"type\":\"ElmReady\",\"currency\":\"\",\"address\":\"\"}"
+                                    ]
                                 )
                         )
                     ]

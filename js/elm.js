@@ -5566,13 +5566,30 @@ var $elm$core$Task$perform = F2(
 			A2($elm$core$Task$map, toMessage, task));
 	});
 var $elm$browser$Browser$application = _Browser_application;
-var $author$project$Main$AccountsPage = function (a) {
-	return {$: 7, a: a};
-};
 var $author$project$Main$Loading = 0;
+var $author$project$Main$SplashPage = function (a) {
+	return {$: 0, a: a};
+};
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo = {nf: $elm$core$Maybe$Nothing, nX: $elm$core$Maybe$Nothing};
 var $author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BalancesInfo;
+var $author$project$Pages$Splash$Loading = 0;
+var $author$project$Pages$Splash$Model = F7(
+	function (status, pagetitle, root, balances, primaryaddress, version, errors) {
+		return {ol: balances, oW: errors, qh: pagetitle, fZ: primaryaddress, qP: root, dI: status, bE: version};
+	});
+var $author$project$Pages$Splash$Splash = $elm$core$Basics$identity;
+var $author$project$Pages$Splash$initialModel = A7(
+	$author$project$Pages$Splash$Model,
+	0,
+	'Splash',
+	{tQ: 'Loading...'},
+	$elm$core$Maybe$Nothing,
+	'',
+	'',
+	_List_Nil);
+var $elm$time$Time$Posix = $elm$core$Basics$identity;
+var $elm$time$Time$millisToPosix = $elm$core$Basics$identity;
 var $author$project$Pages$Accounts$BTC = 0;
 var $author$project$Pages$Accounts$Loaded = 0;
 var $author$project$Pages$Accounts$ManageAccounts = 0;
@@ -5590,8 +5607,6 @@ var $author$project$Pages$Accounts$initialModel = {
 	dI: 0,
 	uS: ''
 };
-var $elm$time$Time$Posix = $elm$core$Basics$identity;
-var $elm$time$Time$millisToPosix = $elm$core$Basics$identity;
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Pages$Accounts$init = function (_v0) {
@@ -5690,13 +5705,7 @@ var $author$project$Pages$Sell$init = function (_v0) {
 		$author$project$Pages$Sell$initialModel,
 		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
-var $author$project$Pages$Splash$Loading = 0;
-var $author$project$Pages$Splash$Model = F7(
-	function (status, pagetitle, root, balances, primaryaddress, version, errors) {
-		return {ol: balances, oW: errors, qh: pagetitle, fZ: primaryaddress, qP: root, dI: status, bE: version};
-	});
 var $author$project$Pages$Splash$NoOp = 0;
-var $author$project$Pages$Splash$Splash = $elm$core$Basics$identity;
 var $author$project$Pages$Splash$init = function (fromMainToSplash) {
 	var newModel = A7(
 		$author$project$Pages$Splash$Model,
@@ -6365,6 +6374,9 @@ var $elm$url$Url$Parser$parse = F2(
 					url.s4,
 					$elm$core$Basics$identity)));
 	});
+var $author$project$Main$AccountsPage = function (a) {
+	return {$: 7, a: a};
+};
 var $author$project$Main$GotAccountsMsg = function (a) {
 	return {$: 8, a: a};
 };
@@ -6526,9 +6538,6 @@ var $author$project$Main$toSell = F2(
 	});
 var $author$project$Main$GotXmrPrimaryAddress = function (a) {
 	return {$: 16, a: a};
-};
-var $author$project$Main$SplashPage = function (a) {
-	return {$: 0, a: a};
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionRequest = {};
 var $author$project$Proto$Io$Haveno$Protobuffer$defaultGetVersionRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetVersionRequest;
@@ -8072,6 +8081,40 @@ var $author$project$Main$gotAvailableBalances = function () {
 			A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getBalances, $author$project$Proto$Io$Haveno$Protobuffer$defaultGetBalancesRequest)));
 	return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Main$GotBalances, grpcRequest);
 }();
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Main$jsInterop = _Platform_outgoingPort('jsInterop', $elm$json$Json$Encode$string);
+var $elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			$elm$core$List$foldl,
+			F2(
+				function (_v0, obj) {
+					var k = _v0.a;
+					var v = _v0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(0),
+			pairs));
+};
+var $author$project$Main$gotDecryptedCryptoAccountData = function () {
+	var message = A2(
+		$elm$json$Json$Encode$encode,
+		0,
+		$elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'type',
+					$elm$json$Json$Encode$string('decrytCrypoAccountsMsgRequest')),
+					_Utils_Tuple2(
+					'currency',
+					$elm$json$Json$Encode$string('BTC')),
+					_Utils_Tuple2(
+					'page',
+					$elm$json$Json$Encode$string('AccountsPage'))
+				])));
+	return $author$project$Main$jsInterop(message);
+}();
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressRequest = {};
 var $author$project$Proto$Io$Haveno$Protobuffer$defaultGetXmrPrimaryAddressRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressRequest;
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressReply = {ug: ''};
@@ -8122,21 +8165,6 @@ var $author$project$Comms$CustomGrpc$gotPrimaryAddress = A2(
 		'password',
 		'apitest',
 		A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getXmrPrimaryAddress, $author$project$Proto$Io$Haveno$Protobuffer$defaultGetXmrPrimaryAddressRequest)));
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $author$project$Main$jsInterop = _Platform_outgoingPort('jsInterop', $elm$json$Json$Encode$string);
-var $elm$json$Json$Encode$object = function (pairs) {
-	return _Json_wrap(
-		A3(
-			$elm$core$List$foldl,
-			F2(
-				function (_v0, obj) {
-					var k = _v0.a;
-					var v = _v0.b;
-					return A3(_Json_addField, k, v, obj);
-				}),
-			_Json_emptyObject(0),
-			pairs));
-};
 var $author$project$Main$notifyJsReady = function () {
 	var message = A2(
 		$elm$json$Json$Encode$encode,
@@ -8218,7 +8246,8 @@ var $author$project$Main$toSplash = F2(
 						$author$project$Main$gotAvailableBalances,
 						A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Main$GotXmrPrimaryAddress, $author$project$Comms$CustomGrpc$gotPrimaryAddress),
 						$author$project$Main$startTimeout,
-						$author$project$Main$notifyJsReady
+						$author$project$Main$notifyJsReady,
+						$author$project$Main$gotDecryptedCryptoAccountData
 					])));
 	});
 var $author$project$Main$GotSupportMsg = function (a) {
@@ -8499,7 +8528,7 @@ var $author$project$Main$init = F3(
 			ds: false,
 			dC: false,
 			pF: key,
-			H: $author$project$Main$AccountsPage($author$project$Pages$Accounts$initialModel),
+			H: $author$project$Main$SplashPage($author$project$Pages$Splash$initialModel),
 			fZ: '',
 			dI: 0,
 			lD: $elm$time$Time$millisToPosix(0),
@@ -11077,7 +11106,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.6.66')
+										$elm$html$Html$text('Version 0.6.67')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
