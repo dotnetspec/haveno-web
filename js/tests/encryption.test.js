@@ -8,6 +8,7 @@ describe("Web Crypto API - AES Encryption", () => {
         type: "encryptCrypoAccountMsgRequest",
         currency: "BTC",
         address: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
+        storeAs: "BTC_Public_Key_0"
     });
 
     beforeEach(() => {
@@ -22,25 +23,22 @@ describe("Web Crypto API - AES Encryption", () => {
         const decrypted = await decrypt(encryptedinStorage, password);
         expect(decrypted).not.toBeNull();
         expect(decrypted).not.toBeUndefined();
-        expect(decrypted).toContain("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
+        const parsedDecrypted = JSON.parse(decrypted);
+        expect(parsedDecrypted.address).toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
     });
 
     it("should fail to decrypt with a wrong password", async () => {
         await handleMessageFromElm(elmMessageAsJson);
         const encryptedinStorage = localStorage.getItem("BTC_Public_Key_0");
-        const decrypted = await decrypt(encryptedinStorage, "wrong-password");
-        expect(decrypted).not.toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
+        const decrypted = await decrypt(JSON.parse(encryptedinStorage), "wrong-password");
         expect(decrypted).toBeNull();
     });
 
     it("should generate different encrypted outputs for the same message", async () => {
-        await handleMessageFromElm(elmMessageAsJson);
         const firstEncryption = await encrypt(elmMessageAsJson, password);
-
-        await handleMessageFromElm(elmMessageAsJson);
         const secondEncryption = await encrypt(elmMessageAsJson, password);
 
-        expect(firstEncryption).not.toBe(secondEncryption);
+        expect(firstEncryption).not.toEqual(secondEncryption);
     });
 
     it("should store encrypted data with the expected structure", async () => {
@@ -51,12 +49,10 @@ describe("Web Crypto API - AES Encryption", () => {
         const decrypted = await decrypt(encryptedinStorage, password);
         expect(decrypted).not.toBeNull();
         expect(decrypted).not.toBeUndefined();
-        expect(decrypted).toContain("type");
-        expect(decrypted).toContain("encryptCrypoAccountMsgRequest");
-        expect(decrypted).toContain("currency");
-        expect(decrypted).toContain("BTC");
-        expect(decrypted).toContain("address");
-        expect(decrypted).toContain("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
-        expect(decrypted).not.toContain('Sorry, problem');
+        const parsedDecrypted = JSON.parse(decrypted);
+        expect(parsedDecrypted.type).toBe("encryptCrypoAccountMsgRequest");
+        expect(parsedDecrypted.currency).toBe("BTC");
+        expect(parsedDecrypted.address).toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
+        expect(parsedDecrypted.storeAs).toBe("BTC_Public_Key_0");
     });
 });

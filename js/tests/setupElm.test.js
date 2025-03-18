@@ -5,6 +5,7 @@ describe('initializeElmApp', () => {
     let originalGetElementById;
     let originalConsoleLog;
     let mockElm;
+    let mockSubscribe;
 
     beforeEach(() => {
         // Mock document.getElementById
@@ -18,12 +19,13 @@ describe('initializeElmApp', () => {
         console.log = vi.fn();
 
         // Mock Elm object
+        mockSubscribe = vi.fn();
         mockElm = {
             Main: {
                 init: vi.fn().mockReturnValue({
                     ports: {
                         jsInterop: {
-                            subscribe: vi.fn(),
+                            subscribe: mockSubscribe,
                         },
                         jsInteropFromAccounts: {
                             subscribe: vi.fn(),

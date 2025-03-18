@@ -1,4 +1,3 @@
-// encryption.js
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
@@ -52,7 +51,6 @@ export async function encrypt(message, password) {
 }
 
 export async function decrypt(encryptedData, password) {
-   
     if (!encryptedData) return null;
  
     const salt = new Uint8Array(encryptedData.salt);
@@ -73,7 +71,6 @@ export async function decrypt(encryptedData, password) {
         
         return decoder.decode(decrypted);
     } catch (e) {
-        
         console.error("Decryption failed (not an error if testing for fail):", e);
         return null;
     }

@@ -59,6 +59,8 @@ function initializeBrowserEnvironment() {
     const eapp = initializeElmApp(Elm, jsonUrl);
     handleMessagesToAndFromMain(eapp);
     handleMessagesFromAccounts(eapp);
+
+  
   } catch (error) {
     console.error("Error in setupElm.js:", error);
   }
