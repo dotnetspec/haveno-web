@@ -17,13 +17,14 @@ export async function handleMessageFromElm(message) {
             break;
         case "encryptCrypoAccountMsgRequest":
             try {
-                const encryptedData = await encrypt(parsedMessage.address, 'test-password'); // Call the encrypt function
+                const encryptedData = await encrypt(parsedMessage, 'test-password'); // Call the encrypt function with the parsed message
                 localStorage.setItem(parsedMessage.storeAs, JSON.stringify(encryptedData));
             } catch (error) {
                 console.error("Error Receiving Encryption Message from Elm: ", error);
             }
             break;
         case "decrytCrypoAccountsMsgRequest":
+            console.log("window ", window);
             try {
                 const keys = Object.keys(localStorage).filter(key => key.startsWith('BTC_Public_Key'));
                 if (keys.length === 0) {
@@ -31,7 +32,7 @@ export async function handleMessageFromElm(message) {
                     return;
                 }
                 const decryptedData = await Promise.all(keys.map(async key => {
-                    const encryptedData = localStorage.getItem(key);
+                    const encryptedData = JSON.parse(localStorage.getItem(key));
                     return await decrypt(encryptedData, 'test-password');
                 }));
                 console.log("Decrypted BTC accounts:", decryptedData);
