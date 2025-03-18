@@ -26,6 +26,10 @@ export async function handleMessageFromElm(message) {
         case "decrytCrypoAccountsMsgRequest":
             try {
                 const keys = Object.keys(localStorage).filter(key => key.startsWith('BTC_Public_Key'));
+                if (keys.length === 0) {
+                    console.log("No BTC accounts found in localStorage.");
+                    return;
+                }
                 const decryptedData = await Promise.all(keys.map(async key => {
                     const encryptedData = localStorage.getItem(key);
                     return await decrypt(encryptedData, 'test-password');
