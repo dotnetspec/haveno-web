@@ -5599,7 +5599,7 @@ var $author$project$Pages$Accounts$initialModel = {
 	sG: 0,
 	oW: _List_Nil,
 	pA: false,
-	dD: _List_Nil,
+	du: _List_Nil,
 	mK: _List_Nil,
 	jJ: '',
 	qh: 'Accounts',
@@ -8526,7 +8526,7 @@ var $author$project$Main$init = F3(
 			o4: decodedJsonFromSetupElmjs,
 			pu: false,
 			ds: false,
-			dC: false,
+			dD: false,
 			pF: key,
 			H: $author$project$Main$SplashPage($author$project$Pages$Splash$initialModel),
 			fZ: '',
@@ -8648,6 +8648,8 @@ var $author$project$Pages$Accounts$update = F2(
 		switch (msg.$) {
 			case 3:
 				var address = msg.a;
+				var btcAccountCount = $elm$core$List$length(model.du);
+				var storeAs = 'BTC_Public_Key_' + $elm$core$String$fromInt(btcAccountCount);
 				var message = A2(
 					$elm$json$Json$Encode$encode,
 					0,
@@ -8662,15 +8664,18 @@ var $author$project$Pages$Accounts$update = F2(
 								$elm$json$Json$Encode$string('BTC')),
 								_Utils_Tuple2(
 								'address',
-								$elm$json$Json$Encode$string(address))
+								$elm$json$Json$Encode$string(address)),
+								_Utils_Tuple2(
+								'storeAs',
+								$elm$json$Json$Encode$string(storeAs))
 							])));
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
 							sG: 4,
-							dD: _Utils_ap(
-								model.dD,
+							du: _Utils_ap(
+								model.du,
 								_List_fromArray(
 									[address]))
 						}),
@@ -8681,8 +8686,8 @@ var $author$project$Pages$Accounts$update = F2(
 					_Utils_update(
 						model,
 						{
-							dD: _Utils_ap(
-								model.dD,
+							du: _Utils_ap(
+								model.du,
 								_List_fromArray(
 									[data]))
 						}),
@@ -9029,7 +9034,7 @@ var $author$project$Main$update = F2(
 					var url = urlRequest.a;
 					var modelWithMenuClosed = _Utils_update(
 						model,
-						{dC: false});
+						{dD: false});
 					var _v4 = $elm$url$Url$toString(url);
 					if (_v4 === 'https://haveno-web-dev.netlify.app//') {
 						return _Utils_Tuple2(
@@ -9047,7 +9052,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{dC: !model.dC}),
+						{dD: !model.dD}),
 					$elm$core$Platform$Cmd$none);
 			case 12:
 				var message = msg.a;
@@ -9313,7 +9318,7 @@ var $author$project$Pages$Accounts$btcAccountsView = function (model) {
 					[
 						$elm$html$Html$Attributes$id('accounts-listOfBTCAccounts')
 					]),
-				$elm$core$List$isEmpty(model.dD) ? _List_fromArray(
+				$elm$core$List$isEmpty(model.du) ? _List_fromArray(
 					[
 						A2(
 						$elm$html$Html$div,
@@ -9344,7 +9349,7 @@ var $author$project$Pages$Accounts$btcAccountsView = function (model) {
 									$elm$html$Html$text(account)
 								]));
 					},
-					model.dD))
+					model.du))
 			]));
 };
 var $author$project$Pages$Accounts$UpdateNewBTCAddress = function (a) {
@@ -11370,7 +11375,7 @@ var $author$project$Main$menu = function (model) {
 						_List_fromArray(
 							[
 								_Utils_Tuple2('menu-btn', true),
-								_Utils_Tuple2('open', model.dC)
+								_Utils_Tuple2('open', model.dD)
 							])),
 						$elm$html$Html$Events$onClick($author$project$Main$ToggleMenu),
 						$elm$html$Html$Attributes$name('menubutton'),
@@ -11379,7 +11384,7 @@ var $author$project$Main$menu = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						model.dC ? '✖' : '☰')
+						model.dD ? '✖' : '☰')
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -11389,7 +11394,7 @@ var $author$project$Main$menu = function (model) {
 						_List_fromArray(
 							[
 								_Utils_Tuple2('menu', true),
-								_Utils_Tuple2('open', model.dC)
+								_Utils_Tuple2('open', model.dD)
 							]))
 					]),
 				_List_fromArray(

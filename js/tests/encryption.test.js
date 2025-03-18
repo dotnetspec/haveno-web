@@ -27,7 +27,7 @@ describe("Web Crypto API - AES Encryption", () => {
 
     it("should fail to decrypt with a wrong password", async () => {
         await handleMessageFromElm(elmMessageAsJson);
-        const encryptedinStorage = localStorage.getItem("encryptCrypoAccountMsgRequest");
+        const encryptedinStorage = localStorage.getItem("BTC_Public_Key_0");
         const decrypted = await decrypt(encryptedinStorage, "wrong-password");
         expect(decrypted).not.toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
         expect(decrypted).toBeNull();

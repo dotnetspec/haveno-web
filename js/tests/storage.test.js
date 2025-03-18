@@ -4,8 +4,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 // There is no corresponding storage.js
 
 describe('storage', () => {
-    const key = 'secureMessage';
-    const message = 'Sensitive bank details';
+    const key = 'BTC_Public_Key_0';
+    const message = '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v';
 
     beforeEach(() => {
         localStorage.clear(); // Reset storage before each test
