@@ -35,8 +35,10 @@ export async function handleMessageFromElm(message) {
                     return await decrypt(encryptedData, 'test-password');
                 }));
                 console.log("Decrypted BTC accounts:", decryptedData);
-                if (window.Elm && window.Elm.Main && window.Elm.Main.ports && window.Elm.Main.ports.receiveMsgsFromJs) {
-                    window.Elm.Main.ports.receiveMsgsFromJs.send(JSON.stringify({
+                console.log("window.Elm receiveMsgsFromJs", window.Elm.ports.receiveMsgsFromJs);
+                if (window.Elm && window.Elm.ports && window.Elm.ports.receiveMsgsFromJs) {
+                    console.log("inside window.Elm.ports.receiveMsgsFromJs", window.Elm.ports.receiveMsgsFromJs);
+                    window.Elm.ports.receiveMsgsFromJs.send(JSON.stringify({
                     type: "decryptedCrypoAccountsResponse",
                     page: parsedMessage.page,
                         data: decryptedData, // Send as a list

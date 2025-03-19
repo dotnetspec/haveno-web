@@ -23,7 +23,7 @@ describe("handleMessageFromElm", () => {
 
     // Mock the Elm ports
     global.window.Elm = {
-      Main: {
+     // Main: {
         ports: {
           msgFromElm: {
             send: vi.fn(),
@@ -31,7 +31,7 @@ describe("handleMessageFromElm", () => {
           receiveMsgsFromJs: {
             send: vi.fn(),
           },
-        },
+       // },
       },
     };
   });
@@ -89,7 +89,7 @@ describe("handleMessageFromElm", () => {
     expect(decryptSpy).toHaveBeenCalledWith(encryptedData2, password);
 
     // Verify that the decrypted data was sent back to Elm
-    expect(window.Elm.Main.ports.receiveMsgsFromJs.send).toHaveBeenCalledWith(JSON.stringify({
+    expect(window.Elm.ports.receiveMsgsFromJs.send).toHaveBeenCalledWith(JSON.stringify({
       type: "decryptedCrypoAccountsResponse",
       page: "AccountsPage",
       data: ["1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o"], // Send as a flat array

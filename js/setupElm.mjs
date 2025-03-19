@@ -4,6 +4,8 @@ import { handleMessageFromElm } from "./handleElmMessages.js";
 // WARN: Use Playwright to test. Vitest runs in Node.js, so it cannot execute Elm code directly.
 // NOTE: Try to use browser debugger if possible.
 
+
+
 function detectEnvironment() {
   const protocol = window.location.protocol;
   const hostname = window.location.hostname;
@@ -60,6 +62,8 @@ function initializeBrowserEnvironment() {
     handleMessagesToAndFromMain(eapp);
     handleMessagesFromAccounts(eapp);
 
+     // Set window.Elm to the initialized Elm application instance
+     window.Elm = eapp;
   
   } catch (error) {
     console.error("Error in setupElm.js:", error);
