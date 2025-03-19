@@ -20,6 +20,20 @@ describe("handleMessageFromElm", () => {
   beforeEach(() => {
     localStorage.clear(); // Reset storage before each test
     vi.restoreAllMocks(); // Restore all mocks before each test
+
+    // Mock the Elm ports
+    global.window.Elm = {
+      Main: {
+        ports: {
+          msgFromElm: {
+            send: vi.fn(),
+          },
+          receiveMsgsFromJs: {
+            send: vi.fn(),
+          },
+        },
+      },
+    };
   });
 
   it("should encrypt data received from Elm", async () => {
@@ -68,17 +82,6 @@ describe("handleMessageFromElm", () => {
     localStorage.setItem("BTC_Public_Key_0", JSON.stringify(encryptedData1));
     localStorage.setItem("BTC_Public_Key_1", JSON.stringify(encryptedData2));
 
-    // Mock the Elm ports
-    global.window.Elm = {
-      Main: {
-        ports: {
-          msgFromElm: {
-            send: vi.fn(),
-          },
-        },
-      },
-    };
-
     await handleMessageFromElm(elmDecrytCrypoAccountsMsgRequestAsJson);
 
     // Verify that the decrypt function was called with the correct parameters
@@ -86,7 +89,7 @@ describe("handleMessageFromElm", () => {
     expect(decryptSpy).toHaveBeenCalledWith(encryptedData2, password);
 
     // Verify that the decrypted data was sent back to Elm
-    expect(window.Elm.Main.ports.msgFromElm.send).toHaveBeenCalledWith(JSON.stringify({
+    expect(window.Elm.Main.ports.receiveMsgsFromJs.send).toHaveBeenCalledWith(JSON.stringify({
       type: "decryptedCrypoAccountsResponse",
       page: "AccountsPage",
       data: ["1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o"], // Send as a flat array
