@@ -173,7 +173,7 @@ runSpecTests =
                                 )
                         )
                     , it "sent the right message over the port"
-                        (Spec.Port.observe "jsInterop" Json.Decode.string
+                        (Spec.Port.observe "msgFromElm" Json.Decode.string
                             |> Spec.expect
                                 (BddStepDefinitions.Extra.equals
                                     [ "{\"type\":\"decrytCrypoAccountsMsgRequest\",\"currency\":\"BTC\",\"page\":\"AccountsPage\"}"

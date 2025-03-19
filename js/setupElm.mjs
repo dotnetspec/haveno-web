@@ -27,22 +27,22 @@ export function initializeElmApp(Elm, jsonUrl) {
 }
 
 function handleMessagesToAndFromMain(eapp) {
-  if (eapp.ports && eapp.ports.jsInterop) {
-    eapp.ports.jsInterop.subscribe((message) => {
+  if (eapp.ports && eapp.ports.msgFromElm) {
+    eapp.ports.msgFromElm.subscribe((message) => {
       handleMessageFromElm(message);
     });
   } else {
-    console.error("jsInterop port is not defined on eapp.ports");
+    console.error("msgFromElm port is not defined on eapp.ports");
   }
 }
 
 function handleMessagesFromAccounts(eapp) {
-  if (eapp.ports && eapp.ports.jsInteropFromAccounts) {
-    eapp.ports.jsInteropFromAccounts.subscribe((message) => {
+  if (eapp.ports && eapp.ports.msgFromAccounts) {
+    eapp.ports.msgFromAccounts.subscribe((message) => {
       handleMessageFromElm(message);
     });
   } else {
-    console.error("jsInteropFromAccounts port is not defined on eapp.ports");
+    console.error("msgFromAccounts port is not defined on eapp.ports");
   }
 }
 

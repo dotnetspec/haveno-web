@@ -1,4 +1,4 @@
-port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, jsInteropFromAccounts, manageAccountsView, messageDecoder, update, view)
+port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, msgFromAccounts, manageAccountsView, messageDecoder, update, view)
 
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
@@ -382,14 +382,14 @@ formatBalance int64 =
 
 encryptionMsg : String -> Cmd Msg
 encryptionMsg msgString =
-    jsInteropFromAccounts msgString
+    msgFromAccounts msgString
 
 
 
 -- NAV: Ports
 
 
-port jsInteropFromAccounts : String -> Cmd msg
+port msgFromAccounts : String -> Cmd msg
 
 
 

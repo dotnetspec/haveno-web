@@ -24,10 +24,10 @@ describe('initializeElmApp', () => {
             Main: {
                 init: vi.fn().mockReturnValue({
                     ports: {
-                        jsInterop: {
+                        msgFromElm: {
                             subscribe: mockSubscribe,
                         },
-                        jsInteropFromAccounts: {
+                        msgFromAccounts: {
                             subscribe: vi.fn(),
                         },
                     },
@@ -54,10 +54,10 @@ describe('initializeElmApp', () => {
         expect(console.log).toHaveBeenCalledWith('elm init:', eapp);
         expect(eapp).toEqual({
             ports: {
-                jsInterop: {
+                msgFromElm: {
                     subscribe: expect.any(Function),
                 },
-                jsInteropFromAccounts: {
+                msgFromAccounts: {
                     subscribe: expect.any(Function),
                 },
             },

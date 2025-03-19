@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, only2Decimals, receiveMsgsFromJs, jsInterop, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, only2Decimals, receiveMsgsFromJs, msgFromElm, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- NOTE: exposing Url exposes a different type of Url to
@@ -1037,7 +1037,7 @@ subscriptions _ =
 -- WARN: Use the port(s) somewhere in the code or it won't initialize on document load
 
 
-port jsInterop : String -> Cmd msg
+port msgFromElm : String -> Cmd msg
 
 
 port receiveMsgsFromJs : (JD.Value -> msg) -> Sub msg
@@ -1134,7 +1134,7 @@ notifyJsReady =
         message =
             JE.encode 0 (JE.object [ ( "type", JE.string "ElmReady" ), ( "currency", JE.string "" ), ( "address", JE.string "" ) ])
     in
-    jsInterop message
+    msgFromElm message
 
 gotDecryptedCryptoAccountData : Cmd Msg
 gotDecryptedCryptoAccountData = 
@@ -1142,7 +1142,7 @@ gotDecryptedCryptoAccountData =
         message =
             JE.encode 0 (JE.object [ ( "type", JE.string "decrytCrypoAccountsMsgRequest" ), ( "currency", JE.string "BTC" ), ( "page", JE.string "AccountsPage" ) ])
     in
-    jsInterop message
+    msgFromElm message
 
 
 
