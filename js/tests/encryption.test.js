@@ -5,7 +5,7 @@ import { handleMessageFromElm } from "../handleElmMessages.js";
 describe("Web Crypto API - AES Encryption", () => {
     const password = "test-password";
     const elmMessageAsJson = JSON.stringify({
-        type: "encryptCrypoAccountMsgRequest",
+        typeOfMsg: "encryptCrypoAccountMsgRequest",
         currency: "BTC",
         address: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
         storeAs: "BTC_Public_Key_0"
@@ -50,7 +50,7 @@ describe("Web Crypto API - AES Encryption", () => {
         expect(decrypted).not.toBeNull();
         expect(decrypted).not.toBeUndefined();
         const parsedDecrypted = JSON.parse(decrypted);
-        expect(parsedDecrypted.type).toBe("encryptCrypoAccountMsgRequest");
+        expect(parsedDecrypted.typeOfMsg).toBe("encryptCrypoAccountMsgRequest");
         expect(parsedDecrypted.currency).toBe("BTC");
         expect(parsedDecrypted.address).toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
         expect(parsedDecrypted.storeAs).toBe("BTC_Public_Key_0");
