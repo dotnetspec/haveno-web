@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, only2Decimals, receiveMsgsFromJs, msgFromElm, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, JsMessage, QueryStringParser, Route(..), Status(..), jsMessageDecoder, codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, only2Decimals, receiveMsgsFromJs, msgFromElm, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- NOTE: exposing Url exposes a different type of Url to
@@ -582,6 +582,14 @@ type alias QueryStringParser a =
 
 -- NAV: Json decoders
 -- Decode the URL from JSON-encoded string
+jsMessageDecoder : JD.Decoder JsMessage
+jsMessageDecoder =
+    JD.map4 JsMessage
+        (JD.field "page" JD.string)
+        (JD.field "type" JD.string)
+        (JD.field "data" JD.value)
+        (JD.field "currency" JD.string)
+
 
 
 justmsgFieldFromJsonDecoder : JD.Decoder OperationEventMsg
@@ -858,6 +866,13 @@ type Status
 
 
 -- NAV: Type aliases
+
+type alias JsMessage =
+    { page : String
+    , type_ : String
+    , data : JD.Value
+    , currency : String
+    }
 
 
 type alias OperationEventMsg =
@@ -1275,17 +1290,6 @@ viewErrors dismissErrors errors =
                 ++ [ okButton dismissErrors ]
 
 
-type alias JsMessage =
-    { page : String
-    , type_ : String
-    , data : JD.Value
-    , currency : String
-    }
 
-jsMessageDecoder : JD.Decoder JsMessage
-jsMessageDecoder =
-    JD.map4 JsMessage
-        (JD.field "page" JD.string)
-        (JD.field "type" JD.string)
-        (JD.field "data" JD.value)
-        (JD.field "currency" JD.string)
+
+
