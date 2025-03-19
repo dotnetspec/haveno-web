@@ -18,7 +18,7 @@ tests =
                         """
                         {
                             "page": "AccountsPage",
-                            "type": "decryptedCrypoAccountsResponse",
+                            "typeOfMsg": "decryptedCrypoAccountsResponse",
                             "data": ["1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o"],
                             "currency": "BTC"
                         }
@@ -27,7 +27,7 @@ tests =
                     expected : JsMessage
                     expected =
                         { page = "AccountsPage"
-                        , type_ = "decryptedCrypoAccountsResponse"
+                        , typeOfMsg = "decryptedCrypoAccountsResponse"
                         , data = Json.Encode.list  Json.Encode.string [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
                         , currency = "BTC"
                         }

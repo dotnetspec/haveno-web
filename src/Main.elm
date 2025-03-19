@@ -15,7 +15,7 @@ import Html
 import Html.Attributes as Attr
 import Html.Events exposing (onClick)
 import Json.Decode as JD
-import Json.Encode as JE
+import Json.Encode
 import Pages.Accounts
 import Pages.Buy
 import Pages.Connect exposing (Model)
@@ -303,14 +303,14 @@ update msg model =
                                     
                                     in
                                     toAccounts model (Pages.Accounts.update  accountsPageMsgType accountsMdl)
-                                Err _ ->
-                                    ( model, Cmd.none )
+                                Err errmsg ->
+                                    ( {model | errors = model.errors ++ ["Third Case", JD.errorToString errmsg]}, Cmd.none )
 
                         _ ->
-                            ( model, Cmd.none )
+                            ( {model | errors = model.errors ++ ["Second Case", "Not accounts page"]}, Cmd.none )
 
-                Err _ ->
-                    ( model, Cmd.none )
+                Err errmsg ->
+                    ( {model | errors = model.errors ++ ["First Case", JD.errorToString errmsg]}, Cmd.none )
 
         GotSplashMsg dashboardMsg ->
             case model.page of
@@ -586,7 +586,7 @@ jsMessageDecoder : JD.Decoder JsMessage
 jsMessageDecoder =
     JD.map4 JsMessage
         (JD.field "page" JD.string)
-        (JD.field "type" JD.string)
+        (JD.field "typeOfMsg" JD.string)
         (JD.field "data" JD.value)
         (JD.field "currency" JD.string)
 
@@ -869,7 +869,7 @@ type Status
 
 type alias JsMessage =
     { page : String
-    , type_ : String
+    , typeOfMsg : String
     , data : JD.Value
     , currency : String
     }
@@ -1023,9 +1023,9 @@ isValidXMRAddress str =
 -- TODO: Create own url parser to eventually replace this:
 
 
-fromJsonToString : JE.Value -> String
+fromJsonToString : Json.Encode.Value -> String
 fromJsonToString value =
-    JE.encode 0 value
+    Json.Encode.encode 0 value
 
 
 gotCodeFromUrl : Url.Url -> Maybe String
@@ -1147,7 +1147,7 @@ notifyJsReady : Cmd Msg
 notifyJsReady =
     let
         message =
-            JE.encode 0 (JE.object [ ( "type", JE.string "ElmReady" ), ( "currency", JE.string "" ), ( "address", JE.string "" ) ])
+            Json.Encode.encode 0 (Json.Encode.object [ ( "type", Json.Encode.string "ElmReady" ), ( "currency", Json.Encode.string "" ), ( "address", Json.Encode.string "" ) ])
     in
     msgFromElm message
 
@@ -1155,7 +1155,7 @@ gotDecryptedCryptoAccountData : Cmd Msg
 gotDecryptedCryptoAccountData = 
     let
         message =
-            JE.encode 0 (JE.object [ ( "type", JE.string "decrytCrypoAccountsMsgRequest" ), ( "currency", JE.string "BTC" ), ( "page", JE.string "AccountsPage" ) ])
+            Json.Encode.encode 0 (Json.Encode.object [ ( "type", Json.Encode.string "decrytCrypoAccountsMsgRequest" ), ( "currency", Json.Encode.string "BTC" ), ( "page", Json.Encode.string "AccountsPage" ) ])
     in
     msgFromElm message
 
