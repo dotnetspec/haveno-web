@@ -32,8 +32,8 @@ describe('handleMessageFromElm', () => {
     });
 
     it('decrypts stored BTC accounts and sends response to Elm', async () => {
-        localStorage.setItem('BTC_Public_Key_0', JSON.stringify('encrypted-test'));
-        localStorage.setItem('BTC_Public_Key_1', JSON.stringify('encrypted-test2'));
+        localStorage.setItem('BTC_Public_Key_0', JSON.stringify('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'));
+        localStorage.setItem('BTC_Public_Key_1', JSON.stringify('2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o'));
         
         const message = JSON.stringify({ typeOfMsg: 'decrytCrypoAccountsMsgRequest', page: 'dashboard', currency: 'BTC' });
         await handleMessageFromElm(message);
@@ -42,7 +42,7 @@ describe('handleMessageFromElm', () => {
             JSON.stringify({
                 typeOfMsg: "decryptedCrypoAccountsResponse",
                 page: "dashboard",
-                data: ["decrypted-encrypted-test", "decrypted-encrypted-test2"],
+                data: ["decrypted-1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "decrypted-2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o"],
                 currency: "BTC"
             })
         );
@@ -50,7 +50,7 @@ describe('handleMessageFromElm', () => {
 
     it('logs error on decryption failure', async () => {
         decrypt.mockRejectedValueOnce(new Error('Decryption failed'));
-        localStorage.setItem('BTC_Public_Key_0', JSON.stringify('encrypted-test'));
+        localStorage.setItem('BTC_Public_Key_0', JSON.stringify('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'));
         
         const message = JSON.stringify({ typeOfMsg: 'decrytCrypoAccountsMsgRequest', page: 'dashboard', currency: 'BTC' });
         await handleMessageFromElm(message);
