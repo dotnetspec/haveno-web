@@ -7,10 +7,10 @@ export async function handleMessageFromElm(message) {
     }
     const parsedMessage = JSON.parse(message);
 
-    switch (parsedMessage.type) {
+    switch (parsedMessage.typeOfMsg) {
         case "ElmReady":
             try {
-                console.log("Message from Elm : ", parsedMessage.type);
+                console.log("Message from Elm : ", parsedMessage.typeOfMsg);
             } catch (error) {
                 console.error("Error Receiving Message from Elm: ", error);
             }
@@ -39,7 +39,7 @@ export async function handleMessageFromElm(message) {
                 if (window.Elm && window.Elm.ports && window.Elm.ports.receiveMsgsFromJs) {
                     
                     window.Elm.ports.receiveMsgsFromJs.send(JSON.stringify({
-                    type: "decryptedCrypoAccountsResponse",
+                    typeOfMsg: "decryptedCrypoAccountsResponse",
                     page: parsedMessage.page,
                         data: decryptedData, // Send as a list
                         currency: parsedMessage.currency

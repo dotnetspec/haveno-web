@@ -21,12 +21,12 @@ beforeEach(() => {
 
 describe('handleMessageFromElm', () => {
     it('logs ElmReady message', async () => {
-        await handleMessageFromElm(JSON.stringify({ type: 'ElmReady' }));
+        await handleMessageFromElm(JSON.stringify({ typeOfMsg: 'ElmReady' }));
         expect(console.log).toHaveBeenCalledWith("Message from Elm : ", 'ElmReady');
     });
 
     it('encrypts and stores data in localStorage', async () => {
-        const message = JSON.stringify({ type: 'encryptCrypoAccountMsgRequest', storeAs: 'BTC_Public_Key_1', data: 'test' });
+        const message = JSON.stringify({ typeOfMsg: 'encryptCrypoAccountMsgRequest', storeAs: 'BTC_Public_Key_1', data: 'test' });
         await handleMessageFromElm(message);
         expect(localStorage.getItem('BTC_Public_Key_1')).toContain('encrypted-');
     });
@@ -35,12 +35,12 @@ describe('handleMessageFromElm', () => {
         localStorage.setItem('BTC_Public_Key_1', JSON.stringify('encrypted-test'));
         localStorage.setItem('BTC_Public_Key_2', JSON.stringify('encrypted-test2'));
         
-        const message = JSON.stringify({ type: 'decrytCrypoAccountsMsgRequest', page: 'dashboard', currency: 'BTC' });
+        const message = JSON.stringify({ typeOfMsg: 'decrytCrypoAccountsMsgRequest', page: 'dashboard', currency: 'BTC' });
         await handleMessageFromElm(message);
 
         expect(window.Elm.ports.receiveMsgsFromJs.send).toHaveBeenCalledWith(
             JSON.stringify({
-                type: "decryptedCrypoAccountsResponse",
+                typeOfMsg: "decryptedCrypoAccountsResponse",
                 page: "dashboard",
                 data: ["decrypted-encrypted-test", "decrypted-encrypted-test2"],
                 currency: "BTC"
@@ -52,7 +52,7 @@ describe('handleMessageFromElm', () => {
         decrypt.mockRejectedValueOnce(new Error('Decryption failed'));
         localStorage.setItem('BTC_Public_Key_1', JSON.stringify('encrypted-test'));
         
-        const message = JSON.stringify({ type: 'decrytCrypoAccountsMsgRequest', page: 'dashboard', currency: 'BTC' });
+        const message = JSON.stringify({ typeOfMsg: 'decrytCrypoAccountsMsgRequest', page: 'dashboard', currency: 'BTC' });
         await handleMessageFromElm(message);
         expect(console.error).toHaveBeenCalledWith("Error decrypting BTC accounts:", expect.any(Error));
     });
