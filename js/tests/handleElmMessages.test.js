@@ -58,7 +58,7 @@ describe('handleMessageFromElm', () => {
     });
 
     it('handles unknown message types', async () => {
-        await handleMessageFromElm(JSON.stringify({ type: 'UnknownMessage' }));
+        await handleMessageFromElm(JSON.stringify({ typeOfMsg: 'UnknownMessage' }));
         expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Sorry, problem:'));
     });
 });
