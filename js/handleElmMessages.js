@@ -5,7 +5,7 @@ export async function handleMessageFromElm(message) {
         console.log("Null or undefined. No message yet", message);
         return;
     }
-    const parsedMessage = JSON.parse(message);
+    const parsedMessage = message;
 
     switch (parsedMessage.typeOfMsg) {
         case "ElmReady":

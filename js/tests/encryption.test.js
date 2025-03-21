@@ -4,19 +4,27 @@ import { handleMessageFromElm } from "../handleElmMessages.js";
 
 describe("Web Crypto API - AES Encryption", () => {
     const password = "test-password";
-    const elmMessageAsJson = JSON.stringify({
+    const elmMessageAsJson = {
         typeOfMsg: "encryptCrypoAccountMsgRequest",
         currency: "BTC",
         accountsData: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
         storeAs: "BTC_Public_Key_0"
-    });
+    };
+
+    const elmMessageAsJson2 = {
+        typeOfMsg: "encryptCrypoAccountMsgRequest",
+        currency: "BTC",
+        accountsData: "2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o",
+        storeAs: "BTC_Public_Key_1"
+    };
 
     beforeEach(() => {
         localStorage.clear(); // Reset storage before each test
     });
 
     it("should encrypt and decrypt the message correctly", async () => {
-        const encryptedinStorage = await encrypt(elmMessageAsJson, password);
+        // NOTE: We stringify the message before passing it to ENCRYPT (not other parts of code)
+        const encryptedinStorage = await encrypt( JSON.stringify(elmMessageAsJson), password);
 
         expect(encryptedinStorage).not.toBeNull();
         expect(encryptedinStorage).not.toBeUndefined();
@@ -42,7 +50,8 @@ describe("Web Crypto API - AES Encryption", () => {
     });
 
     it("should store encrypted data with the expected structure", async () => {
-        const encryptedinStorage = await encrypt(elmMessageAsJson, password);
+        // NOTE: We stringify the message before passing it to ENCRYPT (not other parts of code)
+        const encryptedinStorage = await encrypt(JSON.stringify(elmMessageAsJson), password);
 
         expect(encryptedinStorage).not.toBeNull();
         expect(encryptedinStorage).not.toBeUndefined();
