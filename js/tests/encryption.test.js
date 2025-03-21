@@ -4,14 +4,14 @@ import { handleMessageFromElm } from "../handleElmMessages.js";
 
 describe("Web Crypto API - AES Encryption", () => {
     const password = "test-password";
-    const elmMessageAsJson = {
+    const elmENCRYPTMessageAsJson = {
         typeOfMsg: "encryptCrypoAccountMsgRequest",
         currency: "BTC",
         accountsData: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
         storeAs: "BTC_Public_Key_0"
     };
 
-    const elmMessageAsJson2 = {
+    const elmENCRYPTMessageAsJson2 = {
         typeOfMsg: "encryptCrypoAccountMsgRequest",
         currency: "BTC",
         accountsData: "2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o",
@@ -24,7 +24,7 @@ describe("Web Crypto API - AES Encryption", () => {
 
     it("should encrypt and decrypt the message correctly", async () => {
         // NOTE: We stringify the message before passing it to ENCRYPT (not other parts of code)
-        const encryptedinStorage = await encrypt( JSON.stringify(elmMessageAsJson), password);
+        const encryptedinStorage = await encrypt( JSON.stringify(elmENCRYPTMessageAsJson), password);
 
         expect(encryptedinStorage).not.toBeNull();
         expect(encryptedinStorage).not.toBeUndefined();
@@ -36,22 +36,22 @@ describe("Web Crypto API - AES Encryption", () => {
     });
 
     it("should fail to decrypt with a wrong password", async () => {
-        await handleMessageFromElm(elmMessageAsJson);
+        await handleMessageFromElm(elmENCRYPTMessageAsJson);
         const encryptedinStorage = localStorage.getItem("BTC_Public_Key_0");
         const decrypted = await decrypt(JSON.parse(encryptedinStorage), "wrong-password");
         expect(decrypted).toBeNull();
     });
 
     it("should generate different encrypted outputs for the same message", async () => {
-        const firstEncryption = await encrypt(elmMessageAsJson, password);
-        const secondEncryption = await encrypt(elmMessageAsJson, password);
+        const firstEncryption = await encrypt(elmENCRYPTMessageAsJson, password);
+        const secondEncryption = await encrypt(elmENCRYPTMessageAsJson, password);
 
         expect(firstEncryption).not.toEqual(secondEncryption);
     });
 
     it("should store encrypted data with the expected structure", async () => {
         // NOTE: We stringify the message before passing it to ENCRYPT (not other parts of code)
-        const encryptedinStorage = await encrypt(JSON.stringify(elmMessageAsJson), password);
+        const encryptedinStorage = await encrypt(JSON.stringify(elmENCRYPTMessageAsJson), password);
 
         expect(encryptedinStorage).not.toBeNull();
         expect(encryptedinStorage).not.toBeUndefined();
