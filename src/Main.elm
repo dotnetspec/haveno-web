@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, JsMessage, QueryStringParser, Route(..), Status(..), jsMessageDecoder, codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, justmsgFieldFromJsonDecoder, main, menu, navLinks, navigate, okButton, only2Decimals, receiveMsgsFromJs, msgFromElm, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, JsMessage, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, jsMessageDecoder, justmsgFieldFromJsonDecoder, main, menu, msgFromElm, navLinks, okButton, only2Decimals, receiveMsgsFromJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- NOTE: exposing Url exposes a different type of Url to
@@ -9,7 +9,6 @@ import Browser.Navigation as Nav
 import Comms.CustomGrpc
 import Data.AddressValidity as R
 import Erl
-import Extras.TestData exposing (placeholderUrl)
 import Grpc
 import Html
 import Html.Attributes as Attr
@@ -129,11 +128,6 @@ init flag _ key =
     in
     -- NOTE: We go via the SplashRoute, but arrive on the Accounts page, as per initial model
     updateUrl decodedJsonFromSetupElmjs initialModel
-
-
-navigate : Nav.Key -> Cmd Msg
-navigate thekey =
-    Nav.pushUrl thekey (Url.toString placeholderUrl)
 
 
 
@@ -292,25 +286,27 @@ update msg model =
                                 Ok accountsPageMsgType ->
                                     let
                                         -- HACK: To get an accounts model to pass on
-                                        accountsMdl = case model.page of
-                                            AccountsPage accountsModel ->
-                                                accountsModel
-                                            _ ->
-                                                -- REVIEW:
-                                                -- WARN: This could re-set values if we're not
-                                                -- on the Accounts page in Elm (unlikely) 
-                                                Pages.Accounts.initialModel
-                                    
+                                        accountsMdl =
+                                            case model.page of
+                                                AccountsPage accountsModel ->
+                                                    accountsModel
+
+                                                _ ->
+                                                    -- REVIEW:
+                                                    -- WARN: This could re-set values if we're not
+                                                    -- on the Accounts page in Elm (unlikely)
+                                                    Pages.Accounts.initialModel
                                     in
-                                    toAccounts model (Pages.Accounts.update  accountsPageMsgType accountsMdl)
+                                    toAccounts model (Pages.Accounts.update accountsPageMsgType accountsMdl)
+
                                 Err errmsg ->
-                                    ( {model | errors = model.errors ++ ["Third Case", JD.errorToString errmsg]}, Cmd.none )
+                                    ( { model | errors = model.errors ++ [ "Third Case", JD.errorToString errmsg ] }, Cmd.none )
 
                         _ ->
-                            ( {model | errors = model.errors ++ ["Second Case", "Not accounts page"]}, Cmd.none )
+                            ( { model | errors = model.errors ++ [ "Second Case", "Not accounts page" ] }, Cmd.none )
 
                 Err errmsg ->
-                    ( {model | errors = model.errors ++ ["First Case", JD.errorToString errmsg]}, Cmd.none )
+                    ( { model | errors = model.errors ++ [ "First Case", JD.errorToString errmsg ] }, Cmd.none )
 
         GotSplashMsg dashboardMsg ->
             case model.page of
@@ -582,6 +578,8 @@ type alias QueryStringParser a =
 
 -- NAV: Json decoders
 -- Decode the URL from JSON-encoded string
+
+
 jsMessageDecoder : JD.Decoder JsMessage
 jsMessageDecoder =
     JD.map4 JsMessage
@@ -589,7 +587,6 @@ jsMessageDecoder =
         (JD.field "typeOfMsg" JD.string)
         (JD.field "data" JD.value)
         (JD.field "currency" JD.string)
-
 
 
 justmsgFieldFromJsonDecoder : JD.Decoder OperationEventMsg
@@ -867,6 +864,7 @@ type Status
 
 -- NAV: Type aliases
 
+
 type alias JsMessage =
     { page : String
     , typeOfMsg : String
@@ -1046,7 +1044,7 @@ subscriptions _ =
 
 
 
--- NAV: Ports 
+-- NAV: Ports
 -- NOTE: once defined here they can be used in js with app.ports.
 -- <portname>.send/subscribe(<data>)
 -- WARN: Use the port(s) somewhere in the code or it won't initialize on document load
@@ -1151,15 +1149,14 @@ notifyJsReady =
     in
     msgFromElm message
 
+
 gotDecryptedCryptoAccountData : Cmd Msg
-gotDecryptedCryptoAccountData = 
+gotDecryptedCryptoAccountData =
     let
         message =
             Json.Encode.encode 0 (Json.Encode.object [ ( "typeOfMsg", Json.Encode.string "decrytCrypoAccountsMsgRequest" ), ( "currency", Json.Encode.string "BTC" ), ( "page", Json.Encode.string "AccountsPage" ) ])
     in
     msgFromElm message
-
-
 
 
 
@@ -1288,8 +1285,3 @@ viewErrors dismissErrors errors =
         <|
             errorMessages errors
                 ++ [ okButton dismissErrors ]
-
-
-
-
-
