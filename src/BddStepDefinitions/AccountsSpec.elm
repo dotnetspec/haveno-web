@@ -363,7 +363,7 @@ runSpecTests =
                 |> Spec.observeThat
                     [ it "sends the expected message to the port"
                         (Spec.Port.observe "msgFromAccounts" Json.Decode.string
-                           |> Spec.expect (equals [ "{\"type\":\"encryptCrypoAccountMsgRequest\",\"currency\":\"BTC\",\"address\":\"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa\",\"storeAs\":\"BTC_Public_Key_0\"}" ])
+                           |> Spec.expect (equals [ "{\"typeOfMsg\":\"encryptCrypoAccountMsgRequest\",\"currency\":\"BTC\",\"address\":\"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa\",\"storeAs\":\"BTC_Public_Key_0\"}" ])
                         )
                     , it "is on the DisplayStoredBTCAddresses view"
                         (Observer.observeModel .currentView

@@ -13,7 +13,8 @@ import Grpc
 import Html
 import Html.Attributes as Attr
 import Html.Events exposing (onClick)
-import Json.Decode as JD
+import Json.Decode
+import Json.Decode.Pipeline exposing (required)
 import Json.Encode
 import Pages.Accounts
 import Pages.Buy
@@ -80,7 +81,7 @@ type alias Model =
     , errors : List String
     , isApiConnected : Bool
     , version : String
-    , currentJsMessage : String
+    , currentJsMessage : List String
     , initialized : Bool
     , isMenuOpen : Bool
     , balances : Maybe Protobuf.BalancesInfo
@@ -100,7 +101,7 @@ init : String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flag _ key =
     let
         decodedJsonFromSetupElmjs =
-            case JD.decodeString urlDecoder flag of
+            case Json.Decode.decodeString urlDecoder flag of
                 Ok urLAfterFlagDecode ->
                     { urLAfterFlagDecode | path = "/" }
 
@@ -117,7 +118,7 @@ init flag _ key =
             , errors = []
             , isApiConnected = False
             , version = "No Haveno version available"
-            , currentJsMessage = ""
+            , currentJsMessage = [ "" ]
             , initialized = False
             , isMenuOpen = False
             , balances = Just Protobuf.defaultBalancesInfo
@@ -128,6 +129,13 @@ init flag _ key =
     in
     -- NOTE: We go via the SplashRoute, but arrive on the Accounts page, as per initial model
     updateUrl decodedJsonFromSetupElmjs initialModel
+
+
+
+-- TODO: Remove
+
+
+
 
 
 
@@ -180,7 +188,7 @@ type Msg
     | GotDonateMsg Pages.Donate.Msg
     | GotConnectMsg Pages.Connect.Msg
     | ChangedUrl Url.Url
-    | Recv JD.Value
+    | Recv Json.Decode.Value
     | GotVersion (Result Grpc.Error GetVersionReply)
     | ToggleMenu
     | GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
@@ -278,18 +286,23 @@ update msg model =
         -- NOTE: This is where we can branch and handle data according to whichever page js intends
         -- it's message to reach
         Recv message ->
-            case JD.decodeValue jsMessageDecoder message of
+            let
+                _ =
+                    Debug.log "message" (Json.Encode.encode 2 message)
+            in
+            case Json.Decode.decodeValue jsMessageDecoder message of
                 Ok jsMsg ->
                     case jsMsg.page of
                         "AccountsPage" ->
-                            case JD.decodeValue Pages.Accounts.messageDecoder jsMsg.data of
-                                Ok accountsPageMsgType ->
+                            case jsMsg.typeOfMsg of
+                                "encryptCrypoAccountMsgRequest" ->
+                                    --Json.Decode.map AddNewCryptoAccount (Json.Decode.field "address" Json.Decode.string)
                                     let
                                         -- HACK: To get an accounts model to pass on
                                         accountsMdl =
                                             case model.page of
                                                 AccountsPage accountsModel ->
-                                                    accountsModel
+                                                    { accountsModel | listOfBTCAccounts = jsMsg.accountsData }
 
                                                 _ ->
                                                     -- REVIEW:
@@ -297,16 +310,37 @@ update msg model =
                                                     -- on the Accounts page in Elm (unlikely)
                                                     Pages.Accounts.initialModel
                                     in
-                                    toAccounts model (Pages.Accounts.update accountsPageMsgType accountsMdl)
+                                    toAccounts model (Pages.Accounts.update (Pages.Accounts.AddNewCryptoAccount (Maybe.withDefault "No BTC address" (List.head jsMsg.accountsData))) accountsMdl)
 
-                                Err errmsg ->
-                                    ( { model | errors = model.errors ++ [ "Third Case", JD.errorToString errmsg ] }, Cmd.none )
+                                "decryptedCrypoAccountsResponse" ->
+                                    --Json.Decode.map DecryptCryptoAccounts (Json.Decode.field "data" (Json.Decode.list Json.Decode.string))
+                                    let
+                                        -- HACK: To get an accounts model to pass on
+                                        accountsMdl =
+                                            case model.page of
+                                                AccountsPage accountsModel ->
+                                                    { accountsModel | listOfBTCAccounts = jsMsg.accountsData }
 
+                                                _ ->
+                                                    -- REVIEW:
+                                                    -- WARN: This could re-set values if we're not
+                                                    -- on the Accounts page in Elm (unlikely)
+                                                    Pages.Accounts.initialModel
+                                    in
+                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptCryptoAccounts jsMsg.accountsData) accountsMdl)
+
+                                _ ->
+                                    --Json.Decode.fail "Unknown message type"
+                                    ( { model | errors = model.errors ++ [ "Third Case", jsMsg.typeOfMsg ] }, Cmd.none )
+
+                        {- Err errmsg ->
+                           ( { model | errors = model.errors ++ [ "Third Case", Json.Decode.errorToString errmsg, jsMsg.typeOfMsg  ] }, Cmd.none )
+                        -}
                         _ ->
                             ( { model | errors = model.errors ++ [ "Second Case", "Not accounts page" ] }, Cmd.none )
 
                 Err errmsg ->
-                    ( { model | errors = model.errors ++ [ "First Case", JD.errorToString errmsg ] }, Cmd.none )
+                    ( { model | errors = model.errors ++ [ "First Case", Json.Decode.errorToString errmsg ] }, Cmd.none )
 
         GotSplashMsg dashboardMsg ->
             case model.page of
@@ -580,32 +614,32 @@ type alias QueryStringParser a =
 -- Decode the URL from JSON-encoded string
 
 
-jsMessageDecoder : JD.Decoder JsMessage
+jsMessageDecoder : Json.Decode.Decoder JsMessage
 jsMessageDecoder =
-    JD.map4 JsMessage
-        (JD.field "page" JD.string)
-        (JD.field "typeOfMsg" JD.string)
-        (JD.field "data" JD.value)
-        (JD.field "currency" JD.string)
+    Json.Decode.succeed JsMessage
+        |> required "page" Json.Decode.string
+        |> required "typeOfMsg" Json.Decode.string
+        |> required "accountsData" (Json.Decode.list Json.Decode.string)
+        |> required "currency" Json.Decode.string
 
 
-justmsgFieldFromJsonDecoder : JD.Decoder OperationEventMsg
+justmsgFieldFromJsonDecoder : Json.Decode.Decoder OperationEventMsg
 justmsgFieldFromJsonDecoder =
-    JD.map OperationEventMsg
-        (JD.field "operationEventMsg" JD.string)
+    Json.Decode.map OperationEventMsg
+        (Json.Decode.field "operationEventMsg" Json.Decode.string)
 
 
-urlDecoder : JD.Decoder Url
+urlDecoder : Json.Decode.Decoder Url
 urlDecoder =
-    JD.string
-        |> JD.andThen
+    Json.Decode.string
+        |> Json.Decode.andThen
             (\s ->
                 case Url.fromString s of
                     Just url ->
-                        JD.succeed url
+                        Json.Decode.succeed url
 
                     Nothing ->
-                        JD.fail "Invalid URL"
+                        Json.Decode.fail "Invalid URL"
             )
 
 
@@ -868,7 +902,7 @@ type Status
 type alias JsMessage =
     { page : String
     , typeOfMsg : String
-    , data : JD.Value
+    , accountsData : List String
     , currency : String
     }
 
@@ -1053,7 +1087,7 @@ subscriptions _ =
 port msgFromElm : String -> Cmd msg
 
 
-port receiveMsgsFromJs : (JD.Value -> msg) -> Sub msg
+port receiveMsgsFromJs : (Json.Decode.Value -> msg) -> Sub msg
 
 
 

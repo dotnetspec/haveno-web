@@ -86,7 +86,7 @@ type Msg
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | AddNewCryptoAccount String
-    | DecryptCryptoAccounts String
+    | DecryptCryptoAccounts (List String)
     | ChangeView View
     | UpdateNewBTCAddress String
 
@@ -111,12 +111,12 @@ update msg model =
                 btcAccountCount = List.length model.listOfBTCAccounts
                 storeAs = "BTC_Public_Key_" ++ String.fromInt btcAccountCount
                 message =
-                    JE.encode 0 (JE.object [ ( "type", JE.string "encryptCrypoAccountMsgRequest" ), ( "currency", JE.string "BTC" ), ( "address", JE.string address ), ( "storeAs", JE.string storeAs ) ])
+                    JE.encode 0 (JE.object [ ( "typeOfMsg", JE.string "encryptCrypoAccountMsgRequest" ), ( "currency", JE.string "BTC" ), ( "address", JE.string address ), ( "storeAs", JE.string storeAs ) ])
             in
             ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAccounts = model.listOfBTCAccounts ++ [ address ] }, encryptionMsg message )
 
         DecryptCryptoAccounts data ->
-            ( { model | listOfBTCAccounts = model.listOfBTCAccounts ++ [ data ] }, Cmd.none )
+            ( { model | listOfBTCAccounts = model.listOfBTCAccounts ++ data }, Cmd.none )
 
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
@@ -398,7 +398,7 @@ port msgFromAccounts : String -> Cmd msg
 
 messageDecoder : JD.Decoder Msg
 messageDecoder =
-    JD.field "type" JD.string
+    JD.field "typeOfMsg" JD.string
         |> JD.andThen
             (\msgType ->
                 case msgType of
@@ -406,7 +406,7 @@ messageDecoder =
                         JD.map AddNewCryptoAccount (JD.field "address" JD.string)
 
                     "decryptedCrypoAccountsResponse" ->
-                        JD.map DecryptCryptoAccounts (JD.field "data" JD.string)
+                        JD.map DecryptCryptoAccounts (JD.field "data" (JD.list JD.string))
 
                     _ ->
                         JD.fail "Unknown message type"

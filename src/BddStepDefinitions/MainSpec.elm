@@ -14,6 +14,7 @@ import BddStepDefinitions.Runner
 import Browser
 import Extras.TestData as TestData
 import Json.Decode
+import Json.Encode
 import Main
 import Pages.Accounts
 import Pages.Connect as Connect
@@ -47,6 +48,16 @@ fundsInitialModel =
 accountsInitialModel : Pages.Accounts.Model
 accountsInitialModel =
     Pages.Accounts.initialModel
+
+
+decryptedCrypoAccountsResponseMessage : Json.Decode.Value
+decryptedCrypoAccountsResponseMessage =
+    Json.Encode.object
+        [ ( "page", Json.Encode.string "AccountsPage" )
+        , ( "typeOfMsg", Json.Encode.string "decryptedCrypoAccountsResponse" )
+        , ( "accountsData", Json.Encode.list Json.Encode.string [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ] )
+        , ( "currency", Json.Encode.string "BTC" )
+        ]
 
 
 
@@ -533,6 +544,33 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
                                     Main.ConnectPage Connect.initialModel
+                                )
+                        )
+                    ]
+            )
+        , scenario "15: adds BTC address to listOfBTCAccounts on decryptedCrypoAccountsResponse"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                )
+                |> when "receiving decryptedCrypoAccountsResponse message"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            (Main.Recv decryptedCrypoAccountsResponseMessage)
+                    ]
+                |> Spec.observeThat
+                    [ it "adds BTC address to listOfBTCAccounts"
+                        (Spec.Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.AccountsPage <|
+                                        { accountsInitialModel | listOfBTCAccounts = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ] }
                                 )
                         )
                     ]

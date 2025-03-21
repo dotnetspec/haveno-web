@@ -7,7 +7,7 @@ describe("Web Crypto API - AES Encryption", () => {
     const elmMessageAsJson = JSON.stringify({
         typeOfMsg: "encryptCrypoAccountMsgRequest",
         currency: "BTC",
-        address: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
+        accountsData: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
         storeAs: "BTC_Public_Key_0"
     });
 
@@ -24,7 +24,7 @@ describe("Web Crypto API - AES Encryption", () => {
         expect(decrypted).not.toBeNull();
         expect(decrypted).not.toBeUndefined();
         const parsedDecrypted = JSON.parse(decrypted);
-        expect(parsedDecrypted.address).toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
+        expect(parsedDecrypted.accountsData).toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
     });
 
     it("should fail to decrypt with a wrong password", async () => {
@@ -52,7 +52,7 @@ describe("Web Crypto API - AES Encryption", () => {
         const parsedDecrypted = JSON.parse(decrypted);
         expect(parsedDecrypted.typeOfMsg).toBe("encryptCrypoAccountMsgRequest");
         expect(parsedDecrypted.currency).toBe("BTC");
-        expect(parsedDecrypted.address).toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
+        expect(parsedDecrypted.accountsData).toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
         expect(parsedDecrypted.storeAs).toBe("BTC_Public_Key_0");
     });
 });

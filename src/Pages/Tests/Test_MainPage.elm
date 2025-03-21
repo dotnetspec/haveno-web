@@ -2,7 +2,6 @@ module Pages.Tests.Test_MainPage exposing (tests)
 
 import Expect
 import Json.Decode
-import Json.Encode
 import Main exposing (JsMessage, jsMessageDecoder)
 import Test exposing (Test, describe, test)
 
@@ -19,7 +18,7 @@ tests =
                         {
                             "page": "AccountsPage",
                             "typeOfMsg": "decryptedCrypoAccountsResponse",
-                            "data": ["1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o"],
+                            "accountsData": ["1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o"],
                             "currency": "BTC"
                         }
                         """
@@ -28,7 +27,7 @@ tests =
                     expected =
                         { page = "AccountsPage"
                         , typeOfMsg = "decryptedCrypoAccountsResponse"
-                        , data = Json.Encode.list  Json.Encode.string [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
+                        , accountsData =  [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
                         , currency = "BTC"
                         }
                 in

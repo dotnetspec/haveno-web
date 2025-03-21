@@ -3,8 +3,8 @@ import { handleMessageFromElm } from '../handleElmMessages.js';
 import { encrypt, decrypt } from '../encryption.js';
 
 vi.mock('../encryption.js', () => ({
-    encrypt: vi.fn(async (data, password) => `encrypted-${JSON.stringify(data)}`),
-    decrypt: vi.fn(async (data, password) => `decrypted-${data}`)
+    encrypt: vi.fn(async (data, password) => `${JSON.stringify(data)}`),
+    decrypt: vi.fn(async (data, password) => `${data}`)
 }));
 
 beforeEach(() => {
@@ -26,9 +26,9 @@ describe('handleMessageFromElm', () => {
     });
 
     it('encrypts and stores data in localStorage', async () => {
-        const message = JSON.stringify({ typeOfMsg: 'encryptCrypoAccountMsgRequest', storeAs: 'BTC_Public_Key_0', data: 'test' });
+        const message = JSON.stringify({ typeOfMsg: 'encryptCrypoAccountMsgRequest', storeAs: 'BTC_Public_Key_0', address: '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v' });
         await handleMessageFromElm(message);
-        expect(localStorage.getItem('BTC_Public_Key_0')).toContain('encrypted-');
+        expect(localStorage.getItem('BTC_Public_Key_0')).toContain('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v');
     });
 
     it('decrypts stored BTC accounts and sends response to Elm', async () => {
@@ -39,12 +39,14 @@ describe('handleMessageFromElm', () => {
         await handleMessageFromElm(message);
 
         expect(window.Elm.ports.receiveMsgsFromJs.send).toHaveBeenCalledWith(
-            JSON.stringify({
+            //JSON.stringify(
+                {
                 typeOfMsg: "decryptedCrypoAccountsResponse",
                 page: "AccountsPage",
-                data: ["decrypted-1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "decrypted-2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o"],
+                accountsData: ["1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o"],
                 currency: "BTC"
-            })
+            }
+        //)
         );
     });
 

@@ -38,12 +38,12 @@ export async function handleMessageFromElm(message) {
                
                 if (window.Elm && window.Elm.ports && window.Elm.ports.receiveMsgsFromJs) {
                     
-                    window.Elm.ports.receiveMsgsFromJs.send(JSON.stringify({
+                    window.Elm.ports.receiveMsgsFromJs.send({
                     typeOfMsg: "decryptedCrypoAccountsResponse",
                     page: parsedMessage.page,
-                        data: decryptedData, // Send as a list
+                        accountsData: decryptedData, // Send as a list
                         currency: parsedMessage.currency
-                }));
+                });
                 }
             } catch (error) {
                 console.error("Error decrypting BTC accounts:", error);

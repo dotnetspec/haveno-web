@@ -22,11 +22,11 @@ subAddress =
 
 decrytCrypoAccountsMsgRequest : String
 decrytCrypoAccountsMsgRequest =
-    "{\"type\":\"decrytCrypoAccountsMsgRequest\",\"currency\":\"BTC\",\"page\":\"AccountsPage\"}"
+    "{\"typeOfMsg\":\"decrytCrypoAccountsMsgRequest\",\"currency\":\"BTC\",\"page\":\"AccountsPage\"}"
 
 elmReadyMsgRequest : String
 elmReadyMsgRequest =
-    "{\"type\":\"ElmReady\",\"currency\":\"\",\"address\":\"\"}"
+    "{\"typeOfMsg\":\"ElmReady\",\"currency\":\"\",\"address\":\"\"}"
 
 getVersionBaseURL : String
 getVersionBaseURL =
