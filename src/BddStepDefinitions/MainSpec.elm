@@ -187,7 +187,7 @@ runSpecTests =
                         (Spec.Port.observe "msgFromElm" Json.Decode.string
                             |> Spec.expect
                                 (BddStepDefinitions.Extra.equals
-                                    [ "{\"typeOfMsg\":\"decrytCrypoAccountsMsgRequest\",\"currency\":\"BTC\",\"page\":\"AccountsPage\"}"
+                                    [ "{\"typeOfMsg\":\"decryptCryptoAccountsMsgRequest\",\"currency\":\"BTC\",\"page\":\"AccountsPage\"}"
                                     , "{\"typeOfMsg\":\"ElmReady\",\"currency\":\"\",\"address\":\"\"}"
                                     ]
                                 )

@@ -23,7 +23,7 @@ export async function handleMessageFromElm(message) {
                 console.error("Error Receiving Encryption Message from Elm: ", error);
             }
             break;
-        case "decrytCrypoAccountsMsgRequest":
+        case "decryptCryptoAccountsMsgRequest":
             try {
                 const keys = Object.keys(localStorage).filter(key => key.startsWith('BTC_Public_Key'));
                 if (keys.length === 0) {

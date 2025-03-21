@@ -1,4 +1,4 @@
-module Extras.TestData exposing (elmReadyMsgRequest, decrytCrypoAccountsMsgRequest, encodeGrpcMessage, getBalancesEncodedResponse, getBalancesResponse, getSubAddressesEncodedResponse, getVersionBaseURL, placeholderUrl, primaryAddress, subAddress, successfullBalancesFetch, successfullSubAddressFetch, successfullVersionFetch, successfullXmrPrimaryAddressFetch, testBalanceInfo, toBytes, unSuccessfullXmrPrimaryAddressFetch, unsuccessfullBalancesFetch, unsuccessfullVersionFetch, walletsBaseUrl)
+module Extras.TestData exposing (elmReadyMsgRequest, decryptCryptoAccountsMsgRequest, encodeGrpcMessage, getBalancesEncodedResponse, getBalancesResponse, getSubAddressesEncodedResponse, getVersionBaseURL, placeholderUrl, primaryAddress, subAddress, successfullBalancesFetch, successfullSubAddressFetch, successfullVersionFetch, successfullXmrPrimaryAddressFetch, testBalanceInfo, toBytes, unSuccessfullXmrPrimaryAddressFetch, unsuccessfullBalancesFetch, unsuccessfullVersionFetch, walletsBaseUrl)
 
 import Base64
 import Bytes exposing (Bytes, Endianness(..))
@@ -20,9 +20,9 @@ subAddress : String
 subAddress =
     "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
 
-decrytCrypoAccountsMsgRequest : String
-decrytCrypoAccountsMsgRequest =
-    "{\"typeOfMsg\":\"decrytCrypoAccountsMsgRequest\",\"currency\":\"BTC\",\"page\":\"AccountsPage\"}"
+decryptCryptoAccountsMsgRequest : String
+decryptCryptoAccountsMsgRequest =
+    "{\"typeOfMsg\":\"decryptCryptoAccountsMsgRequest\",\"currency\":\"BTC\",\"page\":\"AccountsPage\"}"
 
 elmReadyMsgRequest : String
 elmReadyMsgRequest =

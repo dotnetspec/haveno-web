@@ -35,7 +35,7 @@ describe('handleMessageFromElm', () => {
         localStorage.setItem('BTC_Public_Key_0', JSON.stringify('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'));
         localStorage.setItem('BTC_Public_Key_1', JSON.stringify('2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o'));
         
-        const message = { typeOfMsg: 'decrytCrypoAccountsMsgRequest', page: 'AccountsPage', currency: 'BTC' };
+        const message = { typeOfMsg: 'decryptCryptoAccountsMsgRequest', page: 'AccountsPage', currency: 'BTC' };
         await handleMessageFromElm(message);
 
         expect(window.Elm.ports.receiveMsgsFromJs.send).toHaveBeenCalledWith(
@@ -54,7 +54,7 @@ describe('handleMessageFromElm', () => {
         decrypt.mockRejectedValueOnce(new Error('Decryption failed'));
         localStorage.setItem('BTC_Public_Key_0', '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v');
         
-        const message = { typeOfMsg: 'decrytCrypoAccountsMsgRequest', page: 'AccountsPage', currency: 'BTC' };
+        const message = { typeOfMsg: 'decryptCryptoAccountsMsgRequest', page: 'AccountsPage', currency: 'BTC' };
         await handleMessageFromElm(message);
         expect(console.error).toHaveBeenCalledWith("Error decrypting BTC accounts:", expect.any(Error));
     });

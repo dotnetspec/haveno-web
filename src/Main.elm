@@ -1188,7 +1188,7 @@ gotDecryptedCryptoAccountData : Cmd Msg
 gotDecryptedCryptoAccountData =
     let
         message =
-            Json.Encode.encode 0 (Json.Encode.object [ ( "typeOfMsg", Json.Encode.string "decrytCrypoAccountsMsgRequest" ), ( "currency", Json.Encode.string "BTC" ), ( "page", Json.Encode.string "AccountsPage" ) ])
+            Json.Encode.encode 0 (Json.Encode.object [ ( "typeOfMsg", Json.Encode.string "decryptCryptoAccountsMsgRequest" ), ( "currency", Json.Encode.string "BTC" ), ( "page", Json.Encode.string "AccountsPage" ) ])
     in
     msgFromElm message
 
