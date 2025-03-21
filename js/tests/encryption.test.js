@@ -1,6 +1,8 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { encrypt, decrypt } from "../encryption.js";
 import { handleMessageFromElm } from "../handleElmMessages.js";
+
+
 
 describe("Web Crypto API - AES Encryption", () => {
     const password = "test-password";
@@ -19,7 +21,15 @@ describe("Web Crypto API - AES Encryption", () => {
     };
 
     beforeEach(() => {
-        localStorage.clear(); // Reset storage before each test
+        localStorage.clear();
+        vi.stubGlobal('console', { log: vi.fn(), error: vi.fn() });
+        vi.stubGlobal('window', {
+            Elm: {
+                ports: {
+                    receiveMsgsFromJs: { send: vi.fn() }
+                }
+            }
+        });
     });
 
     it("should encrypt and decrypt the message correctly", async () => {
