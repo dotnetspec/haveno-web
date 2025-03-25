@@ -17,7 +17,7 @@ tests =
                         """
                         {
                             "page": "AccountsPage",
-                            "typeOfMsg": "decryptedCrypoAccountsResponse",
+                            "typeOfMsg": "decryptedCryptoAccountsResponse",
                             "accountsData": ["1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o"],
                             "currency": "BTC"
                         }
@@ -26,7 +26,7 @@ tests =
                     expected : JsMessage
                     expected =
                         { page = "AccountsPage"
-                        , typeOfMsg = "decryptedCrypoAccountsResponse"
+                        , typeOfMsg = "decryptedCryptoAccountsResponse"
                         , accountsData =  [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
                         , currency = "BTC"
                         }

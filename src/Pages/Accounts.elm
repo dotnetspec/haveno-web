@@ -111,7 +111,7 @@ update msg model =
                 btcAccountCount = List.length model.listOfBTCAccounts
                 storeAs = "BTC_Public_Key_" ++ String.fromInt btcAccountCount
                 message =
-                    JE.encode 0 (JE.object [ ( "typeOfMsg", JE.string "encryptCrypoAccountMsgRequest" ), ( "currency", JE.string "BTC" ), ( "address", JE.string address ), ( "storeAs", JE.string storeAs ) ])
+                    JE.encode 0 (JE.object [ ( "typeOfMsg", JE.string "encryptCryptoAccountMsgRequest" ), ( "currency", JE.string "BTC" ), ( "address", JE.string address ), ( "storeAs", JE.string storeAs ) ])
             in
             ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAccounts = model.listOfBTCAccounts ++ [ address ] }, encryptionMsg message )
 
@@ -402,10 +402,10 @@ messageDecoder =
         |> JD.andThen
             (\msgType ->
                 case msgType of
-                    "encryptCrypoAccountMsgRequest" ->
+                    "encryptCryptoAccountMsgRequest" ->
                         JD.map AddNewCryptoAccount (JD.field "address" JD.string)
 
-                    "decryptedCrypoAccountsResponse" ->
+                    "decryptedCryptoAccountsResponse" ->
                         JD.map DecryptCryptoAccounts (JD.field "data" (JD.list JD.string))
 
                     _ ->

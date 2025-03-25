@@ -26,7 +26,7 @@ describe('handleMessageFromElm', () => {
     });
 
     it('encrypts and stores data in localStorage', async () => {
-        const message = { typeOfMsg: 'encryptCrypoAccountMsgRequest', storeAs: 'BTC_Public_Key_0', address: '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v' };
+        const message = { typeOfMsg: 'encryptCryptoAccountMsgRequest', storeAs: 'BTC_Public_Key_0', address: '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v' };
         await handleMessageFromElm(message);
         expect(localStorage.getItem('BTC_Public_Key_0')).toContain('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v');
     });
@@ -41,7 +41,7 @@ describe('handleMessageFromElm', () => {
         expect(window.Elm.ports.receiveMsgsFromJs.send).toHaveBeenCalledWith(
             
                 {
-                typeOfMsg: "decryptedCrypoAccountsResponse",
+                typeOfMsg: "decryptedCryptoAccountsResponse",
                 page: "AccountsPage",
                 accountsData: ["1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o"],
                 currency: "BTC"

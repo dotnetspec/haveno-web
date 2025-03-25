@@ -7,14 +7,14 @@ import { handleMessageFromElm } from "../handleElmMessages.js";
 describe("Web Crypto API - AES Encryption", () => {
     const password = "test-password";
     const elmENCRYPTMessageAsJson = {
-        typeOfMsg: "encryptCrypoAccountMsgRequest",
+        typeOfMsg: "encryptCryptoAccountMsgRequest",
         currency: "BTC",
         accountsData: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
         storeAs: "BTC_Public_Key_0"
     };
 
     const elmENCRYPTMessageAsJson2 = {
-        typeOfMsg: "encryptCrypoAccountMsgRequest",
+        typeOfMsg: "encryptCryptoAccountMsgRequest",
         currency: "BTC",
         accountsData: "2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o",
         storeAs: "BTC_Public_Key_1"
@@ -69,7 +69,7 @@ describe("Web Crypto API - AES Encryption", () => {
         expect(decrypted).not.toBeNull();
         expect(decrypted).not.toBeUndefined();
         const parsedDecrypted = JSON.parse(decrypted);
-        expect(parsedDecrypted.typeOfMsg).toBe("encryptCrypoAccountMsgRequest");
+        expect(parsedDecrypted.typeOfMsg).toBe("encryptCryptoAccountMsgRequest");
         expect(parsedDecrypted.currency).toBe("BTC");
         expect(parsedDecrypted.accountsData).toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
         expect(parsedDecrypted.storeAs).toBe("BTC_Public_Key_0");

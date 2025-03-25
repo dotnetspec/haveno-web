@@ -15,7 +15,7 @@ export async function handleMessageFromElm(message) {
                 console.error("Error Receiving Message from Elm: ", error);
             }
             break;
-        case "encryptCrypoAccountMsgRequest":
+        case "encryptCryptoAccountMsgRequest":
             try {
                 const encryptedData = await encrypt(parsedMessage, 'test-password'); // Call the encrypt function with the parsed message
                 localStorage.setItem(parsedMessage.storeAs, JSON.stringify(encryptedData));
@@ -39,7 +39,7 @@ export async function handleMessageFromElm(message) {
                 if (window.Elm && window.Elm.ports && window.Elm.ports.receiveMsgsFromJs) {
                     
                     window.Elm.ports.receiveMsgsFromJs.send({
-                    typeOfMsg: "decryptedCrypoAccountsResponse",
+                    typeOfMsg: "decryptedCryptoAccountsResponse",
                     page: parsedMessage.page,
                         accountsData: decryptedData, // Send as a list
                         currency: parsedMessage.currency

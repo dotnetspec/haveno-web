@@ -295,7 +295,7 @@ update msg model =
                     case jsMsg.page of
                         "AccountsPage" ->
                             case jsMsg.typeOfMsg of
-                                "encryptCrypoAccountMsgRequest" ->
+                                "encryptCryptoAccountMsgRequest" ->
                                     --Json.Decode.map AddNewCryptoAccount (Json.Decode.field "address" Json.Decode.string)
                                     let
                                         -- HACK: To get an accounts model to pass on
@@ -312,7 +312,7 @@ update msg model =
                                     in
                                     toAccounts model (Pages.Accounts.update (Pages.Accounts.AddNewCryptoAccount (Maybe.withDefault "No BTC address" (List.head jsMsg.accountsData))) accountsMdl)
 
-                                "decryptedCrypoAccountsResponse" ->
+                                "decryptedCryptoAccountsResponse" ->
                                     --Json.Decode.map DecryptCryptoAccounts (Json.Decode.field "data" (Json.Decode.list Json.Decode.string))
                                     let
                                         -- HACK: To get an accounts model to pass on

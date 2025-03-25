@@ -50,11 +50,11 @@ accountsInitialModel =
     Pages.Accounts.initialModel
 
 
-decryptedCrypoAccountsResponseMessage : Json.Decode.Value
-decryptedCrypoAccountsResponseMessage =
+decryptedCryptoAccountsResponseMessage : Json.Decode.Value
+decryptedCryptoAccountsResponseMessage =
     Json.Encode.object
         [ ( "page", Json.Encode.string "AccountsPage" )
-        , ( "typeOfMsg", Json.Encode.string "decryptedCrypoAccountsResponse" )
+        , ( "typeOfMsg", Json.Encode.string "decryptedCryptoAccountsResponse" )
         , ( "accountsData", Json.Encode.list Json.Encode.string [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ] )
         , ( "currency", Json.Encode.string "BTC" )
         ]
@@ -548,7 +548,7 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario "15: adds BTC address to listOfBTCAccounts on decryptedCrypoAccountsResponse"
+        , scenario "15: adds BTC address to listOfBTCAccounts on decryptedCryptoAccountsResponse"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -559,10 +559,10 @@ runSpecTests =
                         , onUrlChange = Main.ChangedUrl
                         }
                 )
-                |> when "receiving decryptedCrypoAccountsResponse message"
+                |> when "receiving decryptedCryptoAccountsResponse message"
                     [ Spec.Command.send <|
                         Spec.Command.fake
-                            (Main.Recv decryptedCrypoAccountsResponseMessage)
+                            (Main.Recv decryptedCryptoAccountsResponseMessage)
                     ]
                 |> Spec.observeThat
                     [ it "adds BTC address to listOfBTCAccounts"
