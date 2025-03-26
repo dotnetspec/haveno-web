@@ -36,11 +36,11 @@ describe("Web Crypto API - AES Encryption", () => {
 
     it("should encrypt and decrypt the message correctly", async () => {
         // NOTE: We stringify the message before passing it to ENCRYPT (not other parts of code)
-        const encryptedinStorage = await encrypt( JSON.stringify(elmENCRYPTMessageAsJson), password);
+        const encryptedReadyForStorage = await encrypt( JSON.stringify(elmENCRYPTMessageAsJson), password);
 
-        expect(encryptedinStorage).not.toBeNull();
-        expect(encryptedinStorage).not.toBeUndefined();
-        const decrypted = await decrypt(encryptedinStorage, password);
+        expect(encryptedReadyForStorage).not.toBeNull();
+        expect(encryptedReadyForStorage).not.toBeUndefined();
+        const decrypted = await decrypt(encryptedReadyForStorage, password);
         expect(decrypted).not.toBeNull();
         expect(decrypted).not.toBeUndefined();
         const parsedDecrypted = JSON.parse(decrypted);
