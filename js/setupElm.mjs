@@ -1,5 +1,5 @@
 import { Elm } from './elm.js'
-import { elmInterop } from './handleElmMessages.js'
+import { elmInterop } from './elmJsInterop.js'
 
 
 // WARN: Use Playwright to test. Vitest runs in Node.js, so it cannot execute Elm code directly.

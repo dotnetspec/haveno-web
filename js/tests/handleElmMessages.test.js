@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest'
-import { elmInterop } from '../handleElmMessages.js'
+import { elmInterop } from '../elmJsInterop.js'
 import { encrypt, decrypt } from '../encryption.js'
 
 // -- NOTE: We are mocking the encryption module here. The 'real' functions are not used in this test.
