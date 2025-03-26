@@ -24,7 +24,7 @@ describe('initializeElmApp', () => {
             Main: {
                 init: vi.fn().mockReturnValue({
                     ports: {
-                        msgFromElm: {
+                        receiveMsgsFromJs: {
                             subscribe: mockSubscribe,
                         },
                         msgFromAccounts: {
@@ -54,7 +54,7 @@ describe('initializeElmApp', () => {
         expect(console.log).toHaveBeenCalledWith('elm init:', eapp);
         expect(eapp).toEqual({
             ports: {
-                msgFromElm: {
+                receiveMsgsFromJs: {
                     subscribe: expect.any(Function),
                 },
                 msgFromAccounts: {

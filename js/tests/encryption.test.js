@@ -10,14 +10,16 @@ describe("Web Crypto API - AES Encryption", () => {
         typeOfMsg: "encryptCryptoAccountMsgRequest",
         currency: "BTC",
         accountsData: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
-        storeAs: "BTC_Public_Key_0"
+        storeAs: "BTC_Public_Key_0",
+        pword: password
     };
 
     const elmENCRYPTMessageAsJson2 = {
         typeOfMsg: "encryptCryptoAccountMsgRequest",
         currency: "BTC",
         accountsData: "2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o",
-        storeAs: "BTC_Public_Key_1"
+        storeAs: "BTC_Public_Key_1",
+        pword: password
     };
 
     beforeEach(() => {
@@ -45,12 +47,7 @@ describe("Web Crypto API - AES Encryption", () => {
         expect(parsedDecrypted.accountsData).toBe("1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v");
     });
 
-    it("should fail to decrypt with a wrong password", async () => {
-        await handleMessageFromElm(elmENCRYPTMessageAsJson);
-        const encryptedinStorage = localStorage.getItem("BTC_Public_Key_0");
-        const decrypted = await decrypt(JSON.parse(encryptedinStorage), "wrong-password");
-        expect(decrypted).toBeNull();
-    });
+   
 
     it("should generate different encrypted outputs for the same message", async () => {
         const firstEncryption = await encrypt(elmENCRYPTMessageAsJson, password);

@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, JsMessage, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, jsMessageDecoder, justmsgFieldFromJsonDecoder, main, menu, msgFromElm, navLinks, okButton, only2Decimals, receiveMsgsFromJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, JsMessage, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, jsInterop, jsMessageDecoder, justmsgFieldFromJsonDecoder, main, menu, navLinks, okButton, only2Decimals, receiveMsgsFromJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- NOTE: exposing Url exposes a different type of Url to
@@ -88,6 +88,7 @@ type alias Model =
     , primaryaddress : String
     , status : Status
     , timeoutId : Maybe Time.Posix
+    , pword : String
     }
 
 
@@ -125,6 +126,7 @@ init flag _ key =
             , primaryaddress = ""
             , status = Loading
             , timeoutId = Nothing
+            , pword = ""
             }
     in
     -- NOTE: We go via the SplashRoute, but arrive on the Accounts page, as per initial model
@@ -133,12 +135,6 @@ init flag _ key =
 
 
 -- TODO: Remove
-
-
-
-
-
-
 -- forNavigation needs this to be:
 --  #{ onUrlChange : Url -> msg, onUrlRequest : Browser.UrlRequest -> msg }#
 -- NAV: Msg
@@ -286,10 +282,6 @@ update msg model =
         -- NOTE: This is where we can branch and handle data according to whichever page js intends
         -- it's message to reach
         Recv message ->
-            let
-                _ =
-                    Debug.log "message" (Json.Encode.encode 2 message)
-            in
             case Json.Decode.decodeValue jsMessageDecoder message of
                 Ok jsMsg ->
                     case jsMsg.page of
@@ -810,7 +802,7 @@ toSplash model ( dashboard, cmd ) =
         , Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress
         , startTimeout
         , notifyJsReady
-        , gotDecryptedCryptoAccountData
+        , gotDecryptedCryptoAccountData model
         ]
     )
 
@@ -1084,7 +1076,7 @@ subscriptions _ =
 -- WARN: Use the port(s) somewhere in the code or it won't initialize on document load
 
 
-port msgFromElm : String -> Cmd msg
+port jsInterop : Json.Encode.Value -> Cmd msg
 
 
 port receiveMsgsFromJs : (Json.Decode.Value -> msg) -> Sub msg
@@ -1178,19 +1170,25 @@ navLinks page =
 notifyJsReady : Cmd Msg
 notifyJsReady =
     let
-        message =
-            Json.Encode.encode 0 (Json.Encode.object [ ( "typeOfMsg", Json.Encode.string "ElmReady" ), ( "currency", Json.Encode.string "" ), ( "address", Json.Encode.string "" ) ])
+        sendMessage =
+            Json.Encode.object [ ( "typeOfMsg", Json.Encode.string "ElmReady" ), ( "currency", Json.Encode.string "" ), ( "page", Json.Encode.string "AccountsPage" ), ( "accountsData", Json.Encode.list Json.Encode.string [ "", "" ] ), ( "password", Json.Encode.string "test-password" ) ]
     in
-    msgFromElm message
+    jsInterop sendMessage
 
 
-gotDecryptedCryptoAccountData : Cmd Msg
-gotDecryptedCryptoAccountData =
+gotDecryptedCryptoAccountData : Model -> Cmd Msg
+gotDecryptedCryptoAccountData model =
     let
         message =
-            Json.Encode.encode 0 (Json.Encode.object [ ( "typeOfMsg", Json.Encode.string "decryptCryptoAccountsMsgRequest" ), ( "currency", Json.Encode.string "BTC" ), ( "page", Json.Encode.string "AccountsPage" ) ])
+            Json.Encode.object
+                [ ( "typeOfMsg", Json.Encode.string "decryptCryptoAccountsMsgRequest" )
+                , ( "currency", Json.Encode.string "BTC" )
+                , ( "page", Json.Encode.string "AccountsPage" )
+                , ( "accountsData", Json.Encode.list Json.Encode.string [ "", "" ] )
+                , ( "password", Json.Encode.string model.pword )
+                ]
     in
-    msgFromElm message
+    jsInterop message
 
 
 

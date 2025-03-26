@@ -183,12 +183,21 @@ runSpecTests =
                                         "http://elm-spec/"
                                 )
                         )
-                    , it "sent the right message over the port"
-                        (Spec.Port.observe "msgFromElm" Json.Decode.string
+                    , it
+                        "sent the right message over the port"
+                        (Spec.Port.observe "jsInterop" Main.jsMessageDecoder
                             |> Spec.expect
                                 (BddStepDefinitions.Extra.equals
-                                    [ "{\"typeOfMsg\":\"decryptCryptoAccountsMsgRequest\",\"currency\":\"BTC\",\"page\":\"AccountsPage\"}"
-                                    , "{\"typeOfMsg\":\"ElmReady\",\"currency\":\"\",\"address\":\"\"}"
+                                    [ { typeOfMsg = "decryptCryptoAccountsMsgRequest"
+                                      , currency = "BTC"
+                                      , page = "AccountsPage"
+                                      , accountsData = [ "", "" ]
+                                      }
+                                    , { typeOfMsg = "ElmReady"
+                                      , currency = ""
+                                      , page = "AccountsPage"
+                                      , accountsData = [ "", "" ]
+                                      }
                                     ]
                                 )
                         )
