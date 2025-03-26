@@ -63,4 +63,13 @@ describe('initializeElmApp', () => {
             },
         });
     });
+
+    it('should ensure receiveMsgsFromJs.subscribe is a function', () => {
+        const jsonUrl = JSON.stringify('http://localhost');
+        const eapp = initializeElmApp(mockElm, jsonUrl);
+
+        expect(eapp.ports).toBeDefined();
+        expect(eapp.ports.receiveMsgsFromJs).toBeDefined();
+        expect(typeof eapp.ports.receiveMsgsFromJs.subscribe).toBe('function');
+    });
 });

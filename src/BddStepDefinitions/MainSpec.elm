@@ -185,7 +185,7 @@ runSpecTests =
                         )
                     , it
                         "sent the right message over the port"
-                        (Spec.Port.observe "jsInterop" Main.jsMessageDecoder
+                        (Spec.Port.observe "msgFromMain" Main.jsMessageDecoder
                             |> Spec.expect
                                 (BddStepDefinitions.Extra.equals
                                     [ { typeOfMsg = "decryptCryptoAccountsMsgRequest"

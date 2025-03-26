@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, JsMessage, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, jsInterop, jsMessageDecoder, justmsgFieldFromJsonDecoder, main, menu, navLinks, okButton, only2Decimals, receiveMsgsFromJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, JsMessage, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, msgFromMain, jsMessageDecoder, justmsgFieldFromJsonDecoder, main, menu, navLinks, okButton, only2Decimals, receiveMsgsFromJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- NOTE: exposing Url exposes a different type of Url to
@@ -134,40 +134,8 @@ init flag _ key =
 
 
 
--- TODO: Remove
--- forNavigation needs this to be:
---  #{ onUrlChange : Url -> msg, onUrlRequest : Browser.UrlRequest -> msg }#
 -- NAV: Msg
--- REVIEW: Move these notes to a separate file somewhere?
--- We 'talk' (e.g. send time to schedule) to the other pages via the Msgs defined here and in those pages.
-{- -- NOTE: each variant of a custom type can be considered a type constructor. They are not functions in the
-   traditional sense, but they behave similarly in that they take arguments and produce a value of the custom type.
-   All the below are creating a value of type Msg. The value is a constructor for the Msg type.
-   e.g. ClickedLink Browser.UrlRequest is a constructor for the Msg type. It takes a Browser.UrlRequest value as input
-
-   In practical terms, you would use a type constructor when you want to create a new value of a SPECIFIC type,
-   and you would use a function when you want to perform some computation or operation.
-
-   All the below are constructor functions for the Msg type. They are not functions in the traditional sense,
-   e.g.
-   port receiveMsgsFromJs : (String -> msg) -> Sub msg
-   ReceivedFromJs String
-
-   subscriptions : Model -> Sub Msg
-    subscriptions _ =
-    -- NOTE: ReceivedFromJs has no String here cos receiveMsgsFromJs wants a function that takes a String
-    -- and returns a Msg. This is what ReceivedFromJs was 'constructed' to be
-    receiveMsgsFromJs ReceivedFromJs
-
-
-
-    update : Msg -> Model -> (Model, Cmd Msg)
-    update msg model =
-    case msg of
-        ReceivedFromJs message ->
-            -- Handle the message from JavaScript
-            (model, Cmd.none)
--}
+-- NOTE: Each variant here is a constructor for the Msg type.
 
 
 type Msg
@@ -1060,8 +1028,9 @@ gotCodeFromUrl url =
 
 
 -- NAV: Subscriptions
-    -- NOTE: ReceivedFromJs has no String here cos receiveMsgsFromJs wants a function that takes a String
-    -- and returns a Msg. This is what ReceivedFromJs was 'constructed' to be
+-- NOTE: ReceivedFromJs has no String here cos receiveMsgsFromJs wants a function that takes a String
+-- and returns a Msg. This is what ReceivedFromJs was 'constructed' to be
+
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
@@ -1077,9 +1046,13 @@ subscriptions _ =
 -- WARN: Use the port(s) somewhere in the code or it won't initialize on document load
 
 
-port jsInterop : Json.Encode.Value -> Cmd msg
+port msgFromMain : Json.Encode.Value -> Cmd msg
+
+
 
 -- XXX: Don't use this port to send msgs to JS
+
+
 port receiveMsgsFromJs : (Json.Decode.Value -> msg) -> Sub msg
 
 
@@ -1174,7 +1147,7 @@ notifyJsReady =
         sendMessage =
             Json.Encode.object [ ( "typeOfMsg", Json.Encode.string "ElmReady" ), ( "currency", Json.Encode.string "" ), ( "page", Json.Encode.string "AccountsPage" ), ( "accountsData", Json.Encode.list Json.Encode.string [ "", "" ] ), ( "password", Json.Encode.string "test-password" ) ]
     in
-    jsInterop sendMessage
+    msgFromMain sendMessage
 
 
 gotDecryptedCryptoAccountData : Model -> Cmd Msg
@@ -1189,7 +1162,7 @@ gotDecryptedCryptoAccountData model =
                 , ( "password", Json.Encode.string model.pword )
                 ]
     in
-    jsInterop message
+    msgFromMain message
 
 
 

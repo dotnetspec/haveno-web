@@ -22,9 +22,15 @@ export function initializeElmApp (Elm, jsonUrl) {
   const eapp = Elm.Main.init({
     node: document.getElementById('elm'),
     flags: jsonUrl
-  })
-  console.log('elm init:', eapp)
-  return eapp
+  });
+
+  if (!eapp.ports || !eapp.ports.receiveMsgsFromJs || typeof eapp.ports.receiveMsgsFromJs.subscribe !== 'function') {
+    console.error('Error: receiveMsgsFromJs.subscribe is not a function or is undefined.');
+    throw new TypeError('receiveMsgsFromJs.subscribe is not a function or is undefined.');
+  }
+
+  console.log('elm init:', eapp);
+  return eapp;
 }
 
 function handleMessagesToMain (eapp) {
