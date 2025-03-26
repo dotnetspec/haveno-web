@@ -1079,7 +1079,7 @@ subscriptions _ =
 
 port jsInterop : Json.Encode.Value -> Cmd msg
 
-
+-- XXX: Don't use this port to send msgs to JS
 port receiveMsgsFromJs : (Json.Decode.Value -> msg) -> Sub msg
 
 

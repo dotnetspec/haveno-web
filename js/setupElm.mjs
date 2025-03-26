@@ -27,14 +27,13 @@ export function initializeElmApp (Elm, jsonUrl) {
   return eapp
 }
 
-function handleMessagesToAndFromMain (eapp) {
-  if (eapp.ports && eapp.ports.receiveMsgsFromJs) {
-    eapp.ports.receiveMsgsFromJs.subscribe((message, pword) => {
-      handleMessageFromElm(message, pword)
-    })
+function handleMessagesToMain (eapp) {
+  if (eapp.ports && eapp.ports.receiveMsgsFromJs && typeof eapp.ports.receiveMsgsFromJs.subscribe === 'function') {
+    eapp.ports.receiveMsgsFromJs.subscribe((message) => {
+      handleMessageFromElm(message);
+    });
   } else {
-console.error('receiveMsgsFromJs port is not defined on eapp.ports')
-
+    console.error('receiveMsgsFromJs port is not defined or subscribe is not a function on eapp.ports');
   }
 }
 
@@ -63,7 +62,7 @@ console.log('jsonUrl:', jsonUrl)
 
 
 const eapp = initializeElmApp(Elm, jsonUrl)
-handleMessagesToAndFromMain(eapp)
+handleMessagesToMain(eapp)
 handleMessagesFromAccounts(eapp)
 
 
