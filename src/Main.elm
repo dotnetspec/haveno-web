@@ -184,7 +184,7 @@ type Msg
     | GotDonateMsg Pages.Donate.Msg
     | GotConnectMsg Pages.Connect.Msg
     | ChangedUrl Url.Url
-    | Recv Json.Decode.Value
+    | ReceivedFromJs Json.Decode.Value
     | GotVersion (Result Grpc.Error GetVersionReply)
     | ToggleMenu
     | GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
@@ -278,10 +278,10 @@ update msg model =
         ToggleMenu ->
             ( { model | isMenuOpen = not model.isMenuOpen }, Cmd.none )
 
-        -- NAV: Recv
+        -- NAV: ReceivedFromJs
         -- NOTE: This is where we can branch and handle data according to whichever page js intends
         -- it's message to reach
-        Recv message ->
+        ReceivedFromJs message ->
             case Json.Decode.decodeValue jsMessageDecoder message of
                 Ok jsMsg ->
                     case jsMsg.page of
@@ -1060,12 +1060,13 @@ gotCodeFromUrl url =
 
 
 -- NAV: Subscriptions
-
+    -- NOTE: ReceivedFromJs has no String here cos receiveMsgsFromJs wants a function that takes a String
+    -- and returns a Msg. This is what ReceivedFromJs was 'constructed' to be
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.batch
-        [ receiveMsgsFromJs Recv
+        [ receiveMsgsFromJs ReceivedFromJs
         ]
 
 

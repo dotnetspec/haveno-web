@@ -571,7 +571,7 @@ runSpecTests =
                 |> when "receiving decryptedCryptoAccountsResponse message"
                     [ Spec.Command.send <|
                         Spec.Command.fake
-                            (Main.Recv decryptedCryptoAccountsResponseMessage)
+                            (Main.ReceivedFromJs decryptedCryptoAccountsResponseMessage)
                     ]
                 |> Spec.observeThat
                     [ it "adds BTC address to listOfBTCAccounts"
