@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { encrypt, decrypt } from "../encryption.js";
-import { handleMessageFromElm } from "../handleElmMessages.js";
+import { elmInterop } from "../handleElmMessages.js";
 
 
 

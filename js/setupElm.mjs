@@ -1,5 +1,5 @@
 import { Elm } from './elm.js'
-import { handleMessageFromElm } from './handleElmMessages.js'
+import { elmInterop } from './handleElmMessages.js'
 
 
 // WARN: Use Playwright to test. Vitest runs in Node.js, so it cannot execute Elm code directly.
@@ -55,7 +55,7 @@ if (eapp.ports && eapp.ports.msgFromMain) {
 function handleMessagesToMain (eapp) {
   if (eapp.ports && eapp.ports.receiveMsgsFromJs && typeof eapp.ports.receiveMsgsFromJs.send === 'function') {
     eapp.ports.receiveMsgsFromJs.send((message) => {
-      handleMessageFromElm(message);
+      elmInterop(message);
     });
   } else {
     console.error('receiveMsgsFromJs port is not defined or subscribe is not a function on eapp.ports');
@@ -65,7 +65,7 @@ function handleMessagesToMain (eapp) {
 function handleMessagesFromAccounts (eapp) {
   if (eapp.ports && eapp.ports.msgFromAccounts) {
 eapp.ports.msgFromAccounts.subscribe((message, pword) => {
-  handleMessageFromElm(message, pword)
+  elmInterop(message, pword)
 })
 
   } else {

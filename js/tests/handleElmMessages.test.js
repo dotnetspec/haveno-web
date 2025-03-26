@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest'
-import { handleMessageFromElm } from '../handleElmMessages.js'
+import { elmInterop } from '../handleElmMessages.js'
 import { encrypt, decrypt } from '../encryption.js'
 
 // -- NOTE: We are mocking the encryption module here. The 'real' functions are not used in this test.
@@ -40,7 +40,7 @@ beforeEach(() => {
   vi.clearAllMocks() // Clear all mock states before each test
 })
 
-describe('handleMessageFromElm', async () => {
+describe('elmInterop', async () => {
 const password = 'test-password'
 const elmENCRYPTMessageAsJson = {
   typeOfMsg: 'encryptCryptoAccountMsgRequest',
@@ -51,12 +51,12 @@ const elmENCRYPTMessageAsJson = {
 }
 
   it('logs ElmReady message', async () => {
-    await handleMessageFromElm({ typeOfMsg: 'ElmReady' })
+    await elmInterop({ typeOfMsg: 'ElmReady' })
     expect(console.log).toHaveBeenCalledWith('Message from Elm : ', 'ElmReady')
   })
 
   it('encrypts and stores data in localStorage', async () => {
-    await handleMessageFromElm(elmENCRYPTMessageAsJson)
+    await elmInterop(elmENCRYPTMessageAsJson)
     const encryptedinStorage = localStorage.getItem('BTC_Public_Key_0')
     const decrypted = await decrypt(
       encryptedinStorage,
@@ -98,7 +98,7 @@ it('decrypts stored BTC accounts and sends response to Elm', async () => {
     pword: password
   };
 
-  await handleMessageFromElm(message);
+  await elmInterop(message);
 
   expect(window.Elm.ports.receiveMsgsFromJs.send).toHaveBeenCalledWith({
     typeOfMsg: 'decryptedCryptoAccountsResponse',
@@ -131,7 +131,7 @@ localStorage.setItem('BTC_Public_Key_0', '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v')
       page: 'AccountsPage',
       currency: 'BTC'
     }
-    await handleMessageFromElm(message)
+    await elmInterop(message)
     expect(console.error).toHaveBeenCalledWith(
       'Error decrypting BTC accounts:',
       expect.any(Error)
@@ -139,14 +139,14 @@ localStorage.setItem('BTC_Public_Key_0', '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v')
   })
 
   it('handles unknown message types', async () => {
-    await handleMessageFromElm({ typeOfMsg: 'UnknownMessage' })
+    await elmInterop({ typeOfMsg: 'UnknownMessage' })
     expect(console.log).toHaveBeenCalledWith(
       expect.stringContaining('Sorry, problem:')
     )
   })
 
   it('should fail to decrypt with a wrong password', async () => {
-    await handleMessageFromElm(elmENCRYPTMessageAsJson)
+    await elmInterop(elmENCRYPTMessageAsJson)
 
     const encryptedinStorage = localStorage.getItem('BTC_Public_Key_0')
 
