@@ -39,7 +39,7 @@
     "build": "parcel build",
     "serve": "parcel serve",
     "bs": "yarn build && yarn serve",
-    "plw": "playwright show-report",
+    "plw": "playwright test",
     "obs": "yarn optimize &&  yarn build && yarn review && yarn vitest && yarn serve",
     "dbs": "yarn debug &&  yarn build && yarn review && yarn vitest && yarn serve",
     "relns": "yarn optimize &&  yarn unit && yarn spec && yarn review && yarn vitest && yarn build",
