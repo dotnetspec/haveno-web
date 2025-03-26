@@ -8081,7 +8081,6 @@ var $author$project$Main$gotAvailableBalances = function () {
 			A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getBalances, $author$project$Proto$Io$Haveno$Protobuffer$defaultGetBalancesRequest)));
 	return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Main$GotBalances, grpcRequest);
 }();
-var $author$project$Main$jsInterop = _Platform_outgoingPort('jsInterop', $elm$core$Basics$identity);
 var $elm$json$Json$Encode$list = F2(
 	function (func, entries) {
 		return _Json_wrap(
@@ -8091,6 +8090,7 @@ var $elm$json$Json$Encode$list = F2(
 				_Json_emptyArray(0),
 				entries));
 	});
+var $author$project$Main$msgFromMain = _Platform_outgoingPort('msgFromMain', $elm$core$Basics$identity);
 var $elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
 		A3(
@@ -8129,7 +8129,7 @@ var $author$project$Main$gotDecryptedCryptoAccountData = function (model) {
 				'password',
 				$elm$json$Json$Encode$string(model.nN))
 			]));
-	return $author$project$Main$jsInterop(message);
+	return $author$project$Main$msgFromMain(message);
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressRequest = {};
 var $author$project$Proto$Io$Haveno$Protobuffer$defaultGetXmrPrimaryAddressRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressRequest;
@@ -8205,7 +8205,7 @@ var $author$project$Main$notifyJsReady = function () {
 				'password',
 				$elm$json$Json$Encode$string('test-password'))
 			]));
-	return $author$project$Main$jsInterop(sendMessage);
+	return $author$project$Main$msgFromMain(sendMessage);
 }();
 var $author$project$Main$GotVersion = function (a) {
 	return {$: 13, a: a};
@@ -8563,7 +8563,7 @@ var $author$project$Main$init = F3(
 		};
 		return A2($author$project$Main$updateUrl, decodedJsonFromSetupElmjs, initialModel);
 	});
-var $author$project$Main$Recv = function (a) {
+var $author$project$Main$ReceivedFromJs = function (a) {
 	return {$: 12, a: a};
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -8573,7 +8573,7 @@ var $author$project$Main$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
-				$author$project$Main$receiveMsgsFromJs($author$project$Main$Recv)
+				$author$project$Main$receiveMsgsFromJs($author$project$Main$ReceivedFromJs)
 			]));
 };
 var $author$project$Pages$Accounts$AddNewCryptoAccount = function (a) {

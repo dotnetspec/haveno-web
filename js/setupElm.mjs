@@ -24,12 +24,26 @@ export function initializeElmApp (Elm, jsonUrl) {
     flags: jsonUrl
   });
 
-  if (!eapp.ports || !eapp.ports.receiveMsgsFromJs || typeof eapp.ports.receiveMsgsFromJs.subscribe !== 'function') {
-    console.error('Error: receiveMsgsFromJs.subscribe is not a function or is undefined.');
-    throw new TypeError('receiveMsgsFromJs.subscribe is not a function or is undefined.');
+  console.log('Elm app initialized:', eapp);
+
+  if (!eapp.ports) {
+    console.error('Error: eapp.ports is undefined.');
+    throw new TypeError('eapp.ports is undefined.');
   }
 
-  console.log('elm init:', eapp);
+  if (!eapp.ports.receiveMsgsFromJs) {
+    console.error('Error: eapp.ports.receiveMsgsFromJs is undefined.');
+    throw new TypeError('eapp.ports.receiveMsgsFromJs is undefined.');
+  }
+
+  if (typeof eapp.ports.receiveMsgsFromJs.subscribe !== 'function') {
+    console.error('Error: eapp.ports.receiveMsgsFromJs.subscribe is not a function.');
+    throw new TypeError('eapp.ports.receiveMsgsFromJs.subscribe is not a function.');
+  }
+
+  console.log('Elm app ports:', eapp.ports);
+  console.log('receiveMsgsFromJs.subscribe is a function:', typeof eapp.ports.receiveMsgsFromJs.subscribe === 'function');
+
   return eapp;
 }
 

@@ -1050,7 +1050,7 @@ port msgFromMain : Json.Encode.Value -> Cmd msg
 
 
 
--- XXX: Don't use this port to send msgs to JS
+-- XXX: Don't use receiveMsgsFromJs to send msgs to JS
 
 
 port receiveMsgsFromJs : (Json.Decode.Value -> msg) -> Sub msg

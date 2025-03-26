@@ -584,84 +584,35 @@ runSpecTests =
                         )
                     ]
             )
-
-        {-
-
-           , --Runner.skip <|
-             --Runner.pick <|
-             scenario "14: Checking the Wallet page has initialized after using navlink to Wallet"
-               (given
-                   (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
-                       |> Spec.Setup.withDocument Main.view
-                       |> Spec.Setup.withUpdate Main.update
-                       |> Spec.Setup.withSubscriptions Main.subscriptions
-                       |> Spec.Setup.forNavigation
-                           { onUrlRequest = Main.ClickedLink
-                           , onUrlChange = Main.ChangedUrl
-                           }
-                       -- NOTE: Currently believe this is equivalent to the user clicking a link
-                       |> Spec.Setup.withLocation (Url Http "localhost" (Just 1234) "/" Nothing Nothing)
-                       |> Stub.serve [ TestData.successfullBalancesFetch ]
-                       |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch ]
-                   )
-                   |> when "the user navigates to another navLink in the menu"
-                       [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing)) ]
-                   -- Simulate user clicking the Wallet href navLink in the simple menu
-                   |> when "the user then clicks the Wallet navLink in the menu"
-                       [ Spec.Command.send <| Spec.Command.fake (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/wallet" Nothing Nothing)) ]
-
-                   |> Spec.observeThat
-                       [ it "should display the menu"
-                           (Markup.observeElement
-                               |> Markup.query
-                               << by [ tag "button" ]
-                               |> Spec.expect
-                                   (Claim.isSomethingWhere <|
-                                       Markup.attribute "class" <|
-                                           Claim.isSomethingWhere <|
-                                               Claim.isStringContaining 1 "menu-btn"
-                                   )
-                           )
-                       , it "b.is on the Wallet page with an updated inital wallet model"
-                           -- NOTE: Cos connected with valid XMR address
-                           (Observer.observeModel .page
-                               |> Spec.expect
-                                   (Claim.isEqual Debug.toString <|
-                                       Main.WalletPage <|
-                                           { primaryaddress = ""
-                                           , balances = Just expectedBalances
-                                           , errors = []
-                                           , pagetitle = "Haveno Web Wallet"
-                                           , status = Wallet.Loaded
-                                           , subaddress = "" --TestData.subAddress
-                                           , currentView = Wallet.WalletView
-                                           }
-                                   )
-                           )
-                       , it "displays the available balance correctly"
-                           (Markup.observeElement
-                               |> Markup.query
-                               << by [ id "xmrbalance" ]
-                               |> Spec.expect
-                                   (Claim.isSomethingWhere <|
-                                       Markup.text <|
-                                           Claim.isStringContaining 1 "Available Balance: 10000.0 XMR"
-                                   )
-                           )
-                       , it "displays the reserved balance correctly"
-                           (Markup.observeElement
-                               |> Markup.query
-                               << by [ id "reservedOfferBalance" ]
-                               |> Spec.expect
-                                   (Claim.isSomethingWhere <|
-                                       Markup.text <|
-                                           Claim.isStringContaining 1 "Reserved Offer Balance: 5000.0 XMR"
-                                   )
-                           )
-
-                       ]
-               )
-        -}
+        , scenario "16: should trigger ReceivedFromJs when a message is received from the receiveMsgsFromJs port"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                )
+                |> when "a message is sent to the receiveMsgsFromJs port"
+                    [ Spec.Port.send "receiveMsgsFromJs"
+                        (Json.Encode.object
+                            [ ( "page", Json.Encode.string "AccountsPage" )
+                            , ( "typeOfMsg", Json.Encode.string "decryptedCryptoAccountsResponse" )
+                            , ( "accountsData", Json.Encode.list Json.Encode.string [ "account1", "account2" ] )
+                            , ( "currency", Json.Encode.string "BTC" )
+                            ]
+                        )
+                    ]
+                |> Spec.observeThat
+                    [ it "should trigger the ReceivedFromJs message"
+                        (Spec.Observer.observeModel .currentJsMessage
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString ["account1", "account2"])
+                        )
+                    ]
+            )
         ]
 
 

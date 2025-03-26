@@ -51,7 +51,7 @@ describe('initializeElmApp', () => {
             node: { id: 'elm' },
             flags: jsonUrl,
         });
-        expect(console.log).toHaveBeenCalledWith('elm init:', eapp);
+        expect(console.log).toHaveBeenCalledWith('Elm app initialized:', eapp);
         expect(eapp).toEqual({
             ports: {
                 receiveMsgsFromJs: {
