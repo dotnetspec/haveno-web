@@ -26,7 +26,7 @@ decryptCryptoAccountsMsgRequest =
 
 elmReadyMsgRequest : String
 elmReadyMsgRequest =
-    "{\"typeOfMsg\":\"ElmReady\",\"currency\":\"\",\"address\":\"\"}"
+    "{\"typeOfMsg\":\"ElmReady\",\"currency\":\"\",\"accountsData\":\"\"}"
 
 getVersionBaseURL : String
 getVersionBaseURL =

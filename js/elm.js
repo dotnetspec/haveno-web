@@ -8696,7 +8696,7 @@ var $author$project$Pages$Accounts$update = F2(
 								'currency',
 								$elm$json$Json$Encode$string('BTC')),
 								_Utils_Tuple2(
-								'address',
+								'accountsData',
 								$elm$json$Json$Encode$string(address)),
 								_Utils_Tuple2(
 								'storeAs',
@@ -11202,7 +11202,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.6.67')
+										$elm$html$Html$text('Version 0.7.68')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
