@@ -27,7 +27,7 @@
     "vitest": "vitest --no-watch",
     "debug": "elm make src/Main.elm --output=js/elm.js --debug",
     "optimize": "elm make src/Main.elm --output=js/elm.js --optimize",
-    "jt": "yarn unit && yarn spec && yarn review && yarn vitest",
+    "jt": "yarn unit && yarn spec && yarn review && yarn vitest && yarn plw",
     "mth": "./terminals/localNet_2_User.sh",
     "fullTestHaveno": "./terminals/openAll.sh",
     "eb": "./terminals/oneUserEnvoy.sh",

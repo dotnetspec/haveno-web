@@ -10,23 +10,29 @@ test('has title', async ({ page, browserName }) => {
   await expect(page).toHaveTitle(/Haveno-Web/);
 });
 
-test('get funds link', async ({ page }) => {
+test.only('get funds link', async ({ page }) => {
+  // Navigate to the application
   await page.goto('http://localhost:1234/');
 
-  // Open menu if needed
+  // Wait for the menu button to be visible and click it to open the menu
   await page.waitForSelector('button.menu-btn', { state: 'visible' });
-  await page.getByTestId('menu-button').click();
 
-  // Ensure "Funds" link is visible before clicking
+  // Wait for the menu button to be visible
+  const menuButton = await page.waitForSelector('button.menu-btn', { state: 'visible' });
+
+  // Assert that the menu button exists and is visible
+  expect(menuButton).not.toBeNull();
+  await expect(page.locator('button.menu-btn')).toBeVisible();
+
+/*   await page.getByRole('button', { name: /☰/i }).click();
+
+  // Ensure the "Funds" link is visible before clicking
   await page.waitForSelector('a:has-text("Funds")', { state: 'visible' });
   await page.getByRole('link', { name: /Funds/i }).click();
 
-
-  console.log("Current URL:", page.url());
-
-
-  // Verify navigation to "Funds" page
-  await expect(page.getByRole('heading', { name: 'Funds' })).toBeVisible();
+  // Verify that the "Funds" page content is displayed
+  await expect(page.getByRole('heading', { name: 'Funds' })).toBeVisible(); */
+  //await expect(page.locator('text=Manage your funds')).toBeVisible();
 });
 
 

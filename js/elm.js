@@ -10631,6 +10631,13 @@ var $author$project$Pages$Funds$custodialFundsView = function (model) {
 					[
 						$elm$html$Html$text('Funds')
 					])),
+				A2(
+				$elm$html$Html$h4,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Manage your funds')
+					])),
 				$author$project$Pages$Funds$primaryAddressView(model),
 				$author$project$Pages$Funds$xmrBalView(model),
 				A2(
