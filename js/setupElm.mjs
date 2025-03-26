@@ -4,6 +4,7 @@ import { handleMessageFromElm } from './handleElmMessages.js'
 
 // WARN: Use Playwright to test. Vitest runs in Node.js, so it cannot execute Elm code directly.
 // NOTE: Try to use browser debugger if possible.
+// NOTE: Distinguish between send (sending to Elm) and subscribe (receiving from Elm) functions.
 
 function detectEnvironment () {
   const protocol = window.location.protocol
@@ -24,6 +25,16 @@ export function initializeElmApp (Elm, jsonUrl) {
     flags: jsonUrl
   });
 
+  // Ensure the port exists before subscribing
+if (eapp.ports && eapp.ports.msgFromMain) {
+  eapp.ports.msgFromMain.subscribe((message) => {
+      console.log('Received msg from Elm:', message);
+     
+  });
+} else {
+  console.error('Port "msgFromMain" is not defined in Elm.');
+}
+
   console.log('Elm app initialized:', eapp);
 
   if (!eapp.ports) {
@@ -36,20 +47,14 @@ export function initializeElmApp (Elm, jsonUrl) {
     throw new TypeError('eapp.ports.receiveMsgsFromJs is undefined.');
   }
 
-  if (typeof eapp.ports.receiveMsgsFromJs.subscribe !== 'function') {
-    console.error('Error: eapp.ports.receiveMsgsFromJs.subscribe is not a function.');
-    throw new TypeError('eapp.ports.receiveMsgsFromJs.subscribe is not a function.');
-  }
-
-  console.log('Elm app ports:', eapp.ports);
-  console.log('receiveMsgsFromJs.subscribe is a function:', typeof eapp.ports.receiveMsgsFromJs.subscribe === 'function');
+ 
 
   return eapp;
 }
 
 function handleMessagesToMain (eapp) {
-  if (eapp.ports && eapp.ports.receiveMsgsFromJs && typeof eapp.ports.receiveMsgsFromJs.subscribe === 'function') {
-    eapp.ports.receiveMsgsFromJs.subscribe((message) => {
+  if (eapp.ports && eapp.ports.receiveMsgsFromJs && typeof eapp.ports.receiveMsgsFromJs.send === 'function') {
+    eapp.ports.receiveMsgsFromJs.send((message) => {
       handleMessageFromElm(message);
     });
   } else {
@@ -81,14 +86,14 @@ const jsonUrl = JSON.stringify(window.location.origin)
 console.log('jsonUrl:', jsonUrl)
 
 
-const eapp = initializeElmApp(Elm, jsonUrl)
-handleMessagesToMain(eapp)
-handleMessagesFromAccounts(eapp)
+const elmapp = initializeElmApp(Elm, jsonUrl)
+handleMessagesToMain(elmapp)
+handleMessagesFromAccounts(elmapp)
 
 
 // Set window.Elm to the initialized Elm application instance
 
-window.Elm = eapp
+window.Elm = elmapp
 
   } catch (error) {
 console.error('Error in setupElm.js:', error)

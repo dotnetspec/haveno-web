@@ -6,6 +6,7 @@ describe('initializeElmApp', () => {
     let originalConsoleLog;
     let mockElm;
     let mockSubscribe;
+    let mockSend;
 
     beforeEach(() => {
         // Mock document.getElementById
@@ -20,15 +21,16 @@ describe('initializeElmApp', () => {
 
         // Mock Elm object
         mockSubscribe = vi.fn();
+        mockSend = vi.fn();
         mockElm = {
             Main: {
                 init: vi.fn().mockReturnValue({
                     ports: {
                         receiveMsgsFromJs: {
-                            subscribe: mockSubscribe,
+                            send: mockSend,
                         },
                         msgFromAccounts: {
-                            subscribe: vi.fn(),
+                            subscribe: mockSubscribe,
                         },
                     },
                 }),
@@ -55,7 +57,7 @@ describe('initializeElmApp', () => {
         expect(eapp).toEqual({
             ports: {
                 receiveMsgsFromJs: {
-                    subscribe: expect.any(Function),
+                    send: expect.any(Function),
                 },
                 msgFromAccounts: {
                     subscribe: expect.any(Function),
@@ -64,12 +66,12 @@ describe('initializeElmApp', () => {
         });
     });
 
-    it('should ensure receiveMsgsFromJs.subscribe is a function', () => {
+    it('should ensure receiveMsgsFromJs.send is a function', () => {
         const jsonUrl = JSON.stringify('http://localhost');
         const eapp = initializeElmApp(mockElm, jsonUrl);
 
         expect(eapp.ports).toBeDefined();
         expect(eapp.ports.receiveMsgsFromJs).toBeDefined();
-        expect(typeof eapp.ports.receiveMsgsFromJs.subscribe).toBe('function');
+        expect(typeof eapp.ports.receiveMsgsFromJs.send).toBe('function');
     });
 });
