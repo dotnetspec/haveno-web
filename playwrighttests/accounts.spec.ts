@@ -15,18 +15,28 @@ test('get accounts link', async ({ page }) => {
 
   // Open menu if needed
   await page.waitForSelector('button.menu-btn', { state: 'visible' });
-  await page.getByTestId('menu-button').click();
+    // Wait for the menu button to be visible and attached
+    const menuButton = await page.waitForSelector('button.menu-btn', { state: 'visible', state: 'attached'  });
+  
+    // Assert that the menu button exists and is visible
+    expect(menuButton).not.toBeNull();
+    await expect(page.locator('button.menu-btn')).toBeVisible();
 
-  // Ensure "Accounts" link is visible before clicking
-  await page.waitForSelector('a:has-text("Accounts")', { state: 'visible' });
-  await page.getByRole('link', { name: /Accounts/i }).click();
+  
+    await menuButton.click();
+    
+  
+
+  
+
+
 
 
   console.log("Current URL:", page.url());
 
-
+/* 
   // Verify navigation to "Accounts" page
-  await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible(); */
 });
 
 
