@@ -49,4 +49,27 @@ test('add new crytpo currency account', async ({ page, browserName }) => {
   await addNewCryptoCurrencyAccountsButton.click()
   // Verify that the text "Bitcoin address:" is still visible
   await expect(page.locator('text=Bitcoin address:')).toBeVisible()
+
+  // Find the Bitcoin address input field and enter the address
+  const bitcoinAddressInput = await page.waitForSelector(
+    'input#bitcoin-address-input',
+    { state: 'visible' }
+  )
+  expect(bitcoinAddressInput).not.toBeNull()
+  await bitcoinAddressInput.fill('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v')
+
+  // Find the "SAVE NEW BTC ACCOUNT" button and click it
+  const saveNewBTCAccountButton = await page.waitForSelector(
+    'button.info-button#save-new-BTC-account-button',
+    { state: 'visible' }
+  )
+  expect(saveNewBTCAccountButton).not.toBeNull()
+  await saveNewBTCAccountButton.click()
+
+   // Verify that the Bitcoin address appears in the list of accounts
+   await expect(
+    page.locator('div.btc-account-item.address-label', {
+      hasText: '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'
+    })
+  ).toBeVisible();
 })
