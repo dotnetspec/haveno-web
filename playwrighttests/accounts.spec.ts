@@ -1,42 +1,32 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
 
 test('has title', async ({ page, browserName }) => {
-  await page.goto('http://localhost:1234/');
+  await page.goto('http://localhost:1234/')
 
   // Increase timeout for slower browsers
-  const timeout = browserName === 'webkit' || browserName === 'chromium' ? 15000 : 10000;
+  const timeout =
+    browserName === 'webkit' || browserName === 'chromium' ? 15000 : 10000
 
   // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Haveno-Web/);
-});
+  await expect(page).toHaveTitle(/Haveno-Web/)
+})
 
 test('get accounts link', async ({ page }) => {
+  // Navigate to the application
   await page.goto('http://localhost:1234/');
 
-  // Open menu if needed
-  await page.waitForSelector('button.menu-btn', { state: 'visible' });
-    // Wait for the menu button to be visible and attached
-    const menuButton = await page.waitForSelector('button.menu-btn', { state: 'visible', state: 'attached'  });
-  
-    // Assert that the menu button exists and is visible
-    expect(menuButton).not.toBeNull();
-    await expect(page.locator('button.menu-btn')).toBeVisible();
+  // Wait for the menu button to be visible and click it to open the menu
+  const menuButton = await page.waitForSelector('button.menu-btn', { state: 'visible' });
+  expect(menuButton).not.toBeNull();
+  await menuButton.click();
 
-  
-    await menuButton.click();
-    
-  
+  // Wait for the "Accounts" link to be visible in the menu
+  const accountsLink = await page.waitForSelector('a:has-text("Accounts")', { state: 'visible' });
+  expect(accountsLink).not.toBeNull();
 
-  
+  // Click the "Accounts" link
+  await accountsLink.click();
 
-
-
-
-  console.log("Current URL:", page.url());
-
-/* 
-  // Verify navigation to "Accounts" page
-  await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible(); */
+  // Verify that the "Accounts" page content is displayed
+  await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible();
 });
-
-

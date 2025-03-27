@@ -7,5 +7,7 @@
 			"path": "../Tests"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"editor.defaultFormatter": "elmTooling.elm-ls-vscode"
+	}
 }

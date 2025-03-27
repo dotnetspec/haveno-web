@@ -1,12 +1,12 @@
 {
     "[elm]": {
-        "editor.formatOnSave": true
+        "editor.formatOnSave": false
         
     },
     "elmLS.trace.server": "messages",
       "elmLS.disableElmLSP": false,
       "elmLS.elmReviewDiagnostics": "off"
-    , "editor.formatOnSave": true
+    , "editor.formatOnSave": false
         , "files.watcherExclude": {
           "**/node_modules/**": true,
           "**/.git/**": true,
@@ -18,5 +18,8 @@
           "**/dist/**": true,
           "**/.elm-stuff/**": true
         }
+    ,"[javascript]": {
+    "editor.defaultFormatter": null
+  }
     
 }
