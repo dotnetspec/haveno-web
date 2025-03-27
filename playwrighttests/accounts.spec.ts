@@ -66,10 +66,23 @@ test('add new crytpo currency account', async ({ page, browserName }) => {
   expect(saveNewBTCAccountButton).not.toBeNull()
   await saveNewBTCAccountButton.click()
 
-   // Verify that the Bitcoin address appears in the list of accounts
-   await expect(
+  // Verify that the Bitcoin address appears in the list of accounts
+  await expect(
     page.locator('div.btc-account-item.address-label', {
       hasText: '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'
     })
-  ).toBeVisible();
+  ).toBeVisible()
+  
+  // Wait for the "BACK TO ACCOUNTS" button to be visible
+  const backToAccountsButton = await page.waitForSelector(
+    'button.info-button#back-to-accounts-button',
+    { state: 'visible' }
+  )
+  expect(backToAccountsButton).not.toBeNull()
+
+  // Click the "BACK TO ACCOUNTS" button
+  await backToAccountsButton.click()
+
+  // Verify that the "Accounts" page content is displayed again
+  await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible()
 })

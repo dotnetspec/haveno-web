@@ -264,6 +264,7 @@ btcAccountsView : Model -> Html Msg
 btcAccountsView model =
     Html.div []
         [ Html.h6 [ class "accounts-subtitle" ] [ Html.text "Your BTC Accounts" ]
+        , Utils.MyUtils.infoBtn "BACK TO ACCOUNTS" "back-to-accounts-button" <| ChangeView ManageAccounts
         , Html.div [ id "accounts-listOfBTCAccounts" ]
             (if List.isEmpty model.listOfBTCAccounts then
                 [ Html.div [ class "btc-account-item" ] [ Html.text "There are no BTC accounts set up yet" ] ]
