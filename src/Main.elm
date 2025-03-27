@@ -736,7 +736,7 @@ updateUrl url model =
 
 
 -- NOTE: This is where we can update Pages's model
-{- Let's break down the `toPages` function step by step in simple terms:
+{- Let's break down the `toPages` function step by step:
 
    1. **Function Name and Purpose**:
       - Its job is to translate information from the `Pages` module into a format that the main application (`Main`) can understand.
@@ -768,6 +768,7 @@ toSplash model ( dashboard, cmd ) =
         [ sendVersionRequest Protobuf.defaultGetVersionRequest
         , gotAvailableBalances
         , Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress
+        -- NOTE: Turn startTimeout off when testing (unless required)
         , startTimeout
         , notifyJsReady
         , gotDecryptedCryptoAccountData model
