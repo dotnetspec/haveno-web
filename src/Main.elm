@@ -768,7 +768,6 @@ toSplash model ( dashboard, cmd ) =
         [ sendVersionRequest Protobuf.defaultGetVersionRequest
         , gotAvailableBalances
         , Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress
-        -- NOTE: Turn startTimeout off when testing (unless required)
         , startTimeout
         , notifyJsReady
         , gotDecryptedCryptoAccountData model
@@ -927,10 +926,10 @@ only2Decimals str =
         _ ->
             str
 
-
+-- NOTE: For prod timeout can be 5 *
 startTimeout : Cmd Msg
 startTimeout =
-    Process.sleep (5 * 1000) |> Task.perform (\_ -> Timeout)
+    Process.sleep (1 * 1000) |> Task.perform (\_ -> Timeout) 
 
 
 

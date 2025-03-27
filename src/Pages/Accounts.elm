@@ -249,7 +249,7 @@ createNewBTCAccountView model =
 existingCryptoAccountsView : Model -> Html Msg
 existingCryptoAccountsView model =
     Html.div []
-        [ Html.h6 [ class "accounts-subtitle" ] [ Html.text "Your Cryptocurrency Accounts" ]
+        [ Html.h6 [ class "accounts-subtitle" ] [ Html.text "Existing Accounts" ]
         , Html.div [ id "accounts-listOfExistingCryptoAccounts" ]
             (if List.isEmpty model.listOfExistingCryptoAccounts then
                 [ Html.div [ class "account-item" ] [ Html.text "There are no accounts set up yet" ] ]

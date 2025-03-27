@@ -8251,7 +8251,7 @@ var $author$project$Main$startTimeout = A2(
 	function (_v0) {
 		return $author$project$Main$Timeout;
 	},
-	$elm$core$Process$sleep(5 * 1000));
+	$elm$core$Process$sleep(1 * 1000));
 var $author$project$Main$toSplash = F2(
 	function (model, _v0) {
 		var dashboard = _v0.a;
@@ -9703,7 +9703,7 @@ var $author$project$Pages$Accounts$existingCryptoAccountsView = function (model)
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Your Cryptocurrency Accounts')
+						$elm$html$Html$text('Existing Accounts')
 					])),
 				A2(
 				$elm$html$Html$div,
