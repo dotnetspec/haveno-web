@@ -42,8 +42,18 @@ test('add new crytpo currency account', async ({ page }) => {
   expect(cryptoCurrencyAccountsButton).not.toBeNull()
 
   await cryptoCurrencyAccountsButton.click()
-
   await expect(
     page.getByRole('heading', { name: 'Cryptocurrency Accounts' })
   ).toBeVisible()
+
+  // Wait for the "Add New Crypto Currency Account" button to be visible
+  const addNewCryptoCurrencyAccountsButton = await page.waitForSelector(
+    'button.info-button#addnewBTCaccountViewbutton',
+    { state: 'visible' }
+  )
+  expect(addNewCryptoCurrencyAccountsButton).not.toBeNull()
+
+  await addNewCryptoCurrencyAccountsButton.click()
+  // Verify that the text "Bitcoin address:" is still visible
+  await expect(page.locator('text=Bitcoin address:')).toBeVisible()
 })
