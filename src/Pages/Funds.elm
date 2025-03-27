@@ -138,7 +138,6 @@ custodialFundsView : Model -> Html Msg
 custodialFundsView model =
     Html.div [ Attr.class "funds-container", Attr.id "custodialFundsView" ]
         [ Html.h1 [ Attr.class "funds-title" ] [ Html.text "Funds" ]
-        , Html.h4 [  ] [ Html.text "Manage your funds" ]
         , primaryAddressView model
         , xmrBalView model
         , Html.div [ Attr.id "btcbalance", Attr.class "balance-text" ]
