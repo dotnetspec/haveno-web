@@ -1,4 +1,4 @@
-port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, msgFromAccounts, manageAccountsView, messageDecoder, update, view)
+port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, messageDecoder, msgFromAccounts, update, view)
 
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
@@ -30,6 +30,8 @@ type alias Model =
     , listOfBTCAccounts : List String
     , newBTCAddress : String
     , cryptoAccountType : CryptoAccount
+    , savedPassword : String -- The actual saved password
+    , temporaryPassword : String -- The temporary password for the input box
     }
 
 
@@ -47,6 +49,8 @@ initialModel =
     , listOfBTCAccounts = []
     , newBTCAddress = ""
     , cryptoAccountType = BTC
+    , savedPassword = "" -- The actual saved password
+    , temporaryPassword = "" -- The temporary password for the input box
     }
 
 
@@ -89,6 +93,9 @@ type Msg
     | DecryptCryptoAccounts (List String)
     | ChangeView View
     | UpdateNewBTCAddress String
+    | UpdatePassword String
+    | ClearPasswordInput
+    | SavePassword
 
 
 
@@ -108,10 +115,20 @@ update msg model =
     case msg of
         AddNewCryptoAccount address ->
             let
-                btcAccountCount = List.length model.listOfBTCAccounts
-                storeAs = "BTC_Public_Key_" ++ String.fromInt btcAccountCount
+                btcAccountCount =
+                    List.length model.listOfBTCAccounts
+
+                storeAs =
+                    "BTC_Public_Key_" ++ String.fromInt btcAccountCount
+
                 message =
-                    JE.encode 0 (JE.object [ ( "typeOfMsg", JE.string "encryptCryptoAccountMsgRequest" ), ( "currency", JE.string "BTC" ), ( "accountsData", JE.string address ), ( "storeAs", JE.string storeAs ) ])
+                    JE.encode 0 (JE.object [ ( "typeOfMsg", JE.string "encryptCryptoAccountMsgRequest" )
+                    , ( "currency", JE.string "BTC" )
+                    , ( "accountsData", JE.string address )
+                    , ( "storeAs", JE.string storeAs ) 
+                    , ( "password", JE.string model.savedPassword ) 
+                    ])
+
             in
             ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAccounts = model.listOfBTCAccounts ++ [ address ] }, encryptionMsg message )
 
@@ -142,8 +159,20 @@ update msg model =
         UpdateNewBTCAddress address ->
             ( { model | newBTCAddress = address }, Cmd.none )
 
+        UpdatePassword newPass ->
+            ( { model | temporaryPassword = newPass }, Cmd.none )
+
+        SavePassword ->
+            ( { model | savedPassword = model.temporaryPassword, temporaryPassword = "" }, Cmd.none )
+
+        -- Save and clear input
+        -- Only update temporaryPassword
+        ClearPasswordInput ->
+            ( { model | temporaryPassword = "" }, Cmd.none )
 
 
+
+-- Clears the input box
 -- NAV: View
 
 
@@ -174,7 +203,7 @@ view model =
                                     ]
 
                             ManageAccounts ->
-                                manageAccountsView
+                                manageAccountsView model
 
                             TraditionalCurrencyAccounts ->
                                 div [] [ text "Traditional Currency Accounts" ]
@@ -284,15 +313,38 @@ errorView =
         ]
 
 
-manageAccountsView : Html Msg
-manageAccountsView =
+manageAccountsView : Model -> Html Msg
+manageAccountsView model =
     Html.div [ class "accounts-container" ]
         [ Html.h1 [ class "accounts-title" ] [ Html.text "Accounts" ]
+        , passwordView model
         , p [] [ Utils.MyUtils.infoBtn "Traditional Currency Accounts" "traditionalCurrencyAccountsButton" <| ChangeView TraditionalCurrencyAccounts ]
         , p [] [ Utils.MyUtils.infoBtn "Crypto Currency Accounts" "cryptocurrencyAccountsButton" <| ChangeView CryptoAccounts ]
         , p [] [ Utils.MyUtils.infoBtn "Wallet Password" "walletPasswordButton" <| ChangeView WalletPassword ]
         , p [] [ Utils.MyUtils.infoBtn "Wallet Seed" "walletSeedButton" <| ChangeView WalletSeed ]
         , p [] [ Utils.MyUtils.infoBtn "Backup" "backupButton" <| ChangeView Backup ]
+        ]
+
+
+passwordView : Model -> Html Msg
+passwordView model =
+    Html.div []
+        [ Html.div []
+            [ Html.label [ class "large-text" ] [ Html.text "Password: " ]
+            , Html.span []
+                [ Html.input
+                    [ id "accounts-password-input"
+                    , type_ "text"
+                    , placeholder "Enter password to en/decrypt accounts data"
+                    , onInput UpdatePassword
+                    , value model.temporaryPassword -- Ensures the input box stays in sync with `temporaryPassword`
+                    ]
+                    []
+                ]
+            ]
+        , p []
+            [ Utils.MyUtils.infoBtn "Save Password" "savePasswordButton" <| SavePassword ]
+        , p [] [ Utils.MyUtils.infoBtn "Clear Password" "clearPasswordButton" <| ClearPasswordInput ]
         ]
 
 

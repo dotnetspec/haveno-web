@@ -10972,8 +10972,10 @@ var $author$project$Pages$Accounts$initialModel = {
 	newBTCAddress: '',
 	pagetitle: 'Accounts',
 	primaryaddress: '',
+	savedPassword: '',
 	status: $author$project$Pages$Accounts$Loaded,
-	subaddress: ''
+	subaddress: '',
+	temporaryPassword: ''
 };
 var $author$project$Pages$Accounts$init = function (_v0) {
 	return _Utils_Tuple2($author$project$Pages$Accounts$initialModel, $elm$core$Platform$Cmd$none);
@@ -13604,12 +13606,31 @@ var $author$project$Pages$Accounts$update = F2(
 						model,
 						{currentView: newView}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'UpdateNewBTCAddress':
 				var address = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{newBTCAddress: address}),
+					$elm$core$Platform$Cmd$none);
+			case 'UpdatePassword':
+				var newPass = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{temporaryPassword: newPass}),
+					$elm$core$Platform$Cmd$none);
+			case 'SavePassword':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{savedPassword: model.temporaryPassword, temporaryPassword: ''}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{temporaryPassword: ''}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -14508,80 +14529,143 @@ var $author$project$Pages$Accounts$CryptoAccounts = {$: 'CryptoAccounts'};
 var $author$project$Pages$Accounts$TraditionalCurrencyAccounts = {$: 'TraditionalCurrencyAccounts'};
 var $author$project$Pages$Accounts$WalletPassword = {$: 'WalletPassword'};
 var $author$project$Pages$Accounts$WalletSeed = {$: 'WalletSeed'};
-var $author$project$Pages$Accounts$manageAccountsView = A2(
-	$elm$html$Html$div,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('accounts-container')
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$h1,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('accounts-title')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Accounts')
-				])),
-			A2(
-			$elm$html$Html$p,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A3(
-					$author$project$Utils$MyUtils$infoBtn,
-					'Traditional Currency Accounts',
-					'traditionalCurrencyAccountsButton',
-					$author$project$Pages$Accounts$ChangeView($author$project$Pages$Accounts$TraditionalCurrencyAccounts))
-				])),
-			A2(
-			$elm$html$Html$p,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A3(
-					$author$project$Utils$MyUtils$infoBtn,
-					'Crypto Currency Accounts',
-					'cryptocurrencyAccountsButton',
-					$author$project$Pages$Accounts$ChangeView($author$project$Pages$Accounts$CryptoAccounts))
-				])),
-			A2(
-			$elm$html$Html$p,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A3(
-					$author$project$Utils$MyUtils$infoBtn,
-					'Wallet Password',
-					'walletPasswordButton',
-					$author$project$Pages$Accounts$ChangeView($author$project$Pages$Accounts$WalletPassword))
-				])),
-			A2(
-			$elm$html$Html$p,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A3(
-					$author$project$Utils$MyUtils$infoBtn,
-					'Wallet Seed',
-					'walletSeedButton',
-					$author$project$Pages$Accounts$ChangeView($author$project$Pages$Accounts$WalletSeed))
-				])),
-			A2(
-			$elm$html$Html$p,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A3(
-					$author$project$Utils$MyUtils$infoBtn,
-					'Backup',
-					'backupButton',
-					$author$project$Pages$Accounts$ChangeView($author$project$Pages$Accounts$Backup))
-				]))
-		]));
+var $author$project$Pages$Accounts$ClearPasswordInput = {$: 'ClearPasswordInput'};
+var $author$project$Pages$Accounts$SavePassword = {$: 'SavePassword'};
+var $author$project$Pages$Accounts$UpdatePassword = function (a) {
+	return {$: 'UpdatePassword', a: a};
+};
+var $author$project$Pages$Accounts$passwordView = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$label,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('large-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Password: ')
+							])),
+						A2(
+						$elm$html$Html$span,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$id('accounts-password-input'),
+										$elm$html$Html$Attributes$type_('text'),
+										$elm$html$Html$Attributes$placeholder('Enter password to en/decrypt accounts data'),
+										$elm$html$Html$Events$onInput($author$project$Pages$Accounts$UpdatePassword),
+										$elm$html$Html$Attributes$value(model.temporaryPassword)
+									]),
+								_List_Nil)
+							]))
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A3($author$project$Utils$MyUtils$infoBtn, 'Save Password', 'savePasswordButton', $author$project$Pages$Accounts$SavePassword)
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A3($author$project$Utils$MyUtils$infoBtn, 'Clear Password', 'clearPasswordButton', $author$project$Pages$Accounts$ClearPasswordInput)
+					]))
+			]));
+};
+var $author$project$Pages$Accounts$manageAccountsView = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('accounts-container')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$h1,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('accounts-title')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Accounts')
+					])),
+				$author$project$Pages$Accounts$passwordView(model),
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A3(
+						$author$project$Utils$MyUtils$infoBtn,
+						'Traditional Currency Accounts',
+						'traditionalCurrencyAccountsButton',
+						$author$project$Pages$Accounts$ChangeView($author$project$Pages$Accounts$TraditionalCurrencyAccounts))
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A3(
+						$author$project$Utils$MyUtils$infoBtn,
+						'Crypto Currency Accounts',
+						'cryptocurrencyAccountsButton',
+						$author$project$Pages$Accounts$ChangeView($author$project$Pages$Accounts$CryptoAccounts))
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A3(
+						$author$project$Utils$MyUtils$infoBtn,
+						'Wallet Password',
+						'walletPasswordButton',
+						$author$project$Pages$Accounts$ChangeView($author$project$Pages$Accounts$WalletPassword))
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A3(
+						$author$project$Utils$MyUtils$infoBtn,
+						'Wallet Seed',
+						'walletSeedButton',
+						$author$project$Pages$Accounts$ChangeView($author$project$Pages$Accounts$WalletSeed))
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A3(
+						$author$project$Utils$MyUtils$infoBtn,
+						'Backup',
+						'backupButton',
+						$author$project$Pages$Accounts$ChangeView($author$project$Pages$Accounts$Backup))
+					]))
+			]));
+};
 var $elm$html$Html$section = _VirtualDom_node('section');
 var $author$project$Pages$Accounts$view = function (model) {
 	return A2(
@@ -14642,7 +14726,7 @@ var $author$project$Pages$Accounts$view = function (model) {
 															$author$project$Pages$Accounts$btcAccountsView(model)
 														]));
 											case 'ManageAccounts':
-												return $author$project$Pages$Accounts$manageAccountsView;
+												return $author$project$Pages$Accounts$manageAccountsView(model);
 											case 'TraditionalCurrencyAccounts':
 												return A2(
 													$elm$html$Html$div,
@@ -16534,4 +16618,4 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$ChangedUrl, onUrlRequest: $author$project$Main$ClickedLink, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$string)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Proto.Io.Haveno.Protobuffer.GetBalancesReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetBalancesReply"},"Proto.Io.Haveno.Protobuffer.GetVersionReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply"},"Proto.Io.Haveno.Protobuffer.GetXmrPrimaryAddressReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressReply"},"Protobuf.Types.Int64.Int64":{"args":[],"type":"Internal.Int64.Int64"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BalancesInfo":{"args":[],"type":"{ btc : Maybe.Maybe Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BtcBalanceInfo, xmr : Maybe.Maybe Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__XmrBalanceInfo }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BtcBalanceInfo":{"args":[],"type":"{ availableBalance : Protobuf.Types.Int64.Int64, reservedBalance : Protobuf.Types.Int64.Int64, totalAvailableBalance : Protobuf.Types.Int64.Int64, lockedBalance : Protobuf.Types.Int64.Int64 }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetBalancesReply":{"args":[],"type":"{ balances : Maybe.Maybe Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BalancesInfo }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply":{"args":[],"type":"{ version : String.String }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressReply":{"args":[],"type":"{ primaryAddress : String.String }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__XmrBalanceInfo":{"args":[],"type":"{ balance : Protobuf.Types.Int64.Int64, availableBalance : Protobuf.Types.Int64.Int64, pendingBalance : Protobuf.Types.Int64.Int64, reservedOfferBalance : Protobuf.Types.Int64.Int64, reservedTradeBalance : Protobuf.Types.Int64.Int64 }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"},"Proto.Io.Haveno.Protobuffer.GetXmrNewSubaddressReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetXmrNewSubaddressReply"},"Internal.Int64.Ints":{"args":[],"type":"{ higher : Basics.Int, lower : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Pages.Buy.Model":{"args":[],"type":"{ status : Pages.Buy.Status, title : String.String, root : Pages.Buy.Buy }"},"Pages.Market.Model":{"args":[],"type":"{ status : Pages.Market.Status, title : String.String, root : Pages.Market.Market }"},"Pages.Portfolio.Model":{"args":[],"type":"{ status : Pages.Portfolio.Status, title : String.String, root : Pages.Portfolio.Portfolio }"},"Pages.Sell.Model":{"args":[],"type":"{ status : Pages.Sell.Status, title : String.String, root : Pages.Sell.Sell }"},"Pages.Support.Model":{"args":[],"type":"{ status : Pages.Support.Status, title : String.String, root : Pages.Support.Support }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetXmrNewSubaddressReply":{"args":[],"type":"{ subaddress : String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"ClickedLink":["Browser.UrlRequest"],"GotSplashMsg":["Pages.Splash.Msg"],"GotSellMsg":["Pages.Sell.Msg"],"GotPortfolioMsg":["Pages.Portfolio.Msg"],"GotFundsMsg":["Pages.Funds.Msg"],"GotSupportMsg":["Pages.Support.Msg"],"GotBuyMsg":["Pages.Buy.Msg"],"GotMarketMsg":["Pages.Market.Msg"],"GotAccountsMsg":["Pages.Accounts.Msg"],"GotDonateMsg":["Pages.Donate.Msg"],"GotConnectMsg":["Pages.Connect.Msg"],"ChangedUrl":["Url.Url"],"ReceivedFromJs":["Json.Decode.Value"],"GotVersion":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"],"ToggleMenu":[],"GotBalances":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetBalancesReply"],"GotXmrPrimaryAddress":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrPrimaryAddressReply"],"Timeout":[],"NoOp":[]}},"Grpc.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["{ metadata : Http.Metadata, response : Bytes.Bytes, errMessage : String.String, status : Grpc.GrpcStatus }"],"BadBody":["Bytes.Bytes"],"UnknownGrpcStatus":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Internal.Int64.Int64":{"args":[],"tags":{"Int64":["Internal.Int64.Ints"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Pages.Accounts.Msg":{"args":[],"tags":{"GotBalances":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetBalancesReply"],"GotXmrPrimaryAddress":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrPrimaryAddressReply"],"GotXmrNewSubaddress":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrNewSubaddressReply"],"AddNewCryptoAccount":["String.String"],"DecryptCryptoAccounts":["List.List String.String"],"ChangeView":["Pages.Accounts.View"],"UpdateNewBTCAddress":["String.String"]}},"Pages.Buy.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Buy.Model"]}},"Pages.Connect.Msg":{"args":[],"tags":{"RetryWalletConnection":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrPrimaryAddressReply"],"RetryHavenoConnection":[],"SetCustomMoneroNode":["String.String"],"ApplyCustomMoneroNode":[]}},"Pages.Donate.Msg":{"args":[],"tags":{"GotBalances":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetBalancesReply"],"GotXmrPrimaryAddress":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrPrimaryAddressReply"],"GotXmrNewSubaddress":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrNewSubaddressReply"]}},"Pages.Funds.Msg":{"args":[],"tags":{"GotXmrNewSubaddress":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrNewSubaddressReply"],"ClickedGotNewSubaddress":[],"ToggleFundsVisibility":[]}},"Pages.Market.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Market.Model"]}},"Pages.Portfolio.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Portfolio.Model"]}},"Pages.Sell.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Sell.Model"]}},"Pages.Splash.Msg":{"args":[],"tags":{"NoOp":[]}},"Pages.Support.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Support.Model"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Pages.Buy.Buy":{"args":[],"tags":{"Buy":["{ name : String.String }"]}},"Bytes.Bytes":{"args":[],"tags":{"Bytes":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Grpc.GrpcStatus":{"args":[],"tags":{"Ok_":[],"Cancelled":[],"Unknown":[],"InvalidArgument":[],"DeadlineExceeded":[],"NotFound":[],"AlreadyExists":[],"PermissionDenied":[],"ResourceExhausted":[],"FailedPrecondition":[],"Aborted":[],"OutOfRange":[],"Unimplemented":[],"Internal":[],"Unavailable":[],"DataLoss":[],"Unauthenticated":[]}},"List.List":{"args":["a"],"tags":{}},"Pages.Market.Market":{"args":[],"tags":{"Market":["{ name : String.String }"]}},"Pages.Portfolio.Portfolio":{"args":[],"tags":{"Portfolio":["{ name : String.String }"]}},"Pages.Sell.Sell":{"args":[],"tags":{"Sell":["{ name : String.String }"]}},"Pages.Buy.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Market.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Portfolio.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Sell.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Support":{"args":[],"tags":{"Support":["{ name : String.String }"]}},"Pages.Accounts.View":{"args":[],"tags":{"ManageAccounts":[],"TraditionalCurrencyAccounts":[],"CryptoAccounts":[],"CreateNewBTCAccountView":[],"DisplayStoredBTCAddresses":[],"WalletPassword":[],"WalletSeed":[],"Backup":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));
+_Platform_export({'Main':{'init':$author$project$Main$main($elm$json$Json$Decode$string)({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Proto.Io.Haveno.Protobuffer.GetBalancesReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetBalancesReply"},"Proto.Io.Haveno.Protobuffer.GetVersionReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply"},"Proto.Io.Haveno.Protobuffer.GetXmrPrimaryAddressReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressReply"},"Protobuf.Types.Int64.Int64":{"args":[],"type":"Internal.Int64.Int64"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BalancesInfo":{"args":[],"type":"{ btc : Maybe.Maybe Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BtcBalanceInfo, xmr : Maybe.Maybe Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__XmrBalanceInfo }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BtcBalanceInfo":{"args":[],"type":"{ availableBalance : Protobuf.Types.Int64.Int64, reservedBalance : Protobuf.Types.Int64.Int64, totalAvailableBalance : Protobuf.Types.Int64.Int64, lockedBalance : Protobuf.Types.Int64.Int64 }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetBalancesReply":{"args":[],"type":"{ balances : Maybe.Maybe Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__BalancesInfo }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetVersionReply":{"args":[],"type":"{ version : String.String }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressReply":{"args":[],"type":"{ primaryAddress : String.String }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__XmrBalanceInfo":{"args":[],"type":"{ balance : Protobuf.Types.Int64.Int64, availableBalance : Protobuf.Types.Int64.Int64, pendingBalance : Protobuf.Types.Int64.Int64, reservedOfferBalance : Protobuf.Types.Int64.Int64, reservedTradeBalance : Protobuf.Types.Int64.Int64 }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"},"Proto.Io.Haveno.Protobuffer.GetXmrNewSubaddressReply":{"args":[],"type":"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetXmrNewSubaddressReply"},"Internal.Int64.Ints":{"args":[],"type":"{ higher : Basics.Int, lower : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Pages.Buy.Model":{"args":[],"type":"{ status : Pages.Buy.Status, title : String.String, root : Pages.Buy.Buy }"},"Pages.Market.Model":{"args":[],"type":"{ status : Pages.Market.Status, title : String.String, root : Pages.Market.Market }"},"Pages.Portfolio.Model":{"args":[],"type":"{ status : Pages.Portfolio.Status, title : String.String, root : Pages.Portfolio.Portfolio }"},"Pages.Sell.Model":{"args":[],"type":"{ status : Pages.Sell.Status, title : String.String, root : Pages.Sell.Sell }"},"Pages.Support.Model":{"args":[],"type":"{ status : Pages.Support.Status, title : String.String, root : Pages.Support.Support }"},"Proto.Io.Haveno.Protobuffer.Internals_.Proto__Io__Haveno__Protobuffer__GetXmrNewSubaddressReply":{"args":[],"type":"{ subaddress : String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"ClickedLink":["Browser.UrlRequest"],"GotSplashMsg":["Pages.Splash.Msg"],"GotSellMsg":["Pages.Sell.Msg"],"GotPortfolioMsg":["Pages.Portfolio.Msg"],"GotFundsMsg":["Pages.Funds.Msg"],"GotSupportMsg":["Pages.Support.Msg"],"GotBuyMsg":["Pages.Buy.Msg"],"GotMarketMsg":["Pages.Market.Msg"],"GotAccountsMsg":["Pages.Accounts.Msg"],"GotDonateMsg":["Pages.Donate.Msg"],"GotConnectMsg":["Pages.Connect.Msg"],"ChangedUrl":["Url.Url"],"ReceivedFromJs":["Json.Decode.Value"],"GotVersion":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetVersionReply"],"ToggleMenu":[],"GotBalances":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetBalancesReply"],"GotXmrPrimaryAddress":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrPrimaryAddressReply"],"Timeout":[],"NoOp":[]}},"Grpc.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["{ metadata : Http.Metadata, response : Bytes.Bytes, errMessage : String.String, status : Grpc.GrpcStatus }"],"BadBody":["Bytes.Bytes"],"UnknownGrpcStatus":["String.String"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Internal.Int64.Int64":{"args":[],"tags":{"Int64":["Internal.Int64.Ints"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Pages.Accounts.Msg":{"args":[],"tags":{"GotBalances":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetBalancesReply"],"GotXmrPrimaryAddress":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrPrimaryAddressReply"],"GotXmrNewSubaddress":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrNewSubaddressReply"],"AddNewCryptoAccount":["String.String"],"DecryptCryptoAccounts":["List.List String.String"],"ChangeView":["Pages.Accounts.View"],"UpdateNewBTCAddress":["String.String"],"UpdatePassword":["String.String"],"ClearPasswordInput":[],"SavePassword":[]}},"Pages.Buy.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Buy.Model"]}},"Pages.Connect.Msg":{"args":[],"tags":{"RetryWalletConnection":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrPrimaryAddressReply"],"RetryHavenoConnection":[],"SetCustomMoneroNode":["String.String"],"ApplyCustomMoneroNode":[]}},"Pages.Donate.Msg":{"args":[],"tags":{"GotBalances":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetBalancesReply"],"GotXmrPrimaryAddress":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrPrimaryAddressReply"],"GotXmrNewSubaddress":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrNewSubaddressReply"]}},"Pages.Funds.Msg":{"args":[],"tags":{"GotXmrNewSubaddress":["Result.Result Grpc.Error Proto.Io.Haveno.Protobuffer.GetXmrNewSubaddressReply"],"ClickedGotNewSubaddress":[],"ToggleFundsVisibility":[]}},"Pages.Market.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Market.Model"]}},"Pages.Portfolio.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Portfolio.Model"]}},"Pages.Sell.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Sell.Model"]}},"Pages.Splash.Msg":{"args":[],"tags":{"NoOp":[]}},"Pages.Support.Msg":{"args":[],"tags":{"GotInitialModel":["Pages.Support.Model"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Pages.Buy.Buy":{"args":[],"tags":{"Buy":["{ name : String.String }"]}},"Bytes.Bytes":{"args":[],"tags":{"Bytes":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Grpc.GrpcStatus":{"args":[],"tags":{"Ok_":[],"Cancelled":[],"Unknown":[],"InvalidArgument":[],"DeadlineExceeded":[],"NotFound":[],"AlreadyExists":[],"PermissionDenied":[],"ResourceExhausted":[],"FailedPrecondition":[],"Aborted":[],"OutOfRange":[],"Unimplemented":[],"Internal":[],"Unavailable":[],"DataLoss":[],"Unauthenticated":[]}},"List.List":{"args":["a"],"tags":{}},"Pages.Market.Market":{"args":[],"tags":{"Market":["{ name : String.String }"]}},"Pages.Portfolio.Portfolio":{"args":[],"tags":{"Portfolio":["{ name : String.String }"]}},"Pages.Sell.Sell":{"args":[],"tags":{"Sell":["{ name : String.String }"]}},"Pages.Buy.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Market.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Portfolio.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Sell.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Status":{"args":[],"tags":{"Loading":[]}},"Pages.Support.Support":{"args":[],"tags":{"Support":["{ name : String.String }"]}},"Pages.Accounts.View":{"args":[],"tags":{"ManageAccounts":[],"TraditionalCurrencyAccounts":[],"CryptoAccounts":[],"CreateNewBTCAccountView":[],"DisplayStoredBTCAddresses":[],"WalletPassword":[],"WalletSeed":[],"Backup":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));

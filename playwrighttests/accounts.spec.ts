@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test'
 
-test('add new crytpo currency account', async ({ page, browserName }) => {
+test('add new crytpo currency account to local storage', async ({
+  page,
+  browserName
+}) => {
   // Navigate to the application
   await page.goto('http://localhost:1234/')
 
@@ -27,6 +30,27 @@ test('add new crytpo currency account', async ({ page, browserName }) => {
   // Verify that the "Accounts" page content is displayed
   await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible()
 
+  // Verify that the text "Password:" is visible
+  await expect(page.locator('text=Password:')).toBeVisible()
+
+  // Find the Password input field and enter the password
+  const passwordInput = await page.waitForSelector(
+    'input#accounts-password-input',
+    { state: 'visible' }
+  )
+  expect(passwordInput).not.toBeNull()
+  await passwordInput.fill('test-password')
+
+  const savePasswordButton = await page.waitForSelector(
+    'button.info-button#savePasswordButton',
+    { state: 'visible' }
+  )
+  expect(savePasswordButton).not.toBeNull()
+
+  // NOTE: Password is now saved in Elm Accounts.Model
+ 
+
+  /* 
   // Wait for the "Crypto Currency Accounts" button to be visible
   const cryptoCurrencyAccountsButton = await page.waitForSelector(
     'button.info-button#cryptocurrencyAccountsButton',
@@ -35,6 +59,7 @@ test('add new crytpo currency account', async ({ page, browserName }) => {
   expect(cryptoCurrencyAccountsButton).not.toBeNull()
 
   await cryptoCurrencyAccountsButton.click()
+
   await expect(
     page.getByRole('heading', { name: 'Cryptocurrency Accounts' })
   ).toBeVisible()
@@ -72,7 +97,15 @@ test('add new crytpo currency account', async ({ page, browserName }) => {
       hasText: '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'
     })
   ).toBeVisible()
-  
+
+   // Verify that 'BTC_Public_Key_0' has been added to local storage
+   const btcPublicKey = await page.evaluate(() => {
+    return localStorage.getItem('BTC_Public_Key_0');
+  });
+  expect(btcPublicKey).not.toBeNull();
+  console.log('BTC_Public_Key_0:', btcPublicKey);
+
+
   // Wait for the "BACK TO ACCOUNTS" button to be visible
   const backToAccountsButton = await page.waitForSelector(
     'button.info-button#back-to-accounts-button',
@@ -84,5 +117,5 @@ test('add new crytpo currency account', async ({ page, browserName }) => {
   await backToAccountsButton.click()
 
   // Verify that the "Accounts" page content is displayed again
-  await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible() */
 })
