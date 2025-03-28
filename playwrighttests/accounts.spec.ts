@@ -83,7 +83,7 @@ test('add new crytpo currency account to local storage', async ({
   expect(bitcoinAddressInput).not.toBeNull()
   await bitcoinAddressInput.fill('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v')
 
-  /* 
+   
   // Find the "SAVE NEW BTC ACCOUNT" button and click it
   const saveNewBTCAccountButton = await page.waitForSelector(
     'button.info-button#save-new-BTC-account-button',
@@ -99,6 +99,7 @@ test('add new crytpo currency account to local storage', async ({
     })
   ).toBeVisible()
 
+  /*
    // Verify that 'BTC_Public_Key_0' has been added to local storage
    const btcPublicKey = await page.evaluate(() => {
     return localStorage.getItem('BTC_Public_Key_0');
