@@ -50,7 +50,7 @@ test('add new crytpo currency account to local storage', async ({
   // NOTE: Password is now saved in Elm Accounts.Model
  
 
-  /* 
+  
   // Wait for the "Crypto Currency Accounts" button to be visible
   const cryptoCurrencyAccountsButton = await page.waitForSelector(
     'button.info-button#cryptocurrencyAccountsButton',
@@ -83,6 +83,7 @@ test('add new crytpo currency account to local storage', async ({
   expect(bitcoinAddressInput).not.toBeNull()
   await bitcoinAddressInput.fill('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v')
 
+  /* 
   // Find the "SAVE NEW BTC ACCOUNT" button and click it
   const saveNewBTCAccountButton = await page.waitForSelector(
     'button.info-button#save-new-BTC-account-button',
