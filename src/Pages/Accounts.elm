@@ -122,13 +122,15 @@ update msg model =
                     "BTC_Public_Key_" ++ String.fromInt btcAccountCount
 
                 message =
-                    JE.encode 0 (JE.object [ ( "typeOfMsg", JE.string "encryptCryptoAccountMsgRequest" )
-                    , ( "currency", JE.string "BTC" )
-                    , ( "accountsData", JE.string address )
-                    , ( "storeAs", JE.string storeAs ) 
-                    , ( "password", JE.string model.savedPassword ) 
-                    ])
-
+                    JE.encode 0
+                        (JE.object
+                            [ ( "typeOfMsg", JE.string "encryptCryptoAccountMsgRequest" )
+                            , ( "currency", JE.string <| convertStringToCurrencyType model.cryptoAccountType )
+                            , ( "accountsData", JE.string address )
+                            , ( "storeAs", JE.string storeAs )
+                            , ( "password", JE.string model.savedPassword )
+                            ]
+                        )
             in
             ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAccounts = model.listOfBTCAccounts ++ [ address ] }, encryptionMsg message )
 
@@ -390,6 +392,15 @@ gotNewSubAddress =
 
 
 -- NAV: Helper functions
+
+
+convertStringToCurrencyType : CryptoAccount -> String
+convertStringToCurrencyType cryptoAccount =
+    case cryptoAccount of
+        BTC ->
+            "BTC"
+
+        
 
 
 formatBalance : { higher : Int, lower : Int } -> String

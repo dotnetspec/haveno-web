@@ -48,9 +48,7 @@ test('add new crytpo currency account to local storage', async ({
   expect(savePasswordButton).not.toBeNull()
 
   // NOTE: Password is now saved in Elm Accounts.Model
- 
 
-  
   // Wait for the "Crypto Currency Accounts" button to be visible
   const cryptoCurrencyAccountsButton = await page.waitForSelector(
     'button.info-button#cryptocurrencyAccountsButton',
@@ -83,7 +81,6 @@ test('add new crytpo currency account to local storage', async ({
   expect(bitcoinAddressInput).not.toBeNull()
   await bitcoinAddressInput.fill('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v')
 
-   
   // Find the "SAVE NEW BTC ACCOUNT" button and click it
   const saveNewBTCAccountButton = await page.waitForSelector(
     'button.info-button#save-new-BTC-account-button',
@@ -92,6 +89,16 @@ test('add new crytpo currency account to local storage', async ({
   expect(saveNewBTCAccountButton).not.toBeNull()
   await saveNewBTCAccountButton.click()
 
+  // WARN: You need to DECRYPT this after you get it
+
+  // Verify that 'BTC_Public_Key_0' has been added to local storage
+  const btcPublicKey = await page.evaluate(() => {
+    return localStorage.getItem('BTC_Public_Key_0')
+  })
+  expect(btcPublicKey).not.toBeNull()
+  console.log('BTC_Public_Key_0:', btcPublicKey)
+
+   /*
   // Verify that the Bitcoin address appears in the list of accounts
   await expect(
     page.locator('div.btc-account-item.address-label', {
@@ -99,15 +106,7 @@ test('add new crytpo currency account to local storage', async ({
     })
   ).toBeVisible()
 
-  /*
-   // Verify that 'BTC_Public_Key_0' has been added to local storage
-   const btcPublicKey = await page.evaluate(() => {
-    return localStorage.getItem('BTC_Public_Key_0');
-  });
-  expect(btcPublicKey).not.toBeNull();
-  console.log('BTC_Public_Key_0:', btcPublicKey);
-
-
+ 
   // Wait for the "BACK TO ACCOUNTS" button to be visible
   const backToAccountsButton = await page.waitForSelector(
     'button.info-button#back-to-accounts-button',

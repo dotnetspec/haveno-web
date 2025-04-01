@@ -41,13 +41,13 @@ beforeEach(() => {
 })
 
 describe('elmInterop', async () => {
-const password = 'test-password'
+const testPassword = 'test-password'
 const elmENCRYPTMessageAsJson = {
   typeOfMsg: 'encryptCryptoAccountMsgRequest',
   currency: 'BTC',
   accountsData: '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v',
   storeAs: 'BTC_Public_Key_0',
-  pword: password
+  password: testPassword
 }
 
   it('logs ElmReady message', async () => {
@@ -60,7 +60,7 @@ const elmENCRYPTMessageAsJson = {
     const encryptedinStorage = localStorage.getItem('BTC_Public_Key_0')
     const decrypted = await decrypt(
       encryptedinStorage,
-      elmENCRYPTMessageAsJson.pword
+      elmENCRYPTMessageAsJson.password
     )
     expect(decrypted).not.toBeNull()
     expect(decrypted).not.toBeUndefined()
@@ -71,8 +71,8 @@ const elmENCRYPTMessageAsJson = {
 
 it('decrypts stored BTC accounts and sends response to Elm', async () => {
   // Mock the decrypt function
-  decrypt.mockImplementation(async (encryptedData, password) => {
-    if (password !== 'test-password') {
+  decrypt.mockImplementation(async (encryptedData, testPassword) => {
+    if (testPassword !== 'test-password') {
       throw new Error('Decryption failed: Incorrect password');
     }
     const parsedData = JSON.parse(encryptedData);
@@ -82,11 +82,11 @@ it('decrypts stored BTC accounts and sends response to Elm', async () => {
   // Set up localStorage with encrypted data
   localStorage.setItem(
     'BTC_Public_Key_0',
-    JSON.stringify(await encrypt('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v', password))
+    JSON.stringify(await encrypt('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v', testPassword))
   );
   localStorage.setItem(
     'BTC_Public_Key_1',
-    JSON.stringify(await encrypt('2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o', password))
+    JSON.stringify(await encrypt('2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o', testPassword))
   );
 
   // Message that triggers decryption
@@ -95,7 +95,7 @@ it('decrypts stored BTC accounts and sends response to Elm', async () => {
     page: 'AccountsPage',
     currency: 'BTC',
     accountsData: ['', ''],
-    pword: password
+    password: testPassword
   };
 
   await elmInterop(message);
@@ -113,12 +113,12 @@ it('decrypts stored BTC accounts and sends response to Elm', async () => {
   // Verify `decrypt` was called with expected arguments
   expect(decrypt).toHaveBeenCalledTimes(2);
   expect(decrypt).toHaveBeenCalledWith(
-    await encrypt('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v', password),
-    password
+    await encrypt('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v', testPassword),
+    testPassword
   );
   expect(decrypt).toHaveBeenCalledWith(
-    await encrypt('2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o', password),
-    password
+    await encrypt('2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o', testPassword),
+    testPassword
   );
 });
 

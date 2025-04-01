@@ -23,7 +23,7 @@ console.log('message here ', message)
       try {
         const encryptedData = await encrypt(
           parsedMessage.accountsData,
-          parsedMessage.pword
+          parsedMessage.password
         ) // Call the encrypt function with the parsed message
         localStorage.setItem(parsedMessage.storeAs, encryptedData)
       } catch (error) {
@@ -42,7 +42,7 @@ console.log('message here ', message)
 const decryptedData = await Promise.all(
   keys.map(async key => {
     const encryptedData = JSON.parse(localStorage.getItem(key))
-    return await decrypt(encryptedData, parsedMessage.pword)
+    return await decrypt(encryptedData, parsedMessage.password)
   })
 )
 console.log('Decrypted BTC accounts:', decryptedData)

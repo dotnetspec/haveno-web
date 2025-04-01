@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, JsMessage, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, msgFromMain, jsMessageDecoder, justmsgFieldFromJsonDecoder, main, menu, navLinks, okButton, only2Decimals, receiveMsgsFromJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, JsMessage, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, jsMessageDecoder, justmsgFieldFromJsonDecoder, main, menu, msgFromMain, navLinks, okButton, only2Decimals, receiveMsgsFromJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- NOTE: exposing Url exposes a different type of Url to
@@ -262,7 +262,7 @@ update msg model =
                                         accountsMdl =
                                             case model.page of
                                                 AccountsPage accountsModel ->
-                                                    { accountsModel | listOfBTCAccounts = jsMsg.accountsData }
+                                                    { accountsModel | cryptoAccountType = convertStringToCurrencyType jsMsg.currency, listOfBTCAccounts = jsMsg.accountsData }
 
                                                 _ ->
                                                     -- REVIEW:
@@ -913,6 +913,16 @@ gotAvailableBalances =
 -- NAV: Helper functions
 
 
+convertStringToCurrencyType : String -> Pages.Accounts.CryptoAccount
+convertStringToCurrencyType str =
+    case str of
+        "BTC" ->
+            Pages.Accounts.BTC
+
+        _ ->
+            Pages.Accounts.BTC
+
+
 only2Decimals : String -> String
 only2Decimals str =
     case String.split "." str of
@@ -926,10 +936,14 @@ only2Decimals str =
         _ ->
             str
 
+
+
 -- NOTE: For prod timeout can be 5 *
+
+
 startTimeout : Cmd Msg
 startTimeout =
-    Process.sleep (1 * 1000) |> Task.perform (\_ -> Timeout) 
+    Process.sleep (1 * 1000) |> Task.perform (\_ -> Timeout)
 
 
 
