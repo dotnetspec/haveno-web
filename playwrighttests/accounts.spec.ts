@@ -89,23 +89,20 @@ test('add new crytpo currency account to local storage', async ({
   expect(saveNewBTCAccountButton).not.toBeNull()
   await saveNewBTCAccountButton.click()
 
-
-  await page.waitForTimeout(500); // Wait for 500ms to ensure the key is stored
+  await page.waitForTimeout(500) // Wait for 500ms to ensure the key is stored
 
   // Verify that 'BTC_Public_Key_0' has been added to local storage
   const btcPublicKey = await page.evaluate(() => {
-    const value = localStorage.getItem('BTC_Public_Key_0');
-    console.log('Retrieved value from localStorage:', value);
-    return value;
-  });
- 
+    const value = localStorage.getItem('BTC_Public_Key_0')
+    console.log('Retrieved value from localStorage:', value)
+    return value
+  })
 
   expect(btcPublicKey).toBeDefined()
   expect(btcPublicKey).not.toBeUndefined()
   expect(btcPublicKey).not.toBeNull()
   console.log('BTC_Public_Key_0:', btcPublicKey)
 
-  /*
   // Verify that the Bitcoin address appears in the list of accounts
   await expect(
     page.locator('div.btc-account-item.address-label', {
@@ -113,7 +110,6 @@ test('add new crytpo currency account to local storage', async ({
     })
   ).toBeVisible()
 
- 
   // Wait for the "BACK TO ACCOUNTS" button to be visible
   const backToAccountsButton = await page.waitForSelector(
     'button.info-button#back-to-accounts-button',
@@ -125,5 +121,5 @@ test('add new crytpo currency account to local storage', async ({
   await backToAccountsButton.click()
 
   // Verify that the "Accounts" page content is displayed again
-  await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible() */
+  await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible()
 })
