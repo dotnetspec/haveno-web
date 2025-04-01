@@ -89,16 +89,23 @@ test('add new crytpo currency account to local storage', async ({
   expect(saveNewBTCAccountButton).not.toBeNull()
   await saveNewBTCAccountButton.click()
 
-  // WARN: You need to DECRYPT this after you get it
+
+  await page.waitForTimeout(500); // Wait for 500ms to ensure the key is stored
 
   // Verify that 'BTC_Public_Key_0' has been added to local storage
   const btcPublicKey = await page.evaluate(() => {
-    return localStorage.getItem('BTC_Public_Key_0')
-  })
+    const value = localStorage.getItem('BTC_Public_Key_0');
+    console.log('Retrieved value from localStorage:', value);
+    return value;
+  });
+ 
+
+  expect(btcPublicKey).toBeDefined()
+  expect(btcPublicKey).not.toBeUndefined()
   expect(btcPublicKey).not.toBeNull()
   console.log('BTC_Public_Key_0:', btcPublicKey)
 
-   /*
+  /*
   // Verify that the Bitcoin address appears in the list of accounts
   await expect(
     page.locator('div.btc-account-item.address-label', {

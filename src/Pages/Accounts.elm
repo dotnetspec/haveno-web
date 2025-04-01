@@ -125,7 +125,7 @@ update msg model =
                     JE.encode 0
                         (JE.object
                             [ ( "typeOfMsg", JE.string "encryptCryptoAccountMsgRequest" )
-                            , ( "currency", JE.string <| convertStringToCurrencyType model.cryptoAccountType )
+                            , ( "currency", JE.string <| convertCurrencyTypeToString model.cryptoAccountType )
                             , ( "accountsData", JE.string address )
                             , ( "storeAs", JE.string storeAs )
                             , ( "password", JE.string model.savedPassword )
@@ -394,8 +394,8 @@ gotNewSubAddress =
 -- NAV: Helper functions
 
 
-convertStringToCurrencyType : CryptoAccount -> String
-convertStringToCurrencyType cryptoAccount =
+convertCurrencyTypeToString : CryptoAccount -> String
+convertCurrencyTypeToString cryptoAccount =
     case cryptoAccount of
         BTC ->
             "BTC"

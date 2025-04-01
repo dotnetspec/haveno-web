@@ -1,15 +1,13 @@
 import { encrypt, decrypt } from './encryption.js'
 
-
 export async function elmInterop (message) {
   if (!message) {
     console.log('Null or undefined. No message yet', message)
     return
   }
-const parsedMessage = message
-
-console.log('message here ', message)
-
+  // WARN: In tests message is a correctly formatted object, in production it needs to be parsed
+  const parsedMessage =
+    typeof message === 'string' ? JSON.parse(message) : message
 
   switch (parsedMessage.typeOfMsg) {
     case 'ElmReady':
@@ -20,12 +18,16 @@ console.log('message here ', message)
       }
       break
     case 'encryptCryptoAccountMsgRequest':
+      console.log('inside encryptCryptoAccountMsgRequest ', message)
       try {
         const encryptedData = await encrypt(
           parsedMessage.accountsData,
           parsedMessage.password
         ) // Call the encrypt function with the parsed message
-        localStorage.setItem(parsedMessage.storeAs, encryptedData)
+        localStorage.setItem(
+          parsedMessage.storeAs,
+          JSON.stringify(encryptedData)
+        )
       } catch (error) {
         console.error('Error Receiving Encryption Message from Elm: ', error)
       }
@@ -39,13 +41,13 @@ console.log('message here ', message)
           console.log('No BTC accounts found in localStorage.')
           return
         }
-const decryptedData = await Promise.all(
-  keys.map(async key => {
-    const encryptedData = JSON.parse(localStorage.getItem(key))
-    return await decrypt(encryptedData, parsedMessage.password)
-  })
-)
-console.log('Decrypted BTC accounts:', decryptedData)
+        const decryptedData = await Promise.all(
+          keys.map(async key => {
+            const encryptedData = JSON.parse(localStorage.getItem(key))
+            return await decrypt(encryptedData, parsedMessage.password)
+          })
+        )
+        console.log('Decrypted BTC accounts:', decryptedData)
 
         if (
           window.Elm &&
