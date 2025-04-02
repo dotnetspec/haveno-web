@@ -339,7 +339,7 @@ runSpecTests =
             )
         , scenario "User clicks SAVE NEW BTC ACCOUNT button and sends the expected message to the port"
             (given
-                (Spec.Setup.initWithModel {accountsInitialModel | savedPassword = "test-password"}
+                (Spec.Setup.initWithModel { accountsInitialModel | savedPassword = "test-password" }
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                     |> Spec.Setup.withLocation placeholderUrl
@@ -362,8 +362,8 @@ runSpecTests =
                     ]
                 |> Spec.observeThat
                     [ it "sends the expected message to the port"
-                        (Spec.Port.observe "msgFromAccounts" Json.Decode.string
-                           |> Spec.expect (equals [ "{\"typeOfMsg\":\"encryptCryptoAccountMsgRequest\",\"currency\":\"BTC\",\"accountsData\":\"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa\",\"storeAs\":\"BTC_Public_Key_0\",\"password\":\"test-password\"}" ])
+                        (Spec.Port.observe "msgFromAccounts" Accounts.messageDecoder
+                            |> Spec.expect (equals <| [ Accounts.AddNewCryptoAccount "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa" ])
                         )
                     , it "is on the DisplayStoredBTCAddresses view"
                         (Observer.observeModel .currentView

@@ -122,4 +122,65 @@ test('add new crytpo currency account to local storage', async ({
 
   // Verify that the "Accounts" page content is displayed again
   await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible()
+
+   // Reload and verify persistence
+  await page.reload();
+
+  //Return to the Accounts page - list BTC accounts section
+
+   // Wait for the menu button to be visible and click it to open the menu
+  const menuButtonAfterReload = await page.waitForSelector('button.menu-btn', {
+    state: 'visible'
+  })
+  expect(menuButtonAfterReload).not.toBeNull()
+  await menuButtonAfterReload.click()
+
+  // Wait for the "Accounts" link to be visible in the menu
+  const accountsLinkAfterReload = await page.waitForSelector('a:has-text("Accounts")', {
+    state: 'visible'
+  })
+  expect(accountsLinkAfterReload).not.toBeNull()
+
+  // Click the "Accounts" link
+  await accountsLinkAfterReload.click()
+
+  // Verify that the "Accounts" page content is displayed
+  await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible()
+
+  // Verify that the text "Password:" is visible
+  await expect(page.locator('text=Password:')).toBeVisible()
+
+  // Find the Password input field and enter the password
+  const passwordInputAfterReload = await page.waitForSelector(
+    'input#accounts-password-input',
+    { state: 'visible' }
+  )
+  expect(passwordInputAfterReload).not.toBeNull()
+  await passwordInputAfterReload.fill('test-password')
+
+  const savePasswordButtonAfterReload = await page.waitForSelector(
+    'button.info-button#savePasswordButton',
+    { state: 'visible' }
+  )
+  expect(savePasswordButtonAfterReload).not.toBeNull()
+
+  // Wait for the "Crypto Currency Accounts" button to be visible
+  const cryptoCurrencyAccountsButtonAfterReload = await page.waitForSelector(
+    'button.info-button#cryptocurrencyAccountsButton',
+    { state: 'visible' }
+  )
+  expect(cryptoCurrencyAccountsButtonAfterReload).not.toBeNull()
+
+  await cryptoCurrencyAccountsButtonAfterReload.click()
+
+  await expect(
+    page.getByRole('heading', { name: 'Cryptocurrency Accounts' })
+  ).toBeVisible()
+
+   // Verify that the Bitcoin address appears in the list of accounts
+  /* await expect(
+    page.locator('div.btc-account-item.address-label', {
+      hasText: '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'
+    })
+     */
 })

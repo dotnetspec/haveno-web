@@ -5,8 +5,8 @@ import Grpc
 import Html exposing (Html, div, h4, p, section, text)
 import Html.Attributes exposing (class, classList, id, placeholder, readonly, type_, value)
 import Html.Events exposing (onInput)
-import Json.Decode as JD
-import Json.Encode as JE
+import Json.Decode
+import Json.Encode
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import UInt64
@@ -113,24 +113,11 @@ type CryptoAccount
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        -- REVIEW: Need address or already in the model?
         AddNewCryptoAccount address ->
             let
-                btcAccountCount =
-                    List.length model.listOfBTCAccounts
-
-                storeAs =
-                    "BTC_Public_Key_" ++ String.fromInt btcAccountCount
-
                 message =
-                    JE.encode 0
-                        (JE.object
-                            [ ( "typeOfMsg", JE.string "encryptCryptoAccountMsgRequest" )
-                            , ( "currency", JE.string <| convertCurrencyTypeToString model.cryptoAccountType )
-                            , ( "accountsData", JE.string address )
-                            , ( "storeAs", JE.string storeAs )
-                            , ( "password", JE.string model.savedPassword )
-                            ]
-                        )
+                    encryptCryptoAccountMsgRequest address model
             in
             ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAccounts = model.listOfBTCAccounts ++ [ address ] }, encryptionMsg message )
 
@@ -165,7 +152,7 @@ update msg model =
             ( { model | temporaryPassword = newPass }, Cmd.none )
 
         SavePassword ->
-            ( { model | savedPassword = model.temporaryPassword, temporaryPassword = "" }, Cmd.none )
+            ( { model | savedPassword = model.temporaryPassword, temporaryPassword = "" }, Cmd.batch [ gotDecryptedCryptoAccountData { model | savedPassword = model.temporaryPassword } ] )
 
         -- Save and clear input
         -- Only update temporaryPassword
@@ -390,6 +377,21 @@ gotNewSubAddress =
     Grpc.toCmd GotXmrNewSubaddress grpcRequest
 
 
+gotDecryptedCryptoAccountData : Model -> Cmd Msg
+gotDecryptedCryptoAccountData model =
+    let
+        message =
+            Json.Encode.object
+                [ ( "typeOfMsg", Json.Encode.string "decryptCryptoAccountsMsgRequest" )
+                , ( "currency", Json.Encode.string "BTC" )
+                , ( "page", Json.Encode.string "AccountsPage" )
+                , ( "accountsData", Json.Encode.list Json.Encode.string [ "", "" ] )
+                , ( "password", Json.Encode.string model.savedPassword )
+                ]
+    in
+    msgFromAccounts message
+
+
 
 -- NAV: Helper functions
 
@@ -399,8 +401,6 @@ convertCurrencyTypeToString cryptoAccount =
     case cryptoAccount of
         BTC ->
             "BTC"
-
-        
 
 
 formatBalance : { higher : Int, lower : Int } -> String
@@ -444,34 +444,57 @@ formatBalance int64 =
     String.fromFloat roundedXmr
 
 
-encryptionMsg : String -> Cmd Msg
-encryptionMsg msgString =
-    msgFromAccounts msgString
+encryptionMsg : Json.Encode.Value  -> Cmd Msg
+encryptionMsg msg =
+    msgFromAccounts msg
 
 
 
 -- NAV: Ports
 
 
-port msgFromAccounts : String -> Cmd msg
+port msgFromAccounts : Json.Encode.Value -> Cmd msg
+
+
+
+-- NAV: Encoders
+-- REVIEW: Need address or already in the model?
+
+
+encryptCryptoAccountMsgRequest : String -> Model -> Json.Encode.Value
+encryptCryptoAccountMsgRequest address model =
+    let
+        btcAccountCount =
+            List.length model.listOfBTCAccounts
+
+        storeAs =
+            "BTC_Public_Key_" ++ String.fromInt btcAccountCount
+    in
+    Json.Encode.object
+        [ ( "typeOfMsg", Json.Encode.string "encryptCryptoAccountMsgRequest" )
+        , ( "currency", Json.Encode.string <| convertCurrencyTypeToString model.cryptoAccountType )
+        , ( "accountsData", Json.Encode.string address )
+        , ( "storeAs", Json.Encode.string storeAs )
+        , ( "password", Json.Encode.string model.savedPassword )
+        ]
 
 
 
 -- NAV: Decoders
 
 
-messageDecoder : JD.Decoder Msg
+messageDecoder : Json.Decode.Decoder Msg
 messageDecoder =
-    JD.field "typeOfMsg" JD.string
-        |> JD.andThen
+    Json.Decode.field "typeOfMsg" Json.Decode.string
+        |> Json.Decode.andThen
             (\msgType ->
                 case msgType of
                     "encryptCryptoAccountMsgRequest" ->
-                        JD.map AddNewCryptoAccount (JD.field "address" JD.string)
+                        Json.Decode.map AddNewCryptoAccount (Json.Decode.field "accountsData" Json.Decode.string)
 
                     "decryptedCryptoAccountsResponse" ->
-                        JD.map DecryptCryptoAccounts (JD.field "data" (JD.list JD.string))
+                        Json.Decode.map DecryptCryptoAccounts (Json.Decode.field "data" (Json.Decode.list Json.Decode.string))
 
                     _ ->
-                        JD.fail "Unknown message type"
+                        Json.Decode.fail "Unknown message type"
             )

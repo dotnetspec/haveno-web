@@ -188,12 +188,7 @@ runSpecTests =
                         (Spec.Port.observe "msgFromMain" Main.jsMessageDecoder
                             |> Spec.expect
                                 (BddStepDefinitions.Extra.equals
-                                    [ { typeOfMsg = "decryptCryptoAccountsMsgRequest"
-                                      , currency = "BTC"
-                                      , page = "AccountsPage"
-                                      , accountsData = [ "", "" ]
-                                      }
-                                    , { typeOfMsg = "ElmReady"
+                                    [ { typeOfMsg = "ElmReady"
                                       , currency = ""
                                       , page = "AccountsPage"
                                       , accountsData = [ "", "" ]

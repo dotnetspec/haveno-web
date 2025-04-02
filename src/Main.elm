@@ -770,7 +770,7 @@ toSplash model ( dashboard, cmd ) =
         , Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress
         , startTimeout
         , notifyJsReady
-        , gotDecryptedCryptoAccountData model
+        
         ]
     )
 
@@ -1164,19 +1164,7 @@ notifyJsReady =
     msgFromMain sendMessage
 
 
-gotDecryptedCryptoAccountData : Model -> Cmd Msg
-gotDecryptedCryptoAccountData model =
-    let
-        message =
-            Json.Encode.object
-                [ ( "typeOfMsg", Json.Encode.string "decryptCryptoAccountsMsgRequest" )
-                , ( "currency", Json.Encode.string "BTC" )
-                , ( "page", Json.Encode.string "AccountsPage" )
-                , ( "accountsData", Json.Encode.list Json.Encode.string [ "", "" ] )
-                , ( "password", Json.Encode.string model.pword )
-                ]
-    in
-    msgFromMain message
+
 
 
 
