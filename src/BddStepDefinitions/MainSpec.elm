@@ -74,6 +74,7 @@ runSpecTests =
           scenario "1: Display successful API connection status"
             (given
                 -- NOTE: The URL is passed from js as JSON.stringified
+                -- it could also be "\"http://elm-spec/\""
                 (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
                     |> Spec.Setup.withDocument Main.view
                     |> Spec.Setup.withUpdate Main.update
@@ -147,11 +148,31 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario """3: When app first loads it should be on the accounts page if all the required 
+        , scenario "UNsuccessful API connection on startup - there should be no errors in error list"
+            (given
+                (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Stub.serve [ TestData.unsuccessfullVersionFetch, TestData.unsuccessfullBalancesFetch, TestData.unSuccessfullXmrPrimaryAddressFetch ]
+                )
+                |> Spec.observeThat
+                    [ it "there should be no errors"
+                        (Spec.Observer.observeModel (.errors >> List.length)
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString 0)
+                        )
+                    ]
+            )
+        , scenario """When app first loads it should be on the accounts page if all the required 
         data is successfully fetched from gRPC server and the correct request for decrypted crypto accont data 
         is made to the js interop port"""
             (given
-                (Spec.Setup.initForApplication (Main.init "\"http://elm-spec/\"")
+                (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
                     |> Spec.Setup.withDocument Main.view
                     |> Spec.Setup.withUpdate Main.update
                     |> Spec.Setup.withSubscriptions Main.subscriptions
@@ -189,7 +210,7 @@ runSpecTests =
                             |> Spec.expect
                                 (BddStepDefinitions.Extra.equals
                                     [ { typeOfMsg = "ElmReady"
-                                      , currency = ""
+                                      , currency = "BTC"
                                       , page = "AccountsPage"
                                       , accountsData = [ "", "" ]
                                       }

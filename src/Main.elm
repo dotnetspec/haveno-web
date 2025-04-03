@@ -273,7 +273,6 @@ update msg model =
                                     toAccounts model (Pages.Accounts.update (Pages.Accounts.AddNewCryptoAccount (Maybe.withDefault "No BTC address" (List.head jsMsg.accountsData))) accountsMdl)
 
                                 "decryptedCryptoAccountsResponse" ->
-                                   
                                     toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAddresses jsMsg.accountsData) Pages.Accounts.initialModel)
 
                                 _ ->
@@ -757,7 +756,6 @@ toSplash model ( dashboard, cmd ) =
         , Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress
         , startTimeout
         , notifyJsReady
-        
         ]
     )
 
@@ -1146,12 +1144,9 @@ notifyJsReady : Cmd Msg
 notifyJsReady =
     let
         sendMessage =
-            Json.Encode.object [ ( "typeOfMsg", Json.Encode.string "ElmReady" ), ( "currency", Json.Encode.string "" ), ( "page", Json.Encode.string "AccountsPage" ), ( "accountsData", Json.Encode.list Json.Encode.string [ "", "" ] ), ( "password", Json.Encode.string "test-password" ) ]
+            Json.Encode.object [ ( "typeOfMsg", Json.Encode.string "ElmReady" ), ( "currency", Json.Encode.string "BTC" ), ( "page", Json.Encode.string "AccountsPage" ), ( "accountsData", Json.Encode.list Json.Encode.string [ "", "" ] ), ( "password", Json.Encode.string "test-password" ) ]
     in
     msgFromMain sendMessage
-
-
-
 
 
 
@@ -1170,7 +1165,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.7.68" ]
+                , Html.p [] [ Html.text "Version 0.8.68" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text

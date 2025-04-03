@@ -49,22 +49,6 @@ export function initializeElmApp (Elm, jsonUrl) {
   return eapp
 }
 
-function handleMessagesToMain (eapp) {
-  if (
-    eapp.ports &&
-    eapp.ports.receiveMsgsFromJs &&
-    typeof eapp.ports.receiveMsgsFromJs.send === 'function'
-  ) {
-    eapp.ports.receiveMsgsFromJs.send(message => {
-      elmInterop(message)
-    })
-  } else {
-    console.error(
-      'receiveMsgsFromJs port is not defined or subscribe is not a function on eapp.ports'
-    )
-  }
-}
-
 function handleMessagesFromAccounts (eapp) {
   if (eapp.ports && eapp.ports.msgFromAccounts) {
     eapp.ports.msgFromAccounts.subscribe((message, pword) => {
@@ -86,11 +70,14 @@ function initializeBrowserEnvironment () {
     console.log('jsonUrl:', jsonUrl)
 
     const elmapp = initializeElmApp(Elm, jsonUrl)
-    handleMessagesToMain(elmapp)
+
     handleMessagesFromAccounts(elmapp)
 
-    // Set window.Elm to the initialized Elm application instance
-
+    // NOTE: Set window.Elm to the initialized Elm application instance
+    // This allows other scripts to access the Elm instance
+    // and its ports if needed
+    // This is useful for testing purposes
+    // and for accessing Elm from other JavaScript code
     window.Elm = elmapp
   } catch (error) {
     console.error('Error in setupElm.js:', error)

@@ -90,7 +90,6 @@ type Msg
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | AddNewCryptoAccount String
-    | DecryptCryptoAccounts (List String)
     | DecryptedBTCAddresses (List String)
     | ChangeView View
     | UpdateNewBTCAddress String
@@ -122,12 +121,9 @@ update msg model =
             in
             ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = model.listOfBTCAddresses ++ [ address ] }, encryptionMsg message )
 
-        DecryptCryptoAccounts data ->
-            ( { model | listOfExistingCryptoAccounts = model.listOfExistingCryptoAccounts ++ data , listOfBTCAddresses = model.listOfBTCAddresses ++ data , currentView = CryptoAccounts}, Cmd.none )
-
         DecryptedBTCAddresses data ->
-            ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = data, isAddressVisible = True}, Cmd.none )
-        
+            ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = data, isAddressVisible = True }, Cmd.none )
+
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
 
@@ -292,7 +288,7 @@ btcAccountsView model =
                 [ Html.div [ class "btc-account-item" ] [ Html.text "There are no BTC accounts set up yet" ] ]
 
              else
-                List.map (\account -> Html.div [ id "BTCAddress" , classList [ ( "btc-account-item", True ), ( "address-label", True ) ] ] [ Html.text account ]) model.listOfBTCAddresses
+                List.map (\account -> Html.div [ id "BTCAddress", classList [ ( "btc-account-item", True ), ( "address-label", True ) ] ] [ Html.text account ]) model.listOfBTCAddresses
             )
         ]
 
@@ -447,8 +443,12 @@ formatBalance int64 =
     in
     String.fromFloat roundedXmr
 
+
+
 -- NAV: Cmd Msgs
-encryptionMsg : Json.Encode.Value  -> Cmd Msg
+
+
+encryptionMsg : Json.Encode.Value -> Cmd Msg
 encryptionMsg msg =
     msgFromAccounts msg
 
