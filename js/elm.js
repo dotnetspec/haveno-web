@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.at.jm === region.X.jm)
+	if (region.at.jn === region.X.jn)
 	{
-		return 'on line ' + region.at.jm;
+		return 'on line ' + region.at.jn;
 	}
-	return 'on lines ' + region.at.jm + ' through ' + region.X.jm;
+	return 'on lines ' + region.at.jn + ' through ' + region.X.jn;
 }
 
 
@@ -2720,7 +2720,7 @@ var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
 		c: func(record.c),
-		nT: record.nT,
+		nS: record.nS,
 		nM: record.nM
 	}
 });
@@ -2990,7 +2990,7 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 
 		var value = result.a;
 		var message = !tag ? value : tag < 3 ? value.a : value.c;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.nT;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.nS;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
 			(tag == 2 ? value.b : tag == 3 && value.nM) && event.preventDefault(),
@@ -3983,7 +3983,7 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 		impl.vl,
 		impl.u_,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.ej && impl.ej(sendToApp)
+			var divertHrefToApp = impl.el && impl.el(sendToApp)
 			var view = impl.vm;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
@@ -4058,7 +4058,7 @@ function _Browser_application(impl)
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		ej: function(sendToApp)
+		el: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4074,9 +4074,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.kp === next.kp
-							&& curr.mR === next.mR
-							&& curr.ki.a === next.ki.a
+							&& curr.kq === next.kq
+							&& curr.mS === next.mS
+							&& curr.kj.a === next.kj.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4252,7 +4252,7 @@ function _Browser_getViewport()
 			rV: _Browser_window.pageXOffset,
 			rY: _Browser_window.pageYOffset,
 			dn: _Browser_doc.documentElement.clientWidth,
-			iE: _Browser_doc.documentElement.clientHeight
+			iF: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4263,7 +4263,7 @@ function _Browser_getScene()
 	var elem = _Browser_doc.documentElement;
 	return {
 		dn: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		iE: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		iF: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4288,13 +4288,13 @@ function _Browser_getViewportOf(id)
 		return {
 			q0: {
 				dn: node.scrollWidth,
-				iE: node.scrollHeight
+				iF: node.scrollHeight
 			},
 			rM: {
 				rV: node.scrollLeft,
 				rY: node.scrollTop,
 				dn: node.clientWidth,
-				iE: node.clientHeight
+				iF: node.clientHeight
 			}
 		};
 	});
@@ -4329,13 +4329,13 @@ function _Browser_getElement(id)
 				rV: x,
 				rY: y,
 				dn: _Browser_doc.documentElement.clientWidth,
-				iE: _Browser_doc.documentElement.clientHeight
+				iF: _Browser_doc.documentElement.clientHeight
 			},
 			dq: {
 				rV: x + rect.left,
 				rY: y + rect.top,
 				dn: rect.width,
-				iE: rect.height
+				iF: rect.height
 			}
 		};
 	});
@@ -4622,7 +4622,7 @@ var _Http_toTask = F3(function(router, toTask, request)
 		$elm$core$Maybe$isJust(request.nk) && _Http_track(router, xhr, request.nk.a);
 
 		try {
-			xhr.open(request.pY, request.dl, true);
+			xhr.open(request.pX, request.dl, true);
 		} catch (e) {
 			return done($elm$http$Http$BadUrl_(request.dl));
 		}
@@ -4645,7 +4645,7 @@ function _Http_configureRequest(xhr, request)
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
-	xhr.timeout = request.lN.a || 0;
+	xhr.timeout = request.lO.a || 0;
 	xhr.responseType = request.s2.d;
 	xhr.withCredentials = request.r9;
 }
@@ -5287,7 +5287,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {ta: fragment, mR: host, uh: path, ki: port_, kp: protocol, uo: query};
+		return {ta: fragment, mS: host, uh: path, kj: port_, kq: protocol, uo: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5576,7 +5576,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo = $author$pr
 var $author$project$Pages$Splash$Loading = 0;
 var $author$project$Pages$Splash$Model = F7(
 	function (status, pagetitle, root, balances, primaryaddress, version, errors) {
-		return {bH: balances, dF: errors, ql: pagetitle, f2: primaryaddress, qT: root, dL: status, bF: version};
+		return {bH: balances, dG: errors, qk: pagetitle, f3: primaryaddress, qT: root, dM: status, bF: version};
 	});
 var $author$project$Pages$Splash$Splash = $elm$core$Basics$identity;
 var $author$project$Pages$Splash$initialModel = A7(
@@ -5597,17 +5597,17 @@ var $author$project$Pages$Accounts$initialModel = {
 	bH: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
 	sL: 0,
 	sM: 0,
-	dF: _List_Nil,
-	pD: false,
-	pO: _List_Nil,
-	mU: _List_Nil,
-	jP: '',
-	ql: 'Accounts',
-	f2: '',
-	m8: '',
-	dL: 0,
+	dG: _List_Nil,
+	pC: false,
+	pN: _List_Nil,
+	mV: _List_Nil,
+	jQ: '',
+	qk: 'Accounts',
+	f3: '',
+	ej: '',
+	dM: 0,
 	nc: '',
-	en: ''
+	dB: ''
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
@@ -5619,7 +5619,7 @@ var $author$project$Pages$Buy$Buy = $elm$core$Basics$identity;
 var $author$project$Pages$Buy$Loading = 0;
 var $author$project$Pages$Buy$initialModel = {
 	qT: {tW: 'Loading...'},
-	dL: 0,
+	dM: 0,
 	vg: 'Buy'
 };
 var $elm$core$Platform$Cmd$map = _Platform_map;
@@ -5630,7 +5630,7 @@ var $author$project$Pages$Buy$init = function (_v0) {
 			{vg: 'Haveno-Web Buy'}),
 		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
-var $author$project$Pages$Connect$initialModel = {e_: 0, e3: '', tm: false, mZ: 'node.haveno.network:17750', f2: '', nQ: false, m3: false, vn: false};
+var $author$project$Pages$Connect$initialModel = {e$: 0, e4: '', tm: false, m_: 'node.haveno.network:17750', f3: '', nP: false, m4: false, vn: false};
 var $author$project$Pages$Connect$init = function (_v0) {
 	return _Utils_Tuple2($author$project$Pages$Connect$initialModel, $elm$core$Platform$Cmd$none);
 };
@@ -5639,11 +5639,11 @@ var $author$project$Pages$Donate$Loaded = 0;
 var $author$project$Pages$Donate$initialModel = {
 	bH: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
 	sM: 0,
-	dF: _List_Nil,
-	pD: false,
-	ql: 'Donate',
-	f2: '',
-	dL: 0,
+	dG: _List_Nil,
+	pC: false,
+	qk: 'Donate',
+	f3: '',
+	dM: 0,
 	nc: ''
 };
 var $author$project$Pages$Donate$init = function (_v0) {
@@ -5654,11 +5654,11 @@ var $author$project$Pages$Funds$Loaded = 0;
 var $author$project$Pages$Funds$initialModel = {
 	bH: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
 	sM: 0,
-	dF: _List_Nil,
-	pD: false,
-	ql: 'Funds',
-	f2: '',
-	dL: 0,
+	dG: _List_Nil,
+	pC: false,
+	qk: 'Funds',
+	f3: '',
+	dM: 0,
 	nc: ''
 };
 var $author$project$Pages$Funds$init = function (_v0) {
@@ -5669,7 +5669,7 @@ var $author$project$Pages$Market$Loading = 0;
 var $author$project$Pages$Market$Market = $elm$core$Basics$identity;
 var $author$project$Pages$Market$initialModel = {
 	qT: {tW: 'Loading...'},
-	dL: 0,
+	dM: 0,
 	vg: 'Market'
 };
 var $author$project$Pages$Market$init = function (_v0) {
@@ -5684,7 +5684,7 @@ var $author$project$Pages$Portfolio$Loading = 0;
 var $author$project$Pages$Portfolio$Portfolio = $elm$core$Basics$identity;
 var $author$project$Pages$Portfolio$initialModel = {
 	qT: {tW: 'Loading...'},
-	dL: 0,
+	dM: 0,
 	vg: 'Portfolio'
 };
 var $author$project$Pages$Portfolio$init = function (_v0) {
@@ -5699,7 +5699,7 @@ var $author$project$Pages$Sell$Loading = 0;
 var $author$project$Pages$Sell$Sell = $elm$core$Basics$identity;
 var $author$project$Pages$Sell$initialModel = {
 	qT: {tW: 'Loading...'},
-	dL: 0,
+	dM: 0,
 	vg: 'Sell'
 };
 var $author$project$Pages$Sell$init = function (_v0) {
@@ -5716,7 +5716,7 @@ var $author$project$Pages$Splash$init = function (fromMainToSplash) {
 		{tW: 'Loading...'},
 		$elm$core$Maybe$Nothing,
 		'',
-		fromMainToSplash.pl,
+		fromMainToSplash.pk,
 		_List_Nil);
 	return _Utils_Tuple2(
 		newModel,
@@ -5732,7 +5732,7 @@ var $author$project$Pages$Support$Loading = 0;
 var $author$project$Pages$Support$Support = $elm$core$Basics$identity;
 var $author$project$Pages$Support$initialModel = {
 	qT: {tW: 'Loading...'},
-	dL: 0,
+	dM: 0,
 	vg: 'Support'
 };
 var $author$project$Pages$Support$init = function (_v0) {
@@ -5744,7 +5744,7 @@ var $author$project$Pages$Support$init = function (_v0) {
 };
 var $elm$url$Url$Parser$State = F5(
 	function (visited, unvisited, params, frag, value) {
-		return {d_: frag, ea: params, dN: unvisited, ao: value, er: visited};
+		return {d$: frag, eb: params, dO: unvisited, ao: value, es: visited};
 	});
 var $elm$url$Url$Parser$getFirstMatch = function (states) {
 	getFirstMatch:
@@ -5754,7 +5754,7 @@ var $elm$url$Url$Parser$getFirstMatch = function (states) {
 		} else {
 			var state = states.a;
 			var rest = states.b;
-			var _v1 = state.dN;
+			var _v1 = state.dO;
 			if (!_v1.b) {
 				return $elm$core$Maybe$Just(state.ao);
 			} else {
@@ -6406,7 +6406,7 @@ var $author$project$Main$GotConnectMsg = function (a) {
 var $author$project$Main$Loaded = 1;
 var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$isXMRWalletConnected = function (model) {
-	return (!(model.f2 === '')) ? true : false;
+	return (!(model.f3 === '')) ? true : false;
 };
 var $author$project$Main$toConnect = F2(
 	function (model, _v0) {
@@ -6423,7 +6423,7 @@ var $author$project$Main$toConnect = F2(
 								tm: model.dv,
 								vn: $author$project$Main$isXMRWalletConnected(model)
 							})),
-					dL: 1
+					dM: 1
 				}),
 			A2($elm$core$Platform$Cmd$map, $author$project$Main$GotConnectMsg, cmd));
 	});
@@ -6575,10 +6575,10 @@ var $eriktim$elm_protocol_buffers$Internal$Int64$fromInts = F2(
 	});
 var $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts = $eriktim$elm_protocol_buffers$Internal$Int64$fromInts;
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__BtcBalanceInfo = {
-	op: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
-	jn: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
-	kH: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
-	lR: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0)
+	oo: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	jo: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	kI: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	lS: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0)
 };
 var $eriktim$elm_protocol_buffers$Protobuf$Decode$Decoder = $elm$core$Basics$identity;
 var $elm$bytes$Bytes$Encode$getWidth = function (builder) {
@@ -6943,7 +6943,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$unknownFieldDecoder = function
 };
 var $eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage = F2(
 	function (width, state) {
-		return (state.dn <= 0) ? ($elm$core$Set$isEmpty(state.kE) ? $elm$bytes$Bytes$Decode$succeed(
+		return (state.dn <= 0) ? ($elm$core$Set$isEmpty(state.kF) ? $elm$bytes$Bytes$Decode$succeed(
 			$elm$bytes$Bytes$Decode$Done(
 				_Utils_Tuple2(width, state.tT))) : $elm$bytes$Bytes$Decode$fail) : A2(
 			$elm$bytes$Bytes$Decode$andThen,
@@ -6965,7 +6965,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage = F2(
 									state,
 									{
 										tT: fn(state.tT),
-										kE: A2($elm$core$Set$remove, fieldNumber, state.kE),
+										kF: A2($elm$core$Set$remove, fieldNumber, state.kF),
 										dn: (state.dn - usedBytes) - n
 									}));
 						},
@@ -7016,7 +7016,7 @@ var $eriktim$elm_protocol_buffers$Protobuf$Decode$message = F2(
 				var width = wireType.a;
 				return A2(
 					$elm$bytes$Bytes$Decode$loop,
-					{nt: dict, tT: v, kE: requiredSet, dn: width},
+					{nt: dict, tT: v, kF: requiredSet, dn: width},
 					$eriktim$elm_protocol_buffers$Protobuf$Decode$stepMessage(width));
 			} else {
 				return $elm$bytes$Bytes$Decode$fail;
@@ -7162,7 +7162,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{op: a});
+						{oo: a});
 				})),
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
@@ -7172,7 +7172,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{kH: a});
+						{kI: a});
 				})),
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
@@ -7182,7 +7182,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{lR: a});
+						{lS: a});
 				})),
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
@@ -7192,15 +7192,15 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{jn: a});
+						{jo: a});
 				}))
 		]));
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__XmrBalanceInfo = {
-	op: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	oo: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
 	bR: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
-	ke: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
+	kf: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
 	uu: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0),
-	kI: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0)
+	kJ: A2($eriktim$elm_protocol_buffers$Protobuf$Types$Int64$fromInts, 0, 0)
 };
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__XmrBalanceInfo = A2(
 	$eriktim$elm_protocol_buffers$Protobuf$Decode$message,
@@ -7225,7 +7225,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{op: a});
+						{oo: a});
 				})),
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
@@ -7235,7 +7235,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{ke: a});
+						{kf: a});
 				})),
 			A3(
 			$eriktim$elm_protocol_buffers$Protobuf$Decode$optional,
@@ -7255,7 +7255,7 @@ var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Have
 				function (a, r) {
 					return _Utils_update(
 						r,
-						{kI: a});
+						{kJ: a});
 				}))
 		]));
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$decodeProto__Io__Haveno__Protobuffer__BalancesInfo = A2(
@@ -7551,10 +7551,10 @@ var $anmolitor$elm_grpc$Grpc$new = F2(
 				[
 					A2($elm$http$Http$header, 'accept', $anmolitor$elm_grpc$Grpc$grpcContentType)
 				]),
-			mR: '',
-			m4: false,
-			kL: rpc,
-			lN: $elm$core$Maybe$Nothing,
+			mS: '',
+			m5: false,
+			kM: rpc,
+			lO: $elm$core$Maybe$Nothing,
 			nk: $elm$core$Maybe$Nothing
 		};
 	});
@@ -7563,7 +7563,7 @@ var $anmolitor$elm_grpc$Grpc$setHost = F2(
 		var req = _v0;
 		return _Utils_update(
 			req,
-			{mR: host});
+			{mS: host});
 	});
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -7861,7 +7861,7 @@ var $anmolitor$elm_grpc$Grpc$handleResponse = F2(
 						A2($elm$core$Dict$get, 'grpc-message', metadata.bI));
 					return $elm$core$Result$Err(
 						$anmolitor$elm_grpc$Grpc$BadStatus(
-							{s0: errMessage, cA: metadata, uw: bytes, dL: grpcStatus}));
+							{s0: errMessage, cA: metadata, uw: bytes, dM: grpcStatus}));
 				}
 			});
 		switch (httpResponse.$) {
@@ -8005,8 +8005,8 @@ var $elm$http$Http$cmdMap = F2(
 					sm: r.sm,
 					s2: A2(_Http_mapExpect, func, r.s2),
 					bI: r.bI,
-					pY: r.pY,
-					lN: r.lN,
+					pX: r.pX,
+					lO: r.lO,
 					nk: r.nk,
 					dl: r.dl
 				});
@@ -8031,12 +8031,12 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{r9: false, sm: r.sm, s2: r.s2, bI: r.bI, pY: r.pY, lN: r.lN, nk: r.nk, dl: r.dl}));
+			{r9: false, sm: r.sm, s2: r.s2, bI: r.bI, pX: r.pX, lO: r.lO, nk: r.nk, dl: r.dl}));
 };
 var $elm$http$Http$riskyRequest = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{r9: true, sm: r.sm, s2: r.s2, bI: r.bI, pY: r.pY, lN: r.lN, nk: r.nk, dl: r.dl}));
+			{r9: true, sm: r.sm, s2: r.s2, bI: r.bI, pX: r.pX, lO: r.lO, nk: r.nk, dl: r.dl}));
 };
 var $anmolitor$elm_grpc$Grpc$rpcPath = function (_v0) {
 	var service = _v0.uL;
@@ -8047,8 +8047,8 @@ var $anmolitor$elm_grpc$Grpc$rpcPath = function (_v0) {
 var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 	function (expect, _v0) {
 		var req = _v0;
-		var toHttpRequest = req.m4 ? $elm$http$Http$riskyRequest : $elm$http$Http$request;
-		var _v1 = req.kL;
+		var toHttpRequest = req.m5 ? $elm$http$Http$riskyRequest : $elm$http$Http$request;
+		var _v1 = req.kM;
 		var rpc = _v1;
 		var body = A2(
 			$elm$http$Http$bytesBody,
@@ -8064,12 +8064,12 @@ var $anmolitor$elm_grpc$Grpc$toCmd = F2(
 					expect,
 					$anmolitor$elm_grpc$Grpc$handleResponse(rpc.sP)),
 				bI: req.bI,
-				pY: 'POST',
-				lN: req.lN,
+				pX: 'POST',
+				lO: req.lO,
 				nk: req.nk,
 				dl: _Utils_ap(
-					req.mR,
-					$anmolitor$elm_grpc$Grpc$rpcPath(req.kL))
+					req.mS,
+					$anmolitor$elm_grpc$Grpc$rpcPath(req.kM))
 			});
 	});
 var $author$project$Main$gotAvailableBalances = function () {
@@ -8083,56 +8083,6 @@ var $author$project$Main$gotAvailableBalances = function () {
 			A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getBalances, $author$project$Proto$Io$Haveno$Protobuffer$defaultGetBalancesRequest)));
 	return A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Main$GotBalances, grpcRequest);
 }();
-var $elm$json$Json$Encode$list = F2(
-	function (func, entries) {
-		return _Json_wrap(
-			A3(
-				$elm$core$List$foldl,
-				_Json_addEntry(func),
-				_Json_emptyArray(0),
-				entries));
-	});
-var $author$project$Main$msgFromMain = _Platform_outgoingPort('msgFromMain', $elm$core$Basics$identity);
-var $elm$json$Json$Encode$object = function (pairs) {
-	return _Json_wrap(
-		A3(
-			$elm$core$List$foldl,
-			F2(
-				function (_v0, obj) {
-					var k = _v0.a;
-					var v = _v0.b;
-					return A3(_Json_addField, k, v, obj);
-				}),
-			_Json_emptyObject(0),
-			pairs));
-};
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $author$project$Main$gotDecryptedCryptoAccountData = function (model) {
-	var message = $elm$json$Json$Encode$object(
-		_List_fromArray(
-			[
-				_Utils_Tuple2(
-				'typeOfMsg',
-				$elm$json$Json$Encode$string('decryptCryptoAccountsMsgRequest')),
-				_Utils_Tuple2(
-				'currency',
-				$elm$json$Json$Encode$string('BTC')),
-				_Utils_Tuple2(
-				'page',
-				$elm$json$Json$Encode$string('AccountsPage')),
-				_Utils_Tuple2(
-				'accountsData',
-				A2(
-					$elm$json$Json$Encode$list,
-					$elm$json$Json$Encode$string,
-					_List_fromArray(
-						['', '']))),
-				_Utils_Tuple2(
-				'password',
-				$elm$json$Json$Encode$string(model.nO))
-			]));
-	return $author$project$Main$msgFromMain(message);
-};
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressRequest = {};
 var $author$project$Proto$Io$Haveno$Protobuffer$defaultGetXmrPrimaryAddressRequest = $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressRequest;
 var $author$project$Proto$Io$Haveno$Protobuffer$Internals_$defaultProto__Io__Haveno__Protobuffer__GetXmrPrimaryAddressReply = {um: ''};
@@ -8183,6 +8133,30 @@ var $author$project$Comms$CustomGrpc$gotPrimaryAddress = A2(
 		'password',
 		'apitest',
 		A2($anmolitor$elm_grpc$Grpc$new, $author$project$Proto$Io$Haveno$Protobuffer$Wallets$getXmrPrimaryAddress, $author$project$Proto$Io$Haveno$Protobuffer$defaultGetXmrPrimaryAddressRequest)));
+var $elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				$elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(0),
+				entries));
+	});
+var $author$project$Main$msgFromMain = _Platform_outgoingPort('msgFromMain', $elm$core$Basics$identity);
+var $elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			$elm$core$List$foldl,
+			F2(
+				function (_v0, obj) {
+					var k = _v0.a;
+					var v = _v0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(0),
+			pairs));
+};
+var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Main$notifyJsReady = function () {
 	var sendMessage = $elm$json$Json$Encode$object(
 		_List_fromArray(
@@ -8271,8 +8245,7 @@ var $author$project$Main$toSplash = F2(
 						$author$project$Main$gotAvailableBalances,
 						A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Main$GotXmrPrimaryAddress, $author$project$Comms$CustomGrpc$gotPrimaryAddress),
 						$author$project$Main$startTimeout,
-						$author$project$Main$notifyJsReady,
-						$author$project$Main$gotDecryptedCryptoAccountData(model)
+						$author$project$Main$notifyJsReady
 					])));
 	});
 var $author$project$Main$GotSupportMsg = function (a) {
@@ -8306,10 +8279,10 @@ var $author$project$Main$Support = 4;
 var $elm$url$Url$Parser$Parser = $elm$core$Basics$identity;
 var $elm$url$Url$Parser$mapState = F2(
 	function (func, _v0) {
-		var visited = _v0.er;
-		var unvisited = _v0.dN;
-		var params = _v0.ea;
-		var frag = _v0.d_;
+		var visited = _v0.es;
+		var unvisited = _v0.dO;
+		var params = _v0.eb;
+		var frag = _v0.d$;
 		var value = _v0.ao;
 		return A5(
 			$elm$url$Url$Parser$State,
@@ -8323,10 +8296,10 @@ var $elm$url$Url$Parser$map = F2(
 	function (subValue, _v0) {
 		var parseArg = _v0;
 		return function (_v1) {
-			var visited = _v1.er;
-			var unvisited = _v1.dN;
-			var params = _v1.ea;
-			var frag = _v1.d_;
+			var visited = _v1.es;
+			var unvisited = _v1.dO;
+			var params = _v1.eb;
+			var frag = _v1.d$;
 			var value = _v1.ao;
 			return A2(
 				$elm$core$List$map,
@@ -8364,10 +8337,10 @@ var $elm$url$Url$Parser$oneOf = function (parsers) {
 };
 var $elm$url$Url$Parser$s = function (str) {
 	return function (_v0) {
-		var visited = _v0.er;
-		var unvisited = _v0.dN;
-		var params = _v0.ea;
-		var frag = _v0.d_;
+		var visited = _v0.es;
+		var unvisited = _v0.dO;
+		var params = _v0.eb;
+		var frag = _v0.d$;
 		var value = _v0.ao;
 		if (!unvisited.b) {
 			return _List_Nil;
@@ -8458,7 +8431,7 @@ var $author$project$Main$updateUrl = F2(
 						$author$project$Main$toSplash,
 						model,
 						$author$project$Pages$Splash$init(
-							{pl: model.bF, lM: $elm$core$Maybe$Nothing}));
+							{pk: model.bF, lN: $elm$core$Maybe$Nothing}));
 				case 1:
 					var _v3 = _v0.a;
 					return A2(
@@ -8513,7 +8486,7 @@ var $author$project$Main$updateUrl = F2(
 				$author$project$Main$toSplash,
 				model,
 				$author$project$Pages$Splash$init(
-					{pl: model.bF, lM: $elm$core$Maybe$Nothing}));
+					{pk: model.bF, lN: $elm$core$Maybe$Nothing}));
 		}
 	});
 var $elm$json$Json$Decode$andThen = _Json_andThen;
@@ -8548,17 +8521,17 @@ var $author$project$Main$init = F3(
 			bH: $elm$core$Maybe$Just($author$project$Proto$Io$Haveno$Protobuffer$defaultBalancesInfo),
 			nq: _List_fromArray(
 				['']),
-			dF: _List_Nil,
-			o7: decodedJsonFromSetupElmjs,
-			px: false,
+			dG: _List_Nil,
+			o6: decodedJsonFromSetupElmjs,
+			pw: false,
 			dv: false,
-			dG: false,
-			pI: key,
+			dH: false,
+			pH: key,
 			E: $author$project$Main$SplashPage($author$project$Pages$Splash$initialModel),
-			f2: '',
-			nO: '',
-			dL: 0,
-			lM: $elm$time$Time$millisToPosix(0),
+			f3: '',
+			qG: '',
+			dM: 0,
+			lN: $elm$time$Time$millisToPosix(0),
 			ru: $elm$core$Maybe$Nothing,
 			bF: 'No Haveno version available',
 			r_: $elm$core$Maybe$Nothing
@@ -8605,7 +8578,7 @@ var $elm$core$List$head = function (list) {
 };
 var $author$project$Main$JsMessage = F4(
 	function (page, typeOfMsg, accountsData, currency) {
-		return {eA: accountsData, oP: currency, E: page, nW: typeOfMsg};
+		return {eB: accountsData, oO: currency, E: page, nV: typeOfMsg};
 	});
 var $elm$json$Json$Decode$list = _Json_decodeList;
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
@@ -8657,7 +8630,7 @@ var $elm$url$Url$addPrefixed = F3(
 	});
 var $elm$url$Url$toString = function (url) {
 	var http = function () {
-		var _v0 = url.kp;
+		var _v0 = url.kq;
 		if (!_v0) {
 			return 'http://';
 		} else {
@@ -8675,56 +8648,83 @@ var $elm$url$Url$toString = function (url) {
 			_Utils_ap(
 				A2(
 					$elm$url$Url$addPort,
-					url.ki,
-					_Utils_ap(http, url.mR)),
+					url.kj,
+					_Utils_ap(http, url.mS)),
 				url.uh)));
 };
 var $author$project$Pages$Accounts$DisplayStoredBTCAddresses = 4;
 var $author$project$Pages$Accounts$Errored = 1;
-var $author$project$Pages$Accounts$convertStringToCurrencyType = function (cryptoAccount) {
+var $author$project$Pages$Accounts$convertCurrencyTypeToString = function (cryptoAccount) {
 	return 'BTC';
 };
-var $author$project$Pages$Accounts$msgFromAccounts = _Platform_outgoingPort('msgFromAccounts', $elm$json$Json$Encode$string);
-var $author$project$Pages$Accounts$encryptionMsg = function (msgString) {
-	return $author$project$Pages$Accounts$msgFromAccounts(msgString);
+var $author$project$Pages$Accounts$encryptCryptoAccountMsgRequest = F2(
+	function (address, model) {
+		var btcAccountCount = $elm$core$List$length(model.pN);
+		var storeAs = 'BTC_Public_Key_' + $elm$core$String$fromInt(btcAccountCount);
+		return $elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'typeOfMsg',
+					$elm$json$Json$Encode$string('encryptCryptoAccountMsgRequest')),
+					_Utils_Tuple2(
+					'currency',
+					$elm$json$Json$Encode$string(
+						$author$project$Pages$Accounts$convertCurrencyTypeToString(model.sL))),
+					_Utils_Tuple2(
+					'accountsData',
+					$elm$json$Json$Encode$string(address)),
+					_Utils_Tuple2(
+					'storeAs',
+					$elm$json$Json$Encode$string(storeAs)),
+					_Utils_Tuple2(
+					'password',
+					$elm$json$Json$Encode$string(model.ej))
+				]));
+	});
+var $author$project$Pages$Accounts$msgFromAccounts = _Platform_outgoingPort('msgFromAccounts', $elm$core$Basics$identity);
+var $author$project$Pages$Accounts$encryptionMsg = function (msg) {
+	return $author$project$Pages$Accounts$msgFromAccounts(msg);
+};
+var $author$project$Pages$Accounts$gotDecryptedCryptoAccountData = function (model) {
+	var message = $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'typeOfMsg',
+				$elm$json$Json$Encode$string('decryptCryptoAccountsMsgRequest')),
+				_Utils_Tuple2(
+				'currency',
+				$elm$json$Json$Encode$string('BTC')),
+				_Utils_Tuple2(
+				'page',
+				$elm$json$Json$Encode$string('AccountsPage')),
+				_Utils_Tuple2(
+				'accountsData',
+				A2(
+					$elm$json$Json$Encode$list,
+					$elm$json$Json$Encode$string,
+					_List_fromArray(
+						['', '']))),
+				_Utils_Tuple2(
+				'password',
+				$elm$json$Json$Encode$string(model.ej))
+			]));
+	return $author$project$Pages$Accounts$msgFromAccounts(message);
 };
 var $author$project$Pages$Accounts$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 3:
 				var address = msg.a;
-				var btcAccountCount = $elm$core$List$length(model.pO);
-				var storeAs = 'BTC_Public_Key_' + $elm$core$String$fromInt(btcAccountCount);
-				var message = A2(
-					$elm$json$Json$Encode$encode,
-					0,
-					$elm$json$Json$Encode$object(
-						_List_fromArray(
-							[
-								_Utils_Tuple2(
-								'typeOfMsg',
-								$elm$json$Json$Encode$string('encryptCryptoAccountMsgRequest')),
-								_Utils_Tuple2(
-								'currency',
-								$elm$json$Json$Encode$string(
-									$author$project$Pages$Accounts$convertStringToCurrencyType(model.sL))),
-								_Utils_Tuple2(
-								'accountsData',
-								$elm$json$Json$Encode$string(address)),
-								_Utils_Tuple2(
-								'storeAs',
-								$elm$json$Json$Encode$string(storeAs)),
-								_Utils_Tuple2(
-								'password',
-								$elm$json$Json$Encode$string(model.m8))
-							])));
+				var message = A2($author$project$Pages$Accounts$encryptCryptoAccountMsgRequest, address, model);
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
 							sM: 4,
-							pO: _Utils_ap(
-								model.pO,
+							pN: _Utils_ap(
+								model.pN,
 								_List_fromArray(
 									[address]))
 						}),
@@ -8735,22 +8735,29 @@ var $author$project$Pages$Accounts$update = F2(
 					_Utils_update(
 						model,
 						{
-							pO: _Utils_ap(model.pO, data)
+							pN: _Utils_ap(model.pN, data)
 						}),
-					$elm$core$Platform$Cmd$none);
+					$elm$core$Platform$Cmd$batch(
+						_List_fromArray(
+							[
+								$author$project$Pages$Accounts$gotDecryptedCryptoAccountData(
+								_Utils_update(
+									model,
+									{ej: model.dB}))
+							])));
 			case 1:
 				if (!msg.a.$) {
 					var primaryAddresponse = msg.a.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{sM: 0, f2: primaryAddresponse.um, dL: 0}),
+							{sM: 0, f3: primaryAddresponse.um, dM: 0}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{dL: 1}),
+							{dM: 1}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 2:
@@ -8759,13 +8766,13 @@ var $author$project$Pages$Accounts$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{sM: 0, dL: 0, nc: subAddresponse.nc}),
+							{sM: 0, dM: 0, nc: subAddresponse.nc}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{dL: 1}),
+							{dM: 1}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 0:
@@ -8774,13 +8781,13 @@ var $author$project$Pages$Accounts$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{bH: response.bH, sM: 0, dL: 0}),
+							{bH: response.bH, sM: 0, dM: 0}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{dL: 1}),
+							{dM: 1}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 5:
@@ -8795,26 +8802,33 @@ var $author$project$Pages$Accounts$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{jP: address}),
+						{jQ: address}),
 					$elm$core$Platform$Cmd$none);
 			case 7:
 				var newPass = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{en: newPass}),
+						{dB: newPass}),
 					$elm$core$Platform$Cmd$none);
 			case 9:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{m8: model.en, en: ''}),
-					$elm$core$Platform$Cmd$none);
+						{ej: model.dB, dB: ''}),
+					$elm$core$Platform$Cmd$batch(
+						_List_fromArray(
+							[
+								$author$project$Pages$Accounts$gotDecryptedCryptoAccountData(
+								_Utils_update(
+									model,
+									{ej: model.dB}))
+							])));
 			default:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{en: ''}),
+						{dB: ''}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -8839,33 +8853,33 @@ var $author$project$Pages$Connect$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{e_: model.e_, f2: primaryAddresponse.um, m3: false, vn: true}),
+							{e$: model.e$, f3: primaryAddresponse.um, m4: false, vn: true}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{e_: model.e_ + 1, m3: true}),
+							{e$: model.e$ + 1, m4: true}),
 						A2($anmolitor$elm_grpc$Grpc$toCmd, $author$project$Pages$Connect$RetryWalletConnection, $author$project$Comms$CustomGrpc$gotPrimaryAddress));
 				}
 			case 1:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{nQ: true}),
+						{nP: true}),
 					$elm$core$Platform$Cmd$none);
 			case 2:
 				var node = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{e3: node}),
+						{e4: node}),
 					$elm$core$Platform$Cmd$none);
 			default:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{e3: '', mZ: model.e3}),
+						{e4: '', m_: model.e4}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -8880,13 +8894,13 @@ var $author$project$Pages$Donate$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{sM: 0, f2: primaryAddresponse.um, dL: 0}),
+							{sM: 0, f3: primaryAddresponse.um, dM: 0}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{dL: 1}),
+							{dM: 1}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 2:
@@ -8895,13 +8909,13 @@ var $author$project$Pages$Donate$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{sM: 1, dL: 0, nc: subAddresponse.nc}),
+							{sM: 1, dM: 0, nc: subAddresponse.nc}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{dL: 1}),
+							{dM: 1}),
 						$elm$core$Platform$Cmd$none);
 				}
 			default:
@@ -8910,13 +8924,13 @@ var $author$project$Pages$Donate$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{bH: response.bH, dL: 0}),
+							{bH: response.bH, dM: 0}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{dL: 1}),
+							{dM: 1}),
 						$elm$core$Platform$Cmd$none);
 				}
 		}
@@ -8968,7 +8982,7 @@ var $author$project$Pages$Funds$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{pD: !model.pD}),
+						{pC: !model.pC}),
 					$elm$core$Platform$Cmd$none);
 			case 1:
 				return _Utils_Tuple2(model, $author$project$Pages$Funds$gotNewSubAddress);
@@ -8978,13 +8992,13 @@ var $author$project$Pages$Funds$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{sM: 1, dL: 0, nc: subAddresponse.nc}),
+							{sM: 1, dM: 0, nc: subAddresponse.nc}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{dL: 1}),
+							{dM: 1}),
 						$elm$core$Platform$Cmd$none);
 				}
 		}
@@ -9041,7 +9055,7 @@ var $author$project$Main$update = F2(
 					}();
 					var updatedModel = _Utils_update(
 						model,
-						{dv: true, dL: 1, bF: verResp});
+						{dv: true, dM: 1, bF: verResp});
 					return A2(
 						$author$project$Main$toAccounts,
 						updatedModel,
@@ -9058,7 +9072,7 @@ var $author$project$Main$update = F2(
 					var primaryAddresponse = msg.a.a;
 					var updatedModel = _Utils_update(
 						model,
-						{dv: true, f2: primaryAddresponse.um, dL: 1});
+						{dv: true, f3: primaryAddresponse.um, dM: 1});
 					return A2(
 						$author$project$Main$toAccounts,
 						updatedModel,
@@ -9071,7 +9085,7 @@ var $author$project$Main$update = F2(
 					var response = msg.a.a;
 					var updatedModel = _Utils_update(
 						model,
-						{bH: response.bH, dL: 1});
+						{bH: response.bH, dM: 1});
 					return _Utils_Tuple2(
 						updatedModel,
 						$elm$core$Platform$Cmd$batch(
@@ -9099,7 +9113,7 @@ var $author$project$Main$update = F2(
 					var url = urlRequest.a;
 					var modelWithMenuClosed = _Utils_update(
 						model,
-						{dG: false});
+						{dH: false});
 					var _v4 = $elm$url$Url$toString(url);
 					if (_v4 === 'https://haveno-web-dev.netlify.app//') {
 						return _Utils_Tuple2(
@@ -9117,7 +9131,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{dG: !model.dG}),
+						{dH: !model.dH}),
 					$elm$core$Platform$Cmd$none);
 			case 12:
 				var message = msg.a;
@@ -9126,7 +9140,7 @@ var $author$project$Main$update = F2(
 					var jsMsg = _v5.a;
 					var _v6 = jsMsg.E;
 					if (_v6 === 'AccountsPage') {
-						var _v7 = jsMsg.nW;
+						var _v7 = jsMsg.nV;
 						switch (_v7) {
 							case 'encryptCryptoAccountMsgRequest':
 								var accountsMdl = function () {
@@ -9136,8 +9150,8 @@ var $author$project$Main$update = F2(
 										return _Utils_update(
 											accountsModel,
 											{
-												sL: $author$project$Main$convertStringToCurrencyType(jsMsg.oP),
-												pO: jsMsg.eA
+												sL: $author$project$Main$convertStringToCurrencyType(jsMsg.oO),
+												pN: jsMsg.eB
 											});
 									} else {
 										return $author$project$Pages$Accounts$initialModel;
@@ -9152,7 +9166,7 @@ var $author$project$Main$update = F2(
 											A2(
 												$elm$core$Maybe$withDefault,
 												'No BTC address',
-												$elm$core$List$head(jsMsg.eA))),
+												$elm$core$List$head(jsMsg.eB))),
 										accountsMdl));
 							case 'decryptedCryptoAccountsResponse':
 								var accountsMdl = function () {
@@ -9161,7 +9175,7 @@ var $author$project$Main$update = F2(
 										var accountsModel = _v9.a;
 										return _Utils_update(
 											accountsModel,
-											{pO: jsMsg.eA});
+											{pN: jsMsg.eB});
 									} else {
 										return $author$project$Pages$Accounts$initialModel;
 									}
@@ -9170,20 +9184,20 @@ var $author$project$Main$update = F2(
 									$author$project$Main$toAccounts,
 									_Utils_update(
 										model,
-										{nq: jsMsg.eA}),
+										{nq: jsMsg.eB}),
 									A2(
 										$author$project$Pages$Accounts$update,
-										$author$project$Pages$Accounts$DecryptCryptoAccounts(jsMsg.eA),
+										$author$project$Pages$Accounts$DecryptCryptoAccounts(jsMsg.eB),
 										accountsMdl));
 							default:
 								return _Utils_Tuple2(
 									_Utils_update(
 										model,
 										{
-											dF: _Utils_ap(
-												model.dF,
+											dG: _Utils_ap(
+												model.dG,
 												_List_fromArray(
-													['Third Case', jsMsg.nW]))
+													['Third Case', jsMsg.nV]))
 										}),
 									$elm$core$Platform$Cmd$none);
 						}
@@ -9192,8 +9206,8 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									dF: _Utils_ap(
-										model.dF,
+									dG: _Utils_ap(
+										model.dG,
 										_List_fromArray(
 											['Second Case', 'Not accounts page']))
 								}),
@@ -9205,8 +9219,8 @@ var $author$project$Main$update = F2(
 						_Utils_update(
 							model,
 							{
-								dF: _Utils_ap(
-									model.dF,
+								dG: _Utils_ap(
+									model.dG,
 									_List_fromArray(
 										[
 											'First Case',
@@ -9263,7 +9277,7 @@ var $author$project$Main$update = F2(
 						case 2:
 							var newFundsModel = _Utils_update(
 								fundsModel,
-								{f2: model.f2});
+								{f3: model.f3});
 							return A2(
 								$author$project$Main$toFunds,
 								model,
@@ -9271,7 +9285,7 @@ var $author$project$Main$update = F2(
 						case 1:
 							var newFundsModel = _Utils_update(
 								fundsModel,
-								{sM: 1, dL: 0});
+								{sM: 1, dM: 0});
 							return A2(
 								$author$project$Main$toFunds,
 								model,
@@ -9485,7 +9499,7 @@ var $author$project$Pages$Accounts$btcAccountsView = function (model) {
 					[
 						$elm$html$Html$Attributes$id('accounts-listOfBTCAccounts')
 					]),
-				$elm$core$List$isEmpty(model.pO) ? _List_fromArray(
+				$elm$core$List$isEmpty(model.pN) ? _List_fromArray(
 					[
 						A2(
 						$elm$html$Html$div,
@@ -9516,7 +9530,7 @@ var $author$project$Pages$Accounts$btcAccountsView = function (model) {
 									$elm$html$Html$text(account)
 								]));
 					},
-					model.pO))
+					model.pN))
 			]));
 };
 var $author$project$Pages$Accounts$UpdateNewBTCAddress = function (a) {
@@ -9689,7 +9703,7 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 										$elm$html$Html$Attributes$id('account-name-input'),
 										$elm$html$Html$Attributes$type_('text'),
 										$elm$html$Html$Attributes$readonly(true),
-										$elm$html$Html$Attributes$value('BTC: ' + model.jP)
+										$elm$html$Html$Attributes$value('BTC: ' + model.jQ)
 									]),
 								_List_Nil)
 							]))
@@ -9698,7 +9712,7 @@ var $author$project$Pages$Accounts$createNewBTCAccountView = function (model) {
 				$author$project$Utils$MyUtils$infoBtn,
 				'SAVE NEW BTC ACCOUNT',
 				'save-new-BTC-account-button',
-				$author$project$Pages$Accounts$AddNewCryptoAccount(model.jP))
+				$author$project$Pages$Accounts$AddNewCryptoAccount(model.jQ))
 			]));
 };
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
@@ -9754,7 +9768,7 @@ var $author$project$Pages$Accounts$existingCryptoAccountsView = function (model)
 					[
 						$elm$html$Html$Attributes$id('accounts-listOfExistingCryptoAccounts')
 					]),
-				$elm$core$List$isEmpty(model.mU) ? _List_fromArray(
+				$elm$core$List$isEmpty(model.mV) ? _List_fromArray(
 					[
 						A2(
 						$elm$html$Html$div,
@@ -9780,7 +9794,7 @@ var $author$project$Pages$Accounts$existingCryptoAccountsView = function (model)
 									$elm$html$Html$text(account)
 								]));
 					},
-					model.mU))
+					model.mV))
 			]));
 };
 var $elm$html$Html$h4 = _VirtualDom_node('h4');
@@ -9829,7 +9843,7 @@ var $author$project$Pages$Accounts$passwordView = function (model) {
 										$elm$html$Html$Attributes$type_('text'),
 										$elm$html$Html$Attributes$placeholder('Enter password to en/decrypt accounts data'),
 										$elm$html$Html$Events$onInput($author$project$Pages$Accounts$UpdatePassword),
-										$elm$html$Html$Attributes$value(model.en)
+										$elm$html$Html$Attributes$value(model.dB)
 									]),
 								_List_Nil)
 							]))
@@ -9949,7 +9963,7 @@ var $author$project$Pages$Accounts$view = function (model) {
 					[
 						A2($elm$html$Html$div, _List_Nil, _List_Nil),
 						function () {
-						var _v0 = model.dL;
+						var _v0 = model.dM;
 						if (_v0 === 1) {
 							return A2(
 								$elm$html$Html$div,
@@ -10269,7 +10283,7 @@ var $author$project$Pages$Connect$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text(model.mZ)
+								$elm$html$Html$text(model.m_)
 							]))
 					])) : A2(
 				$elm$html$Html$p,
@@ -10299,7 +10313,7 @@ var $author$project$Pages$Connect$view = function (model) {
 							[
 								$elm$html$Html$Attributes$placeholder('Custom Monero Node'),
 								$elm$html$Html$Events$onInput($author$project$Pages$Connect$SetCustomMoneroNode),
-								$elm$html$Html$Attributes$value(model.e3)
+								$elm$html$Html$Attributes$value(model.e4)
 							]),
 						_List_Nil),
 						A2(
@@ -10452,7 +10466,7 @@ var $author$project$Pages$Donate$view = function (model) {
 							]),
 						_List_Nil),
 						function () {
-						var _v0 = model.dL;
+						var _v0 = model.dM;
 						if (_v0 === 1) {
 							return A2(
 								$elm$html$Html$div,
@@ -10590,7 +10604,7 @@ var $author$project$Pages$Funds$btcBalanceAsString = function (balInfo) {
 			return '0.00';
 		} else {
 			var btcbalinfo = _v1.a;
-			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(btcbalinfo.op);
+			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(btcbalinfo.oo);
 			var firstInt = _v2.a;
 			var secondInt = _v2.b;
 			return $author$project$Pages$Funds$formatBalance(
@@ -10613,7 +10627,7 @@ var $author$project$Pages$Funds$primaryAddressView = function (model) {
 			[
 				A3(
 				$author$project$Utils$MyUtils$infoBtn,
-				model.pD ? 'Hide' : 'Show',
+				model.pC ? 'Hide' : 'Show',
 				'',
 				$author$project$Pages$Funds$ToggleFundsVisibility),
 				A2(
@@ -10644,7 +10658,7 @@ var $author$project$Pages$Funds$primaryAddressView = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								model.pD ? model.f2 : $author$project$Extras$Constants$blankAddress)
+								model.pC ? model.f3 : $author$project$Extras$Constants$blankAddress)
 							]))
 					]))
 			]));
@@ -10674,7 +10688,7 @@ var $author$project$Pages$Funds$xmrAvailableBalanceAsString = function (balInfo)
 			return '0.00';
 		} else {
 			var xmrbalViewinfo = _v1.a;
-			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(xmrbalViewinfo.op);
+			var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(xmrbalViewinfo.oo);
 			var firstInt = _v2.a;
 			var secondInt = _v2.b;
 			return $author$project$Pages$Funds$formatBalance(
@@ -10713,7 +10727,7 @@ var $author$project$Pages$Funds$xmrBalView = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						model.pD ? ($author$project$Pages$Funds$xmrAvailableBalanceAsString(model.bH) + ' XMR') : $author$project$Extras$Constants$blankAddress)
+						model.pC ? ($author$project$Pages$Funds$xmrAvailableBalanceAsString(model.bH) + ' XMR') : $author$project$Extras$Constants$blankAddress)
 					]))
 			]));
 };
@@ -10855,7 +10869,7 @@ var $author$project$Pages$Funds$view = function (model) {
 							]),
 						_List_Nil),
 						function () {
-						var _v0 = model.dL;
+						var _v0 = model.dM;
 						if (_v0 === 1) {
 							return A2(
 								$elm$html$Html$div,
@@ -11126,7 +11140,7 @@ var $author$project$Pages$Sell$view = function (_v0) {
 	return $author$project$Pages$Sell$content;
 };
 var $author$project$Pages$Splash$view = function (model) {
-	var _v0 = model.dL;
+	var _v0 = model.dM;
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -11336,7 +11350,7 @@ var $elm$virtual_dom$VirtualDom$attribute = F2(
 var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
 var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
 var $author$project$Main$isActive = function (_v0) {
-	var link = _v0.pN;
+	var link = _v0.pM;
 	var page = _v0.E;
 	var _v1 = _Utils_Tuple2(link, page);
 	switch (_v1.a) {
@@ -11478,7 +11492,7 @@ var $author$project$Main$navLinks = function (page) {
 								_Utils_Tuple2(
 								'active',
 								$author$project$Main$isActive(
-									{pN: route, E: page})),
+									{pM: route, E: page})),
 								_Utils_Tuple2('navLink', true)
 							]))
 					]),
@@ -11572,7 +11586,7 @@ var $author$project$Main$menu = function (model) {
 						_List_fromArray(
 							[
 								_Utils_Tuple2('menu-btn', true),
-								_Utils_Tuple2('open', model.dG)
+								_Utils_Tuple2('open', model.dH)
 							])),
 						$elm$html$Html$Events$onClick($author$project$Main$ToggleMenu),
 						$elm$html$Html$Attributes$name('menubutton'),
@@ -11581,7 +11595,7 @@ var $author$project$Main$menu = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						model.dG ? '✖' : '☰')
+						model.dH ? '✖' : '☰')
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -11591,7 +11605,7 @@ var $author$project$Main$menu = function (model) {
 						_List_fromArray(
 							[
 								_Utils_Tuple2('menu', true),
-								_Utils_Tuple2('open', model.dG)
+								_Utils_Tuple2('open', model.dH)
 							]))
 					]),
 				_List_fromArray(
@@ -11639,12 +11653,12 @@ var $author$project$Utils$MyUtils$gotBalancesReplyAsTypeAlias = function (reply)
 	var gotXmr = A2($elm$core$Maybe$withDefault, $author$project$Proto$Io$Haveno$Protobuffer$defaultXmrBalanceInfo, balInformation.rW);
 	var _v0 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.uu);
 	var res1 = _v0.a;
-	var _v1 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.ke);
+	var _v1 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.kf);
 	var pend1 = _v1.a;
-	var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.op);
+	var _v2 = $eriktim$elm_protocol_buffers$Protobuf$Types$Int64$toInts(gotXmr.oo);
 	var available1 = _v2.a;
 	return {
-		oo: $elm$core$String$fromInt(available1),
+		on: $elm$core$String$fromInt(available1),
 		ui: $elm$core$String$fromInt(pend1),
 		ut: $elm$core$String$fromInt(res1)
 	};
@@ -11837,7 +11851,7 @@ var $author$project$Main$viewContainer = function (model) {
 var $author$project$Main$view = function (model) {
 	return {
 		sm: function () {
-			var _v0 = model.dL;
+			var _v0 = model.dM;
 			if (!_v0) {
 				return _List_fromArray(
 					[

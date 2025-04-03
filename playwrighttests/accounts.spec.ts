@@ -123,16 +123,18 @@ test('add new crytpo currency account to local storage', async ({
   // Verify that the "Accounts" page content is displayed again
   await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible()
 
-   // Reload and verify persistence
+   // RELOAD and verify persistence
   await page.reload();
 
-  //Return to the Accounts page - list BTC accounts section
+  //RETURN to the Accounts page - list BTC accounts section
 
+  await page.waitForTimeout(1000)
    // Wait for the menu button to be visible and click it to open the menu
   const menuButtonAfterReload = await page.waitForSelector('button.menu-btn', {
     state: 'visible'
   })
   expect(menuButtonAfterReload).not.toBeNull()
+  await page.waitForTimeout(500)
   await menuButtonAfterReload.click()
 
   // Wait for the "Accounts" link to be visible in the menu
@@ -164,6 +166,8 @@ test('add new crytpo currency account to local storage', async ({
   )
   expect(savePasswordButtonAfterReload).not.toBeNull()
 
+  await page.waitForTimeout(500) // Wait for 500ms to ensure page rendered
+
   // Wait for the "Crypto Currency Accounts" button to be visible
   const cryptoCurrencyAccountsButtonAfterReload = await page.waitForSelector(
     'button.info-button#cryptocurrencyAccountsButton',
@@ -177,10 +181,23 @@ test('add new crytpo currency account to local storage', async ({
     page.getByRole('heading', { name: 'Cryptocurrency Accounts' })
   ).toBeVisible()
 
+   // Verify that 'BTC_Public_Key_0' is still in local storage
+   const btcPublicKeyAfterReload = await page.evaluate(() => {
+    const value = localStorage.getItem('BTC_Public_Key_0')
+    console.log('Retrieved value from localStorage:', value)
+    return value
+  })
+
+  await expect(btcPublicKeyAfterReload).toBeDefined()
+  await expect(btcPublicKeyAfterReload).not.toBeNull()
+
+
+  await page.waitForTimeout(500) // Wait for 500ms to ensure page rendered
    // Verify that the Bitcoin address appears in the list of accounts
   /* await expect(
     page.locator('div.btc-account-item.address-label', {
       hasText: '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'
     })
-     */
+  ).toBeVisible() */
+ 
 })

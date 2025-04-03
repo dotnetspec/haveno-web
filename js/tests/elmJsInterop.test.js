@@ -86,8 +86,8 @@ describe('elmInterop', async () => {
       )
     );
 
-    // Message that triggers decryption
-    const message = {
+    // Message originates from Elm that triggers decryption
+    const decryptMessage = {
       typeOfMsg: 'decryptCryptoAccountsMsgRequest',
       page: 'AccountsPage',
       currency: 'BTC',
@@ -95,7 +95,7 @@ describe('elmInterop', async () => {
       password: testPassword,
     };
 
-    await elmInterop(message);
+    await elmInterop(decryptMessage);
 
     expect(window.Elm.ports.receiveMsgsFromJs.send).toHaveBeenCalledWith({
       typeOfMsg: 'decryptedCryptoAccountsResponse',
@@ -127,12 +127,12 @@ describe('elmInterop', async () => {
       '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'
     );
 
-    const message = {
+    const decryptMessage = {
       typeOfMsg: 'decryptCryptoAccountsMsgRequest',
       page: 'AccountsPage',
       currency: 'BTC',
     };
-    await elmInterop(message);
+    await elmInterop(decryptMessage);
     expect(console.error).toHaveBeenCalledWith(
       'Error decrypting BTC accounts:',
       expect.any(Error)

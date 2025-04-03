@@ -27,7 +27,7 @@ type alias Model =
     , subaddress : String
     , currentView : View
     , listOfExistingCryptoAccounts : List String
-    , listOfBTCAccounts : List String
+    , listOfBTCAddresses : List String
     , newBTCAddress : String
     , cryptoAccountType : CryptoAccount
     , savedPassword : String -- The actual saved password
@@ -46,7 +46,7 @@ initialModel =
     , subaddress = ""
     , currentView = ManageAccounts
     , listOfExistingCryptoAccounts = []
-    , listOfBTCAccounts = []
+    , listOfBTCAddresses = []
     , newBTCAddress = ""
     , cryptoAccountType = BTC
     , savedPassword = "" -- The actual saved password
@@ -91,6 +91,7 @@ type Msg
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | AddNewCryptoAccount String
     | DecryptCryptoAccounts (List String)
+    | DecryptedBTCAccounts (List String)
     | ChangeView View
     | UpdateNewBTCAddress String
     | UpdatePassword String
@@ -119,11 +120,14 @@ update msg model =
                 message =
                     encryptCryptoAccountMsgRequest address model
             in
-            ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAccounts = model.listOfBTCAccounts ++ [ address ] }, encryptionMsg message )
+            ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = model.listOfBTCAddresses ++ [ address ] }, encryptionMsg message )
 
         DecryptCryptoAccounts data ->
-            ( { model | listOfBTCAccounts = model.listOfBTCAccounts ++ data }, Cmd.none )
+            ( { model | listOfExistingCryptoAccounts = model.listOfExistingCryptoAccounts ++ data , listOfBTCAddresses = model.listOfBTCAddresses ++ data , currentView = CryptoAccounts}, Cmd.none )
 
+        DecryptedBTCAccounts data ->
+            ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = data}, Cmd.none )
+        
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
 
@@ -283,12 +287,12 @@ btcAccountsView model =
     Html.div []
         [ Html.h6 [ class "accounts-subtitle" ] [ Html.text "Your BTC Accounts" ]
         , Utils.MyUtils.infoBtn "BACK TO ACCOUNTS" "back-to-accounts-button" <| ChangeView ManageAccounts
-        , Html.div [ id "accounts-listOfBTCAccounts" ]
-            (if List.isEmpty model.listOfBTCAccounts then
+        , Html.div [ id "accounts-listOfBTCAddresses" ]
+            (if List.isEmpty model.listOfBTCAddresses then
                 [ Html.div [ class "btc-account-item" ] [ Html.text "There are no BTC accounts set up yet" ] ]
 
              else
-                List.map (\account -> Html.div [ classList [ ( "btc-account-item", True ), ( "address-label", True ) ] ] [ Html.text account ]) model.listOfBTCAccounts
+                List.map (\account -> Html.div [ classList [ ( "btc-account-item", True ), ( "address-label", True ) ] ] [ Html.text account ]) model.listOfBTCAddresses
             )
         ]
 
@@ -443,7 +447,7 @@ formatBalance int64 =
     in
     String.fromFloat roundedXmr
 
-
+-- NAV: Cmd Msgs
 encryptionMsg : Json.Encode.Value  -> Cmd Msg
 encryptionMsg msg =
     msgFromAccounts msg
@@ -465,7 +469,7 @@ encryptCryptoAccountMsgRequest : String -> Model -> Json.Encode.Value
 encryptCryptoAccountMsgRequest address model =
     let
         btcAccountCount =
-            List.length model.listOfBTCAccounts
+            List.length model.listOfBTCAddresses
 
         storeAs =
             "BTC_Public_Key_" ++ String.fromInt btcAccountCount

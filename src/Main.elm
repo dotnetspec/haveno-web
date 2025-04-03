@@ -262,7 +262,7 @@ update msg model =
                                         accountsMdl =
                                             case model.page of
                                                 AccountsPage accountsModel ->
-                                                    { accountsModel | cryptoAccountType = convertStringToCurrencyType jsMsg.currency, listOfBTCAccounts = jsMsg.accountsData }
+                                                    { accountsModel | cryptoAccountType = convertStringToCurrencyType jsMsg.currency, listOfBTCAddresses = jsMsg.accountsData }
 
                                                 _ ->
                                                     -- REVIEW:
@@ -273,21 +273,8 @@ update msg model =
                                     toAccounts model (Pages.Accounts.update (Pages.Accounts.AddNewCryptoAccount (Maybe.withDefault "No BTC address" (List.head jsMsg.accountsData))) accountsMdl)
 
                                 "decryptedCryptoAccountsResponse" ->
-                                    --Json.Decode.map DecryptCryptoAccounts (Json.Decode.field "data" (Json.Decode.list Json.Decode.string))
-                                    let
-                                        -- HACK: To get an accounts model to pass on
-                                        accountsMdl =
-                                            case model.page of
-                                                AccountsPage accountsModel ->
-                                                    { accountsModel | listOfBTCAccounts = jsMsg.accountsData }
-
-                                                _ ->
-                                                    -- REVIEW:
-                                                    -- WARN: This could re-set values if we're not
-                                                    -- on the Accounts page in Elm (unlikely)
-                                                    Pages.Accounts.initialModel
-                                    in
-                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptCryptoAccounts jsMsg.accountsData) accountsMdl)
+                                   
+                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAccounts jsMsg.accountsData) Pages.Accounts.initialModel)
 
                                 _ ->
                                     --Json.Decode.fail "Unknown message type"

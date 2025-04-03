@@ -268,9 +268,14 @@ runSpecTests =
                         )
                     ]
             )
-        , Spec.scenario "6. Displays existing accounts when the list is not empty"
+        , Spec.scenario "6. Displays existing accounts when the list is not empty - ONLY TESTING VIEW and PORT, not localstorage"
             (Spec.given
-                (Spec.Setup.initWithModel { accountsInitialModel | status = Accounts.Loaded, listOfExistingCryptoAccounts = [ "Account 1", "Account 2" ] }
+                (Spec.Setup.initWithModel
+                    { accountsInitialModel
+                        | status = Accounts.Loaded
+                        , listOfExistingCryptoAccounts = [ "Account 1", "Account 2" ]
+                        , savedPassword = "test-password"
+                    }
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                 )
@@ -282,6 +287,12 @@ runSpecTests =
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
                             |> Spec.expect (equals Accounts.Loaded)
+                        )
+
+                    -- NOTE: Can only test the request going to the port, response is returned via Main.elm
+                    , Spec.it "sends the expected message to the port"
+                        (Spec.Port.observe "msgFromAccounts" Accounts.messageDecoder
+                            |> Spec.expect (equals <| [])
                         )
                     , Spec.it "displays the accounts correctly"
                         (Spec.Markup.observeElement
@@ -307,7 +318,7 @@ runSpecTests =
             )
         , scenario "User clicks VIEW BTC ACCOUNTS button and sends the expected message to the port"
             (given
-                (Spec.Setup.initWithModel { accountsInitialModel | listOfBTCAccounts = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ] }
+                (Spec.Setup.initWithModel { accountsInitialModel | listOfBTCAddresses = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ] }
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                     |> Spec.Setup.withLocation placeholderUrl

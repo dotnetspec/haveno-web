@@ -16,7 +16,7 @@ import Extras.TestData as TestData
 import Json.Decode
 import Json.Encode
 import Main
-import Pages.Accounts
+import Pages.Accounts as Accounts
 import Pages.Connect as Connect
 import Pages.Funds as Funds
 import Spec exposing (describe, given, it, scenario, when)
@@ -45,9 +45,9 @@ fundsInitialModel =
     Funds.initialModel
 
 
-accountsInitialModel : Pages.Accounts.Model
+accountsInitialModel : Accounts.Model
 accountsInitialModel =
-    Pages.Accounts.initialModel
+    Accounts.initialModel
 
 
 decryptedCryptoAccountsResponseMessage : Json.Decode.Value
@@ -552,7 +552,7 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario "15: adds BTC address to listOfBTCAccounts on decryptedCryptoAccountsResponse"
+        , scenario "15: List all BTC addresses"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
@@ -569,16 +569,96 @@ runSpecTests =
                             (Main.ReceivedFromJs decryptedCryptoAccountsResponseMessage)
                     ]
                 |> Spec.observeThat
-                    [ it "adds BTC address to listOfBTCAccounts"
+                    [ it "adds BTC address to listOfBTCAddresses"
                         (Spec.Observer.observeModel .page
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
                                     Main.AccountsPage <|
-                                        { accountsInitialModel | listOfBTCAccounts = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ] }
+                                        { accountsInitialModel
+                                            | 
+                                            listOfBTCAddresses = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
+                                            , currentView = Accounts.DisplayStoredBTCAddresses
+                                        }
                                 )
                         )
+                    {- , Spec.it "displays the first account correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "accounts-listOfBTCAddresses" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
+                                )
+                        ) -}
+
+                    {-
+                       , Spec.it "displays the second account correctly"
+                           (Spec.Markup.observeElement
+                               |> Spec.Markup.query
+                               << by [ Spec.Markup.Selector.id "accounts-listOfExistingCryptoAccounts" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Spec.Markup.text <|
+                                           Claim.isStringContaining 1 "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o"
+                                   )
+                    -}
                     ]
             )
+        {- , scenario "adds new BTC address to listOfBTCAddresses after receiving decryptedCryptoAccountsResponse message"
+            (given
+                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                )
+                |> when "receiving decryptedCryptoAccountsResponse message"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            (Main.ReceivedFromJs decryptedCryptoAccountsResponseMessage)
+                    ]
+                |> Spec.observeThat
+                    [ it "adds BTC address to listOfBTCAddresses"
+                        (Spec.Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.AccountsPage <|
+                                        { accountsInitialModel
+                                            | listOfExistingCryptoAccounts = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
+                                            , listOfBTCAddresses = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
+                                            , currentView = Accounts.CryptoAccounts
+                                        }
+                                )
+                        )
+                    , Spec.it "displays the first account correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "accounts-listOfExistingCryptoAccounts" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
+                                )
+                        )
+
+                    
+                       , Spec.it "displays the second account correctly"
+                           (Spec.Markup.observeElement
+                               |> Spec.Markup.query
+                               << by [ Spec.Markup.Selector.id "accounts-listOfExistingCryptoAccounts" ]
+                               |> Spec.expect
+                                   (Claim.isSomethingWhere <|
+                                       Spec.Markup.text <|
+                                           Claim.isStringContaining 1 "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o"
+                                   )
+                                )
+                   
+                    ]
+            ) -}
         , scenario "16: should trigger ReceivedFromJs when a message is received from the receiveMsgsFromJs port"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
@@ -604,7 +684,7 @@ runSpecTests =
                     [ it "should trigger the ReceivedFromJs message"
                         (Spec.Observer.observeModel .currentJsMessage
                             |> Spec.expect
-                                (Claim.isEqual Debug.toString ["account1", "account2"])
+                                (Claim.isEqual Debug.toString [ "account1", "account2" ])
                         )
                     ]
             )
