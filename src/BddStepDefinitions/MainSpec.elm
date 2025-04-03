@@ -578,13 +578,15 @@ runSpecTests =
                                             | 
                                             listOfBTCAddresses = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
                                             , currentView = Accounts.DisplayStoredBTCAddresses
+                                            , isAddressVisible = True
+                                            , cryptoAccountType = Accounts.BTC
                                         }
                                 )
                         )
                     {- , Spec.it "displays the first account correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id "accounts-listOfBTCAddresses" ]
+                            << by [ Spec.Markup.Selector.id "BTCAddress" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|

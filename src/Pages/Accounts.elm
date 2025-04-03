@@ -91,7 +91,7 @@ type Msg
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | AddNewCryptoAccount String
     | DecryptCryptoAccounts (List String)
-    | DecryptedBTCAccounts (List String)
+    | DecryptedBTCAddresses (List String)
     | ChangeView View
     | UpdateNewBTCAddress String
     | UpdatePassword String
@@ -125,8 +125,8 @@ update msg model =
         DecryptCryptoAccounts data ->
             ( { model | listOfExistingCryptoAccounts = model.listOfExistingCryptoAccounts ++ data , listOfBTCAddresses = model.listOfBTCAddresses ++ data , currentView = CryptoAccounts}, Cmd.none )
 
-        DecryptedBTCAccounts data ->
-            ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = data}, Cmd.none )
+        DecryptedBTCAddresses data ->
+            ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = data, isAddressVisible = True}, Cmd.none )
         
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
@@ -292,7 +292,7 @@ btcAccountsView model =
                 [ Html.div [ class "btc-account-item" ] [ Html.text "There are no BTC accounts set up yet" ] ]
 
              else
-                List.map (\account -> Html.div [ classList [ ( "btc-account-item", True ), ( "address-label", True ) ] ] [ Html.text account ]) model.listOfBTCAddresses
+                List.map (\account -> Html.div [ id "BTCAddress" , classList [ ( "btc-account-item", True ), ( "address-label", True ) ] ] [ Html.text account ]) model.listOfBTCAddresses
             )
         ]
 
@@ -496,8 +496,9 @@ messageDecoder =
                     "encryptCryptoAccountMsgRequest" ->
                         Json.Decode.map AddNewCryptoAccount (Json.Decode.field "accountsData" Json.Decode.string)
 
+                    -- NOTE: Need to distinguish between currency types here
                     "decryptedCryptoAccountsResponse" ->
-                        Json.Decode.map DecryptCryptoAccounts (Json.Decode.field "data" (Json.Decode.list Json.Decode.string))
+                        Json.Decode.map DecryptedBTCAddresses (Json.Decode.field "data" (Json.Decode.list Json.Decode.string))
 
                     _ ->
                         Json.Decode.fail "Unknown message type"

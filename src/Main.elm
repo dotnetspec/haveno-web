@@ -274,7 +274,7 @@ update msg model =
 
                                 "decryptedCryptoAccountsResponse" ->
                                    
-                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAccounts jsMsg.accountsData) Pages.Accounts.initialModel)
+                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAddresses jsMsg.accountsData) Pages.Accounts.initialModel)
 
                                 _ ->
                                     --Json.Decode.fail "Unknown message type"

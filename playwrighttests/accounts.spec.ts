@@ -101,7 +101,7 @@ test('add new crytpo currency account to local storage', async ({
   expect(btcPublicKey).toBeDefined()
   expect(btcPublicKey).not.toBeUndefined()
   expect(btcPublicKey).not.toBeNull()
-  console.log('BTC_Public_Key_0:', btcPublicKey)
+  //console.log('BTC_Public_Key_0:', btcPublicKey)
 
   // Verify that the Bitcoin address appears in the list of accounts
   await expect(
