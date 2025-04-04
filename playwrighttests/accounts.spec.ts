@@ -107,7 +107,7 @@ test('add new crytpo currency account to local storage', async ({
 
   // Verify that the Bitcoin address appears in the list of accounts
   await expect(
-    page.locator('div.btc-account-item.address-label', {
+    page.locator('div.btc-address-item.address-label', {
       hasText: '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'
     })
   ).toBeVisible()

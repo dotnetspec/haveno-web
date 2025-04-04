@@ -339,7 +339,7 @@ runSpecTests =
                     , it "displays stored and unencrypted BTC address(es) correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.class "btc-account-item" ]
+                            << by [ Spec.Markup.Selector.class "btc-address-item" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
@@ -383,7 +383,7 @@ runSpecTests =
                     , it "displays the newly added BTC address correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.class "btc-account-item" ]
+                            << by [ Spec.Markup.Selector.class "btc-address-item" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|

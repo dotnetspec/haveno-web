@@ -9485,7 +9485,7 @@ var $author$project$Pages$Accounts$btcAccountsView = function (model) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('btc-account-item')
+								$elm$html$Html$Attributes$class('btc-address-item')
 							]),
 						_List_fromArray(
 							[
@@ -9502,7 +9502,7 @@ var $author$project$Pages$Accounts$btcAccountsView = function (model) {
 									$elm$html$Html$Attributes$classList(
 									_List_fromArray(
 										[
-											_Utils_Tuple2('btc-account-item', true),
+											_Utils_Tuple2('btc-address-item', true),
 											_Utils_Tuple2('address-label', true)
 										]))
 								]),

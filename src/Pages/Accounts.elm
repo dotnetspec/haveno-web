@@ -285,10 +285,10 @@ btcAccountsView model =
         , Utils.MyUtils.infoBtn "BACK TO ACCOUNTS" "back-to-accounts-button" <| ChangeView ManageAccounts
         , Html.div [ id "accounts-listOfBTCAddresses" ]
             (if List.isEmpty model.listOfBTCAddresses then
-                [ Html.div [ class "btc-account-item" ] [ Html.text "There are no BTC accounts set up yet" ] ]
+                [ Html.div [ class "btc-address-item" ] [ Html.text "There are no BTC accounts set up yet" ] ]
 
              else
-                List.map (\account -> Html.div [ id "BTCAddress", classList [ ( "btc-account-item", True ), ( "address-label", True ) ] ] [ Html.text account ]) model.listOfBTCAddresses
+                List.map (\account -> Html.div [ id "BTCAddress", classList [ ( "btc-address-item", True ), ( "address-label", True ) ] ] [ Html.text account ]) model.listOfBTCAddresses
             )
         ]
 
