@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test('add new crytpo currency account to local storage', async ({
   page,
-  browserName
+  browserName, context
 }) => {
   // Navigate to the application
   await page.goto('http://localhost:1234/')
@@ -126,21 +126,33 @@ test('add new crytpo currency account to local storage', async ({
   await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible()
 
    // RELOAD and verify persistence
-  await page.reload();
+  //
 
-  //RETURN to the Accounts page - list BTC accounts section
+    // Save the browser state instead of await page.reload() in this test
+    await context.storageState({ path: 'state.json' });
 
-  await page.waitForTimeout(1000)
+  });
+
+
+  // Test 2: Load state from previous test and verify
+test('Load state and verify localStorage', async ({ page, browser }) => {
+ 
+  const context = await browser.newContext({ storageState: 'state.json' });
+  const pageWithState = await context.newPage();
+
+  await pageWithState.goto('http://localhost:1234/');
+
+  await pageWithState.waitForTimeout(1000)
    // Wait for the menu button to be visible and click it to open the menu
-  const menuButtonAfterReload = await page.waitForSelector('button.menu-btn', {
+  const menuButtonAfterReload = await pageWithState.waitForSelector('button.menu-btn', {
     state: 'visible'
   })
   expect(menuButtonAfterReload).not.toBeNull()
-  await page.waitForTimeout(500)
+  await pageWithState.waitForTimeout(500)
   await menuButtonAfterReload.click()
 
   // Wait for the "Accounts" link to be visible in the menu
-  const accountsLinkAfterReload = await page.waitForSelector('a:has-text("Accounts")', {
+  const accountsLinkAfterReload = await pageWithState.waitForSelector('a:has-text("Accounts")', {
     state: 'visible'
   })
   expect(accountsLinkAfterReload).not.toBeNull()
@@ -148,25 +160,25 @@ test('add new crytpo currency account to local storage', async ({
   // Click the "Accounts" link
   await accountsLinkAfterReload.click()
 
-  await page.waitForTimeout(500)
+  await pageWithState.waitForTimeout(500)
 
   // Verify that the "Accounts" page content is displayed
-  await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible()
+  await expect(pageWithState.getByRole('heading', { name: 'Accounts' })).toBeVisible()
 
   // Verify that the text "Password:" is visible
-  await expect(page.locator('text=Password:')).toBeVisible()
+  await expect(pageWithState.locator('text=Password:')).toBeVisible()
 
   // Find the Password input field and enter the password
-  const passwordInputAfterReload = await page.waitForSelector(
+  const passwordInputAfterReload = await pageWithState.waitForSelector(
     'input#accounts-password-input',
     { state: 'visible' }
   )
   expect(passwordInputAfterReload).not.toBeNull()
   await passwordInputAfterReload.fill('test-password')
 
-  await page.waitForTimeout(500) 
+  await pageWithState.waitForTimeout(500) 
 
-  const savePasswordButtonAfterReload = await page.waitForSelector(
+  const savePasswordButtonAfterReload = await pageWithState.waitForSelector(
     'button.info-button#savePasswordButton',
     { state: 'visible' }
   )
@@ -174,10 +186,10 @@ test('add new crytpo currency account to local storage', async ({
 
   await savePasswordButtonAfterReload.click()
 
-  await page.waitForTimeout(500) // Wait for 500ms to ensure page rendered
+  await pageWithState.waitForTimeout(500) // Wait for 500ms to ensure page rendered
 
   // Wait for the "Crypto Currency Accounts" button to be visible
-  const cryptoCurrencyAccountsButtonAfterReload = await page.waitForSelector(
+  const cryptoCurrencyAccountsButtonAfterReload = await pageWithState.waitForSelector(
     'button.info-button#cryptocurrencyAccountsButton',
     { state: 'visible' }
   )
@@ -186,11 +198,11 @@ test('add new crytpo currency account to local storage', async ({
   await cryptoCurrencyAccountsButtonAfterReload.click()
 
   await expect(
-    page.getByRole('heading', { name: 'Cryptocurrency Accounts' })
+    pageWithState.getByRole('heading', { name: 'Cryptocurrency Accounts' })
   ).toBeVisible()
 
    // Verify that 'BTC_Public_Key_0' is still in local storage
-   const btcPublicKeyAfterReload = await page.evaluate(() => {
+   const btcPublicKeyAfterReload = await pageWithState.evaluate(() => {
     const value = localStorage.getItem('BTC_Public_Key_0')
     console.log('Retrieved value from localStorage:', value)
     return value
@@ -200,8 +212,8 @@ test('add new crytpo currency account to local storage', async ({
   await expect(btcPublicKeyAfterReload).not.toBeNull()
 
 
-  await page.waitForTimeout(500) // Wait for 500ms to ensure page rendered
-  const btcAccountsButtonAfterReload = await page.waitForSelector(
+  await pageWithState.waitForTimeout(500) // Wait for 500ms to ensure page rendered
+  const btcAccountsButtonAfterReload = await pageWithState.waitForSelector(
     'button.info-button#btcAccountsButton',
     { state: 'visible' }
   )
@@ -209,7 +221,7 @@ test('add new crytpo currency account to local storage', async ({
 
   await btcAccountsButtonAfterReload.click()
 
-  const btcAddressDiv = await page.locator('#BTCAddress');
+  const btcAddressDiv = await pageWithState.locator('div.btc-address-item')
   // Verify that the element exists
 await expect(btcAddressDiv).toBeDefined();
 await expect(btcAddressDiv).not.toBeNull();
