@@ -122,7 +122,7 @@ update msg model =
             ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = model.listOfBTCAddresses ++ [ address ] }, encryptionMsg message )
 
         DecryptedBTCAddresses data ->
-            ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = data, isAddressVisible = True }, Cmd.none )
+            ( { model | currentView = ManageAccounts, listOfBTCAddresses = data, isAddressVisible = True }, Cmd.none )
 
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )

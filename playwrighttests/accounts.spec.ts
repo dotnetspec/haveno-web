@@ -47,6 +47,8 @@ test('add new crytpo currency account to local storage', async ({
   )
   expect(savePasswordButton).not.toBeNull()
 
+ await savePasswordButton.click()
+
   // NOTE: Password is now saved in Elm Accounts.Model
 
   // Wait for the "Crypto Currency Accounts" button to be visible
@@ -160,11 +162,15 @@ test('add new crytpo currency account to local storage', async ({
   expect(passwordInputAfterReload).not.toBeNull()
   await passwordInputAfterReload.fill('test-password')
 
+  await page.waitForTimeout(500) 
+
   const savePasswordButtonAfterReload = await page.waitForSelector(
     'button.info-button#savePasswordButton',
     { state: 'visible' }
   )
   expect(savePasswordButtonAfterReload).not.toBeNull()
+
+  await savePasswordButtonAfterReload.click()
 
   await page.waitForTimeout(500) // Wait for 500ms to ensure page rendered
 
@@ -193,11 +199,24 @@ test('add new crytpo currency account to local storage', async ({
 
 
   await page.waitForTimeout(500) // Wait for 500ms to ensure page rendered
-   // Verify that the Bitcoin address appears in the list of accounts
-  /* await expect(
-    page.locator('div.btc-account-item.address-label', {
-      hasText: '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'
-    })
-  ).toBeVisible() */
+  const btcAccountsButtonAfterReload = await page.waitForSelector(
+    'button.info-button#btcAccountsButton',
+    { state: 'visible' }
+  )
+  expect(btcAccountsButtonAfterReload).not.toBeNull()
+
+  await btcAccountsButtonAfterReload.click()
+
+  const btcAddressDiv = await page.locator('#BTCAddress');
+  // Verify that the element exists
+await expect(btcAddressDiv).toBeDefined();
+await expect(btcAddressDiv).not.toBeNull();
+
+// Verify that the element is visible
+await expect(btcAddressDiv).toBeVisible();
+
+// Verify that the element contains the expected Bitcoin address
+await expect(btcAddressDiv).toHaveText('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v');
+
  
 })
