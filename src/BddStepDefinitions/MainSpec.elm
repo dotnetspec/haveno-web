@@ -575,7 +575,8 @@ runSpecTests =
             )
         , scenario "15: List all BTC addresses"
             (given
-                (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
+                (Spec.Setup.initForApplication
+                    (Main.init "http://localhost:1234")
                     |> Spec.Setup.withDocument Main.view
                     |> Spec.Setup.withUpdate Main.update
                     |> Spec.Setup.withSubscriptions Main.subscriptions
@@ -589,21 +590,9 @@ runSpecTests =
                         Spec.Command.fake
                             (Main.ReceivedFromJs decryptedCryptoAccountsResponseMessage)
                     ]
-                |> when "the user updates the password"
-                    [ Spec.Command.send <|
-                        Spec.Command.fake
-                            (Main.GotAccountsMsg <| Accounts.UpdatePassword "test-password")
-                    ]
-                |> when "the user saves the password"
-                    [ Spec.Command.send <|
-                        Spec.Command.fake
-                            (Main.GotAccountsMsg <| Accounts.SavePassword)
-                    ]
-                |> when "the user toggles the VIEW BTC ACCOUNTS button"
-                    [ Spec.Command.send <|
-                        Spec.Command.fake
-                            (Main.GotAccountsMsg <| Accounts.ChangeView Accounts.DisplayStoredBTCAddresses)
-                    ]
+                -- NOTE: It appears that cos we use Spec.Setup.withDocument Main.view we cannot see the rendering of
+                -- data on the Accounts page from Main. We're confined to ensuring the Accounts model is correct from
+                -- here. Rendering can be tested in AccountsSpec
                 |> Spec.observeThat
                     [ it "adds BTC address to listOfBTCAddresses"
                         (Spec.Observer.observeModel .page
@@ -612,35 +601,14 @@ runSpecTests =
                                     Main.AccountsPage <|
                                         { accountsInitialModel
                                             | listOfBTCAddresses = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
-                                            , currentView = Accounts.DisplayStoredBTCAddresses
+                                            , currentView = Accounts.ManageAccounts
                                             , isAddressVisible = True
                                             , cryptoAccountType = Accounts.BTC
-                                            , savedPassword = "test-password"
+                                            , errors = []
                                         }
                                 )
                         )
-                    {- , Spec.it "displays the first account correctly"
-                        (Spec.Markup.observeElement
-                            |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.class "btc-address-item" ]
-                            |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
-                                )
-                        ) -}
-
-                    {-
-                       , Spec.it "displays the second account correctly"
-                           (Spec.Markup.observeElement
-                               |> Spec.Markup.query
-                               << by [ Spec.Markup.Selector.id "accounts-listOfExistingCryptoAccounts" ]
-                               |> Spec.expect
-                                   (Claim.isSomethingWhere <|
-                                       Spec.Markup.text <|
-                                           Claim.isStringContaining 1 "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o"
-                                   )
-                    -}
+                    
                     ]
             )
 

@@ -273,6 +273,19 @@ update msg model =
                                     toAccounts model (Pages.Accounts.update (Pages.Accounts.AddNewCryptoAccount (Maybe.withDefault "No BTC address" (List.head jsMsg.accountsData))) accountsMdl)
 
                                 "decryptedCryptoAccountsResponse" ->
+                                    {- let
+                                        -- HACK: To get an accounts model to pass on
+                                        accountsMdl =
+                                            case model.page of
+                                                AccountsPage accountsModel ->
+                                                    { accountsModel | cryptoAccountType = convertStringToCurrencyType jsMsg.currency, listOfBTCAddresses = jsMsg.accountsData, isAddressVisible = True, currentView = Pages.Accounts.DisplayStoredBTCAddresses}
+
+                                                _ ->
+                                                    -- REVIEW:
+                                                    -- WARN: This could re-set values if we're not
+                                                    -- on the Accounts page in Elm (unlikely)
+                                                    Pages.Accounts.initialModel
+                                    in -}
                                     toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAddresses jsMsg.accountsData) Pages.Accounts.initialModel)
 
                                 _ ->

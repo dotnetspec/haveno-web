@@ -46,7 +46,7 @@
     "relns+plw": "yarn optimize && yarn unit && yarn spec && yarn review && yarn vitest && yarn build && yarn plw",
     "relnoe": "yarn optimize && yarn unit && yarn spec && yarn review && yarn vitest && yarn build && yarn serve",
     "rel": "yarn optimize && yarn eb && yarn unit && yarn spec && yarn review && yarn vitest && yarn build && yarn serve",
-    "killServ": "lsof -ti:1234 | xargs kill -9"
+    "ks": "lsof -ti:1234 | xargs kill -9"
   },
   "husky": {
     "hooks": {

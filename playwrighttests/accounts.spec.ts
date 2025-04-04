@@ -148,6 +148,8 @@ test('add new crytpo currency account to local storage', async ({
   // Click the "Accounts" link
   await accountsLinkAfterReload.click()
 
+  await page.waitForTimeout(500)
+
   // Verify that the "Accounts" page content is displayed
   await expect(page.getByRole('heading', { name: 'Accounts' })).toBeVisible()
 
