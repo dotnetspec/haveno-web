@@ -134,24 +134,90 @@ describe('elmInterop', async () => {
     expect(decrypt).toHaveBeenCalledWith(encryptedData1, testPassword)
   })
 
-  it('logs error on decryption failure', async () => {
-    decrypt.mockRejectedValueOnce(new Error('Decryption failed'))
+  it('decrypts ALL stored Crypto accounts and sends response to Elm', async () => {
+    // Set up localStorage with encrypted data
     localStorage.setItem(
       'BTC_Public_Key_0',
-      '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'
+      JSON.stringify(
+        await encrypt('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v', testPassword)
+      )
+    )
+    localStorage.setItem(
+      'BTC_Public_Key_1',
+      JSON.stringify(
+        await encrypt('2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o', testPassword)
+      )
     )
 
+    // Set up localStorage with encrypted data for another currency
+    localStorage.setItem(
+      'ETH_Public_Key_0',
+      JSON.stringify(
+        await encrypt('0x1234567890abcdef1234567890abcdef12345678', testPassword)
+      )
+    )
+
+    // Message originates from Elm that triggers decryption
+    const decryptMessage = {
+      typeOfMsg: 'decryptCryptoAccountsMsgRequest',
+      page: 'AccountsPage',
+      currency: 'AllCrypto',
+      accountsData: ['', ''],
+      password: testPassword
+    }
+
+    await elmInterop(decryptMessage)
+
+    expect(window.Elm.ports.receiveMsgsFromJs.send).toHaveBeenCalledWith({
+      typeOfMsg: 'decryptedCryptoAccountsResponse',
+      page: 'AccountsPage',
+      accountsData: [
+        '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v',
+        '2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o',
+        '0x1234567890abcdef1234567890abcdef12345678'
+      ],
+      currency: 'AllCrypto'
+    })
+
+    // Verify `decrypt` was called with expected arguments
+    const encryptedData0 = JSON.parse(localStorage.getItem('BTC_Public_Key_0'))
+    const encryptedData1 = JSON.parse(localStorage.getItem('BTC_Public_Key_1'))
+    const encryptedData2 = JSON.parse(localStorage.getItem('ETH_Public_Key_0'))
+
+    expect(decrypt).toHaveBeenCalledTimes(3)
+    expect(decrypt).toHaveBeenCalledWith(encryptedData0, testPassword)
+    expect(decrypt).toHaveBeenCalledWith(encryptedData1, testPassword)
+    expect(decrypt).toHaveBeenCalledWith(encryptedData2, testPassword)
+  })
+
+
+  it('logs error on decryption failure', async () => {
+    // Arrange
+    const fakeEncrypted = { iv: 'fake-iv', data: 'fake-data' } // minimal valid shape
+  
+    decrypt.mockRejectedValueOnce(new Error('Decryption failed'))
+  
+    localStorage.setItem(
+      'BTC_Public_Key_0',
+      JSON.stringify(fakeEncrypted) // ✅ valid JSON
+    )
+  
     const decryptMessage = {
       typeOfMsg: 'decryptCryptoAccountsMsgRequest',
       page: 'AccountsPage',
       currency: 'BTC'
     }
+  
+    // Act
     await elmInterop(decryptMessage)
+  
+    // Assert
     expect(console.error).toHaveBeenCalledWith(
-      'Error decrypting BTC accounts:',
+      'Error decrypting crypto accounts:',
       expect.any(Error)
     )
   })
+  
 
   it('handles unknown message types', async () => {
     await elmInterop({ typeOfMsg: 'UnknownMessage' })

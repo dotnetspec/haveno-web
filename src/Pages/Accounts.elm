@@ -1,11 +1,10 @@
-port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, messageDecoder, msgFromAccounts, update, view)
+port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, msgFromAccounts, update, updateAllCryptoAccountsData, updateBTCAccountsData, view)
 
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
 import Html exposing (Html, div, h4, p, section, text)
 import Html.Attributes exposing (class, classList, id, placeholder, readonly, type_, value)
 import Html.Events exposing (onInput)
-import Json.Decode
 import Json.Encode
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
@@ -91,11 +90,14 @@ type Msg
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
     | AddNewCryptoAccount String
     | DecryptedBTCAddresses (List String)
+    | AllCryptoCurrencies (List String)
     | ChangeView View
     | UpdateNewBTCAddress String
     | UpdatePassword String
     | ClearPasswordInput
     | SavePassword
+    | GotBTCFromJs String
+    | GotAllCryptoAccountsFromJs String
 
 
 
@@ -104,6 +106,7 @@ type Msg
 
 type CryptoAccount
     = BTC
+    | AllCrypto
 
 
 
@@ -119,25 +122,29 @@ update msg model =
                 message =
                     encryptCryptoAccountMsgRequest address model
             in
+            -- TODO: Modify for different cryptos
             ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = model.listOfBTCAddresses ++ [ address ] }, encryptionMsg message )
 
         DecryptedBTCAddresses data ->
-            ( { model | currentView = ManageAccounts, listOfBTCAddresses = data, isAddressVisible = True }, Cmd.none )
+            ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = data, isAddressVisible = True }, Cmd.none )
+
+        AllCryptoCurrencies data ->
+            ( { model | currentView = CryptoAccounts, listOfExistingCryptoAccounts = data, cryptoAccountType = AllCrypto, isAddressVisible = True }, Cmd.none )
 
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
-            ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
+            ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded }, Cmd.none )
 
         GotXmrPrimaryAddress (Err _) ->
             ( { model | status = Errored }, Cmd.none )
 
         GotXmrNewSubaddress (Ok subAddresponse) ->
-            ( { model | subaddress = subAddresponse.subaddress, status = Loaded, currentView = ManageAccounts }, Cmd.none )
+            ( { model | subaddress = subAddresponse.subaddress, status = Loaded }, Cmd.none )
 
         GotXmrNewSubaddress (Err _) ->
             ( { model | status = Errored }, Cmd.none )
 
         GotBalances (Ok response) ->
-            ( { model | balances = response.balances, status = Loaded, currentView = ManageAccounts }, Cmd.none )
+            ( { model | balances = response.balances, status = Loaded }, Cmd.none )
 
         GotBalances (Err _) ->
             ( { model | status = Errored }, Cmd.none )
@@ -152,12 +159,18 @@ update msg model =
             ( { model | temporaryPassword = newPass }, Cmd.none )
 
         SavePassword ->
-            ( { model | savedPassword = model.temporaryPassword, temporaryPassword = "" }, Cmd.batch [ gotDecryptedCryptoAccountData { model | savedPassword = model.temporaryPassword } ] )
+            ( { model | savedPassword = model.temporaryPassword, temporaryPassword = "" }, Cmd.none )
 
         -- Save and clear input
         -- Only update temporaryPassword
         ClearPasswordInput ->
             ( { model | temporaryPassword = "" }, Cmd.none )
+
+        GotBTCFromJs pword ->
+            ( { model | currentView = DisplayStoredBTCAddresses }, Cmd.batch [ gotBTCFromJs pword ] )
+
+        GotAllCryptoAccountsFromJs pword ->
+            ( { model | currentView = CryptoAccounts }, Cmd.batch [ gotAllCryptoAccountsFromJs pword ] )
 
 
 
@@ -200,7 +213,7 @@ view model =
                             CryptoAccounts ->
                                 div []
                                     [ h4 [] [ text "Cryptocurrency Accounts" ]
-                                    , p [] [ Utils.MyUtils.infoBtn "VIEW BTC ACCOUNTS" "btcAccountsButton" <| ChangeView DisplayStoredBTCAddresses ]
+                                    , p [] [ Utils.MyUtils.infoBtn "VIEW BTC ACCOUNTS" "btcAccountsButton" <| GotBTCFromJs model.savedPassword ]
                                     , existingCryptoAccountsView model
                                     , p [] [ Utils.MyUtils.infoBtn "Add New BTC CryptoCurrency Account" "addnewBTCaccountViewbutton" <| ChangeView CreateNewBTCAccountView ]
                                     ]
@@ -241,6 +254,9 @@ createNewBTCAccountView model =
             [ case model.cryptoAccountType of
                 BTC ->
                     Html.text "BTC"
+
+                AllCrypto ->
+                    Html.text "AllCrypto"
             ]
         , Html.div []
             [ Html.label [ class "large-text" ] [ Html.text "Bitcoin address: " ]
@@ -308,7 +324,7 @@ manageAccountsView model =
         [ Html.h1 [ class "accounts-title" ] [ Html.text "Accounts" ]
         , passwordView model
         , p [] [ Utils.MyUtils.infoBtn "Traditional Currency Accounts" "traditionalCurrencyAccountsButton" <| ChangeView TraditionalCurrencyAccounts ]
-        , p [] [ Utils.MyUtils.infoBtn "Crypto Currency Accounts" "cryptocurrencyAccountsButton" <| ChangeView CryptoAccounts ]
+        , p [] [ Utils.MyUtils.infoBtn "Crypto Currency Accounts" "cryptocurrencyAccountsButton" <| GotAllCryptoAccountsFromJs model.savedPassword ]
         , p [] [ Utils.MyUtils.infoBtn "Wallet Password" "walletPasswordButton" <| ChangeView WalletPassword ]
         , p [] [ Utils.MyUtils.infoBtn "Wallet Seed" "walletSeedButton" <| ChangeView WalletSeed ]
         , p [] [ Utils.MyUtils.infoBtn "Backup" "backupButton" <| ChangeView Backup ]
@@ -377,8 +393,8 @@ gotNewSubAddress =
     Grpc.toCmd GotXmrNewSubaddress grpcRequest
 
 
-gotDecryptedCryptoAccountData : Model -> Cmd Msg
-gotDecryptedCryptoAccountData model =
+gotBTCFromJs : String -> Cmd Msg
+gotBTCFromJs pword =
     let
         message =
             Json.Encode.object
@@ -386,7 +402,22 @@ gotDecryptedCryptoAccountData model =
                 , ( "currency", Json.Encode.string "BTC" )
                 , ( "page", Json.Encode.string "AccountsPage" )
                 , ( "accountsData", Json.Encode.list Json.Encode.string [ "", "" ] )
-                , ( "password", Json.Encode.string model.savedPassword )
+                , ( "password", Json.Encode.string pword )
+                ]
+    in
+    msgFromAccounts message
+
+
+gotAllCryptoAccountsFromJs : String -> Cmd Msg
+gotAllCryptoAccountsFromJs pword =
+    let
+        message =
+            Json.Encode.object
+                [ ( "typeOfMsg", Json.Encode.string "decryptCryptoAccountsMsgRequest" )
+                , ( "currency", Json.Encode.string "AllCrypto" )
+                , ( "page", Json.Encode.string "AccountsPage" )
+                , ( "accountsData", Json.Encode.list Json.Encode.string [ "", "" ] )
+                , ( "password", Json.Encode.string pword )
                 ]
     in
     msgFromAccounts message
@@ -396,11 +427,33 @@ gotDecryptedCryptoAccountData model =
 -- NAV: Helper functions
 
 
+updateBTCAccountsData : List String -> Model -> Model
+updateBTCAccountsData newData model =
+    { model
+        | listOfBTCAddresses = model.listOfBTCAddresses ++ newData
+        , isAddressVisible = True
+    }
+
+
+updateAllCryptoAccountsData : List String -> Model -> Model
+updateAllCryptoAccountsData newData model =
+    { model
+        | listOfExistingCryptoAccounts = model.listOfExistingCryptoAccounts ++ newData
+        , isAddressVisible = True
+        , cryptoAccountType = AllCrypto
+        , currentView = CryptoAccounts
+        , errors = []
+    }
+
+
 convertCurrencyTypeToString : CryptoAccount -> String
 convertCurrencyTypeToString cryptoAccount =
     case cryptoAccount of
         BTC ->
             "BTC"
+
+        AllCrypto ->
+            "AllCrypto"
 
 
 formatBalance : { higher : Int, lower : Int } -> String
@@ -485,21 +538,3 @@ encryptCryptoAccountMsgRequest address model =
 
 
 -- NAV: Decoders
-
-
-messageDecoder : Json.Decode.Decoder Msg
-messageDecoder =
-    Json.Decode.field "typeOfMsg" Json.Decode.string
-        |> Json.Decode.andThen
-            (\msgType ->
-                case msgType of
-                    "encryptCryptoAccountMsgRequest" ->
-                        Json.Decode.map AddNewCryptoAccount (Json.Decode.field "accountsData" Json.Decode.string)
-
-                    -- NOTE: Need to distinguish between currency types here
-                    "decryptedCryptoAccountsResponse" ->
-                        Json.Decode.map DecryptedBTCAddresses (Json.Decode.field "data" (Json.Decode.list Json.Decode.string))
-
-                    _ ->
-                        Json.Decode.fail "Unknown message type"
-            )

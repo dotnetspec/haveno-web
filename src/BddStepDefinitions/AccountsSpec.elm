@@ -28,6 +28,11 @@ accountsInitialModel =
     Accounts.initialModel
 
 
+typeOfMsgDecoder : Json.Decode.Decoder String
+typeOfMsgDecoder =
+    Json.Decode.field "typeOfMsg" Json.Decode.string
+
+
 runSpecTests : Spec Accounts.Model Accounts.Msg
 runSpecTests =
     describe
@@ -273,7 +278,7 @@ runSpecTests =
                 (Spec.Setup.initWithModel
                     { accountsInitialModel
                         | status = Accounts.Loaded
-                        , listOfExistingCryptoAccounts = [ "Account 1", "Account 2" ]
+                        , listOfExistingCryptoAccounts = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
                         , savedPassword = "test-password"
                     }
                     |> Spec.Setup.withView Accounts.view
@@ -288,11 +293,16 @@ runSpecTests =
                         (Observer.observeModel .status
                             |> Spec.expect (equals Accounts.Loaded)
                         )
+                    , it "is on the CryptoAccounts view"
+                        (Observer.observeModel .currentView
+                            |> Spec.expect (equals Accounts.CryptoAccounts)
+                        )
 
                     -- NOTE: Can only test the request going to the port, response is returned via Main.elm
                     , Spec.it "sends the expected message to the port"
-                        (Spec.Port.observe "msgFromAccounts" Accounts.messageDecoder
-                            |> Spec.expect (equals <| [])
+                        (Spec.Port.observe "msgFromAccounts" typeOfMsgDecoder
+                            -- NOTE: Spec.Port.observe always returns a LIST of messages received through the port.
+                            |> Spec.expect (equals <| [ "decryptCryptoAccountsMsgRequest" ])
                         )
                     , Spec.it "displays the accounts correctly"
                         (Spec.Markup.observeElement
@@ -301,7 +311,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "Account 1"
+                                        Claim.isStringContaining 1 "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
                                 )
                         )
                     , Spec.it "displays the accounts correctly"
@@ -311,14 +321,20 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "Account 2"
+                                        Claim.isStringContaining 1 "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o"
                                 )
                         )
                     ]
             )
         , scenario "User clicks VIEW BTC ACCOUNTS button and sends the expected message to the port"
             (given
-                (Spec.Setup.initWithModel { accountsInitialModel | listOfBTCAddresses = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ] }
+                (Spec.Setup.initWithModel
+                    { accountsInitialModel
+                        | listOfBTCAddresses =
+                            [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
+                            , "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o"
+                            ]
+                    }
                     |> Spec.Setup.withView Accounts.view
                     |> Spec.Setup.withUpdate Accounts.update
                     |> Spec.Setup.withLocation placeholderUrl
@@ -327,7 +343,7 @@ runSpecTests =
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
                     , Spec.Markup.Event.click
                     ]
-                |> when "User clicks BTC Accounts"
+                |> when "User clicks View BTC Accounts"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "btcAccountsButton" ]
                     , Spec.Markup.Event.click
                     ]
@@ -337,13 +353,14 @@ runSpecTests =
                             |> Spec.expect (equals Accounts.DisplayStoredBTCAddresses)
                         )
                     , it "displays stored and unencrypted BTC address(es) correctly"
-                        (Spec.Markup.observeElement
+                        (Spec.Markup.observeElements
                             |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.class "btc-address-item" ]
                             |> Spec.expect
-                                (Claim.isSomethingWhere <|
-                                    Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
+                                (Claim.isListWhere
+                                    [ Spec.Markup.text (equals "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v")
+                                    , Spec.Markup.text (equals "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o")
+                                    ]
                                 )
                         )
                     ]
@@ -373,8 +390,8 @@ runSpecTests =
                     ]
                 |> Spec.observeThat
                     [ it "sends the expected message to the port"
-                        (Spec.Port.observe "msgFromAccounts" Accounts.messageDecoder
-                            |> Spec.expect (equals <| [ Accounts.AddNewCryptoAccount "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa" ])
+                        (Spec.Port.observe "msgFromAccounts" typeOfMsgDecoder
+                            |> Spec.expect (equals <| [ "decryptCryptoAccountsMsgRequest", "encryptCryptoAccountMsgRequest" ])
                         )
                     , it "is on the DisplayStoredBTCAddresses view"
                         (Observer.observeModel .currentView

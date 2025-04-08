@@ -273,23 +273,37 @@ update msg model =
                                     toAccounts model (Pages.Accounts.update (Pages.Accounts.AddNewCryptoAccount (Maybe.withDefault "No BTC address" (List.head jsMsg.accountsData))) accountsMdl)
 
                                 "decryptedCryptoAccountsResponse" ->
-                                    {- let
-                                        -- HACK: To get an accounts model to pass on
-                                        accountsMdl =
+                                    case convertStringToCurrencyType jsMsg.currency of
+                                        Pages.Accounts.BTC ->
+                                            --toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAddresses jsMsg.accountsData) Pages.Accounts.initialModel)
                                             case model.page of
                                                 AccountsPage accountsModel ->
-                                                    { accountsModel | cryptoAccountType = convertStringToCurrencyType jsMsg.currency, listOfBTCAddresses = jsMsg.accountsData, isAddressVisible = True, currentView = Pages.Accounts.DisplayStoredBTCAddresses}
+                                                    let
+                                                        updatedAccountsModel =
+                                                            Pages.Accounts.updateBTCAccountsData jsMsg.accountsData accountsModel
+                                                    in
+                                                    -- { model | page = AccountsPage updatedAccountsModel }, Cmd.none )
+                                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAddresses jsMsg.accountsData) updatedAccountsModel)
+                                            
 
                                                 _ ->
-                                                    -- REVIEW:
-                                                    -- WARN: This could re-set values if we're not
-                                                    -- on the Accounts page in Elm (unlikely)
-                                                    Pages.Accounts.initialModel
-                                    in -}
-                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAddresses jsMsg.accountsData) Pages.Accounts.initialModel)
+                                                    ( model, Cmd.none )
+
+                                        Pages.Accounts.AllCrypto ->
+                                            case model.page of
+                                                AccountsPage accountsModel ->
+                                                    let
+                                                        updatedAccountsModel =
+                                                            Pages.Accounts.updateAllCryptoAccountsData jsMsg.accountsData accountsModel
+                                                    in
+                                                    --( { model | page = AccountsPage updatedAccountsModel }, Cmd.none )
+                                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.AllCryptoCurrencies jsMsg.accountsData) updatedAccountsModel)
+                                            
+
+                                                _ ->
+                                                    ( model, Cmd.none )
 
                                 _ ->
-                                    --Json.Decode.fail "Unknown message type"
                                     ( { model | errors = model.errors ++ [ "Third Case", jsMsg.typeOfMsg ] }, Cmd.none )
 
                         {- Err errmsg ->
@@ -524,7 +538,7 @@ viewContainer model =
 -}
 {- -- NOTE: Representing a parsed route. Similar, but NOT the same as Page -}
 -- NAV: Route
--- TODO: Complete the others as '...Route'
+-- TODO: Complete the AllCrypto as '...Route'
 
 
 type Route
@@ -918,7 +932,7 @@ convertStringToCurrencyType str =
             Pages.Accounts.BTC
 
         _ ->
-            Pages.Accounts.BTC
+            Pages.Accounts.AllCrypto
 
 
 only2Decimals : String -> String
@@ -1178,7 +1192,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.8.69" ]
+                , Html.p [] [ Html.text "Version 0.8.70" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text

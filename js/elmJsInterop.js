@@ -1,11 +1,12 @@
 import { encrypt, decrypt } from './encryption.js'
 
-export async function elmInterop (message) {
+
+export async function elmInterop(message) {
   if (!message) {
     console.log('Null or undefined. No message yet', message)
     return
   }
-  // WARN: In tests message is a correctly formatted object, in production it needs to be parsed
+
   const parsedMessage =
     typeof message === 'string' ? JSON.parse(message) : message
 
@@ -17,13 +18,14 @@ export async function elmInterop (message) {
         console.error('Error Receiving Message from Elm: ', error)
       }
       break
+
     case 'encryptCryptoAccountMsgRequest':
       console.log('inside encryptCryptoAccountMsgRequest ', message)
       try {
         const encryptedData = await encrypt(
           parsedMessage.accountsData,
           parsedMessage.password
-        ) // Call the encrypt function with the parsed message
+        )
         localStorage.setItem(
           parsedMessage.storeAs,
           JSON.stringify(encryptedData)
@@ -32,22 +34,35 @@ export async function elmInterop (message) {
         console.error('Error Receiving Encryption Message from Elm: ', error)
       }
       break
+
     case 'decryptCryptoAccountsMsgRequest':
       try {
-        const keys = Object.keys(localStorage).filter(key =>
-          key.startsWith('BTC_Public_Key')
-        )
-        if (keys.length === 0) {
-          console.log('No BTC accounts found in localStorage.')
+        let keysToDecrypt = []
+
+        if (parsedMessage.currency === 'BTC') {
+          keysToDecrypt = Object.keys(localStorage).filter(key =>
+            key.startsWith('BTC_Public_Key')
+          )
+        } else if (parsedMessage.currency === 'AllCrypto') {
+          keysToDecrypt = Object.keys(localStorage).filter(key =>
+            key.includes('Public_Key')
+          )
+        } else {
+          console.log(`Unsupported currency: ${parsedMessage.currency}`)
           return
         }
+
+        if (keysToDecrypt.length === 0) {
+          console.log('No crypto accounts found in localStorage.')
+          return
+        }
+
         const decryptedData = await Promise.all(
-          keys.map(async key => {
+          keysToDecrypt.map(async key => {
             const encryptedData = JSON.parse(localStorage.getItem(key))
             return await decrypt(encryptedData, parsedMessage.password)
           })
         )
-        console.log('Decrypted BTC accounts:', decryptedData)
 
         if (
           window.Elm &&
@@ -57,14 +72,15 @@ export async function elmInterop (message) {
           window.Elm.ports.receiveMsgsFromJs.send({
             typeOfMsg: 'decryptedCryptoAccountsResponse',
             page: parsedMessage.page,
-            accountsData: decryptedData, // Send as a list
+            accountsData: decryptedData,
             currency: parsedMessage.currency
           })
         }
       } catch (error) {
-        console.error('Error decrypting BTC accounts:', error)
+        console.error('Error decrypting crypto accounts:', error)
       }
       break
+
     default:
       console.log(`Sorry, problem:  ${message}.`)
   }

@@ -50,8 +50,18 @@ accountsInitialModel =
     Accounts.initialModel
 
 
-decryptedCryptoAccountsResponseMessage : Json.Decode.Value
-decryptedCryptoAccountsResponseMessage =
+decryptedAllCryptoAccountsResponseMessage : Json.Decode.Value
+decryptedAllCryptoAccountsResponseMessage =
+    Json.Encode.object
+        [ ( "page", Json.Encode.string "AccountsPage" )
+        , ( "typeOfMsg", Json.Encode.string "decryptedCryptoAccountsResponse" )
+        , ( "accountsData", Json.Encode.list Json.Encode.string [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o", "0x1234567890abcdef1234567890abcdef12345678" ] )
+        , ( "currency", Json.Encode.string "AllCrypto" )
+        ]
+
+
+decryptedBTCAccountsResponseMessage : Json.Decode.Value
+decryptedBTCAccountsResponseMessage =
     Json.Encode.object
         [ ( "page", Json.Encode.string "AccountsPage" )
         , ( "typeOfMsg", Json.Encode.string "decryptedCryptoAccountsResponse" )
@@ -584,11 +594,12 @@ runSpecTests =
                         { onUrlRequest = Main.ClickedLink
                         , onUrlChange = Main.ChangedUrl
                         }
+                    |> Stub.serve [ TestData.successfullVersionFetch ]
                 )
                 |> when "receiving decryptedCryptoAccountsResponse message"
                     [ Spec.Command.send <|
                         Spec.Command.fake
-                            (Main.ReceivedFromJs decryptedCryptoAccountsResponseMessage)
+                            (Main.ReceivedFromJs decryptedBTCAccountsResponseMessage)
                     ]
                 -- NOTE: It appears that cos we use Spec.Setup.withDocument Main.view we cannot see the rendering of
                 -- data on the Accounts page from Main. We're confined to ensuring the Accounts model is correct from
@@ -601,18 +612,53 @@ runSpecTests =
                                     Main.AccountsPage <|
                                         { accountsInitialModel
                                             | listOfBTCAddresses = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
-                                            , currentView = Accounts.ManageAccounts
+                                            , currentView = Accounts.DisplayStoredBTCAddresses
                                             , isAddressVisible = True
                                             , cryptoAccountType = Accounts.BTC
                                             , errors = []
                                         }
                                 )
                         )
-                    
                     ]
             )
-
-       
+        , scenario "15a: List ALL Crypto addresses"
+            (given
+                (Spec.Setup.initForApplication
+                    (Main.init "http://localhost:1234")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Stub.serve [ TestData.successfullVersionFetch ]
+                )
+                |> when "receiving decryptedCryptoAccountsResponse message"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            (Main.ReceivedFromJs decryptedAllCryptoAccountsResponseMessage)
+                    ]
+                -- NOTE: It appears that cos we use Spec.Setup.withDocument Main.view we cannot see the rendering of
+                -- data on the Accounts page from Main. We're confined to ensuring the Accounts model is correct from
+                -- here. Rendering can be tested in AccountsSpec
+                |> Spec.observeThat
+                    [ it "adds ALL crypto address to listOfExistingCryptoAccounts"
+                        (Spec.Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.AccountsPage <|
+                                        { accountsInitialModel
+                                            | listOfExistingCryptoAccounts = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o", "0x1234567890abcdef1234567890abcdef12345678" ]
+                                            , currentView = Accounts.CryptoAccounts
+                                            , isAddressVisible = True
+                                            , cryptoAccountType = Accounts.AllCrypto
+                                            , errors = []
+                                        }
+                                )
+                        )
+                    ]
+            )
         , scenario "16: should trigger ReceivedFromJs when a message is received from the receiveMsgsFromJs port"
             (given
                 (Spec.Setup.initForApplication (Main.init "http://localhost:1234")
@@ -623,13 +669,14 @@ runSpecTests =
                         { onUrlRequest = Main.ClickedLink
                         , onUrlChange = Main.ChangedUrl
                         }
+                    |> Stub.serve [ TestData.successfullVersionFetch ]
                 )
                 |> when "a message is sent to the receiveMsgsFromJs port"
                     [ Spec.Port.send "receiveMsgsFromJs"
                         (Json.Encode.object
                             [ ( "page", Json.Encode.string "AccountsPage" )
                             , ( "typeOfMsg", Json.Encode.string "decryptedCryptoAccountsResponse" )
-                            , ( "accountsData", Json.Encode.list Json.Encode.string [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ])
+                            , ( "accountsData", Json.Encode.list Json.Encode.string [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ] )
                             , ( "currency", Json.Encode.string "BTC" )
                             ]
                         )
