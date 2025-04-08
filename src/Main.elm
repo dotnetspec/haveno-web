@@ -256,7 +256,7 @@ update msg model =
                         "AccountsPage" ->
                             case jsMsg.typeOfMsg of
                                 "encryptCryptoAccountMsgRequest" ->
-                                    --Json.Decode.map AddNewCryptoAccount (Json.Decode.field "address" Json.Decode.string)
+                                    
                                     let
                                         -- HACK: To get an accounts model to pass on
                                         accountsMdl =
@@ -275,16 +275,13 @@ update msg model =
                                 "decryptedCryptoAccountsResponse" ->
                                     case convertStringToCurrencyType jsMsg.currency of
                                         Pages.Accounts.BTC ->
-                                            --toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAddresses jsMsg.accountsData) Pages.Accounts.initialModel)
                                             case model.page of
                                                 AccountsPage accountsModel ->
                                                     let
                                                         updatedAccountsModel =
                                                             Pages.Accounts.updateBTCAccountsData jsMsg.accountsData accountsModel
                                                     in
-                                                    -- { model | page = AccountsPage updatedAccountsModel }, Cmd.none )
                                                     toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAddresses jsMsg.accountsData) updatedAccountsModel)
-                                            
 
                                                 _ ->
                                                     ( model, Cmd.none )
@@ -296,9 +293,7 @@ update msg model =
                                                         updatedAccountsModel =
                                                             Pages.Accounts.updateAllCryptoAccountsData jsMsg.accountsData accountsModel
                                                     in
-                                                    --( { model | page = AccountsPage updatedAccountsModel }, Cmd.none )
                                                     toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.AllCryptoCurrencies jsMsg.accountsData) updatedAccountsModel)
-                                            
 
                                                 _ ->
                                                     ( model, Cmd.none )
@@ -306,9 +301,6 @@ update msg model =
                                 _ ->
                                     ( { model | errors = model.errors ++ [ "Third Case", jsMsg.typeOfMsg ] }, Cmd.none )
 
-                        {- Err errmsg ->
-                           ( { model | errors = model.errors ++ [ "Third Case", Json.Decode.errorToString errmsg, jsMsg.typeOfMsg  ] }, Cmd.none )
-                        -}
                         _ ->
                             ( { model | errors = model.errors ++ [ "Second Case", "Not accounts page" ] }, Cmd.none )
 

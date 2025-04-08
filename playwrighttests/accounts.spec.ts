@@ -235,21 +235,6 @@ test('Load state and verify localStorage', async ({ page, browser }) => {
   // Verify that the element is visible
   await expect(btcAddressDiv).toBeVisible()
 
-  // Screenshot to visually debug where test fails
-  await pageWithState.screenshot({ path: 'btc-debug.png', fullPage: true })
-
-  // Verify that the element contains the expected Bitcoin address
-  /* await page.waitForSelector('div.btc-address-item.address-label', { timeout: 5000 });
-   */
   await pageWithState.waitForTimeout(500)
   await expect(btcAddressDiv).toHaveText('1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v')
-
-  /* 
-
-  // Verify that the Bitcoin address appears in the list of accounts
-  await expect(
-    page.locator('div.btc-address-item.address-label', {
-      hasText: '1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'
-    })
-  ).toBeVisible() */
 })
