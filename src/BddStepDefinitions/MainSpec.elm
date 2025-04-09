@@ -219,9 +219,9 @@ runSpecTests =
                         (Spec.Port.observe "msgFromMain" Main.jsMessageDecoder
                             |> Spec.expect
                                 (BddStepDefinitions.Extra.equals
-                                    [ { typeOfMsg = "ElmReady"
-                                      , currency = "BTC"
-                                      , page = "AccountsPage"
+                                    [ { typeOfMsg = Main.ElmReady
+                                      , currency = Accounts.BTC
+                                      , page = Main.AccountsPageJs
                                       , accountsData = [ "", "" ]
                                       }
                                     ]

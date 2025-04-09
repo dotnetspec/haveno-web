@@ -1,4 +1,4 @@
-port module Main exposing (FromMainToSchedule, JsMessage, Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, jsMessageDecoder, justmsgFieldFromJsonDecoder, main, menu, msgFromMain, navLinks, okButton, only2Decimals, receiveMsgsFromJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (PageTypeJs(..), FromMainToSchedule, JsMessage, MessageTypeJs(..), Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, jsMessageDecoder, justmsgFieldFromJsonDecoder, main, menu, msgFromMain, navLinks, okButton, only2Decimals, receiveMsgsFromJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- NOTE: exposing Url exposes a different type of Url to
@@ -253,10 +253,10 @@ update msg model =
             case Json.Decode.decodeValue jsMessageDecoder message of
                 Ok jsMsg ->
                     case jsMsg.page of
-                        "AccountsPage" ->
+                        AccountsPageJs ->
                             case jsMsg.typeOfMsg of
-                                "encryptCryptoAccountMsgRequest" ->
-                                    case convertStringToCurrencyType jsMsg.currency of
+                                EncryptCryptoAccountMsgRequestJs ->
+                                    case jsMsg.currency of
                                         Pages.Accounts.BTC ->
                                             case model.page of
                                                 AccountsPage accountsModel ->
@@ -274,8 +274,8 @@ update msg model =
                                                 _ ->
                                                     ( model, Cmd.none )
 
-                                "decryptedCryptoAccountsResponse" ->
-                                    case convertStringToCurrencyType jsMsg.currency of
+                                DecryptedCryptoAccountsResponseJs ->
+                                    case jsMsg.currency of
                                         Pages.Accounts.BTC ->
                                             case model.page of
                                                 AccountsPage accountsModel ->
@@ -293,7 +293,7 @@ update msg model =
                                                     ( model, Cmd.none )
 
                                 _ ->
-                                    ( { model | errors = model.errors ++ [ "Third Case", jsMsg.typeOfMsg ] }, Cmd.none )
+                                    ( { model | errors = model.errors ++ [ "Third Case", "in ReceivedFromJs"] }, Cmd.none )
 
                         _ ->
                             ( { model | errors = model.errors ++ [ "Second Case", "Not accounts page" ] }, Cmd.none )
@@ -570,16 +570,94 @@ type alias QueryStringParser a =
 
 
 -- NAV: Json decoders
+
+
+pageTypeJsDecoder : Json.Decode.Decoder PageTypeJs
+pageTypeJsDecoder =
+    Json.Decode.string
+        |> Json.Decode.andThen
+            (\page ->
+                case page of
+                    "AccountsPage" ->
+                        Json.Decode.succeed AccountsPageJs
+
+                    "SplashPage" ->
+                        Json.Decode.succeed SplashPageJs
+
+                    "SellPage" ->
+                        Json.Decode.succeed SellPageJs
+
+                    "PortfolioPage" ->
+                        Json.Decode.succeed PortfolioPageJs
+
+                    "FundsPage" ->
+                        Json.Decode.succeed FundsPageJs
+
+                    "SupportPage" ->
+                        Json.Decode.succeed SupportPageJs
+
+                    "BuyPage" ->
+                        Json.Decode.succeed BuyPageJs
+
+                    "MarketPage" ->
+                        Json.Decode.succeed MarketPageJs
+
+                    "DonatePage" ->
+                        Json.Decode.succeed DonatePageJs
+
+                    "ConnectPage" ->
+                        Json.Decode.succeed ConnectPageJs
+
+                    _ ->
+                        Json.Decode.fail ("Unknown page type: " ++ page)
+            )
+
+messageTypeJsDecoder : Json.Decode.Decoder MessageTypeJs
+messageTypeJsDecoder =
+    Json.Decode.string
+        |> Json.Decode.andThen
+            (\msgType ->
+                case msgType of
+                    "encryptCryptoAccountMsgRequest" ->
+                        Json.Decode.succeed EncryptCryptoAccountMsgRequestJs
+
+                    "decryptedCryptoAccountsResponse" ->
+                        Json.Decode.succeed DecryptedCryptoAccountsResponseJs
+
+                    "ElmReady" ->
+                        Json.Decode.succeed ElmReady
+
+                    _ ->
+                        Json.Decode.succeed UnknownMessageJs
+            )
+
+currencyJsDecoder : Json.Decode.Decoder Pages.Accounts.CryptoAccount
+currencyJsDecoder =
+    Json.Decode.string
+        |> Json.Decode.andThen
+            (\currency ->
+                case currency of
+                    "BTC" ->
+                        Json.Decode.succeed Pages.Accounts.BTC
+
+                    "AllCrypto" ->
+                        Json.Decode.succeed Pages.Accounts.AllCrypto
+
+                    _ ->
+                        Json.Decode.fail ("Unknown currency: " ++ currency)
+            )
+
+
 -- Decode the URL from JSON-encoded string
 
 
 jsMessageDecoder : Json.Decode.Decoder JsMessage
 jsMessageDecoder =
     Json.Decode.succeed JsMessage
-        |> required "page" Json.Decode.string
-        |> required "typeOfMsg" Json.Decode.string
+        |> required "page" pageTypeJsDecoder
+        |> required "typeOfMsg" messageTypeJsDecoder
         |> required "accountsData" (Json.Decode.list Json.Decode.string)
-        |> required "currency" Json.Decode.string
+        |> required "currency" currencyJsDecoder
 
 
 justmsgFieldFromJsonDecoder : Json.Decode.Decoder OperationEventMsg
@@ -847,6 +925,24 @@ toConnect model ( connect, cmd ) =
 
 -- NAV : Types
 
+type PageTypeJs
+    = AccountsPageJs
+    | SplashPageJs
+    | SellPageJs
+    | PortfolioPageJs
+    | FundsPageJs
+    | SupportPageJs
+    | BuyPageJs
+    | MarketPageJs
+    | DonatePageJs
+    | ConnectPageJs
+
+type MessageTypeJs
+    = EncryptCryptoAccountMsgRequestJs
+    | DecryptedCryptoAccountsResponseJs
+    | ElmReady
+    | UnknownMessageJs
+
 
 type Status
     = Loading
@@ -858,10 +954,10 @@ type Status
 
 
 type alias JsMessage =
-    { page : String
-    , typeOfMsg : String
+    { page : PageTypeJs
+    , typeOfMsg : MessageTypeJs
     , accountsData : List String
-    , currency : String
+    , currency : Pages.Accounts.CryptoAccount
     }
 
 
@@ -911,14 +1007,6 @@ gotAvailableBalances =
 -- NAV: Helper functions
 
 
-convertStringToCurrencyType : String -> Pages.Accounts.CryptoAccount
-convertStringToCurrencyType str =
-    case str of
-        "BTC" ->
-            Pages.Accounts.BTC
-
-        _ ->
-            Pages.Accounts.AllCrypto
 
 
 only2Decimals : String -> String
@@ -1178,7 +1266,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.8.70" ]
+                , Html.p [] [ Html.text "Version 0.9.70" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text
