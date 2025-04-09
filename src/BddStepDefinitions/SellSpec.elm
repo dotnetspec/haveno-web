@@ -5,17 +5,17 @@ module BddStepDefinitions.SellSpec exposing (main)
 import BddStepDefinitions.Extra exposing (equals)
 import BddStepDefinitions.Runner
 import Extras.TestData as TestData exposing (placeholderUrl, testBalanceInfo)
-import Grpc
-import Json.Decode
-import Pages.Accounts as Accounts
-import Spec exposing (Flags, Spec, describe, given, it, scenario, when)
-import Spec.Claim as Claim
+--import Grpc
+--import Json.Decode
+import Pages.Sell as Sell
+import Spec exposing (Flags, Spec, describe, given, it, scenario)
+{- import Spec.Claim as Claim
 import Spec.Command
 import Spec.Markup
 import Spec.Markup.Event
-import Spec.Markup.Selector exposing (by)
+import Spec.Markup.Selector exposing (by) -}
 import Spec.Observer as Observer
-import Spec.Port
+--import Spec.Port
 import Spec.Setup
 
 
@@ -25,24 +25,24 @@ import Spec.Setup
 -- using this:
 
 
-accountsInitialModel : Accounts.Model
-accountsInitialModel =
-    Accounts.initialModel
+sellInitialModel : Sell.Model
+sellInitialModel =
+    Sell.initialModel
 
 
-typeOfMsgDecoder : Json.Decode.Decoder String
+{- typeOfMsgDecoder : Json.Decode.Decoder String
 typeOfMsgDecoder =
-    Json.Decode.field "typeOfMsg" Json.Decode.string
+    Json.Decode.field "typeOfMsg" Json.Decode.string -}
 
 
-runSpecTests : Spec Accounts.Model Accounts.Msg
+runSpecTests : Spec Sell.Model Sell.Msg
 runSpecTests =
     describe
-        "Haveno Web App Accounts Tests"
-        [ scenario "1: Accessing the Accounts page with valid balance data and primary address which would get from Main"
+        "Haveno Web App Sell Tests"
+        [ scenario "1: Accessing the Sell page with valid balance data and primary address which would get from Main"
             (given
-                (Spec.Setup.initWithModel { accountsInitialModel | balances = testBalanceInfo, primaryaddress = TestData.primaryAddress }
-                    |> Spec.Setup.withUpdate Accounts.update
+                (Spec.Setup.initWithModel { sellInitialModel | balances = testBalanceInfo, primaryaddress = TestData.primaryAddress }
+                    |> Spec.Setup.withUpdate Sell.update
                     |> Spec.Setup.withLocation placeholderUrl
                 )
                 {- |> Spec.when "we log the http requests"
@@ -52,15 +52,15 @@ runSpecTests =
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
-                            |> Spec.expect (equals Accounts.Loaded)
+                            |> Spec.expect (equals Sell.Loaded)
                         )
                     , it "has view ManageAccounts"
                         (Observer.observeModel .currentView
-                            |> Spec.expect (equals Accounts.ManageAccounts)
+                            |> Spec.expect (equals Sell.ManageSell)
                         )
-                    , it "pagetitle is Accounts"
+                    , it "pagetitle is Sell"
                         (Observer.observeModel .pagetitle
-                            |> Spec.expect (equals "Accounts")
+                            |> Spec.expect (equals "Sell")
                         )
                     , it "should have balances in the model"
                         (Observer.observeModel .balances
@@ -72,23 +72,23 @@ runSpecTests =
                         )
                     ]
             )
-        , --skip <|
+        {- , --skip <|
           --pick <|
-          scenario "2: Handling the Accounts page with INvalid balance data"
+          scenario "2: Handling the Sell page with INvalid balance data"
             (given
-                (Spec.Setup.init (Accounts.init ())
-                    |> Spec.Setup.withView Accounts.view
-                    |> Spec.Setup.withUpdate Accounts.update
+                (Spec.Setup.init (Sell.init ())
+                    |> Spec.Setup.withView Sell.view
+                    |> Spec.Setup.withUpdate Sell.update
                     |> Spec.Setup.withLocation placeholderUrl
                 )
                 |> when "the page attempts to load Balances"
-                    [ Spec.Command.send (Spec.Command.fake <| Accounts.GotBalances (Result.Err <| Grpc.UnknownGrpcStatus "unknown")) ]
+                    [ Spec.Command.send (Spec.Command.fake <| Sell.GotBalances (Result.Err <| Grpc.UnknownGrpcStatus "unknown")) ]
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
-                            |> Spec.expect (equals Accounts.Errored)
+                            |> Spec.expect (equals Sell.Errored)
                         )
-                    , it "displays the Accounts page correctly"
+                    , it "displays the Sell page correctly"
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
                             << by [ Spec.Markup.Selector.id "accounts-error-message" ]
@@ -100,34 +100,34 @@ runSpecTests =
                         )
                     ]
             )
-        , Spec.scenario "3. User navigates to Traditional Currency Accounts"
+        , Spec.scenario "3. User navigates to Traditional Currency Sell"
             (Spec.given
-                (Spec.Setup.initWithModel accountsInitialModel
-                    |> Spec.Setup.withView Accounts.view
-                    |> Spec.Setup.withUpdate Accounts.update
+                (Spec.Setup.initWithModel sellInitialModel
+                    |> Spec.Setup.withView Sell.view
+                    |> Spec.Setup.withUpdate Sell.update
                 )
-                |> Spec.when "User clicks Traditional Currency Accounts"
+                |> Spec.when "User clicks Traditional Currency Sell"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "traditionalCurrencyAccountsButton" ]
                     , Spec.Markup.Event.click
                     ]
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
-                            |> Spec.expect (equals Accounts.Loaded)
+                            |> Spec.expect (equals Sell.Loaded)
                         )
-                    , Spec.it "updates the model to show Traditional Currency Accounts"
+                    , Spec.it "updates the model to show Traditional Currency Sell"
                         (Observer.observeModel .currentView
-                            |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.TraditionalCurrencyAccounts)
+                            |> Spec.expect (BddStepDefinitions.Extra.equals Sell.TraditionalCurrencyAccounts)
                         )
                     ]
             )
-        , Spec.scenario "4. User navigates to Cryptocurrency Accounts"
+        , Spec.scenario "4. User navigates to Cryptocurrency Sell"
             (Spec.given
-                (Spec.Setup.initWithModel accountsInitialModel
-                    |> Spec.Setup.withView Accounts.view
-                    |> Spec.Setup.withUpdate Accounts.update
+                (Spec.Setup.initWithModel sellInitialModel
+                    |> Spec.Setup.withView Sell.view
+                    |> Spec.Setup.withUpdate Sell.update
                 )
-                |> Spec.when "User clicks Cryptocurrency Accounts"
+                |> Spec.when "User clicks Cryptocurrency Sell"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
                     , Spec.Markup.Event.click
                     ]
@@ -138,15 +138,15 @@ runSpecTests =
                 |> Spec.observeThat
                     [ Spec.it "has status as Loaded"
                         (Observer.observeModel .status
-                            |> Spec.expect (equals Accounts.Loaded)
+                            |> Spec.expect (equals Sell.Loaded)
                         )
                     , Spec.it "has cryptoAccount as BTC"
                         (Observer.observeModel .cryptoAccountType
-                            |> Spec.expect (equals Accounts.BTC)
+                            |> Spec.expect (equals Sell.BTC)
                         )
                     , Spec.it "updates the model to show Create new BTC Account"
                         (Observer.observeModel .currentView
-                            |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.CreateNewBTCAccountView)
+                            |> Spec.expect (BddStepDefinitions.Extra.equals Sell.CreateNewBTCAccountView)
                         )
                     , it "displays the Cryptocurrency list with BTC as the first option"
                         (Spec.Markup.observeElement
@@ -203,9 +203,9 @@ runSpecTests =
             )
         , Spec.scenario "User navigates to Wallet Password"
             (Spec.given
-                (Spec.Setup.initWithModel accountsInitialModel
-                    |> Spec.Setup.withView Accounts.view
-                    |> Spec.Setup.withUpdate Accounts.update
+                (Spec.Setup.initWithModel sellInitialModel
+                    |> Spec.Setup.withView Sell.view
+                    |> Spec.Setup.withUpdate Sell.update
                 )
                 |> Spec.when "User clicks Wallet Password"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "walletPasswordButton" ]
@@ -214,15 +214,15 @@ runSpecTests =
                 |> Spec.observeThat
                     [ Spec.it "updates the model to show Wallet Password"
                         (Observer.observeModel .currentView
-                            |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.WalletPassword)
+                            |> Spec.expect (BddStepDefinitions.Extra.equals Sell.WalletPassword)
                         )
                     ]
             )
         , Spec.scenario "User navigates to Wallet Seed"
             (Spec.given
-                (Spec.Setup.initWithModel accountsInitialModel
-                    |> Spec.Setup.withView Accounts.view
-                    |> Spec.Setup.withUpdate Accounts.update
+                (Spec.Setup.initWithModel sellInitialModel
+                    |> Spec.Setup.withView Sell.view
+                    |> Spec.Setup.withUpdate Sell.update
                 )
                 |> Spec.when "User clicks Wallet Seed"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "walletSeedButton" ]
@@ -231,15 +231,15 @@ runSpecTests =
                 |> Spec.observeThat
                     [ Spec.it "updates the model to show Wallet Seed"
                         (Observer.observeModel .currentView
-                            |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.WalletSeed)
+                            |> Spec.expect (BddStepDefinitions.Extra.equals Sell.WalletSeed)
                         )
                     ]
             )
         , Spec.scenario "User navigates to Backup"
             (Spec.given
-                (Spec.Setup.initWithModel accountsInitialModel
-                    |> Spec.Setup.withView Accounts.view
-                    |> Spec.Setup.withUpdate Accounts.update
+                (Spec.Setup.initWithModel sellInitialModel
+                    |> Spec.Setup.withView Sell.view
+                    |> Spec.Setup.withUpdate Sell.update
                 )
                 |> Spec.when "User clicks Backup"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "backupButton" ]
@@ -248,17 +248,17 @@ runSpecTests =
                 |> Spec.observeThat
                     [ Spec.it "updates the model to show Backup"
                         (Observer.observeModel .currentView
-                            |> Spec.expect (BddStepDefinitions.Extra.equals Accounts.Backup)
+                            |> Spec.expect (BddStepDefinitions.Extra.equals Sell.Backup)
                         )
                     ]
             )
         , Spec.scenario "5. Displays 'There are no accounts set up yet' when the list is empty"
             (Spec.given
-                (Spec.Setup.initWithModel accountsInitialModel
-                    |> Spec.Setup.withView Accounts.view
-                    |> Spec.Setup.withUpdate Accounts.update
+                (Spec.Setup.initWithModel sellInitialModel
+                    |> Spec.Setup.withView Sell.view
+                    |> Spec.Setup.withUpdate Sell.update
                 )
-                |> Spec.when "User clicks Cryptocurrency Accounts"
+                |> Spec.when "User clicks Cryptocurrency Sell"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
                     , Spec.Markup.Event.click
                     ]
@@ -278,26 +278,26 @@ runSpecTests =
         , Spec.scenario "6. Displays existing accounts when the list is not empty - ONLY TESTING VIEW and PORT, not localstorage"
             (Spec.given
                 (Spec.Setup.initWithModel
-                    { accountsInitialModel
-                        | status = Accounts.Loaded
+                    { sellInitialModel
+                        | status = Sell.Loaded
                         , listOfExistingCryptoAccounts = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
                         , savedPassword = "test-password"
                     }
-                    |> Spec.Setup.withView Accounts.view
-                    |> Spec.Setup.withUpdate Accounts.update
+                    |> Spec.Setup.withView Sell.view
+                    |> Spec.Setup.withUpdate Sell.update
                 )
-                |> Spec.when "User clicks Cryptocurrency Accounts"
+                |> Spec.when "User clicks Cryptocurrency Sell"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
                     , Spec.Markup.Event.click
                     ]
                 |> Spec.observeThat
                     [ it "has status as Loaded"
                         (Observer.observeModel .status
-                            |> Spec.expect (equals Accounts.Loaded)
+                            |> Spec.expect (equals Sell.Loaded)
                         )
                     , it "is on the CryptoAccounts view"
                         (Observer.observeModel .currentView
-                            |> Spec.expect (equals Accounts.CryptoAccounts)
+                            |> Spec.expect (equals Sell.CryptoAccounts)
                         )
 
                     -- NOTE: Can only test the request going to the port, response is returned via Main.elm
@@ -331,28 +331,28 @@ runSpecTests =
         , scenario "User clicks VIEW BTC ACCOUNTS button and sends the expected message to the port"
             (given
                 (Spec.Setup.initWithModel
-                    { accountsInitialModel
+                    { sellInitialModel
                         | listOfBTCAddresses =
                             [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v"
                             , "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o"
                             ]
                     }
-                    |> Spec.Setup.withView Accounts.view
-                    |> Spec.Setup.withUpdate Accounts.update
+                    |> Spec.Setup.withView Sell.view
+                    |> Spec.Setup.withUpdate Sell.update
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-                |> when "User clicks Cryptocurrency Accounts"
+                |> when "User clicks Cryptocurrency Sell"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
                     , Spec.Markup.Event.click
                     ]
-                |> when "User clicks View BTC Accounts"
+                |> when "User clicks View BTC Sell"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "btcAccountsButton" ]
                     , Spec.Markup.Event.click
                     ]
                 |> Spec.observeThat
                     [ it "is on the DisplayStoredBTCAddresses view"
                         (Observer.observeModel .currentView
-                            |> Spec.expect (equals Accounts.DisplayStoredBTCAddresses)
+                            |> Spec.expect (equals Sell.DisplayStoredBTCAddresses)
                         )
                     , it "displays stored and unencrypted BTC address(es) correctly"
                         (Spec.Markup.observeElements
@@ -369,12 +369,12 @@ runSpecTests =
             )
         , scenario "User clicks SAVE NEW BTC ACCOUNT button and sends the expected message to the port"
             (given
-                (Spec.Setup.initWithModel { accountsInitialModel | savedPassword = "test-password" }
-                    |> Spec.Setup.withView Accounts.view
-                    |> Spec.Setup.withUpdate Accounts.update
+                (Spec.Setup.initWithModel { sellInitialModel | savedPassword = "test-password" }
+                    |> Spec.Setup.withView Sell.view
+                    |> Spec.Setup.withUpdate Sell.update
                     |> Spec.Setup.withLocation placeholderUrl
                 )
-                |> when "User clicks Cryptocurrency Accounts"
+                |> when "User clicks Cryptocurrency Sell"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "cryptocurrencyAccountsButton" ]
                     , Spec.Markup.Event.click
                     ]
@@ -397,7 +397,7 @@ runSpecTests =
                         )
                     , it "is on the DisplayStoredBTCAddresses view"
                         (Observer.observeModel .currentView
-                            |> Spec.expect (equals Accounts.DisplayStoredBTCAddresses)
+                            |> Spec.expect (equals Sell.DisplayStoredBTCAddresses)
                         )
                     , it "displays the newly added BTC address correctly"
                         (Spec.Markup.observeElement
@@ -410,10 +410,10 @@ runSpecTests =
                                 )
                         )
                     ]
-            )
+            ) -}
         ]
 
 
-main : Program Flags (Spec.Model Accounts.Model Accounts.Msg) (Spec.Msg Accounts.Msg)
+main : Program Flags (Spec.Model Sell.Model Sell.Msg) (Spec.Msg Sell.Msg)
 main =
     BddStepDefinitions.Runner.browserProgram [ runSpecTests ]

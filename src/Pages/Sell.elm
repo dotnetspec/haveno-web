@@ -34,7 +34,7 @@ initialModel =
     , primaryaddress = ""
     , errors = []
     , subaddress = ""
-    , currentView = Bitcoin
+    , currentView = ManageSell
     , listOfExistingCryptoAccounts = []
     , listOfBTCAddresses = []
     , newBTCAddress = ""
@@ -57,7 +57,8 @@ init _ =
 
 
 type View
-    = Bitcoin
+    = ManageSell
+    | Bitcoin
 
 
 type Status
@@ -108,6 +109,11 @@ view model =
                                 div []
                                     [ h4 [] [ text "BTC Accounts" ]
                                     , btcAccountsView model
+                                    ]
+                            ManageSell ->
+                                div []
+                                    [ h4 [] [ text "Manage Sell" ]
+                                    , text "Manage your sell orders here."
                                     ]
                         ]
             , div
