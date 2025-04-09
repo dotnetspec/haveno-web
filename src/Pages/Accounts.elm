@@ -1,6 +1,6 @@
-port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, msgFromAccounts, update, view)
+port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, msgFromAccounts, update, view)
 
-import Extras.Constants exposing (xmrConversionConstant)
+
 import Grpc
 import Html exposing (Html, div, h4, p, section, text)
 import Html.Attributes exposing (class, classList, id, placeholder, readonly, type_, value)
@@ -8,7 +8,6 @@ import Html.Events exposing (onInput)
 import Json.Encode
 import Proto.Io.Haveno.Protobuffer as Protobuf
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
-import UInt64
 import Utils.MyUtils
 
 
@@ -51,11 +50,6 @@ initialModel =
     , savedPassword = "" -- The actual saved password
     , temporaryPassword = "" -- The temporary password for the input box
     }
-
-
-type Status
-    = Loaded
-    | Errored
 
 
 type View
@@ -102,6 +96,10 @@ type Msg
 
 
 -- NAV: Types
+
+type Status
+    = Loaded
+    | Errored
 
 
 type CryptoAccount
@@ -437,45 +435,6 @@ convertCurrencyTypeToString cryptoAccount =
             "AllCrypto"
 
 
-formatBalance : { higher : Int, lower : Int } -> String
-formatBalance int64 =
-    let
-        -- Convert higher and lower into a full 64-bit integer
-        fullUInt64 : UInt64.UInt64
-        fullUInt64 =
-            let
-                highPart =
-                    UInt64.fromInt int64.higher |> UInt64.mul (UInt64.fromInt xmrConversionConstant)
-
-                lowPart =
-                    if int64.lower < 0 then
-                        UInt64.fromInt (int64.lower + xmrConversionConstant)
-
-                    else
-                        UInt64.fromInt int64.lower
-            in
-            UInt64.add highPart lowPart
-
-        -- Convert UInt64 to Float
-        fullFloat : Float
-        fullFloat =
-            UInt64.toFloat fullUInt64
-
-        -- Convert piconero to XMR
-        xmrAmount : Float
-        xmrAmount =
-            fullFloat / 1000000000000
-
-        -- Ensure proper rounding to 11 decimal places
-        scale : Float
-        scale =
-            toFloat (10 ^ 11)
-
-        roundedXmr : Float
-        roundedXmr =
-            toFloat (round (xmrAmount * scale)) / scale
-    in
-    String.fromFloat roundedXmr
 
 
 

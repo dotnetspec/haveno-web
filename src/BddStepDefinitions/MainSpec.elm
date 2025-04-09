@@ -683,7 +683,7 @@ runSpecTests =
                     ]
                 |> Spec.observeThat
                     [ it "should trigger the ReceivedFromJs message"
-                        (Spec.Observer.observeModel .currentJsMessage
+                        (Spec.Observer.observeModel .accountsDataFromJs
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ])
                         )

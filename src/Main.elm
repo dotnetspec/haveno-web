@@ -1,4 +1,4 @@
-port module Main exposing (PageTypeJs(..), FromMainToSchedule, JsMessage, MessageTypeJs(..), Model, Msg(..), OperationEventMsg, Page(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, jsMessageDecoder, justmsgFieldFromJsonDecoder, main, menu, msgFromMain, navLinks, okButton, only2Decimals, receiveMsgsFromJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
+port module Main exposing (FromMainToSchedule, JsMessage, MessageTypeJs(..), Model, Msg(..), OperationEventMsg, Page(..), PageTypeJs(..), QueryParams, QueryStringParser, Route(..), Status(..), codeParser, connectionStatusView, errorMessages, footerContent, fromJsonToString, gotAvailableBalances, gotCodeFromUrl, init, isActive, isValidXMRAddress, isXMRWalletConnected, jsMessageDecoder, justmsgFieldFromJsonDecoder, main, menu, msgFromMain, navLinks, okButton, only2Decimals, receiveMsgsFromJs, sendVersionRequest, setSplashHavenoVersion, subscriptions, toAccounts, toConnect, toDonate, toFunds, toMarket, toPortfolio, toPricing, toSell, toSplash, toSupport, topLogo, update, updateUrl, urlAsPageParser, urlDecoder, view, viewErrors)
 
 -- NOTE: A working Main module that handles URLs and maintains a conceptual Page - i.e. makes an SPA possible
 -- NOTE: exposing Url exposes a different type of Url to
@@ -81,7 +81,7 @@ type alias Model =
     , errors : List String
     , isApiConnected : Bool
     , version : String
-    , currentJsMessage : List String
+    , accountsDataFromJs : List String
     , initialized : Bool
     , isMenuOpen : Bool
     , balances : Maybe Protobuf.BalancesInfo
@@ -119,7 +119,7 @@ init flag _ key =
             , errors = []
             , isApiConnected = False
             , version = "No Haveno version available"
-            , currentJsMessage = [ "" ]
+            , accountsDataFromJs = [ "" ]
             , initialized = False
             , isMenuOpen = False
             , balances = Just Protobuf.defaultBalancesInfo
@@ -136,6 +136,9 @@ init flag _ key =
 
 -- NAV: Msg
 -- NOTE: Each variant here is a constructor for the Msg type.
+
+-- NOTE: The 'Got' Msgs are the sub pages talking to Main
+-- The to<FunctionName> functions are Main talking to the sub pages
 
 
 type Msg
@@ -279,21 +282,25 @@ update msg model =
                                         Pages.Accounts.BTC ->
                                             case model.page of
                                                 AccountsPage accountsModel ->
-                                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAddresses jsMsg.accountsData) accountsModel)
+                                                    toAccounts { model | accountsDataFromJs = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAddresses jsMsg.accountsData) accountsModel)
 
+                                                SellPage sellModel ->
+                                                    toSell { model | accountsDataFromJs = jsMsg.accountsData } (Pages.Sell.update (Pages.Sell.NoOp) sellModel)
+
+                                                
                                                 _ ->
                                                     ( model, Cmd.none )
 
                                         Pages.Accounts.AllCrypto ->
                                             case model.page of
                                                 AccountsPage accountsModel ->
-                                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.AllCryptoCurrencies jsMsg.accountsData) accountsModel)
+                                                    toAccounts { model | accountsDataFromJs = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.AllCryptoCurrencies jsMsg.accountsData) accountsModel)
 
                                                 _ ->
                                                     ( model, Cmd.none )
 
                                 _ ->
-                                    ( { model | errors = model.errors ++ [ "Third Case", "in ReceivedFromJs"] }, Cmd.none )
+                                    ( { model | errors = model.errors ++ [ "Third Case", "in ReceivedFromJs" ] }, Cmd.none )
 
                         _ ->
                             ( { model | errors = model.errors ++ [ "Second Case", "Not accounts page" ] }, Cmd.none )
@@ -612,6 +619,7 @@ pageTypeJsDecoder =
                         Json.Decode.fail ("Unknown page type: " ++ pageReferencedByJs)
             )
 
+
 messageTypeJsDecoder : Json.Decode.Decoder MessageTypeJs
 messageTypeJsDecoder =
     Json.Decode.string
@@ -631,6 +639,7 @@ messageTypeJsDecoder =
                         Json.Decode.succeed UnknownMessageJs
             )
 
+
 currencyJsDecoder : Json.Decode.Decoder Pages.Accounts.CryptoAccount
 currencyJsDecoder =
     Json.Decode.string
@@ -646,6 +655,7 @@ currencyJsDecoder =
                     _ ->
                         Json.Decode.fail ("Unknown currency: " ++ currency)
             )
+
 
 
 -- Decode the URL from JSON-encoded string
@@ -853,7 +863,7 @@ toSplash model ( dashboard, cmd ) =
 
 toSell : Model -> ( Pages.Sell.Model, Cmd Pages.Sell.Msg ) -> ( Model, Cmd Msg )
 toSell model ( sell, cmd ) =
-    ( { model | page = SellPage sell }
+    ( { model | page = SellPage { sell | listOfExistingCryptoAccounts = model.accountsDataFromJs } }
       {- -- NOTE: In your example, Cmd.map GotSellMsg cmd, GotSellMsg is indeed a function,
          but you're not explicitly applying it. Cmd.map will take care of applying GotSellMsg to each value that the command produces.
       -}
@@ -925,6 +935,7 @@ toConnect model ( connect, cmd ) =
 
 -- NAV : Types
 
+
 type PageTypeJs
     = AccountsPageJs
     | SplashPageJs
@@ -936,6 +947,7 @@ type PageTypeJs
     | MarketPageJs
     | DonatePageJs
     | ConnectPageJs
+
 
 type MessageTypeJs
     = EncryptCryptoAccountMsgRequestJs
@@ -1005,8 +1017,6 @@ gotAvailableBalances =
 
 
 -- NAV: Helper functions
-
-
 
 
 only2Decimals : String -> String
@@ -1266,7 +1276,7 @@ footerContent model =
                 , Html.br []
                     []
                 , Html.text "Open source code & design"
-                , Html.p [] [ Html.text "Version 0.9.70" ]
+                , Html.p [] [ Html.text "Version 0.9.71" ]
                 , Html.text "Haveno Version"
                 , Html.p [ Attr.id "havenofooterver" ]
                     [ Html.text
