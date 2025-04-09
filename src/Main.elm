@@ -576,8 +576,8 @@ pageTypeJsDecoder : Json.Decode.Decoder PageTypeJs
 pageTypeJsDecoder =
     Json.Decode.string
         |> Json.Decode.andThen
-            (\page ->
-                case page of
+            (\pageReferencedByJs ->
+                case pageReferencedByJs of
                     "AccountsPage" ->
                         Json.Decode.succeed AccountsPageJs
 
@@ -609,7 +609,7 @@ pageTypeJsDecoder =
                         Json.Decode.succeed ConnectPageJs
 
                     _ ->
-                        Json.Decode.fail ("Unknown page type: " ++ page)
+                        Json.Decode.fail ("Unknown page type: " ++ pageReferencedByJs)
             )
 
 messageTypeJsDecoder : Json.Decode.Decoder MessageTypeJs

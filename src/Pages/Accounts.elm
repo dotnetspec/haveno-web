@@ -340,7 +340,7 @@ passwordView model =
                 [ Html.input
                     [ id "accounts-password-input"
                     , type_ "text"
-                    , placeholder "Enter password to en/decrypt accounts data"
+                    , placeholder "To en/decrypt accounts data"
                     , onInput UpdatePassword
                     , value model.temporaryPassword -- Ensures the input box stays in sync with `temporaryPassword`
                     ]
