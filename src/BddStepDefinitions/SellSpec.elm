@@ -54,7 +54,7 @@ runSpecTests =
                         (Observer.observeModel .status
                             |> Spec.expect (equals Sell.Loaded)
                         )
-                    , it "has view ManageAccounts"
+                    , it "has view ManageSell"
                         (Observer.observeModel .currentView
                             |> Spec.expect (equals Sell.ManageSell)
                         )
