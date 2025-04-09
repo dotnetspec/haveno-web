@@ -88,7 +88,7 @@ type Msg
     = GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | GotXmrNewSubaddress (Result Grpc.Error Protobuf.GetXmrNewSubaddressReply)
-    | AddNewCryptoAccount String
+    | EncryptNewBTCAddress String
     | DecryptedBTCAddresses (List String)
     | AllCryptoCurrencies (List String)
     | ChangeView View
@@ -117,13 +117,13 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         -- REVIEW: Need address or already in the model?
-        AddNewCryptoAccount address ->
+        EncryptNewBTCAddress address ->
             let
                 message =
                     encryptCryptoAccountMsgRequest address model
             in
             -- TODO: Modify for different cryptos
-            ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = model.listOfBTCAddresses ++ [ address ] }, encryptionMsg message )
+            ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = model.listOfBTCAddresses ++ [ address ], cryptoAccountType = BTC }, encryptionMsg message )
 
         DecryptedBTCAddresses data ->
             ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = data, isAddressVisible = True }, Cmd.none )
@@ -276,7 +276,7 @@ createNewBTCAccountView model =
                 [ Html.input [ id "account-name-input", type_ "text", readonly True, value ("BTC: " ++ model.newBTCAddress) ] []
                 ]
             ]
-        , Utils.MyUtils.infoBtn "SAVE NEW BTC ACCOUNT" "save-new-BTC-account-button" <| AddNewCryptoAccount model.newBTCAddress
+        , Utils.MyUtils.infoBtn "SAVE NEW BTC ACCOUNT" "save-new-BTC-account-button" <| EncryptNewBTCAddress model.newBTCAddress
         ]
 
 

@@ -256,20 +256,23 @@ update msg model =
                         "AccountsPage" ->
                             case jsMsg.typeOfMsg of
                                 "encryptCryptoAccountMsgRequest" ->
-                                    let
-                                        -- HACK: To get an accounts model to pass on
-                                        accountsMdl =
+                                    case convertStringToCurrencyType jsMsg.currency of
+                                        Pages.Accounts.BTC ->
                                             case model.page of
                                                 AccountsPage accountsModel ->
-                                                    { accountsModel | cryptoAccountType = convertStringToCurrencyType jsMsg.currency, listOfBTCAddresses = jsMsg.accountsData }
+                                                    toAccounts model (Pages.Accounts.update (Pages.Accounts.EncryptNewBTCAddress (Maybe.withDefault "No BTC address" (List.head jsMsg.accountsData))) accountsModel)
 
                                                 _ ->
-                                                    -- REVIEW:
-                                                    -- WARN: This could re-set values if we're not
-                                                    -- on the Accounts page in Elm (unlikely)
-                                                    Pages.Accounts.initialModel
-                                    in
-                                    toAccounts model (Pages.Accounts.update (Pages.Accounts.AddNewCryptoAccount (Maybe.withDefault "No BTC address" (List.head jsMsg.accountsData))) accountsMdl)
+                                                    ( model, Cmd.none )
+
+                                        -- TODO: Handle other currencies
+                                        Pages.Accounts.AllCrypto ->
+                                            case model.page of
+                                                AccountsPage accountsModel ->
+                                                    toAccounts model (Pages.Accounts.update (Pages.Accounts.EncryptNewBTCAddress (Maybe.withDefault "No BTC address" (List.head jsMsg.accountsData))) accountsModel)
+
+                                                _ ->
+                                                    ( model, Cmd.none )
 
                                 "decryptedCryptoAccountsResponse" ->
                                     case convertStringToCurrencyType jsMsg.currency of
