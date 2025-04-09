@@ -256,7 +256,6 @@ update msg model =
                         "AccountsPage" ->
                             case jsMsg.typeOfMsg of
                                 "encryptCryptoAccountMsgRequest" ->
-                                    
                                     let
                                         -- HACK: To get an accounts model to pass on
                                         accountsMdl =
@@ -277,11 +276,7 @@ update msg model =
                                         Pages.Accounts.BTC ->
                                             case model.page of
                                                 AccountsPage accountsModel ->
-                                                    let
-                                                        updatedAccountsModel =
-                                                            Pages.Accounts.updateBTCAccountsData jsMsg.accountsData accountsModel
-                                                    in
-                                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAddresses jsMsg.accountsData) updatedAccountsModel)
+                                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAddresses jsMsg.accountsData) accountsModel)
 
                                                 _ ->
                                                     ( model, Cmd.none )
@@ -289,11 +284,7 @@ update msg model =
                                         Pages.Accounts.AllCrypto ->
                                             case model.page of
                                                 AccountsPage accountsModel ->
-                                                    let
-                                                        updatedAccountsModel =
-                                                            Pages.Accounts.updateAllCryptoAccountsData jsMsg.accountsData accountsModel
-                                                    in
-                                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.AllCryptoCurrencies jsMsg.accountsData) updatedAccountsModel)
+                                                    toAccounts { model | currentJsMessage = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.AllCryptoCurrencies jsMsg.accountsData) accountsModel)
 
                                                 _ ->
                                                     ( model, Cmd.none )

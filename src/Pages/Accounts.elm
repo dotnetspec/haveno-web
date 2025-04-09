@@ -1,4 +1,4 @@
-port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, msgFromAccounts, update, updateAllCryptoAccountsData, updateBTCAccountsData, view)
+port module Pages.Accounts exposing (CryptoAccount(..), Model, Msg(..), Status(..), View(..), errorView, existingCryptoAccountsView, formatBalance, gotAvailableBalances, gotNewSubAddress, gotPrimaryAddress, init, initialModel, manageAccountsView, msgFromAccounts, update, view)
 
 import Extras.Constants exposing (xmrConversionConstant)
 import Grpc
@@ -129,7 +129,7 @@ update msg model =
             ( { model | currentView = DisplayStoredBTCAddresses, listOfBTCAddresses = data, isAddressVisible = True }, Cmd.none )
 
         AllCryptoCurrencies data ->
-            ( { model | currentView = CryptoAccounts, listOfExistingCryptoAccounts = data, cryptoAccountType = AllCrypto, isAddressVisible = True }, Cmd.none )
+            ( { model | currentView = CryptoAccounts, listOfExistingCryptoAccounts = data, cryptoAccountType = AllCrypto, isAddressVisible = True}, Cmd.none )
 
         GotXmrPrimaryAddress (Ok primaryAddresponse) ->
             ( { model | primaryaddress = primaryAddresponse.primaryAddress, status = Loaded }, Cmd.none )
@@ -425,25 +425,6 @@ gotAllCryptoAccountsFromJs pword =
 
 
 -- NAV: Helper functions
-
-
-updateBTCAccountsData : List String -> Model -> Model
-updateBTCAccountsData newData model =
-    { model
-        | listOfBTCAddresses = model.listOfBTCAddresses ++ newData
-        , isAddressVisible = True
-    }
-
-
-updateAllCryptoAccountsData : List String -> Model -> Model
-updateAllCryptoAccountsData newData model =
-    { model
-        | listOfExistingCryptoAccounts = model.listOfExistingCryptoAccounts ++ newData
-        , isAddressVisible = True
-        , cryptoAccountType = AllCrypto
-        , currentView = CryptoAccounts
-        , errors = []
-    }
 
 
 convertCurrencyTypeToString : CryptoAccount -> String
