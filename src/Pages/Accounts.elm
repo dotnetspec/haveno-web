@@ -52,15 +52,7 @@ initialModel =
     }
 
 
-type View
-    = ManageAccounts
-    | TraditionalCurrencyAccounts
-    | CryptoAccounts
-    | CreateNewBTCAccountView
-    | DisplayStoredBTCAddresses
-    | WalletPassword
-    | WalletSeed
-    | Backup
+
 
 
 
@@ -96,6 +88,16 @@ type Msg
 
 
 -- NAV: Types
+
+type View
+    = ManageAccounts
+    | TraditionalCurrencyAccounts
+    | CryptoAccounts
+    | CreateNewBTCAccountView
+    | DisplayStoredBTCAddresses
+    | WalletPassword
+    | WalletSeed
+    | Backup
 
 type Status
     = Loaded

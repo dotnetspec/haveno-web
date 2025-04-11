@@ -5694,9 +5694,6 @@ var $author$project$Pages$Portfolio$init = function (_v0) {
 			{vg: 'Haveno-Web Portfolio'}),
 		A2($elm$core$Platform$Cmd$map, $elm$core$Basics$identity, $elm$core$Platform$Cmd$none));
 };
-var $author$project$Pages$Sell$GotInitialModel = function (a) {
-	return {$: 0, a: a};
-};
 var $author$project$Types$CryptoAccount$BTC = 0;
 var $author$project$Pages$Sell$Loaded = 0;
 var $author$project$Pages$Sell$ManageSell = 0;
@@ -5717,9 +5714,7 @@ var $author$project$Pages$Sell$initialModel = {
 	ep: ''
 };
 var $author$project$Pages$Sell$init = function (_v0) {
-	return _Utils_Tuple2(
-		$author$project$Pages$Sell$initialModel,
-		A2($elm$core$Platform$Cmd$map, $author$project$Pages$Sell$GotInitialModel, $elm$core$Platform$Cmd$none));
+	return _Utils_Tuple2($author$project$Pages$Sell$initialModel, $elm$core$Platform$Cmd$none);
 };
 var $author$project$Pages$Splash$NoOp = 0;
 var $author$project$Pages$Splash$init = function (fromMainToSplash) {
@@ -8578,7 +8573,7 @@ var $author$project$Pages$Accounts$EncryptNewBTCAddress = function (a) {
 	return {$: 3, a: a};
 };
 var $author$project$Main$NoOp = {$: 18};
-var $author$project$Pages$Sell$NoOp = {$: 1};
+var $author$project$Pages$Sell$NoOp = {$: 0};
 var $author$project$Pages$Funds$SubAddressView = 1;
 var $elm$json$Json$Decode$decodeValue = _Json_run;
 var $elm$core$List$head = function (list) {
@@ -9154,8 +9149,13 @@ var $author$project$Pages$Portfolio$update = F2(
 	});
 var $author$project$Pages$Sell$update = F2(
 	function (msg, model) {
-		if (!msg.$) {
-			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+		if (msg.$ === 1) {
+			var newView = msg.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{sM: newView}),
+				$elm$core$Platform$Cmd$none);
 		} else {
 			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
@@ -11265,6 +11265,12 @@ var $author$project$Pages$Portfolio$content = A2(
 var $author$project$Pages$Portfolio$view = function (_v0) {
 	return $author$project$Pages$Portfolio$content;
 };
+var $author$project$Pages$Sell$Bitcoin = 1;
+var $author$project$Pages$Sell$ChangeView = function (a) {
+	return {$: 1, a: a};
+};
+var $author$project$Pages$Sell$Monero = 2;
+var $author$project$Pages$Sell$Others = 3;
 var $author$project$Pages$Sell$btcAccountsView = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -11275,19 +11281,19 @@ var $author$project$Pages$Sell$btcAccountsView = function (model) {
 				$elm$html$Html$h6,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('accounts-subtitle')
+						$elm$html$Html$Attributes$class('bitcoin-sell-subtitle')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Your BTC Accounts')
+						$elm$html$Html$text('Sell BTC for XMR')
 					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$id('accounts.listOfExistingCryptoAccounts')
+						$elm$html$Html$Attributes$id('sell.listOfBTCAddresses')
 					]),
-				$elm$core$List$isEmpty(model.tM) ? _List_fromArray(
+				$elm$core$List$isEmpty(model.dI) ? _List_fromArray(
 					[
 						A2(
 						$elm$html$Html$div,
@@ -11301,7 +11307,7 @@ var $author$project$Pages$Sell$btcAccountsView = function (model) {
 							]))
 					]) : A2(
 					$elm$core$List$map,
-					function (account) {
+					function (address) {
 						return A2(
 							$elm$html$Html$div,
 							_List_fromArray(
@@ -11315,10 +11321,10 @@ var $author$project$Pages$Sell$btcAccountsView = function (model) {
 								]),
 							_List_fromArray(
 								[
-									$elm$html$Html$text(account)
+									$elm$html$Html$text(address)
 								]));
 					},
-					model.tM))
+					model.dI))
 			]));
 };
 var $author$project$Pages$Sell$view = function (model) {
@@ -11353,36 +11359,82 @@ var $author$project$Pages$Sell$view = function (model) {
 								[
 									function () {
 									var _v1 = model.sM;
-									if (_v1 === 1) {
-										return A2(
-											$elm$html$Html$div,
-											_List_Nil,
-											_List_fromArray(
-												[
-													A2(
-													$elm$html$Html$h4,
-													_List_Nil,
-													_List_fromArray(
-														[
-															$elm$html$Html$text('BTC Accounts')
-														])),
-													$author$project$Pages$Sell$btcAccountsView(model)
-												]));
-									} else {
-										return A2(
-											$elm$html$Html$div,
-											_List_Nil,
-											_List_fromArray(
-												[
-													A2(
-													$elm$html$Html$h4,
-													_List_Nil,
-													_List_fromArray(
-														[
-															$elm$html$Html$text('Manage Sell')
-														])),
-													$elm$html$Html$text('Manage your sell orders here.')
-												]));
+									switch (_v1) {
+										case 0:
+											return A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														A3(
+														$author$project$Utils$MyUtils$infoBtn,
+														'MONERO',
+														'monero-sell-button',
+														$author$project$Pages$Sell$ChangeView(2)),
+														A3(
+														$author$project$Utils$MyUtils$infoBtn,
+														'BITCOIN',
+														'bitcoin-sell-button',
+														$author$project$Pages$Sell$ChangeView(1)),
+														A3(
+														$author$project$Utils$MyUtils$infoBtn,
+														'OTHERS',
+														'others-sell-button',
+														$author$project$Pages$Sell$ChangeView(3))
+													]));
+										case 2:
+											return A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$h4,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$elm$html$Html$text('MONERO Accounts')
+															])),
+														A3(
+														$author$project$Utils$MyUtils$infoBtn,
+														'BACK TO ACCOUNTS',
+														'back-to-accounts-button',
+														$author$project$Pages$Sell$ChangeView(0))
+													]));
+										case 1:
+											return A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$h4,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$elm$html$Html$text('BTC Accounts')
+															])),
+														$author$project$Pages$Sell$btcAccountsView(model)
+													]));
+										default:
+											return A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$h4,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$elm$html$Html$text('OTHERS Accounts')
+															])),
+														A3(
+														$author$project$Utils$MyUtils$infoBtn,
+														'BACK TO ACCOUNTS',
+														'back-to-accounts-button',
+														$author$project$Pages$Sell$ChangeView(0))
+													]));
 									}
 								}()
 								]));
@@ -11580,7 +11632,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.9.71')
+										$elm$html$Html$text('Version 0.9.72')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(

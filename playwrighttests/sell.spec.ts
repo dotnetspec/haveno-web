@@ -11,7 +11,7 @@ test('has title', async ({ page, browserName }) => {
   await expect(page).toHaveTitle(/Haveno-Web/)
 })
 
-test('get sell link', async ({ page }) => {
+test('click BITCOIN SELL button', async ({ page }) => {
   // Navigate to the application
   await page.goto('http://localhost:1234/')
 
@@ -35,4 +35,12 @@ test('get sell link', async ({ page }) => {
 
   // Verify that the "Sell" page content is displayed
   await expect(page.getByRole('heading', { name: 'Manage Sell' })).toBeVisible()
+
+    // Find the "MONERO" button and click it
+    const bitcoin_sell_Button = await page.waitForSelector(
+      'button.info-button#bitcoin-sell-button',
+      { state: 'visible' }
+    )
+    expect(bitcoin_sell_Button).not.toBeNull()
+    await bitcoin_sell_Button.click()
 })
