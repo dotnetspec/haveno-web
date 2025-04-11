@@ -12,6 +12,7 @@ import Spec exposing (Flags, Spec, describe, given, it, scenario)
 import Spec.Claim as Claim
 import Spec.Markup
 import Spec.Markup.Selector exposing (by)
+import Spec.Markup.Event
 import Spec.Observer as Observer
 import Spec.Setup
 
@@ -136,7 +137,7 @@ runSpecTests =
                     ]
             )
 
-        {- , scenario "3: Display Sell BTC for XMR and Sell BTC Offer button"
+        , scenario "3: Display Sell BTC for XMR and Sell BTC Offer button"
             (given
                 (Spec.Setup.initWithModel
                     { sellInitialModel
@@ -161,7 +162,7 @@ runSpecTests =
                    , it "displays the Sell page correctly"
                        (Spec.Markup.observeElement
                            |> Spec.Markup.query
-                           << by [ Spec.Markup.Selector.id "bitcoin-sell-subtitle" ]
+                           << by [ Spec.Markup.Selector.class "bitcoin-sell-subtitle" ]
                            |> Spec.expect
                                (Claim.isSomethingWhere <|
                                    Spec.Markup.text <|
@@ -171,7 +172,7 @@ runSpecTests =
                        )
                    ]
            )
-        -}
+       
         {- , --skip <|
              --pick <|
              scenario "2: Handling the Sell page with INvalid balance data"

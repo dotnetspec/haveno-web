@@ -72,7 +72,7 @@ type Msg
     = NoOp
     | ChangeView View
 
-
+-- NAV: Update
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
