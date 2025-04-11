@@ -159,15 +159,19 @@ runSpecTests =
                        (Observer.observeModel .status
                            |> Spec.expect (equals Sell.Loaded)
                        )
-                   , it "displays the Sell page correctly"
+                    , it "current view is Bitcoin"
+                       (Observer.observeModel .currentView
+                           |> Spec.expect (equals Sell.Bitcoin)
+                       )
+                   , it "displays the CREATE NEW OFFER TO SELL BTC button correctly"
                        (Spec.Markup.observeElement
                            |> Spec.Markup.query
-                           << by [ Spec.Markup.Selector.class "bitcoin-sell-subtitle" ]
+                           << by [ Spec.Markup.Selector.id "create-new-offer-sell-BTC-button" ]
                            |> Spec.expect
                                (Claim.isSomethingWhere <|
                                    Spec.Markup.text <|
                                        Claim.isStringContaining 1
-                                       "Sell BTC for XMR"
+                                       "CREATE NEW OFFER TO SELL BTC"
                                )
                        )
                    ]

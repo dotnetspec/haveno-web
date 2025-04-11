@@ -62,6 +62,7 @@ type View
     | Bitcoin
     | Monero
     | Others
+    | OfferToSellBTC
 
 
 type Status
@@ -72,7 +73,11 @@ type Msg
     = NoOp
     | ChangeView View
 
+
+
 -- NAV: Update
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -109,7 +114,8 @@ view model =
                         [ case model.currentView of
                             ManageSell ->
                                 div []
-                                    [ Utils.MyUtils.infoBtn "MONERO" "monero-sell-button" <| ChangeView Monero
+                                    [ h4 [] [ text "Manage Sell" ]
+                                    , Utils.MyUtils.infoBtn "MONERO" "monero-sell-button" <| ChangeView Monero
                                     , Utils.MyUtils.infoBtn "BITCOIN" "bitcoin-sell-button" <| ChangeView Bitcoin
                                     , Utils.MyUtils.infoBtn "OTHERS" "others-sell-button" <| ChangeView Others
                                     ]
@@ -117,7 +123,7 @@ view model =
                             Monero ->
                                 div []
                                     [ h4 [] [ text "MONERO Accounts" ]
-                                    , Utils.MyUtils.infoBtn "BACK TO ACCOUNTS" "back-to-accounts-button" <| ChangeView ManageSell
+                                    , Utils.MyUtils.infoBtn "BACK TO MANAGE SELL" "back-to-manage-sell-button" <| ChangeView ManageSell
                                     ]
 
                             Bitcoin ->
@@ -129,7 +135,13 @@ view model =
                             Others ->
                                 div []
                                     [ h4 [] [ text "OTHERS Accounts" ]
-                                    , Utils.MyUtils.infoBtn "BACK TO ACCOUNTS" "back-to-accounts-button" <| ChangeView ManageSell
+                                    , Utils.MyUtils.infoBtn "BACK TO MANAGE SELL" "back-to-manage-sell-button" <| ChangeView ManageSell
+                                    ]
+
+                            OfferToSellBTC ->
+                                div []
+                                    [ h4 [] [ text "Offer to Sell BTC" ]
+                                    , Utils.MyUtils.infoBtn "BACK TO MANAGE SELL" "back-to-manage-sell-button" <| ChangeView ManageSell
                                     ]
                         ]
             , div
@@ -148,8 +160,6 @@ btcAccountsView : Model -> Html Msg
 btcAccountsView model =
     Html.div []
         [ Html.h6 [ class "bitcoin-sell-subtitle" ] [ Html.text "Sell BTC for XMR" ]
-
-        --, Utils.MyUtils.infoBtn "BACK TO ACCOUNTS" "back-to-accounts-button" <| ChangeView ManageAccounts
         , Html.div [ id "sell.listOfBTCAddresses" ]
             (if List.isEmpty model.listOfBTCAddresses then
                 [ Html.div [ class "btc-address-item" ] [ Html.text "There are no BTC accounts set up yet" ] ]
@@ -157,6 +167,8 @@ btcAccountsView model =
              else
                 List.map (\address -> Html.div [ classList [ ( "btc-address-item", True ), ( "address-label", True ) ] ] [ Html.text address ]) model.listOfBTCAddresses
             )
+        , Utils.MyUtils.infoBtn "CREATE NEW OFFER TO SELL BTC" "create-new-offer-sell-BTC-button" <| ChangeView OfferToSellBTC
+        , Utils.MyUtils.infoBtn "BACK TO MANAGE SELL" "back-to-manage-sell-button" <| ChangeView ManageSell
         ]
 
 

@@ -11271,6 +11271,7 @@ var $author$project$Pages$Sell$ChangeView = function (a) {
 };
 var $author$project$Pages$Sell$Monero = 2;
 var $author$project$Pages$Sell$Others = 3;
+var $author$project$Pages$Sell$OfferToSellBTC = 4;
 var $author$project$Pages$Sell$btcAccountsView = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -11324,7 +11325,17 @@ var $author$project$Pages$Sell$btcAccountsView = function (model) {
 									$elm$html$Html$text(address)
 								]));
 					},
-					model.dI))
+					model.dI)),
+				A3(
+				$author$project$Utils$MyUtils$infoBtn,
+				'CREATE NEW OFFER TO SELL BTC',
+				'create-new-offer-sell-BTC-button',
+				$author$project$Pages$Sell$ChangeView(4)),
+				A3(
+				$author$project$Utils$MyUtils$infoBtn,
+				'BACK TO MANAGE SELL',
+				'back-to-manage-sell-button',
+				$author$project$Pages$Sell$ChangeView(0))
 			]));
 };
 var $author$project$Pages$Sell$view = function (model) {
@@ -11366,6 +11377,13 @@ var $author$project$Pages$Sell$view = function (model) {
 												_List_Nil,
 												_List_fromArray(
 													[
+														A2(
+														$elm$html$Html$h4,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$elm$html$Html$text('Manage Sell')
+															])),
 														A3(
 														$author$project$Utils$MyUtils$infoBtn,
 														'MONERO',
@@ -11397,8 +11415,8 @@ var $author$project$Pages$Sell$view = function (model) {
 															])),
 														A3(
 														$author$project$Utils$MyUtils$infoBtn,
-														'BACK TO ACCOUNTS',
-														'back-to-accounts-button',
+														'BACK TO MANAGE SELL',
+														'back-to-manage-sell-button',
 														$author$project$Pages$Sell$ChangeView(0))
 													]));
 										case 1:
@@ -11416,7 +11434,7 @@ var $author$project$Pages$Sell$view = function (model) {
 															])),
 														$author$project$Pages$Sell$btcAccountsView(model)
 													]));
-										default:
+										case 3:
 											return A2(
 												$elm$html$Html$div,
 												_List_Nil,
@@ -11431,8 +11449,27 @@ var $author$project$Pages$Sell$view = function (model) {
 															])),
 														A3(
 														$author$project$Utils$MyUtils$infoBtn,
-														'BACK TO ACCOUNTS',
-														'back-to-accounts-button',
+														'BACK TO MANAGE SELL',
+														'back-to-manage-sell-button',
+														$author$project$Pages$Sell$ChangeView(0))
+													]));
+										default:
+											return A2(
+												$elm$html$Html$div,
+												_List_Nil,
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$h4,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$elm$html$Html$text('Offer to Sell BTC')
+															])),
+														A3(
+														$author$project$Utils$MyUtils$infoBtn,
+														'BACK TO MANAGE SELL',
+														'back-to-manage-sell-button',
 														$author$project$Pages$Sell$ChangeView(0))
 													]));
 									}
@@ -11632,7 +11669,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.9.72')
+										$elm$html$Html$text('Version 0.9.73')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
