@@ -141,7 +141,14 @@ view model =
                             OfferToSellBTC ->
                                 div []
                                     [ h4 [] [ text "Offer to Sell BTC" ]
-                                    , Utils.MyUtils.infoBtn "BACK TO MANAGE SELL" "back-to-manage-sell-button" <| ChangeView ManageSell
+                                    , Html.h6 []
+                                        (if List.isEmpty model.listOfBTCAddresses then
+                                            [ Html.div [ class "btc-address-item" ] [ Html.text "You don't have a payment account set up for the selected currency." ] ]
+                                         else
+                                            List.map (\address -> Html.div [ classList [ ( "btc-address-item", True ), ( "address-label", True ) ] ] [ Html.text address ]) model.listOfBTCAddresses
+                                        )
+                                    , Utils.MyUtils.infoBtn "CREATE NEW OFFER TO SELL BTC" "create-new-offer-sell-BTC-button" <| ChangeView OfferToSellBTC
+                                    , Utils.MyUtils.infoBtn "SETUP A NEW TRADING ACCOUNT" "back-to-manage-accounts-from-sell-button" <| ChangeView ManageSell
                                     ]
                         ]
             , div
@@ -162,7 +169,7 @@ btcAccountsView model =
         [ Html.h6 [ class "bitcoin-sell-subtitle" ] [ Html.text "Sell BTC for XMR" ]
         , Html.div [ id "sell.listOfBTCAddresses" ]
             (if List.isEmpty model.listOfBTCAddresses then
-                [ Html.div [ class "btc-address-item" ] [ Html.text "There are no BTC accounts set up yet" ] ]
+                [ Html.div [ class "btc-address-item" ] [ Html.text "You don't have a payment account set up for the selected currency." ] ]
 
              else
                 List.map (\address -> Html.div [ classList [ ( "btc-address-item", True ), ( "address-label", True ) ] ] [ Html.text address ]) model.listOfBTCAddresses
