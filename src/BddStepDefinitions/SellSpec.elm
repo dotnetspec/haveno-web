@@ -11,8 +11,8 @@ import Pages.Sell as Sell
 import Spec exposing (Flags, Spec, describe, given, it, scenario)
 import Spec.Claim as Claim
 import Spec.Markup
-import Spec.Markup.Selector exposing (by)
 import Spec.Markup.Event
+import Spec.Markup.Selector exposing (by)
 import Spec.Observer as Observer
 import Spec.Setup
 
@@ -136,8 +136,7 @@ runSpecTests =
                         )
                     ]
             )
-
-        , scenario "3: Display Sell BTC for XMR and Sell BTC Offer button"
+        , scenario "3: Display Sell BTC for XMR, current offers panel and Sell BTC Offer button"
             (given
                 (Spec.Setup.initWithModel
                     { sellInitialModel
@@ -153,37 +152,103 @@ runSpecTests =
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "bitcoin-sell-button" ]
                     , Spec.Markup.Event.click
                     ]
-
                 |> Spec.observeThat
                     [ it "has status as Loaded"
-                       (Observer.observeModel .status
-                           |> Spec.expect (equals Sell.Loaded)
-                       )
+                        (Observer.observeModel .status
+                            |> Spec.expect (equals Sell.Loaded)
+                        )
                     , it "current view is Bitcoin"
-                       (Observer.observeModel .currentView
-                           |> Spec.expect (equals Sell.Bitcoin)
-                       )
-                   , it "displays the CREATE NEW OFFER TO SELL BTC button correctly"
-                       (Spec.Markup.observeElement
-                           |> Spec.Markup.query
-                           << by [ Spec.Markup.Selector.id "create-new-offer-sell-BTC-button" ]
-                           |> Spec.expect
-                               (Claim.isSomethingWhere <|
-                                   Spec.Markup.text <|
-                                       Claim.isStringContaining 1
-                                       "CREATE NEW OFFER TO SELL BTC"
-                               )
-                       )
-                   ]
-           )
-           , scenario "4: If NO BTC addresses exist, display the setup Accounts button"
+                        (Observer.observeModel .currentView
+                            |> Spec.expect (equals Sell.Bitcoin)
+                        )
+                    , it "displays the CREATE NEW OFFER TO SELL BTC button correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "create-new-offer-sell-BTC-button" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "CREATE NEW OFFER TO SELL BTC"
+                                )
+                        )
+                    , Spec.it "displays the Sell Offers table"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "sell-offers-table" ]
+                            |> Spec.expect Claim.isSomething
+                        )
+                    , Spec.it "displays the Price column"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "column-price" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "Price (XMR)"
+                                )
+                        )
+                    , Spec.it "displays the XMR Range column"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "column-xmr-range" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "XMR Range"
+                                )
+                        )
+                    , Spec.it "displays the BTC Range column"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "column-btc-range" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "BTC Range"
+                                )
+                        )
+                    , Spec.it "displays the Payment column"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "column-payment" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "Payment"
+                                )
+                        )
+                    , Spec.it "displays the Deposit column"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "column-deposit" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "Deposit %"
+                                )
+                        )
+
+                    -- REVIEW: Add a column-actions test?
+                    , Spec.it "displays the Buyer column"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "column-buyer" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "Buyer"
+                                )
+                        )
+                    ]
+            )
+        , scenario "4: If NO BTC addresses exist, display the setup Accounts button"
             (given
                 (Spec.Setup.initWithModel
                     { sellInitialModel
                         | currentView = Sell.ManageSell
                         , status = Sell.Loaded
-                        , listOfExistingCryptoAccounts = [ ]
-                        , listOfBTCAddresses = [ ]
+                        , listOfExistingCryptoAccounts = []
+                        , listOfBTCAddresses = []
                     }
                     |> Spec.Setup.withView Sell.view
                     |> Spec.Setup.withUpdate Sell.update
@@ -193,47 +258,43 @@ runSpecTests =
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "bitcoin-sell-button" ]
                     , Spec.Markup.Event.click
                     ]
-
                 |> Spec.when "User clicks CREATE NEW OFFER TO SELL BTC button"
                     [ Spec.Markup.target << Spec.Markup.Selector.by [ Spec.Markup.Selector.id "create-new-offer-sell-BTC-button" ]
                     , Spec.Markup.Event.click
                     ]
-
                 |> Spec.observeThat
                     [ it "has status as Loaded"
-                       (Observer.observeModel .status
-                           |> Spec.expect (equals Sell.Loaded)
-                       )
+                        (Observer.observeModel .status
+                            |> Spec.expect (equals Sell.Loaded)
+                        )
                     , it "current view is OfferToSellBTC"
-                       (Observer.observeModel .currentView
-                           |> Spec.expect (equals Sell.OfferToSellBTC)
-                       )
+                        (Observer.observeModel .currentView
+                            |> Spec.expect (equals Sell.OfferToSellBTC)
+                        )
                     , it "informs user needs to setup a BTC account"
-                       (Spec.Markup.observeElement
-                           |> Spec.Markup.query
-                           << by [ Spec.Markup.Selector.class "btc-address-item" ]
-                           |> Spec.expect
-                               (Claim.isSomethingWhere <|
-                                   Spec.Markup.text <|
-                                       Claim.isStringContaining 1
-                                       "You don't have a payment account set up for the selected currency."
-                               )
-                       )
-                   , it "displays the CREATE NEW OFFER TO SELL BTC button correctly"
-                       (Spec.Markup.observeElement
-                           |> Spec.Markup.query
-                           << by [ Spec.Markup.Selector.id "back-to-manage-accounts-from-sell-button" ]
-                           |> Spec.expect
-                               (Claim.isSomethingWhere <|
-                                   Spec.Markup.text <|
-                                       Claim.isStringContaining 1
-                                       "SETUP A NEW TRADING ACCOUNT"
-                               )
-                       )
-                   ]
-           )
-       
-        
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.class "btc-address-item" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1
+                                            "You don't have a payment account set up for the selected currency."
+                                )
+                        )
+                    , it "displays the CREATE NEW OFFER TO SELL BTC button correctly"
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "back-to-manage-accounts-from-sell-button" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1
+                                            "SETUP A NEW TRADING ACCOUNT"
+                                )
+                        )
+                    ]
+            )
         ]
 
 

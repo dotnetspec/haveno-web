@@ -36,4 +36,34 @@
   .small-text {
     font-size: 0.35em; /* Reduced font size by another 50% */
   }
+
+
+
+.table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+table {
+  min-width: 700px; /* or however wide your full table is */
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+  font-size: 12px;
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+
+
+
 }

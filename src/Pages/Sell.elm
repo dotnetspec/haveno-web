@@ -37,7 +37,7 @@ initialModel =
     , subaddress = ""
     , currentView = ManageSell
     , listOfExistingCryptoAccounts = []
-    , listOfBTCAddresses = []
+    , listOfBTCAddresses = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
     , newBTCAddress = ""
     , cryptoAccountType = BTC
     , savedPassword = "" -- The actual saved password
@@ -144,6 +144,7 @@ view model =
                                     , Html.h6 []
                                         (if List.isEmpty model.listOfBTCAddresses then
                                             [ Html.div [ class "btc-address-item" ] [ Html.text "You don't have a payment account set up for the selected currency." ] ]
+
                                          else
                                             List.map (\address -> Html.div [ classList [ ( "btc-address-item", True ), ( "address-label", True ) ] ] [ Html.text address ]) model.listOfBTCAddresses
                                         )
@@ -176,6 +177,35 @@ btcAccountsView model =
             )
         , Utils.MyUtils.infoBtn "CREATE NEW OFFER TO SELL BTC" "create-new-offer-sell-BTC-button" <| ChangeView OfferToSellBTC
         , Utils.MyUtils.infoBtn "BACK TO MANAGE SELL" "back-to-manage-sell-button" <| ChangeView ManageSell
+        , div [ class "table-scroll-container" ]
+            [ Html.table
+                [ id "sell-offers-table"
+                , Html.Attributes.style "width" "100%"
+                ]
+                [ Html.thead []
+                    [ Html.tr []
+                        [ Html.th [ id "column-price" ] [ text "Price (XMR)" ]
+                        , Html.th [ id "column-xmr-range" ] [ text "XMR Range" ]
+                        , Html.th [ id "column-btc-range" ] [ text "BTC Range" ]
+                        , Html.th [ id "column-payment" ] [ text "Payment" ]
+                        , Html.th [ id "column-deposit" ] [ text "Deposit %" ]
+                        , Html.th [ id "column-actions" ] [ text "" ]
+                        , Html.th [ id "column-buyer" ] [ text "Buyer" ]
+                        ]
+                    ]
+                , Html.tbody []
+                    [ Html.tr []
+                        [ Html.td [] [ text "0.05" ]
+                        , Html.td [] [ text "10 - 500" ]
+                        , Html.td [] [ text "0.001 - 0.03" ]
+                        , Html.td [] [ text "SEPA" ]
+                        , Html.td [] [ text "5%" ]
+                        , Html.td [] [ text "" ]
+                        , Html.td [] [ text "Alice" ]
+                        ]
+                    ]
+                ]
+            ]
         ]
 
 
