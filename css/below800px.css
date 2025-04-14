@@ -51,17 +51,21 @@
 }
 
 table {
-  min-width: 700px; /* or however wide your full table is */
-  border-collapse: collapse;
+  width: 100%;
   table-layout: fixed;
 }
 
 th, td {
   padding: 8px;
-  text-align: center;
-  font-size: 12px;
-  white-space: nowrap; /* Prevent text from wrapping */
+  text-align: left;
+  border: 1px solid #ddd;
 }
+
+th {
+  background-color: #f2f2f2;
+}
+
+
 
 
 

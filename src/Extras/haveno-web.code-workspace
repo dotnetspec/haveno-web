@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../Tests"
+		},
+		{
+			"path": "../../public"
 		}
 	],
 	"settings": {

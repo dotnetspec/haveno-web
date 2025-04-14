@@ -1,6 +1,10 @@
 module Pages.Sell exposing (Model, Msg(..), Status(..), View(..), btcAccountsView, errorView, init, initialModel, update, view)
 
-import Html exposing (Html, div, h4, section, text)
+import Element exposing (..)
+import Element.Background as Background
+import Element.Border as Border
+import Element.Font as Font
+import Html exposing (Html, div, h4, section)
 import Html.Attributes exposing (class, classList, id)
 import Pages.Accounts exposing (Msg)
 import Proto.Io.Haveno.Protobuffer as Protobuf
@@ -114,7 +118,7 @@ view model =
                         [ case model.currentView of
                             ManageSell ->
                                 div []
-                                    [ h4 [] [ text "Manage Sell" ]
+                                    [ h4 [] [ Html.text "Manage Sell" ]
                                     , Utils.MyUtils.infoBtn "MONERO" "monero-sell-button" <| ChangeView Monero
                                     , Utils.MyUtils.infoBtn "BITCOIN" "bitcoin-sell-button" <| ChangeView Bitcoin
                                     , Utils.MyUtils.infoBtn "OTHERS" "others-sell-button" <| ChangeView Others
@@ -122,25 +126,25 @@ view model =
 
                             Monero ->
                                 div []
-                                    [ h4 [] [ text "MONERO Accounts" ]
+                                    [ h4 [] [ Html.text "MONERO Accounts" ]
                                     , Utils.MyUtils.infoBtn "BACK TO MANAGE SELL" "back-to-manage-sell-button" <| ChangeView ManageSell
                                     ]
 
                             Bitcoin ->
                                 div []
-                                    [ h4 [] [ text "BTC Accounts" ]
+                                    [ h4 [] [ Html.text "BTC Accounts" ]
                                     , btcAccountsView model
                                     ]
 
                             Others ->
                                 div []
-                                    [ h4 [] [ text "OTHERS Accounts" ]
+                                    [ h4 [] [ Html.text "OTHERS Accounts" ]
                                     , Utils.MyUtils.infoBtn "BACK TO MANAGE SELL" "back-to-manage-sell-button" <| ChangeView ManageSell
                                     ]
 
                             OfferToSellBTC ->
                                 div []
-                                    [ h4 [] [ text "Offer to Sell BTC" ]
+                                    [ h4 [] [ Html.text "Offer to Sell BTC" ]
                                     , Html.h6 []
                                         (if List.isEmpty model.listOfBTCAddresses then
                                             [ Html.div [ class "btc-address-item" ] [ Html.text "You don't have a payment account set up for the selected currency." ] ]
@@ -177,36 +181,105 @@ btcAccountsView model =
             )
         , Utils.MyUtils.infoBtn "CREATE NEW OFFER TO SELL BTC" "create-new-offer-sell-BTC-button" <| ChangeView OfferToSellBTC
         , Utils.MyUtils.infoBtn "BACK TO MANAGE SELL" "back-to-manage-sell-button" <| ChangeView ManageSell
-        , div [ class "table-scroll-container" ]
-            [ Html.table
-                [ id "sell-offers-table"
-                , Html.Attributes.style "width" "100%"
-                ]
-                [ Html.thead []
-                    [ Html.tr []
-                        [ Html.th [ id "column-price" ] [ text "Price (XMR)" ]
-                        , Html.th [ id "column-xmr-range" ] [ text "XMR Range" ]
-                        , Html.th [ id "column-btc-range" ] [ text "BTC Range" ]
-                        , Html.th [ id "column-payment" ] [ text "Payment" ]
-                        , Html.th [ id "column-deposit" ] [ text "Deposit %" ]
-                        , Html.th [ id "column-actions" ] [ text "" ]
-                        , Html.th [ id "column-buyer" ] [ text "Buyer" ]
-                        ]
-                    ]
-                , Html.tbody []
-                    [ Html.tr []
-                        [ Html.td [] [ text "0.05" ]
-                        , Html.td [] [ text "10 - 500" ]
-                        , Html.td [] [ text "0.001 - 0.03" ]
-                        , Html.td [] [ text "SEPA" ]
-                        , Html.td [] [ text "5%" ]
-                        , Html.td [] [ text "" ]
-                        , Html.td [] [ text "Alice" ]
-                        ]
-                    ]
-                ]
-            ]
+
+        -- NOTE: Element.layout converts from Element to Html
+        -- NOTE: Using Elm-UI here as 'standard' Html and Css was not working well
+        , Element.layout [] (scrollableTable tableView)
         ]
+
+
+
+-- Scrollable wrapper
+
+
+scrollableTable : Element msg -> Element msg
+scrollableTable content =
+    el
+        [ scrollbarX
+        , width fill
+        , padding 10
+        , Element.htmlAttribute (Html.Attributes.id "sell-offers-table")
+        ]
+        (el [ width (px 900) ] content)
+
+
+
+-- Table definition
+
+
+tableView : Element msg
+tableView =
+    column [ spacing 8 ]
+        [ headerRow
+        , dataRow "0.05" "10 - 500" "0.001 - 0.03" "SEPA" "5%" "" "Alice"
+        ]
+
+
+
+-- Header row with split lines
+
+
+headerRow : Element msg
+headerRow =
+    row [ spacing 0 ]
+        [ columnHeader [ el [ Element.htmlAttribute (Html.Attributes.id "column-price") ] (Element.text "Price (XMR)") ]
+        , columnHeader [ el [ Element.htmlAttribute (Html.Attributes.id "column-xmr-range") ] (Element.text "XMR Range") ]
+        , columnHeader [ el [ Element.htmlAttribute (Html.Attributes.id "column-btc-range") ] (Element.text "BTC Range") ]
+        , columnHeader [ el [ Element.htmlAttribute (Html.Attributes.id "column-payment") ] (Element.text "Payment") ]
+        , columnHeader [ el [ Element.htmlAttribute (Html.Attributes.id "column-deposit") ] (Element.text "Deposit %") ]
+        , columnHeader [ el [ Element.htmlAttribute (Html.Attributes.id "column-action") ] (Element.text "⚙") ]
+        , columnHeader [ el [ Element.htmlAttribute (Html.Attributes.id "column-buyer") ] (Element.text "Buyer") ]
+        ]
+
+
+
+-- Header cell
+
+
+columnHeader : List (Element msg) -> Element msg
+columnHeader lines =
+    column
+        [ Font.bold
+        , spacing 2
+        , paddingXY 8 6
+        , Border.width 1
+        , Border.color (rgb255 200 200 200)
+        , Background.color (rgb255 245 245 245)
+        , width (px 120)
+        ]
+        lines
+
+
+
+-- Data row
+
+
+dataRow : String -> String -> String -> String -> String -> String -> String -> Element msg
+dataRow price xmrRange btcRange payment deposit action buyer =
+    row [ spacing 0 ]
+        [ cell price
+        , cell xmrRange
+        , cell btcRange
+        , cell payment
+        , cell deposit
+        , cell action
+        , cell buyer
+        ]
+
+
+
+-- Data cell
+
+
+cell : String -> Element msg
+cell str =
+    el
+        [ paddingXY 8 6
+        , Border.width 1
+        , Border.color (rgb255 230 230 230)
+        , width (px 120)
+        ]
+        (Element.text str)
 
 
 errorView : Html Msg
