@@ -172,7 +172,7 @@ btcAccountsView : Model -> Html Msg
 btcAccountsView model =
     Html.div []
         [ Html.h6 [ class "bitcoin-sell-subtitle" ] [ Html.text "Sell BTC for XMR" ]
-        , Html.div [ id "sell.listOfBTCAddresses" ]
+        , Html.div [ id "accounts-listOfBTCAddresses" ]
             (if List.isEmpty model.listOfBTCAddresses then
                 [ Html.div [ class "btc-address-item" ] [ Html.text "You don't have a payment account set up for the selected currency." ] ]
 
@@ -186,6 +186,8 @@ btcAccountsView model =
         -- NOTE: Using Elm-UI here as 'standard' Html and Css was not working well
         , Element.layout [] (scrollableTable tableView)
         ]
+
+
 
 
 

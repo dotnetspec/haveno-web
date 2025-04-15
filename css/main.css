@@ -251,6 +251,10 @@ nav a:hover {
   font-size: 0.5em;
 }
 
+.btc-address-item {
+  font-size: 0.5em;
+}
+
 
 .address-text, .balance-text {
   font-size: 16px;

@@ -17257,7 +17257,7 @@ var $author$project$Pages$Sell$btcAccountsView = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$id('sell.listOfBTCAddresses')
+						$elm$html$Html$Attributes$id('accounts-listOfBTCAddresses')
 					]),
 				$elm$core$List$isEmpty(model.dI) ? _List_fromArray(
 					[
