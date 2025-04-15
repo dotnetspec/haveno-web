@@ -743,11 +743,11 @@ runSpecTests =
                     , it "displays the first offer in the table" <|
                         (Spec.Markup.observeElement
                             |> Spec.Markup.query
-                            << by [ Spec.Markup.Selector.id "offerCell" ]
+                            << by [ Spec.Markup.Selector.id "offerRow" ]
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "0.05"
+                                        Claim.isStringContaining 1 "0.050.05 - 0.070.06SEPA0.5%node1"
                                 )
                         )
                     ]

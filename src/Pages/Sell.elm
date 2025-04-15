@@ -212,10 +212,6 @@ scrollableTable content =
 
 tableView : Model -> Element msg
 tableView model =
-    let
-        _ =
-            Debug.log "offers" model.offersReply
-    in
     column [ spacing 8 ]
         [ headerRow
         , case model.offersReply of
@@ -225,6 +221,7 @@ tableView model =
                         (\offer ->
                             dataRow
                                 offer.price
+                                -- TODO: offer.amount needs handling here:
                                 ("0.05" ++ " - " ++ "0.07")
                                 offer.triggerPrice
                                 offer.paymentMethodShortName
@@ -281,7 +278,7 @@ columnHeader lines =
 
 dataRow : String -> String -> String -> String -> String -> String -> String -> Element msg
 dataRow price xmrRange btcRange payment deposit action buyer =
-    row [ spacing 0 ]
+    row [ spacing 0, Element.htmlAttribute (Html.Attributes.id "offerRow") ]
         [ cell price
         , cell xmrRange
         , cell btcRange
@@ -303,7 +300,7 @@ cell str =
         , Border.width 1
         , Border.color (rgb255 230 230 230)
         , width (px 120)
-        , Element.htmlAttribute (Html.Attributes.id "offerCell")
+        
         ]
         (Element.text str)
 
