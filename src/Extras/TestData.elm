@@ -1,4 +1,25 @@
-module Extras.TestData exposing (decryptCryptoAccountsMsgResponse, elmReadyMsgRequest, decryptCryptoAccountsMsgRequest, encodeGrpcMessage, getBalancesEncodedResponse, getBalancesResponse, getSubAddressesEncodedResponse, getVersionBaseURL, placeholderUrl, primaryAddress, subAddress, successfullBalancesFetch, successfullSubAddressFetch, successfullVersionFetch, successfullXmrPrimaryAddressFetch, testBalanceInfo, toBytes, unSuccessfullXmrPrimaryAddressFetch, unsuccessfullBalancesFetch, unsuccessfullVersionFetch, walletsBaseUrl)
+module Extras.TestData exposing
+    ( decryptCryptoAccountsMsgRequest
+    , decryptCryptoAccountsMsgResponse
+    , elmReadyMsgRequest
+    , encodeGrpcMessage
+    , getBalancesEncodedResponse
+    , getSubAddressesEncodedResponse
+    , getVersionBaseURL
+    , placeholderUrl
+    , primaryAddress
+    , subAddress
+    , successfullBalancesFetch
+    , successfullSubAddressFetch
+    , successfullVersionFetch
+    , successfullXmrPrimaryAddressFetch
+    , testBalanceInfo
+    , toBytes
+    , unSuccessfullXmrPrimaryAddressFetch
+    , unsuccessfullBalancesFetch
+    , unsuccessfullVersionFetch
+    , walletsBaseUrl
+    )
 
 import Base64
 import Bytes exposing (Bytes, Endianness(..))
@@ -20,19 +41,21 @@ subAddress : String
 subAddress =
     "BceiPLaX7YDevCfKvgXFq8Tk1BGkQvtfAWCWJGgZfb6kBju1rDUCPzfDbHmffHMC5AZ6TxbgVVkyDFAnD2AVzLNp37DFz32"
 
+
 decryptCryptoAccountsMsgRequest : String
 decryptCryptoAccountsMsgRequest =
     "{\"typeOfMsg\":\"decryptCryptoAccountsMsgRequest\",\"currency\":\"BTC\",\"page\":\"AccountsPage\"}"
+
 
 decryptCryptoAccountsMsgResponse : String
 decryptCryptoAccountsMsgResponse =
     "{\"typeOfMsg\":\"decryptedCryptoAccountsResponse\",\"page\":\"AccountsPage\",\"accountsData\":\"['1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v'\",'2GK6XMLmzFVj8ALj6mfBsbifRoD4miY52o'],\"currency\":\"BTC\"}"
 
 
-
 elmReadyMsgRequest : String
 elmReadyMsgRequest =
     "{\"typeOfMsg\":\"ElmReady\",\"currency\":\"\",\"accountsData\":\"\"}"
+
 
 getVersionBaseURL : String
 getVersionBaseURL =
@@ -226,60 +249,6 @@ getBalancesEncodedResponse =
     encodedResponse
 
 
-getBalancesResponse : Bytes
-getBalancesResponse =
-    let
-        balancesReply : Protobuf.GetBalancesReply
-        balancesReply =
-            -- HACK: This is a placeholder address
-            -- NOTE: Used compiler messages to determine the structure of this message
-            { balances =
-                Just
-                    { btc =
-                        Just
-                            { availableBalance = fromInts 10000 0
-                            , lockedBalance = fromInts 10000 0
-                            , totalAvailableBalance = fromInts 10000 0
-                            , reservedBalance = fromInts 10000 0
-                            }
-                    , xmr =
-                        Just
-                            { availableBalance = fromInts 10000 0
-                            , balance = fromInts 10000 0
-                            , pendingBalance = fromInts 2000 0
-                            , reservedOfferBalance = fromInts 5000 0
-                            , reservedTradeBalance = fromInts 3000 0
-                            }
-                    }
-            }
-
-        -- Encode to bytes
-        encodedResponse : Bytes
-        encodedResponse =
-            Encode.encode (Protobuf.encodeGetBalancesReply balancesReply)
-    in
-    encodedResponse
-
-
-
-{- getXmrPrimaryAddressEncodedResponse : Bytes
-   getXmrPrimaryAddressEncodedResponse =
-       let
-           primAddrReply : Protobuf.GetXmrPrimaryAddressReply
-           primAddrReply =
-               -- HACK: This is a placeholder address
-               -- NOTE: Used compiler messages to determine the structure of this message
-               { primaryAddress = primaryAddress }
-
-           -- Encode to bytes
-           encodedResponse : Bytes
-           encodedResponse =
-               Encode.encode (Protobuf.encodeGetXmrPrimaryAddressReply primAddrReply)
-       in
-       encodedResponse
--}
-
-
 getSubAddressesEncodedResponse : Bytes
 getSubAddressesEncodedResponse =
     let
@@ -293,5 +262,3 @@ getSubAddressesEncodedResponse =
             Encode.encode (Protobuf.encodeGetXmrNewSubaddressReply subAddrReply)
     in
     encodedResponse
-
-
