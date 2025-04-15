@@ -30,6 +30,7 @@ import Parser
 import Process
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (..)
 import Proto.Io.Haveno.Protobuffer.GetVersion exposing (getVersion)
+import Proto.Io.Haveno.Protobuffer.Offers as Offers
 import Proto.Io.Haveno.Protobuffer.Wallets as Wallets
 import Task
 import Time
@@ -38,7 +39,6 @@ import Url exposing (Protocol(..), Url)
 import Url.Parser exposing (oneOf, s)
 import Url.Parser.Query as Query
 import Utils.MyUtils exposing (gotBalancesReplyAsTypeAlias)
-import Proto.Io.Haveno.Protobuffer.Offers as Offers
 
 
 
@@ -139,7 +139,6 @@ init flag _ key =
 
 -- NAV: Msg
 -- NOTE: Each variant here is a constructor for the Msg type.
-
 -- NOTE: The 'Got' Msgs are the sub pages talking to Main
 -- The to<FunctionName> functions are Main talking to the sub pages
 
@@ -165,7 +164,6 @@ type Msg
     | GotOffers (Result Grpc.Error Protobuf.GetOffersReply)
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | Timeout
-    | NoOp
 
 
 
@@ -213,7 +211,7 @@ update msg model =
                 updatedModel =
                     { model | balances = response.balances, status = Loaded }
             in
-            ( updatedModel, Cmd.batch [ Cmd.none, Cmd.map (\_ -> NoOp) Cmd.none ] )
+            ( updatedModel, Cmd.none )
 
         GotBalances (Err _) ->
             ( model, Cmd.none )
@@ -221,12 +219,12 @@ update msg model =
         GotOffers (Ok response) ->
             let
                 updatedModel =
-                    { model | offersReply = Just {offers = response.offers}, status = Loaded }
+                    { model | offersReply = Just { offers = response.offers }, status = Loaded }
             in
-            ( updatedModel, Cmd.batch [ Cmd.none, Cmd.map (\_ -> NoOp) Cmd.none ] )
+            ( updatedModel, Cmd.none )
 
         GotOffers (Err _) ->
-            ( model, Cmd.none )
+            ( { model | errors = model.errors ++ [ "GotOffers error " ] }, Cmd.none )
 
         ClickedLink urlRequest ->
             case urlRequest of
@@ -300,9 +298,8 @@ update msg model =
                                                     toAccounts { model | accountsDataFromJs = jsMsg.accountsData } (Pages.Accounts.update (Pages.Accounts.DecryptedBTCAddresses jsMsg.accountsData) accountsModel)
 
                                                 SellPage sellModel ->
-                                                    toSell { model | accountsDataFromJs = jsMsg.accountsData } (Pages.Sell.update (Pages.Sell.NoOp) sellModel)
+                                                    toSell { model | accountsDataFromJs = jsMsg.accountsData } (Pages.Sell.update Pages.Sell.NoOp sellModel)
 
-                                                
                                                 _ ->
                                                     ( model, Cmd.none )
 
@@ -435,9 +432,6 @@ update msg model =
 
             else
                 ( model, Cmd.none )
-
-        NoOp ->
-            toAccounts model (Pages.Accounts.init ())
 
 
 
@@ -1029,6 +1023,7 @@ gotAvailableBalances =
                 |> Grpc.setHost "http://localhost:8080"
     in
     Grpc.toCmd GotBalances grpcRequest
+
 
 gotOffers : Cmd Msg
 gotOffers =

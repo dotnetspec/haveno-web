@@ -18,8 +18,8 @@ import Json.Encode
 import Main
 import Pages.Accounts as Accounts
 import Pages.Connect as Connect
-import Pages.Sell as Sell
 import Pages.Funds as Funds
+import Pages.Sell as Sell
 import Spec exposing (describe, given, it, scenario, when)
 import Spec.Claim as Claim
 import Spec.Command
@@ -49,6 +49,7 @@ fundsInitialModel =
 accountsInitialModel : Accounts.Model
 accountsInitialModel =
     Accounts.initialModel
+
 
 sellInitialModel : Sell.Model
 sellInitialModel =
@@ -704,12 +705,13 @@ runSpecTests =
                         { onUrlRequest = Main.ClickedLink
                         , onUrlChange = Main.ChangedUrl
                         }
-                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch
-                    , TestData.successfullVersionFetch
-                    , TestData.successfullBalancesFetch
-                    , TestData.successfullOffersFetch ]
+                    |> Stub.serve
+                        [ TestData.successfullXmrPrimaryAddressFetch
+                        , TestData.successfullVersionFetch
+                        , TestData.successfullBalancesFetch
+                        , TestData.successfullOffersFetch
+                        ]
                 )
-                
                 |> when "the user opens the menu"
                     [ Spec.Command.send <|
                         Spec.Command.fake
@@ -719,6 +721,11 @@ runSpecTests =
                     [ Spec.Command.send <|
                         Spec.Command.fake
                             (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing))
+                    ]
+                |> when "the user toggles the Sell Bitcoin button"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            (Main.GotSellMsg <| Sell.ChangeView Sell.Bitcoin)
                     ]
                 {- |> Spec.when "we log the http requests"
                    [ Spec.Http.logRequests
@@ -730,21 +737,19 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
                                     Main.SellPage <|
-                                        { sellInitialModel | offersReply = Just TestData.testGetOffersReply }
+                                        { sellInitialModel | offersReply = Just TestData.testGetOffersReply, currentView = Sell.Bitcoin }
                                 )
                         )
-
-                    {- , it "displays the first offer in the table" <|
-                       (Spec.Markup.observeElement
-                           |> Spec.Markup.query
-                           << by [ Spec.Markup.Selector.id "offers-table-row-0" ]
-                           |> Spec.expect
-                               (Claim.isSomethingWhere <|
-                                   Spec.Markup.text <|
-                                       Claim.isStringContaining 1 "0.05"
-                               )
-                       ) -}
-                   
+                    , it "displays the first offer in the table" <|
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "offerCell" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "0.05"
+                                )
+                        )
                     ]
             )
         ]

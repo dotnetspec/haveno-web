@@ -42,7 +42,7 @@ initialModel =
     , errors = []
     , subaddress = ""
     , currentView = ManageSell
-    , listOfExistingCryptoAccounts = [""]
+    , listOfExistingCryptoAccounts = [ "" ]
     , listOfBTCAddresses = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
     , newBTCAddress = ""
     , cryptoAccountType = BTC
@@ -186,10 +186,8 @@ btcAccountsView model =
 
         -- NOTE: Element.layout converts from Element to Html
         -- NOTE: Using Elm-UI here as 'standard' Html and Css was not working well
-        , Element.layout [] (scrollableTable tableView)
+        , Element.layout [] (scrollableTable <| tableView model)
         ]
-
-
 
 
 
@@ -209,13 +207,36 @@ scrollableTable content =
 
 
 -- Table definition
+-- filepath: /home/alanpoe/Documents/Development/Monero/elm-merge/haveno-web/src/Pages/Sell.elm
 
 
-tableView : Element msg
-tableView =
+tableView : Model -> Element msg
+tableView model =
+    let
+        _ =
+            Debug.log "offers" model.offersReply
+    in
     column [ spacing 8 ]
         [ headerRow
-        , dataRow "0.05" "10 - 500" "0.001 - 0.03" "SEPA" "5%" "" "Alice"
+        , case model.offersReply of
+            Just offersReply ->
+                column []
+                    (List.map
+                        (\offer ->
+                            dataRow
+                                offer.price
+                                ("0.05" ++ " - " ++ "0.07")
+                                offer.triggerPrice
+                                offer.paymentMethodShortName
+                                (String.fromFloat offer.buyerSecurityDepositPct ++ "%")
+                                ""
+                                offer.ownerNodeAddress
+                        )
+                        offersReply.offers
+                    )
+
+            Nothing ->
+                el [] (Element.text "No offers available.")
         ]
 
 
@@ -282,6 +303,7 @@ cell str =
         , Border.width 1
         , Border.color (rgb255 230 230 230)
         , width (px 120)
+        , Element.htmlAttribute (Html.Attributes.id "offerCell")
         ]
         (Element.text str)
 
