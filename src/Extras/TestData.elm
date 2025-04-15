@@ -10,10 +10,12 @@ module Extras.TestData exposing
     , primaryAddress
     , subAddress
     , successfullBalancesFetch
+    , successfullOffersFetch
     , successfullSubAddressFetch
     , successfullVersionFetch
     , successfullXmrPrimaryAddressFetch
     , testBalanceInfo
+    , testGetOffersReply
     , toBytes
     , unSuccessfullXmrPrimaryAddressFetch
     , unsuccessfullBalancesFetch
@@ -25,7 +27,7 @@ import Base64
 import Bytes exposing (Bytes, Endianness(..))
 import Bytes.Encode as BytesEncode
 import Proto.Io.Haveno.Protobuffer as Protobuf exposing (BalancesInfo, BtcBalanceInfo, GetBalancesReply, XmrBalanceInfo, encodeGetBalancesReply)
-import Protobuf.Encode as Encode
+import Protobuf.Encode
 import Protobuf.Types.Int64 exposing (fromInts)
 import Spec.Http.Route as Route
 import Spec.Http.Stub as Stub
@@ -65,6 +67,11 @@ getVersionBaseURL =
 walletsBaseUrl : String
 walletsBaseUrl =
     "http://localhost:8080/io.haveno.protobuffer.Wallets/"
+
+
+offersBaseUrl : String
+offersBaseUrl =
+    "http://localhost:8080/io.haveno.protobuffer.Offers/"
 
 
 placeholderUrl : Url
@@ -244,7 +251,7 @@ getBalancesEncodedResponse =
         -- Encode the GetBalancesReply message to bytes
         encodedResponse : Bytes
         encodedResponse =
-            Encode.encode (encodeGetBalancesReply balancesReply)
+            Protobuf.Encode.encode (encodeGetBalancesReply balancesReply)
     in
     encodedResponse
 
@@ -259,6 +266,99 @@ getSubAddressesEncodedResponse =
         -- Encode the GetBalancesReply message to bytes
         encodedResponse : Bytes
         encodedResponse =
-            Encode.encode (Protobuf.encodeGetXmrNewSubaddressReply subAddrReply)
+            Protobuf.Encode.encode (Protobuf.encodeGetXmrNewSubaddressReply subAddrReply)
     in
     encodedResponse
+
+
+getOffersEncodedResponse : Bytes
+getOffersEncodedResponse =
+    let
+        -- Encode the GetOffersReply message to bytes
+        encodedResponse : Bytes
+        encodedResponse =
+            Protobuf.Encode.encode (Protobuf.encodeGetOffersReply testGetOffersReply)
+    in
+    encodedResponse
+
+
+successfullOffersFetch : Stub.HttpResponseStub
+successfullOffersFetch =
+    Stub.for (Route.post <| offersBaseUrl ++ "GetOffers")
+        |> Stub.withHeader ( "Content-Type", "application/grpc-web+proto" )
+        |> Stub.withBody (Stub.withBytes <| encodeGrpcMessage getOffersEncodedResponse)
+
+
+
+-- filepath: /home/alanpoe/Documents/Development/Monero/elm-merge/haveno-web/src/Extras/TestData.elm
+
+
+testGetOffersReply : Protobuf.GetOffersReply
+testGetOffersReply =
+    { offers =
+        [ { id = "offer1"
+          , direction = "BUY"
+          , price = "0.05"
+          , useMarketBasedPrice = True
+          , marketPriceMarginPct = 1.5
+          , amount = Protobuf.Types.Int64.fromInts 10000 0
+          , minAmount = Protobuf.Types.Int64.fromInts 1000 0
+          , makerFeePct = 0.1
+          , takerFeePct = 0.2
+          , penaltyFeePct = 0.05
+          , buyerSecurityDepositPct = 0.5
+          , sellerSecurityDepositPct = 0.5
+          , volume = "500"
+          , minVolume = "50"
+          , triggerPrice = "0.06"
+          , paymentAccountId = "account1"
+          , paymentMethodId = "method1"
+          , paymentMethodShortName = "SEPA"
+          , baseCurrencyCode = "XMR"
+          , counterCurrencyCode = "BTC"
+          , date = Protobuf.Types.Int64.fromInts 1690000000 0
+          , state = "ACTIVE"
+          , isActivated = True
+          , isMyOffer = False
+          , ownerNodeAddress = "node1"
+          , pubKeyRing = "pubkey1"
+          , versionNr = "1.0"
+          , protocolVersion = 1
+          , arbitratorSigner = "arbitrator1"
+          , splitOutputTxHash = "txhash1"
+          , splitOutputTxFee = Protobuf.Types.Int64.fromInts 100 0
+          }
+        , { id = "offer2"
+          , direction = "SELL"
+          , price = "0.07"
+          , useMarketBasedPrice = False
+          , marketPriceMarginPct = 2.0
+          , amount = Protobuf.Types.Int64.fromInts 20000 0
+          , minAmount = Protobuf.Types.Int64.fromInts 2000 0
+          , makerFeePct = 0.15
+          , takerFeePct = 0.25
+          , penaltyFeePct = 0.1
+          , buyerSecurityDepositPct = 0.6
+          , sellerSecurityDepositPct = 0.6
+          , volume = "1000"
+          , minVolume = "100"
+          , triggerPrice = "0.08"
+          , paymentAccountId = "account2"
+          , paymentMethodId = "method2"
+          , paymentMethodShortName = "SWIFT"
+          , baseCurrencyCode = "BTC"
+          , counterCurrencyCode = "XMR"
+          , date = Protobuf.Types.Int64.fromInts 1690001000 0
+          , state = "PENDING"
+          , isActivated = False
+          , isMyOffer = True
+          , ownerNodeAddress = "node2"
+          , pubKeyRing = "pubkey2"
+          , versionNr = "1.1"
+          , protocolVersion = 2
+          , arbitratorSigner = "arbitrator2"
+          , splitOutputTxHash = "txhash2"
+          , splitOutputTxFee = Protobuf.Types.Int64.fromInts 200 0
+          }
+        ]
+    }

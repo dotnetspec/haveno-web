@@ -16,6 +16,7 @@ type alias Model =
     { status : Status
     , pagetitle : String
     , balances : Maybe Protobuf.BalancesInfo
+    , offersReply : Maybe Protobuf.GetOffersReply
     , isAddressVisible : Bool
     , primaryaddress : String
     , errors : List String
@@ -35,12 +36,13 @@ initialModel =
     { status = Loaded
     , pagetitle = "Sell"
     , balances = Just Protobuf.defaultBalancesInfo
+    , offersReply = Just Protobuf.defaultGetOffersReply
     , isAddressVisible = False
     , primaryaddress = ""
     , errors = []
     , subaddress = ""
     , currentView = ManageSell
-    , listOfExistingCryptoAccounts = []
+    , listOfExistingCryptoAccounts = [""]
     , listOfBTCAddresses = [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ]
     , newBTCAddress = ""
     , cryptoAccountType = BTC

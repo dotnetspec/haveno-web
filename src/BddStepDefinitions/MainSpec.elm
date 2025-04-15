@@ -18,6 +18,7 @@ import Json.Encode
 import Main
 import Pages.Accounts as Accounts
 import Pages.Connect as Connect
+import Pages.Sell as Sell
 import Pages.Funds as Funds
 import Spec exposing (describe, given, it, scenario, when)
 import Spec.Claim as Claim
@@ -48,6 +49,10 @@ fundsInitialModel =
 accountsInitialModel : Accounts.Model
 accountsInitialModel =
     Accounts.initialModel
+
+sellInitialModel : Sell.Model
+sellInitialModel =
+    Sell.initialModel
 
 
 decryptedAllCryptoAccountsResponseMessage : Json.Decode.Value
@@ -100,7 +105,7 @@ runSpecTests =
                    ]
                 -}
                 |> Spec.observeThat
-                    [ it "is on the Accounts page (after Splash page)"
+                    [ it "is on the Accounts page (after Splash page) and has received balances info"
                         (Spec.Observer.observeModel .page
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString <|
@@ -687,6 +692,59 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isEqual Debug.toString [ "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v", "1GK6XMLmzFVj8ALj6mfBsbifRoD4miY36o" ])
                         )
+                    ]
+            )
+        , scenario "17: Fetch offers successfully"
+            (given
+                (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Stub.serve [ TestData.successfullXmrPrimaryAddressFetch
+                    , TestData.successfullVersionFetch
+                    , TestData.successfullBalancesFetch
+                    , TestData.successfullOffersFetch ]
+                )
+                
+                |> when "the user opens the menu"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            Main.ToggleMenu
+                    ]
+                |> when "the user clicks the Sell navLink in the burger menu"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing))
+                    ]
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
+                |> Spec.observeThat
+                    [ it "is on the Accounts page and has received the offers data"
+                        (Spec.Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.SellPage <|
+                                        { sellInitialModel | offersReply = Just TestData.testGetOffersReply }
+                                )
+                        )
+
+                    {- , it "displays the first offer in the table" <|
+                       (Spec.Markup.observeElement
+                           |> Spec.Markup.query
+                           << by [ Spec.Markup.Selector.id "offers-table-row-0" ]
+                           |> Spec.expect
+                               (Claim.isSomethingWhere <|
+                                   Spec.Markup.text <|
+                                       Claim.isStringContaining 1 "0.05"
+                               )
+                       ) -}
+                   
                     ]
             )
         ]

@@ -38,6 +38,7 @@ import Url exposing (Protocol(..), Url)
 import Url.Parser exposing (oneOf, s)
 import Url.Parser.Query as Query
 import Utils.MyUtils exposing (gotBalancesReplyAsTypeAlias)
+import Proto.Io.Haveno.Protobuffer.Offers as Offers
 
 
 
@@ -85,6 +86,7 @@ type alias Model =
     , initialized : Bool
     , isMenuOpen : Bool
     , balances : Maybe Protobuf.BalancesInfo
+    , offersReply : Maybe Protobuf.GetOffersReply
     , primaryaddress : String
     , status : Status
     , timeoutId : Maybe Time.Posix
@@ -123,6 +125,7 @@ init flag _ key =
             , initialized = False
             , isMenuOpen = False
             , balances = Just Protobuf.defaultBalancesInfo
+            , offersReply = Just Protobuf.defaultGetOffersReply
             , primaryaddress = ""
             , status = Loading
             , timeoutId = Nothing
@@ -159,6 +162,7 @@ type Msg
     | GotVersion (Result Grpc.Error GetVersionReply)
     | ToggleMenu
     | GotBalances (Result Grpc.Error Protobuf.GetBalancesReply)
+    | GotOffers (Result Grpc.Error Protobuf.GetOffersReply)
     | GotXmrPrimaryAddress (Result Grpc.Error Protobuf.GetXmrPrimaryAddressReply)
     | Timeout
     | NoOp
@@ -187,6 +191,7 @@ update msg model =
                 updatedModel =
                     { model | isApiConnected = True, version = verResp, status = Loaded }
             in
+            -- REVIEW: Correct way to go to Accounts?
             toAccounts updatedModel (Pages.Accounts.init ())
 
         GotVersion (Err _) ->
@@ -211,6 +216,16 @@ update msg model =
             ( updatedModel, Cmd.batch [ Cmd.none, Cmd.map (\_ -> NoOp) Cmd.none ] )
 
         GotBalances (Err _) ->
+            ( model, Cmd.none )
+
+        GotOffers (Ok response) ->
+            let
+                updatedModel =
+                    { model | offersReply = Just {offers = response.offers}, status = Loaded }
+            in
+            ( updatedModel, Cmd.batch [ Cmd.none, Cmd.map (\_ -> NoOp) Cmd.none ] )
+
+        GotOffers (Err _) ->
             ( model, Cmd.none )
 
         ClickedLink urlRequest ->
@@ -854,6 +869,7 @@ toSplash model ( dashboard, cmd ) =
     , Cmd.batch
         [ sendVersionRequest Protobuf.defaultGetVersionRequest
         , gotAvailableBalances
+        , gotOffers
         , Comms.CustomGrpc.gotPrimaryAddress |> Grpc.toCmd GotXmrPrimaryAddress
         , startTimeout
         , notifyJsReady
@@ -863,7 +879,7 @@ toSplash model ( dashboard, cmd ) =
 
 toSell : Model -> ( Pages.Sell.Model, Cmd Pages.Sell.Msg ) -> ( Model, Cmd Msg )
 toSell model ( sell, cmd ) =
-    ( { model | page = SellPage { sell | listOfExistingCryptoAccounts = model.accountsDataFromJs } }
+    ( { model | page = SellPage { sell | listOfExistingCryptoAccounts = model.accountsDataFromJs, offersReply = model.offersReply } }
       {- -- NOTE: In your example, Cmd.map GotSellMsg cmd, GotSellMsg is indeed a function,
          but you're not explicitly applying it. Cmd.map will take care of applying GotSellMsg to each value that the command produces.
       -}
@@ -1013,6 +1029,17 @@ gotAvailableBalances =
                 |> Grpc.setHost "http://localhost:8080"
     in
     Grpc.toCmd GotBalances grpcRequest
+
+gotOffers : Cmd Msg
+gotOffers =
+    let
+        grpcRequest =
+            Grpc.new Offers.getOffers Protobuf.defaultGetOffersRequest
+                |> Grpc.addHeader "password" "apitest"
+                -- NOTE: "Content-Type" "application/grpc-web+proto" is already part of the request
+                |> Grpc.setHost "http://localhost:8080"
+    in
+    Grpc.toCmd GotOffers grpcRequest
 
 
 

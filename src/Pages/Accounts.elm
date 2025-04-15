@@ -43,7 +43,7 @@ initialModel =
     , errors = []
     , subaddress = ""
     , currentView = ManageAccounts
-    , listOfExistingCryptoAccounts = []
+    , listOfExistingCryptoAccounts = [""]
     , listOfBTCAddresses = []
     , newBTCAddress = ""
     , cryptoAccountType = BTC
@@ -285,7 +285,7 @@ existingCryptoAccountsView model =
     Html.div []
         [ Html.h6 [ class "accounts-subtitle" ] [ Html.text "Existing Accounts" ]
         , Html.div [ id "accounts-listOfExistingCryptoAccounts" ]
-            (if List.isEmpty model.listOfExistingCryptoAccounts then
+            (if model.listOfExistingCryptoAccounts == [""] then
                 [ Html.div [ class "account-item" ] [ Html.text "There are no accounts set up yet" ] ]
 
              else
