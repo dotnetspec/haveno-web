@@ -17741,7 +17741,16 @@ var $author$project$Pages$Sell$tableView = function (model) {
 				var _v0 = model.jX;
 				if (!_v0.$) {
 					var offersReply = _v0.a;
-					return A2(
+					return _Utils_eq(
+						offersReply,
+						{qb: _List_Nil}) ? A2(
+						$mdgriffith$elm_ui$Element$el,
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$htmlAttribute(
+								$elm$html$Html$Attributes$id('offerRow'))
+							]),
+						$mdgriffith$elm_ui$Element$text('No offers available.')) : A2(
 						$mdgriffith$elm_ui$Element$column,
 						_List_Nil,
 						A2(
@@ -17761,7 +17770,11 @@ var $author$project$Pages$Sell$tableView = function (model) {
 				} else {
 					return A2(
 						$mdgriffith$elm_ui$Element$el,
-						_List_Nil,
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$htmlAttribute(
+								$elm$html$Html$Attributes$id('offerRow'))
+							]),
 						$mdgriffith$elm_ui$Element$text('No offers available.'));
 				}
 			}()
@@ -18209,7 +18222,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.9.78')
+										$elm$html$Html$text('Version 0.9.79')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(

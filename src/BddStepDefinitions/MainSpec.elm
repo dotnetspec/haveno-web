@@ -752,6 +752,63 @@ runSpecTests =
                         )
                     ]
             )
+            , scenario "18: Handle no offers correctly"
+            (given
+                (Spec.Setup.initForApplication (Main.init "\"http://localhost:1234/\"")
+                    |> Spec.Setup.withDocument Main.view
+                    |> Spec.Setup.withUpdate Main.update
+                    |> Spec.Setup.withSubscriptions Main.subscriptions
+                    |> Spec.Setup.forNavigation
+                        { onUrlRequest = Main.ClickedLink
+                        , onUrlChange = Main.ChangedUrl
+                        }
+                    |> Stub.serve
+                        [ TestData.successfullXmrPrimaryAddressFetch
+                        , TestData.successfullVersionFetch
+                        , TestData.successfullBalancesFetch
+                        --, TestData.successfullOffersFetch
+                        ]
+                )
+                |> when "the user opens the menu"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            Main.ToggleMenu
+                    ]
+                |> when "the user clicks the Sell navLink in the burger menu"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            (Main.ClickedLink (Browser.Internal <| Url Http "localhost" (Just 1234) "/sell" Nothing Nothing))
+                    ]
+                |> when "the user toggles the Sell Bitcoin button"
+                    [ Spec.Command.send <|
+                        Spec.Command.fake
+                            (Main.GotSellMsg <| Sell.ChangeView Sell.Bitcoin)
+                    ]
+                {- |> Spec.when "we log the http requests"
+                   [ Spec.Http.logRequests
+                   ]
+                -}
+                |> Spec.observeThat
+                    [ it "is on the Accounts page and has received the offers data"
+                        (Spec.Observer.observeModel .page
+                            |> Spec.expect
+                                (Claim.isEqual Debug.toString <|
+                                    Main.SellPage <|
+                                        { sellInitialModel | offersReply = Just { offers = [] }, currentView = Sell.Bitcoin }
+                                )
+                        )
+                    , it "displays the first offer in the table" <|
+                        (Spec.Markup.observeElement
+                            |> Spec.Markup.query
+                            << by [ Spec.Markup.Selector.id "offerRow" ]
+                            |> Spec.expect
+                                (Claim.isSomethingWhere <|
+                                    Spec.Markup.text <|
+                                        Claim.isStringContaining 1 "No offers available."
+                                )
+                        )
+                    ]
+            )
         ]
 
 

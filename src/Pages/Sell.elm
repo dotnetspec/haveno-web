@@ -216,24 +216,28 @@ tableView model =
         [ headerRow
         , case model.offersReply of
             Just offersReply ->
-                column []
-                    (List.map
-                        (\offer ->
-                            dataRow
-                                offer.price
-                                -- TODO: offer.amount needs handling here:
-                                ("0.05" ++ " - " ++ "0.07")
-                                offer.triggerPrice
-                                offer.paymentMethodShortName
-                                (String.fromFloat offer.buyerSecurityDepositPct ++ "%")
-                                ""
-                                offer.ownerNodeAddress
+                if offersReply == { offers = [] } then
+                    el [Element.htmlAttribute (Html.Attributes.id "offerRow") ] (Element.text "No offers available.")
+
+                else
+                    column []
+                        (List.map
+                            (\offer ->
+                                dataRow
+                                    offer.price
+                                    -- TODO: offer.amount needs handling here:
+                                    ("0.05" ++ " - " ++ "0.07")
+                                    offer.triggerPrice
+                                    offer.paymentMethodShortName
+                                    (String.fromFloat offer.buyerSecurityDepositPct ++ "%")
+                                    ""
+                                    offer.ownerNodeAddress
+                            )
+                            offersReply.offers
                         )
-                        offersReply.offers
-                    )
 
             Nothing ->
-                el [] (Element.text "No offers available.")
+                el [Element.htmlAttribute (Html.Attributes.id "offerRow") ] (Element.text "No offers available.")
         ]
 
 
@@ -300,7 +304,6 @@ cell str =
         , Border.width 1
         , Border.color (rgb255 230 230 230)
         , width (px 120)
-        
         ]
         (Element.text str)
 
