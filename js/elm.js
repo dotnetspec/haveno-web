@@ -11055,7 +11055,7 @@ var $author$project$Pages$Donate$errorView = A2(
 					$elm$html$Html$text('Error: Unable to retrieve relevant data. Please try again later.')
 				]))
 		]));
-var $author$project$Extras$Constants$donationAddress = '86F2Vbx6QRL3jfxeACFUsPTAh2x264dDNdgmt8m96zSQd8rwGrsw4th7XrmdhQkFXf32timtpWupQMWokagkXYfiPKYGvpt';
+var $elm$html$Html$li = _VirtualDom_node('li');
 var $author$project$Pages$Donate$manageDonateView = A2(
 	$elm$html$Html$div,
 	_List_fromArray(
@@ -11078,40 +11078,119 @@ var $author$project$Pages$Donate$manageDonateView = A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('address-text')
+					$elm$html$Html$Attributes$class('donation-text')
 				]),
 			_List_fromArray(
 				[
 					A2(
-					$elm$html$Html$span,
+					$elm$html$Html$p,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('address-label')
+							$elm$html$Html$Attributes$class('donation-description')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('Thank you for your support. Every bit helps. Please send your donation to: ')
+							$elm$html$Html$text('Haveno is free, open-source, and built for your privacy — with no middlemen, no ads, no compromises.')
 						])),
 					A2(
 					$elm$html$Html$p,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$id('donationaddress'),
-							$elm$html$Html$Attributes$class('address-value')
+							$elm$html$Html$Attributes$class('donation-call-to-action')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text($author$project$Extras$Constants$donationAddress)
+							$elm$html$Html$text('🚀 If this project helps you trade freely, securely, and anonymously, help keep it alive.')
+						])),
+					A2(
+					$elm$html$Html$ul,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('donation-benefits')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$li,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('✅ Even 0.01 XMR makes a difference.')
+								])),
+							A2(
+							$elm$html$Html$li,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('✅ 100% used for open-source development.')
+								])),
+							A2(
+							$elm$html$Html$li,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('✅ No tracking. No strings attached.')
+								]))
 						])),
 					A2(
 					$elm$html$Html$p,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('address-label')
+							$elm$html$Html$Attributes$class('donation-address-label')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('Thank you. It is much appreciated')
+							$elm$html$Html$text('🔐 Donate XMR to:')
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('address-container')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('address-text')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$p,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$id('donationaddress'),
+											$elm$html$Html$Attributes$class('address-value')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('86F2Vbx6QRL3jfxeACFUsPTAh2x264dDNdgmt8m96zSQd8rwGrsw4th7XrmdhQkFXf32timtpWupQMWokagkXYfiPKYGvpt')
+										]))
+								]))
+						])),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('copy-address-button'),
+							$elm$html$Html$Attributes$id('copy-address')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('📋 Copy Address')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('donation-thank-you')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('❤️ Thank you for defending freedom and financial privacy.')
 						]))
 				]))
 		]));
@@ -18334,7 +18413,6 @@ var $author$project$Main$isActive = function (_v0) {
 			}
 	}
 };
-var $elm$html$Html$li = _VirtualDom_node('li');
 var $elm$html$Html$Attributes$alt = $elm$html$Html$Attributes$stringProperty('alt');
 var $elm$html$Html$Attributes$height = function (n) {
 	return A2(
