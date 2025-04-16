@@ -17768,7 +17768,7 @@ var $author$project$Pages$Sell$tableView = function (model) {
 									offer.vk,
 									offer.ug,
 									$elm$core$String$fromFloat(offer.sr),
-									'',
+									'action',
 									offer.uc);
 							},
 							offersReply.qa));
