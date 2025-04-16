@@ -259,7 +259,7 @@ headerRow =
         , columnHeader [ el [ Element.htmlAttribute (Html.Attributes.id "column-btc-range") ] (Element.text "BTC Range") ]
         , columnHeader [ el [ Element.htmlAttribute (Html.Attributes.id "column-payment") ] (Element.text "Payment") ]
         , columnHeader [ el [ Element.htmlAttribute (Html.Attributes.id "column-deposit") ] (Element.text "Deposit %") ]
-        , columnHeader [ el [ Element.htmlAttribute (Html.Attributes.id "column-action") ] (Element.text "⚙") ]
+        , columnHeader [ el [ Element.htmlAttribute (Html.Attributes.id "column-action") ] (Element.text "⚙️") ]
         , columnHeader [ el [ Element.htmlAttribute (Html.Attributes.id "column-buyer") ] (Element.text "Buyer") ]
         ]
 

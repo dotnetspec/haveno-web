@@ -17794,7 +17794,7 @@ var $author$project$Pages$Sell$headerRow = A2(
 							$mdgriffith$elm_ui$Element$htmlAttribute(
 							$elm$html$Html$Attributes$id('column-action'))
 						]),
-					$mdgriffith$elm_ui$Element$text('⚙'))
+					$mdgriffith$elm_ui$Element$text('⚙️'))
 				])),
 			$author$project$Pages$Sell$columnHeader(
 			_List_fromArray(
