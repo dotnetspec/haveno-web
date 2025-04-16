@@ -747,7 +747,7 @@ runSpecTests =
                             |> Spec.expect
                                 (Claim.isSomethingWhere <|
                                     Spec.Markup.text <|
-                                        Claim.isStringContaining 1 "0.050.05 - 0.070.06SEPA0.5%node1"
+                                        Claim.isStringContaining 1 "0.0510000 - 00.06SEPA0.5actionnode1"
                                 )
                         )
                     ]

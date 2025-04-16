@@ -8,6 +8,7 @@ import Html exposing (Html, div, h4, section)
 import Html.Attributes exposing (class, classList, id)
 import Pages.Accounts exposing (Msg)
 import Proto.Io.Haveno.Protobuffer as Protobuf
+import Protobuf.Types.Int64
 import Types.CryptoAccount exposing (CryptoAccount(..))
 import Utils.MyUtils
 
@@ -217,7 +218,7 @@ tableView model =
         , case model.offersReply of
             Just offersReply ->
                 if offersReply == { offers = [] } then
-                    el [Element.htmlAttribute (Html.Attributes.id "offerRow") ] (Element.text "No offers available.")
+                    el [ Element.htmlAttribute (Html.Attributes.id "offerRow") ] (Element.text "No offers available.")
 
                 else
                     column []
@@ -225,19 +226,24 @@ tableView model =
                             (\offer ->
                                 dataRow
                                     offer.price
-                                    -- TODO: offer.amount needs handling here:
-                                    ("0.05" ++ " - " ++ "0.07")
+                                    (let
+                                        ( low, high ) =
+                                            Protobuf.Types.Int64.toInts offer.amount
+                                     in
+                                     String.fromInt low ++ " - " ++ String.fromInt high
+                                    )
                                     offer.triggerPrice
                                     offer.paymentMethodShortName
-                                    (String.fromFloat offer.buyerSecurityDepositPct ++ "%")
-                                    ""
+                                    (String.fromFloat offer.buyerSecurityDepositPct)
+                                    -- TODO: Add correct action field
+                                    "action"
                                     offer.ownerNodeAddress
                             )
                             offersReply.offers
                         )
 
             Nothing ->
-                el [Element.htmlAttribute (Html.Attributes.id "offerRow") ] (Element.text "No offers available.")
+                el [ Element.htmlAttribute (Html.Attributes.id "offerRow") ] (Element.text "No offers available.")
         ]
 
 
