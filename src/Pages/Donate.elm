@@ -151,17 +151,18 @@ errorView =
 
 manageDonateView : Html Msg
 manageDonateView =
+    -- TODO: Create a generic containter class
     Html.div [ Attr.class "accounts-container" ]
         [ Html.h1 [ Attr.class "accounts-title" ] [ Html.text "Donate" ]
-        , Html.div [ Attr.class "donation-text" ]
-            [ Html.p [ Attr.class "donation-description" ]
+        , Html.div [ Attr.class "balance-text" ]
+            [ Html.p [ ]
                 [ Html.text "Haveno is free, open-source, and built for your privacy — with no middlemen, no ads, no compromises." ]
-            , Html.p [ Attr.class "donation-call-to-action" ]
+            , Html.p [  ]
                 [ Html.text "🚀 If this project helps you trade freely, securely, and anonymously, help keep it alive." ]
-            , Html.ul [ Attr.class "donation-benefits" ]
-                [ Html.li [] [ Html.text "✅ Even 0.01 XMR makes a difference." ]
-                , Html.li [] [ Html.text "✅ 100% used for open-source development." ]
-                , Html.li [] [ Html.text "✅ No tracking. No strings attached." ]
+            , Html.ul [Attr.class "balance-text" ]
+                [ Html.li [Attr.class "balance-text"] [ Html.text "✅ Even 0.01 XMR makes a difference." ]
+                , Html.li [Attr.class "balance-text"] [ Html.text "✅ 100% used for open-source development." ]
+                , Html.li [Attr.class "balance-text"] [ Html.text "✅ No tracking. No strings attached." ]
                 ]
             , Html.p [ Attr.class "donation-address-label" ]
                 [ Html.text "🔐 Donate XMR to:" ]

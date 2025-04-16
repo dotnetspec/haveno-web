@@ -11078,26 +11078,20 @@ var $author$project$Pages$Donate$manageDonateView = A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('donation-text')
+					$elm$html$Html$Attributes$class('balance-text')
 				]),
 			_List_fromArray(
 				[
 					A2(
 					$elm$html$Html$p,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('donation-description')
-						]),
+					_List_Nil,
 					_List_fromArray(
 						[
 							$elm$html$Html$text('Haveno is free, open-source, and built for your privacy — with no middlemen, no ads, no compromises.')
 						])),
 					A2(
 					$elm$html$Html$p,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('donation-call-to-action')
-						]),
+					_List_Nil,
 					_List_fromArray(
 						[
 							$elm$html$Html$text('🚀 If this project helps you trade freely, securely, and anonymously, help keep it alive.')
@@ -11106,27 +11100,36 @@ var $author$project$Pages$Donate$manageDonateView = A2(
 					$elm$html$Html$ul,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('donation-benefits')
+							$elm$html$Html$Attributes$class('balance-text')
 						]),
 					_List_fromArray(
 						[
 							A2(
 							$elm$html$Html$li,
-							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('balance-text')
+								]),
 							_List_fromArray(
 								[
 									$elm$html$Html$text('✅ Even 0.01 XMR makes a difference.')
 								])),
 							A2(
 							$elm$html$Html$li,
-							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('balance-text')
+								]),
 							_List_fromArray(
 								[
 									$elm$html$Html$text('✅ 100% used for open-source development.')
 								])),
 							A2(
 							$elm$html$Html$li,
-							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('balance-text')
+								]),
 							_List_fromArray(
 								[
 									$elm$html$Html$text('✅ No tracking. No strings attached.')
@@ -18306,7 +18309,7 @@ var $author$project$Main$footerContent = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Version 0.9.79')
+										$elm$html$Html$text('Version 0.9.80')
 									])),
 								$elm$html$Html$text('Haveno Version'),
 								A2(
