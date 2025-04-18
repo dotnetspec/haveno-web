@@ -29,6 +29,7 @@
     "optimize": "elm make src/Main.elm --output=js/elm.js --optimize",
     "jt": "yarn optimize && yarn unit && yarn spec && yarn review && yarn vitest && yarn plw",
     "mth": "./terminals/localNet_2_User.sh",
+    "2ue": "./terminals/twoUserEnvoy.sh",
     "fullTestHaveno": "./terminals/openAll.sh",
     "eb": "./terminals/oneUserEnvoy.sh",
     "ct": "./terminals/closeAll.sh",
