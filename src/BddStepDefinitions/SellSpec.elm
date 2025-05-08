@@ -136,7 +136,7 @@ runSpecTests =
                         )
                     ]
             )
-        , scenario "3: Display Sell BTC for XMR, current offers panel and Sell BTC Offer button"
+        , scenario "3: Display Sell XMR for BTC, current offers panel and Sell BTC Offer button"
             (given
                 (Spec.Setup.initWithModel
                     { sellInitialModel

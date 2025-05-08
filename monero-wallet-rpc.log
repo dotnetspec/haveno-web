@@ -1,0 +1,3 @@
+2025-04-18 07:33:31.234	    7bbac18499c0	INFO	logging	contrib/epee/src/mlog.cpp:273	New log categories: *:WARNING,net:FATAL,net.http:FATAL,net.ssl:FATAL,net.p2p:FATAL,net.cn:FATAL,daemon.rpc:FATAL,global:INFO,verify:FATAL,serialization:FATAL,daemon.rpc.payment:ERROR,stacktrace:INFO,logging:INFO,msgwriter:INFO
+2025-04-18 07:33:31.240	    7bbac18499c0	ERROR	wallet.rpc	src/wallet/wallet_rpc_server.cpp:202	Failed to create directory /path/to/wallets: No such file or directory
+2025-04-18 07:33:31.240	    7bbac18499c0	ERROR	wallet.rpc	src/wallet/wallet_rpc_server.cpp:4460	Failed to initialize wallet RPC server

@@ -30,6 +30,7 @@
     "jt": "yarn optimize && yarn unit && yarn spec && yarn review && yarn vitest && yarn plw",
     "mth": "./terminals/localNet_2_User.sh",
     "2ue": "./terminals/twoUserEnvoy.sh",
+    "2ueStagenet": "./terminals/2ueStagenet.sh",
     "fullTestHaveno": "./terminals/openAll.sh",
     "eb": "./terminals/oneUserEnvoy.sh",
     "ct": "./terminals/closeAll.sh",
