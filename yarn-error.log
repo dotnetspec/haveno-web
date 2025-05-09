@@ -1,0 +1,124 @@
+Arguments: 
+  /home/alanpoe/.nvm/versions/node/v20.19.1/bin/node /tmp/fnm_multishells/14690_1746686595527/bin/yarn set version stable
+
+PATH: 
+  /home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/linuxbrew/.linuxbrew/bin:/home/alanpoe/.yarn/bin:/home/alanpoe/.config/yarn/global/node_modules/.bin:/usr/lib/jvm/java-1.11.0-openjdk-amd64/bin:/usr/lib/google-cloud-sdk/bin:/home/alanpoe/.cache/activestate/bin:/home/alanpoe/.local/ActiveState/StateTool/release/bin:/home/alanpoe/.local/bin:/home/alanpoe/.node_modules_global:/home/alanpoe/.nvm/versions/node/v20.19.1/bin:/tmp/fnm_multishells/14690_1746686595527/bin:/home/alanpoe/.fnm:/home/alanpoe/.local/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/linuxbrew/.linuxbrew/bin:/home/alanpoe/.yarn/bin:/home/alanpoe/.config/yarn/global/node_modules/.bin:/home/alanpoe/.sdkman/candidates/java/current/bin:/usr/lib/jvm/java-1.11.0-openjdk-amd64/bin:/usr/lib/google-cloud-sdk/bin:/home/alanpoe/.cache/activestate/bin:/home/alanpoe/.local/ActiveState/StateTool/release/bin:/home/alanpoe/.local/bin:/home/alanpoe/.node_modules_global:/home/alanpoe/.nvm/versions/node/v21.7.3/bin:/home/alanpoe/miniconda3/bin:/home/alanpoe/miniconda3/condabin:/tmp/fnm_multishells/3028_1746685030841/bin:/home/alanpoe/.fnm:/home/alanpoe/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/alanpoe/.dotnet/tools:/home/alanpoe/.dotnet:/home/alanpoe/.dotnet/tools:/home/alanpoe/.dotnet/tools:/home/alanpoe/.dotnet:/home/alanpoe/.dotnet/tools:node_modules/.bin:/usr/bin:/home/alanpoe/.dotnet:/home/alanpoe/.dotnet/tools:/home/alanpoe/.config/Code/User/globalStorage/github.copilot-chat/debugCommand:/home/alanpoe/.dotnet:/home/alanpoe/.dotnet/tools:./node_modules/.bin:/usr/bin
+
+Yarn version: 
+  1.22.11
+
+Node version: 
+  20.19.1
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: Release not found: stable
+      at /home/alanpoe/.fnm/node-versions/v14.16.1/installation/lib/node_modules/yarn/lib/cli.js:90309:17
+      at Generator.next (<anonymous>)
+      at step (/home/alanpoe/.fnm/node-versions/v14.16.1/installation/lib/node_modules/yarn/lib/cli.js:310:30)
+      at /home/alanpoe/.fnm/node-versions/v14.16.1/installation/lib/node_modules/yarn/lib/cli.js:321:13
+      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+npm manifest: 
+  {
+    "name": "haveno-web",
+    "version": "0.0.8",
+    "type": "module",
+    "description": "Mobile-first web app for Haveno",
+    "source": "index.html",
+    "license": "SEE LICENSE IN LICENSE",
+    "licenses": [
+      {
+        "type": "BSD-3-Clause",
+        "url": "https://opensource.org/licenses/BSD-3-Clause"
+      },
+      {
+        "type": "Apache-2.0",
+        "url": "https://opensource.org/licenses/Apache-2.0"
+      },
+      {
+        "type": "AGPL-3.0",
+        "url": "https://www.gnu.org/licenses/agpl-3.0.html"
+      }
+    ],
+    "scripts": {
+      "jsdepgraph": "madge --extensions js,mjs --exclude 'elm.js' --image js/graph.png js",
+      "unit": "elm-test 'src/**/Tests/Test*.elm' --fuzz 100",
+      "spec": "npx elm-spec-runner --specRoot ./",
+      "review": "elm-review --fix",
+      "vitest": "vitest --no-watch",
+      "debug": "elm make src/Main.elm --output=js/elm.js --debug",
+      "optimize": "elm make src/Main.elm --output=js/elm.js --optimize",
+      "jt": "yarn optimize && yarn unit && yarn spec && yarn review && yarn vitest && yarn plw",
+      "mth": "./terminals/localNet_2_User.sh",
+      "2ue": "./terminals/twoUserEnvoy.sh",
+      "2ueStagenet": "./terminals/2ueStagenet.sh",
+      "fullTestHaveno": "./terminals/openAll.sh",
+      "eb": "./terminals/oneUserEnvoy.sh",
+      "ct": "./terminals/closeAll.sh",
+      "yarnClean": "yarn cache clean",
+      "prepareToManageGit": "husky install",
+      "parcelClean": "rm -rf dist .parcel-cache && parcel build",
+      "start": "parcel",
+      "build": "parcel build",
+      "serve": "parcel serve",
+      "bs": "yarn optimize && yarn build && yarn serve",
+      "plw": "yarn playwright test --project=firefox",
+      "obs": "yarn optimize &&  yarn build && yarn review && yarn vitest && yarn serve",
+      "dbs": "yarn debug &&  yarn build && yarn review && yarn vitest && yarn serve",
+      "relns": "yarn optimize &&  yarn unit && yarn spec && yarn review && yarn vitest && yarn build",
+      "relns+plw": "yarn optimize && yarn unit && yarn spec && yarn review && yarn vitest && yarn build && yarn plw",
+      "relnoe": "yarn optimize && yarn unit && yarn spec && yarn review && yarn vitest && yarn build && yarn serve",
+      "rel": "yarn optimize && yarn eb && yarn unit && yarn spec && yarn review && yarn vitest && yarn build && yarn serve",
+      "ks": "lsof -ti:1234 | xargs kill -9"
+    },
+    "husky": {
+      "hooks": {
+        "pre-commit": "lint-staged"
+      }
+    },
+    "lint-staged": {
+      "*.{js,jsx,ts,tsx,html,css,scss,md}": [
+        "prettier --write",
+        "git add"
+      ]
+    },
+    "dependencies": {
+      "@ledgerhq/hw-app-btc": "^10.4.3",
+      "@ledgerhq/hw-transport-webhid": "^6.29.2",
+      "@ledgerhq/hw-transport-webusb": "^6.28.4",
+      "@ledgerhq/logs": "^6.12.0",
+      "buffer": "^5.5.0||^6.0.0",
+      "core-js": "^3.39.0",
+      "elm-json": "^0.2.13",
+      "elm-language-server": "^0.1.1"
+    },
+    "devDependencies": {
+      "@parcel/transformer-elm": "2.13.0",
+      "@playwright/test": "^1.50.1",
+      "@types/node": "^22.13.2",
+      "elm": "^0.19.1-6",
+      "elm-review": "^2.13.2",
+      "elm-spec-runner": "^2.5.1",
+      "husky": "^9.1.4",
+      "jsdom": "^26.0.0",
+      "lint-staged": "^15.2.9",
+      "madge": "^8.0.0",
+      "parcel": "^2.12.0",
+      "playwright": "^1.50.1",
+      "process": "^0.11.10",
+      "stream-browserify": "^3.0.0",
+      "vitest": "^3.0.8"
+    },
+    "alias": {
+      "@ledgerhq/devices": "@ledgerhq/devices/lib-es"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

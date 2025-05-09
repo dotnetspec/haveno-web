@@ -17881,7 +17881,7 @@ var $author$project$Pages$Sell$btcAccountsView = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Sell BTC for XMR')
+						$elm$html$Html$text('Sell XMR for BTC')
 					])),
 				A2(
 				$elm$html$Html$div,
