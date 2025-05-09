@@ -13,8 +13,14 @@ install-yarn:
     - yarn --version
   only:
     - master
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-yarn
+    paths:
+      - .yarn/cache
+      - $HOME/.yarn
+      - $HOME/.config/yarn
+      - node_modules/
   artifacts:
-    # Cache Yarn and Node.js for reuse in other stages
     paths:
       - $HOME/.yarn
       - $HOME/.config/yarn
@@ -26,6 +32,11 @@ test:
   image: node:20
   dependencies:
     - install-yarn
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-yarn
+    paths:
+      - .yarn/cache
+      - node_modules/
   script:
     - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
     - cd $CI_PROJECT_DIR
@@ -34,23 +45,34 @@ test:
     - npx elm-test 'src/**/Tests/Test*.elm' || exit 1  # Ensure test failure stops pipeline
     - yarn build
   only:
-    - master  # Run only on master branch
-
+    - master
 
 integration_test:
   stage: integration_test
   image: node:20
   dependencies:
     - install-yarn
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-yarn
+    paths:
+      - .yarn/cache
+      - node_modules/
   script:
     - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
     - cd $CI_PROJECT_DIR
     - yarn install
     - export PATH=./node_modules/.bin:$PATH
     - npx elm make src/Main.elm --output=js/elm.js --optimize 
-    - yarn add elm-spec-runner
-    - npx elm-spec --specRoot ./ || exit 1  # Ensure integration test failure stops pipeline
+    - yarn add elm-spec-runner @playwright/test
+    - npx elm-spec --specRoot ./ || exit 1  # Elm-spec tests
+    - apt-get update && apt-get install -y libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libnss3 libxrandr2 libasound2 libpangocairo-1.0-0 libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0  # Playwright dependencies
+    - npx playwright install --with-deps firefox  # Install Firefox for Playwright
+    - yarn playwright test --project=firefox --reporter=dot || exit 1  # Playwright tests
     - yarn build
+  artifacts:
+    paths:
+      - playwright-report/
+      - test-results/
+    expire_in: 1 week
   only:
     - master
-
